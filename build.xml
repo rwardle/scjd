@@ -66,12 +66,23 @@
     nbproject/build-impl.xml file. 
 
     -->
-    
-    <taskdef resource="checkstyletask.properties"
-                classpath="/mnt/data/software/checkstyle-3.5/checkstyle-all-3.5.jar"/>
-                
+    <!--
+    ===================
+    INITIALIZATION SECTION
+    ===================
+    -->
+    <target name="-post-init">
+        <property file="build.properties"/>
+    </target>
+    <!--
+    ===================
+    CHECKSTYLE SECTION
+    ===================
+    -->
+    <taskdef classpath="/mnt/data/software/checkstyle/checkstyle-all.jar" 
+                resource="checkstyletask.properties"/>                
     <target name="checkstyle" depends="init">
-        <checkstyle config="/mnt/data/software/checkstyle-3.5/sun_checks.xml">
+        <checkstyle config="${checkstyle.checks}">
             <classpath>
                 <path path="${run.test.classpath}"/>
             </classpath>
@@ -79,5 +90,37 @@
             <fileset dir="${test.src.dir}"/>                               
         </checkstyle>
     </target>
-                
+    <!--
+    ===================
+    COBERTURA SECTION
+    ===================
+    -->
+    <taskdef classpath="/mnt/data/software/cobertura/cobertura.jar"
+                resource="tasks.properties"/>
+    <target name="coverage-instrument" depends="init,compile">
+        <mkdir dir="${build.coverage.classes.dir}"/>
+        <cobertura-instrument todir="${build.coverage.classes.dir}">
+            <fileset dir="${build.classes.dir}">
+                <include name="**/*.class"/>
+            </fileset>
+        </cobertura-instrument>
+    </target>    
+    <target name="coverage-test" depends="compile-test,coverage-instrument">
+        <junit showoutput="true" fork="true" dir="${basedir}" 
+                    failureproperty="tests.failed" errorproperty="tests.failed" 
+                    jvm="${platform.java}">
+            <batchtest todir="${build.test.results.dir}">
+                <fileset dir="${test.src.dir}"/>
+            </batchtest>
+            <classpath>
+                <path path="${cobertura.jar}"/>
+                <path path="${build.coverage.classes.dir}"/>
+                <path path="${run.test.classpath}"/>
+            </classpath>
+            <formatter type="brief" usefile="false"/>
+        </junit>        
+    </target>    
+    <target name="coverage-report" depends="coverage-test">
+        <cobertura-report srcdir="${src.dir}" destdir="${build.coverage.report.dir}"/>
+    </target>        
 </project>
