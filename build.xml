@@ -66,4 +66,18 @@
     nbproject/build-impl.xml file. 
 
     -->
+    
+    <taskdef resource="checkstyletask.properties"
+                classpath="/mnt/data/software/checkstyle-3.5/checkstyle-all-3.5.jar"/>
+                
+    <target name="checkstyle" depends="init">
+        <checkstyle config="/mnt/data/software/checkstyle-3.5/sun_checks.xml">
+            <classpath>
+                <path path="${run.test.classpath}"/>
+            </classpath>
+            <fileset dir="${src.dir}"/>
+            <fileset dir="${test.src.dir}"/>                               
+        </checkstyle>
+    </target>
+                
 </project>
