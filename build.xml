@@ -129,7 +129,7 @@
         </junit>        
     </target>    
     <target name="coverage-report" depends="coverage-test">
-        <cobertura-report srcdir="${src.dir}" destdir="${build.coverage.report.dir}"/>
+        <cobertura-report format="xml" srcdir="${src.dir}" destdir="${build.coverage.report.dir}"/>
     </target>        
     <!--
     =====================
@@ -151,5 +151,5 @@
         </junit>
         <fail message="Tests failed. Check test reports." if="tests.failed" />
     </target>
-    <target name="cruise-build" depends="clean,jar,cruise-test,cruise-checkstyle"/>
+    <target name="cruise-build" depends="clean,jar,cruise-test,cruise-checkstyle,coverage-report"/>
 </project>
