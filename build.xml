@@ -67,9 +67,9 @@
 
     -->
     <!--
-    ===================
+    ======================
     INITIALIZATION SECTION
-    ===================
+    ======================
     -->
     <target name="-pre-init">
         <property name="platforms.J2SDK_1.4.2.home" value="/usr/local/j2sdk1.4.2"/>
@@ -78,9 +78,9 @@
         <property file="build.properties"/>
     </target>
     <!--
-    ===================
+    ==================
     CHECKSTYLE SECTION
-    ===================
+    ==================
     -->
     <taskdef classpath="/mnt/data/software/checkstyle/checkstyle-all.jar" 
                 resource="checkstyletask.properties"/>                
@@ -94,9 +94,9 @@
         </checkstyle>
     </target>
     <!--
-    ===================
+    =================
     COBERTURA SECTION
-    ===================
+    =================
     -->
     <taskdef classpath="/mnt/data/software/cobertura/cobertura.jar"
                 resource="tasks.properties"/>
@@ -126,4 +126,10 @@
     <target name="coverage-report" depends="coverage-test">
         <cobertura-report srcdir="${src.dir}" destdir="${build.coverage.report.dir}"/>
     </target>        
+    <!--
+    =====================
+    CRUISECONTROL SECTION
+    =====================
+    -->
+    <target name="cruise" depends="clean,jar,test"/>
 </project>
