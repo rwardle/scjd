@@ -129,7 +129,7 @@
         </junit>        
     </target>    
     <target name="coverage-report" depends="coverage-test">
-        <cobertura-report format="xml" srcdir="${src.dir}" destdir="${build.coverage.report.dir}"/>
+        <cobertura-report srcdir="${src.dir}" destdir="${build.coverage.report.dir}"/>
     </target>        
     <!--
     =====================
