@@ -89,6 +89,15 @@
             <fileset dir="${src.dir}"/>
             <fileset dir="${test.src.dir}"/> 
             <formatter type="plain"/>
+        </checkstyle>
+    </target>
+    <target name="cruise-checkstyle" depends="init,compile,compile-test">
+        <checkstyle config="${checkstyle.checks.file}" failOnViolation="false">
+            <classpath>
+                <path path="${run.test.classpath}"/>
+            </classpath>
+            <fileset dir="${src.dir}"/>
+            <fileset dir="${test.src.dir}"/> 
             <formatter type="xml" toFile="${checkstyle.errors.file}"/>     
         </checkstyle>
     </target>
@@ -142,5 +151,5 @@
         </junit>
         <fail message="Tests failed. Check test reports." if="tests.failed" />
     </target>
-    <target name="cruise-build" depends="clean,jar,cruise-test,checkstyle"/>
+    <target name="cruise-build" depends="clean,jar,cruise-test,cruise-checkstyle"/>
 </project>
