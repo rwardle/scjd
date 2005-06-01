@@ -81,13 +81,15 @@
     -->
     <taskdef classpath="/mnt/data/software/checkstyle/checkstyle-all.jar" 
                 resource="checkstyletask.properties"/>                
-    <target name="checkstyle" depends="init">
-        <checkstyle config="${checkstyle.checks}">
+    <target name="checkstyle" depends="init,compile,compile-test">
+        <checkstyle config="${checkstyle.checks.file}">
             <classpath>
                 <path path="${run.test.classpath}"/>
             </classpath>
             <fileset dir="${src.dir}"/>
-            <fileset dir="${test.src.dir}"/>                               
+            <fileset dir="${test.src.dir}"/> 
+            <formatter type="plain"/>
+            <formatter type="xml" toFile="${checkstyle.errors.file}"/>     
         </checkstyle>
     </target>
     <!--
