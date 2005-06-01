@@ -71,9 +71,6 @@
     INITIALIZATION SECTION
     ======================
     -->
-    <target name="-pre-init">
-        <property name="platforms.J2SDK_1.4.2.home" value="/usr/local/j2sdk1.4.2"/>
-    </target>
     <target name="-post-init">
         <property file="build.properties"/>
     </target>
