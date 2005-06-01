@@ -106,9 +106,7 @@
         </cobertura-instrument>
     </target>    
     <target name="coverage-test" depends="compile-test,coverage-instrument">
-        <junit showoutput="true" fork="true" dir="${basedir}" 
-                    failureproperty="tests.failed" errorproperty="tests.failed" 
-                    jvm="${platform.java}">
+        <junit fork="true" dir="${basedir}" jvm="${platform.java}">
             <batchtest todir="${build.test.results.dir}">
                 <fileset dir="${test.src.dir}"/>
             </batchtest>
@@ -117,7 +115,6 @@
                 <path path="${build.coverage.classes.dir}"/>
                 <path path="${run.test.classpath}"/>
             </classpath>
-            <formatter type="brief" usefile="false"/>
         </junit>        
     </target>    
     <target name="coverage-report" depends="coverage-test">
@@ -128,5 +125,20 @@
     CRUISECONTROL SECTION
     =====================
     -->
-    <target name="cruise" depends="clean,jar,test"/>
+    <target name="cruise-test" depends="init,compile-test,-pre-test-run">
+        <junit showoutput="true" fork="true" dir="${basedir}" 
+                failureproperty="tests.failed" errorproperty="tests.failed" 
+                jvm="${platform.java}">
+            <batchtest todir="${build.test.results.dir}">
+                <fileset dir="${test.src.dir}"/>
+            </batchtest>
+            <classpath>
+                <path path="${run.test.classpath}"/>
+            </classpath>            
+            <formatter type="brief" usefile="false"/>
+            <formatter type="xml"/>
+        </junit>
+        <fail message="Tests failed. Check test reports." if="tests.failed" />
+    </target>
+    <target name="cruise-build" depends="clean,jar,cruise-test"/>
 </project>
