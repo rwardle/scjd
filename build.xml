@@ -81,7 +81,7 @@
     -->
     <taskdef classpath="/mnt/data/software/checkstyle/checkstyle-all.jar" 
                 resource="checkstyletask.properties"/>                
-    <target name="checkstyle" depends="init,compile,compile-test">
+    <target name="checkstyle" depends="compile,compile-test">
         <checkstyle config="${checkstyle.checks.file}">
             <classpath>
                 <path path="${run.test.classpath}"/>
@@ -91,7 +91,7 @@
             <formatter type="plain"/>
         </checkstyle>
     </target>
-    <target name="cruise-checkstyle" depends="init,compile,compile-test">
+    <target name="cruise-checkstyle" depends="compile,compile-test">
         <checkstyle config="${checkstyle.checks.file}" failOnViolation="false">
             <classpath>
                 <path path="${run.test.classpath}"/>
@@ -108,7 +108,7 @@
     -->
     <taskdef classpath="/mnt/data/software/cobertura/cobertura.jar"
                 resource="tasks.properties"/>
-    <target name="coverage-instrument" depends="init,compile">
+    <target name="coverage-instrument" depends="compile">
         <mkdir dir="${build.coverage.classes.dir}"/>
         <cobertura-instrument todir="${build.coverage.classes.dir}">
             <fileset dir="${build.classes.dir}">
@@ -132,11 +132,26 @@
         <cobertura-report srcdir="${src.dir}" destdir="${build.coverage.report.dir}"/>
     </target>        
     <!--
+    ================
+    FITNESSE SECTION
+    ================
+    -->
+    <target name="fitnesse" depends="jar,test">
+        <java fork="true" classname="fitnesse.runner.TestRunner" 
+                dir="${work.dir}" jvm="${platform.java}" failonerror="true">
+            <arg line="localhost 8091 AcceptanceTests.SuiteScjdAssignment -v"/>
+            <arg line="-html ${fitnesse.report.file} -nopath"/>
+            <classpath>
+                <path path="${run.test.classpath}"/>
+            </classpath>
+        </java>
+    </target>
+    <!--
     =====================
     CRUISECONTROL SECTION
     =====================
     -->
-    <target name="cruise-test" depends="init,compile-test,-pre-test-run">
+    <target name="cruise-test" depends="compile-test,-pre-test-run">
         <junit showoutput="true" fork="true" dir="${basedir}" 
                 failureproperty="tests.failed" errorproperty="tests.failed" 
                 jvm="${platform.java}">
@@ -151,5 +166,6 @@
         </junit>
         <fail message="Tests failed. Check test reports." if="tests.failed" />
     </target>
-    <target name="cruise-build" depends="clean,jar,cruise-test,cruise-checkstyle,coverage-report"/>
+    <target name="cruise-build"
+            depends="clean,jar,cruise-test,fitnesse,cruise-checkstyle,coverage-report"/>    
 </project>
