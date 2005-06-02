@@ -138,13 +138,18 @@
     -->
     <target name="fitnesse" depends="jar,test">
         <java fork="true" classname="fitnesse.runner.TestRunner" 
-                dir="${work.dir}" jvm="${platform.java}" failonerror="true">
+                dir="${work.dir}" jvm="${platform.java}" failonerror="false"
+                resultproperty="java.result">
             <arg line="localhost 8091 AcceptanceTests.SuiteScjdAssignment -v"/>
             <arg line="-html ${fitnesse.report.file} -nopath"/>
             <classpath>
                 <path path="${run.test.classpath}"/>
             </classpath>
-        </java>
+        </java>        
+        <condition property="tests.failed">
+            <equals arg1="${java.result}" arg2="1"/>
+        </condition>
+        <fail message="Acceptance tests failed. Check test reports." if="tests.failed"/>
     </target>
     <!--
     =====================
@@ -164,7 +169,7 @@
             <formatter type="brief" usefile="false"/>
             <formatter type="xml"/>
         </junit>
-        <fail message="Tests failed. Check test reports." if="tests.failed" />
+        <fail message="Tests failed. Check test reports." if="tests.failed"/>
     </target>
     <target name="cruise-build"
             depends="clean,jar,cruise-test,fitnesse,cruise-checkstyle,coverage-report"/>    
