@@ -172,5 +172,5 @@
         <fail message="Tests failed. Check test reports." if="tests.failed"/>
     </target>
     <target name="cruise-build"
-            depends="clean,jar,cruise-test,fitnesse,cruise-checkstyle,coverage-report"/>
+            depends="clean,jar,cruise-test,fitnesse,cruise-checkstyle,coverage-report,javadoc"/>
 </project>
