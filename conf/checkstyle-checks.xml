@@ -82,7 +82,7 @@
         <module name="LeftCurly"/>
         <module name="NeedBraces"/>
         <module name="RightCurly">
-            <property name="option" value="alone"/>
+            <!--<property name="option" value="alone"/>-->
         </module>
         <module name="AvoidNestedBlocks"/>
 
@@ -93,10 +93,7 @@
         <module name="DoubleCheckedLocking"/>
         <module name="EmptyStatement"/>
         <module name="EqualsHashCode"/>
-        <module name="FinalLocalVariable">
-            <property name="tokens" value="VARIABLE_DEF"/>
-            <property name="tokens" value="PARAMETER_DEF"/>
-        </module>
+        <!-- <module name="FinalLocalVariable"/> -->
         <module name="HiddenField">
             <property name="ignoreConstructorParameter" value="true"/>
             <property name="ignoreSetter" value="true"/>
@@ -126,11 +123,9 @@
         <module name="DefaultComesLast"/>
         <module name="MissingCtor"/>
         <module name="FallThrough"/>
-        <module name="MultipleStringLiterals"/>
+        <!-- <module name="MultipleStringLiterals"/> -->
         <module name="MultipleVariableDeclarations"/>
-        <module name="RequireThis">
-            <property name="checkMethods" value="false"/>
-        </module>
+        <!-- <module name="RequireThis"/> -->
         <module name="UnnecessaryParentheses"/>
 
         <!-- Class design -->
@@ -168,13 +163,9 @@
         <module name="UncommentedMain"/>
         <module name="UpperEll"/>
         <module name="ArrayTypeStyle"/>
-        <module name="FinalParameters">
-            <property name="tokens" value="METHOD_DEF"/>
-            <property name="tokens" value="CTOR_DEF"/>
-            <property name="tokens" value="LITERAL_CATCH"/>
-        </module>
+        <!-- <module name="FinalParameters"/> -->
         <!-- <module name="DescendantToken"/> -->
-        <module name="Indentation"/>
+        <!-- <module name="Indentation"/> --> <!-- TODO -->
         <module name="TrailingComment"/>
         <!-- <module name="RequiredRegexp"/> -->
 
