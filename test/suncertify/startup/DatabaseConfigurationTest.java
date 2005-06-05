@@ -24,8 +24,6 @@ import junit.framework.TestCase;
  */
 public class DatabaseConfigurationTest extends TestCase {
 
-    // TODO: add suite method?
-
     private static Logger logger = Logger
             .getLogger(DatabaseConfigurationTest.class.getName());
 
