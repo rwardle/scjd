@@ -102,16 +102,22 @@ public class DatabaseConfiguration {
                 getProperties(properties);
                 loaded = true;
             } catch (IOException e) {
+                // If there is an error reading from the properties file we want
+                // to fall back gracefully to using the default configuration,
+                // so we catch this exception, log it and continue.
                 logger.log(Level.WARNING,
                         "Error reading from properties file at: '"
-                                + propertiesFile.getPath() + "'.", e);
+                                + propertiesFile.getPath()
+                                + "'. Falling back to default configuration.",
+                        e);
             } finally {
                 if (in != null) {
                     try {
                         in.close();
                     } catch (IOException e) {
-                        logger.warning("Error closing InputStream for file: '"
-                                + propertiesFile.getPath() + "'.");
+                        logger.log(Level.WARNING,
+                                "Error closing InputStream for file: '"
+                                        + propertiesFile.getPath() + "'.", e);
                     }
                 }
             }
@@ -142,8 +148,9 @@ public class DatabaseConfiguration {
                 try {
                     out.close();
                 } catch (IOException e) {
-                    logger.warning("Error closing OutputStream for file: '"
-                            + this.propertiesFilePath + "'.");
+                    logger.log(Level.WARNING,
+                            "Error closing OutputStream for file: '"
+                                    + this.propertiesFilePath + "'.", e);
                 }
             }
         }
