@@ -13,6 +13,7 @@
 
         <!-- Javadoc Comments -->
         <module name="JavadocType">
+            <property name="scope" value="package"/>
         </module>
         <module name="JavadocMethod">
             <property name="scope" value="protected"/>
@@ -165,9 +166,20 @@
         <module name="ArrayTypeStyle"/>
         <!-- <module name="FinalParameters"/> -->
         <!-- <module name="DescendantToken"/> -->
-        <!-- <module name="Indentation"/> --> <!-- TODO -->
+        <!-- <module name="Indentation"/> -->
         <module name="TrailingComment"/>
         <!-- <module name="RequiredRegexp"/> -->
+
+        <!-- Usage Checks -->
+        <module name="usage.OneMethodPrivateField"/>
+        <module name="usage.UnusedLocalVariable"/>
+        <module name="usage.UnusedParameter">
+            <property name="ignoreCatch" value="false"/>
+        </module>
+        <module name="usage.UnusedPrivateField"/>
+        <module name="usage.UnusedPrivateMethod">
+            <property name="allowSerializationMethods" value="true"/>
+        </module>
 
     </module>
 

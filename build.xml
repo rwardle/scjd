@@ -79,7 +79,7 @@
     CHECKSTYLE SECTION
     ==================
     -->
-    <taskdef classpath="/mnt/data/software/checkstyle/checkstyle-all.jar"
+    <taskdef classpath="/mnt/data/software/checkstyle/checkstyle-all.jar:/mnt/data/software/checkstyle/checkstyle-optional.jar"
                 resource="checkstyletask.properties"/>
     <target name="checkstyle" depends="compile,compile-test">
         <checkstyle config="${checkstyle.checks.file}">
