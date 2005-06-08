@@ -1,8 +1,9 @@
 /*
- * DatabaseConfigurationTest.java
+ * ConfigurationTest.java
  *
  * Created on 05-Jun-2005
  */
+
 
 package suncertify.startup;
 
@@ -18,22 +19,22 @@ import junit.framework.TestCase;
 
 
 /**
- * Unit tests for {@link suncertify.startup.DatabaseConfiguration}.
- *
+ * Unit tests for {@link suncertify.startup.Configuration}.
+ * 
  * @author Richard Wardle
  */
-public class DatabaseConfigurationTest extends TestCase {
+public class ConfigurationTest extends TestCase {
 
-    private static Logger logger = Logger
-            .getLogger(DatabaseConfigurationTest.class.getName());
+    private static Logger logger = Logger.getLogger(ConfigurationTest.class
+            .getName());
 
     /**
-     * Creates a new DatabaseConfigurationTest.
-     *
+     * Creates a new ConfigurationTest.
+     * 
      * @param name
      *        Test case name.
      */
-    public DatabaseConfigurationTest(String name) {
+    public ConfigurationTest(String name) {
         super(name);
     }
 
@@ -43,7 +44,7 @@ public class DatabaseConfigurationTest extends TestCase {
      */
     public void testInvalidPropertiesFilePath() {
         try {
-            new DatabaseConfiguration(null);
+            new Configuration(null);
             fail("Properties file path passed to constructor must be "
                     + "non-null.");
         } catch (IllegalArgumentException e) {
@@ -52,7 +53,7 @@ public class DatabaseConfigurationTest extends TestCase {
         }
 
         try {
-            new DatabaseConfiguration("");
+            new Configuration("");
             fail("Properties file path passed to constructor must not be an "
                     + "empty string.");
         } catch (IllegalArgumentException e) {
@@ -63,25 +64,24 @@ public class DatabaseConfigurationTest extends TestCase {
 
     /**
      * Tests the loading of the configuration from the file.
-     *
+     * 
      * @throws IOException
      *         If the test properties file cannot be read.
      */
     public void testLoadConfiguration() throws IOException {
         URL url = getResourceUrl("suncertify/startup/suncertify.properties");
         Properties properties = loadTestProperties(url.getPath());
-        DatabaseConfiguration configuration = new DatabaseConfiguration(url
-                .getPath());
+        Configuration configuration = new Configuration(url.getPath());
         assertTrue(configuration.loadConfiguration());
 
-        assertEquals("Server IP address comparison,", properties
-                .getProperty(DatabaseConfigurationConstants.ADDRESS_PROPERTY),
-                configuration.getServerIpAddress());
+        assertEquals("Server address comparison,", properties
+                .getProperty(ConfigurationConstants.ADDRESS_PROPERTY),
+                configuration.getServerAddress());
         assertEquals("Server port comparison,", properties
-                .getProperty(DatabaseConfigurationConstants.PORT_PROPERTY),
+                .getProperty(ConfigurationConstants.PORT_PROPERTY),
                 configuration.getServerPort());
         assertEquals("Database file path comparison,", properties
-                .getProperty(DatabaseConfigurationConstants.PATH_PROPERTY),
+                .getProperty(ConfigurationConstants.PATH_PROPERTY),
                 configuration.getDatabaseFilePath());
     }
 
@@ -92,8 +92,7 @@ public class DatabaseConfigurationTest extends TestCase {
      */
     public void testLoadConfigurationMissingEmptyProperties() {
         URL url = getResourceUrl("suncertify/startup/missingempty.properties");
-        DatabaseConfiguration configuration = new DatabaseConfiguration(url
-                .getPath());
+        Configuration configuration = new Configuration(url.getPath());
         assertTrue(configuration.loadConfiguration());
         assertDefaultConfiguration(configuration);
     }
@@ -109,15 +108,14 @@ public class DatabaseConfigurationTest extends TestCase {
                     + filename + "'; remove file to allow correct test run.");
         }
 
-        DatabaseConfiguration configuration = new DatabaseConfiguration(
-                filename);
+        Configuration configuration = new Configuration(filename);
         assertFalse(configuration.loadConfiguration());
         assertDefaultConfiguration(configuration);
     }
 
     /**
      * Tests saving the configuration to a file that already exists.
-     *
+     * 
      * @throws IOException
      *         If the file cannot be created.
      */
@@ -136,7 +134,7 @@ public class DatabaseConfigurationTest extends TestCase {
     /**
      * Tests that the appropriate exception is thrown if the properties file
      * cannot be written to.
-     *
+     * 
      * @throws IOException
      *         If the test properties file cannot be created.
      */
@@ -152,8 +150,7 @@ public class DatabaseConfigurationTest extends TestCase {
         }
 
         try {
-            DatabaseConfiguration configuration = new DatabaseConfiguration(
-                    fileName);
+            Configuration configuration = new Configuration(fileName);
             configuration.saveConfiguration();
             fail("IOException expected when properties cannot be written to.");
         } catch (IOException e) {
@@ -165,7 +162,7 @@ public class DatabaseConfigurationTest extends TestCase {
 
     /**
      * Tests saving the configuration to a file that doesn't yet exist.
-     *
+     * 
      * @throws IOException
      *         If the file cannot be created.
      */
@@ -183,20 +180,18 @@ public class DatabaseConfigurationTest extends TestCase {
      * called with a valid properties file path.
      */
     public void testValidPropertiesFilePath() {
-        DatabaseConfiguration configuration = new DatabaseConfiguration(
-                "valid.properties");
+        Configuration configuration = new Configuration("valid.properties");
         assertDefaultConfiguration(configuration);
     }
 
-    private void assertDefaultConfiguration(DatabaseConfiguration config) {
-        assertEquals("Server IP address should be set to the default,",
-                DatabaseConfigurationConstants.DEFAULT_ADDRESS, config
-                        .getServerIpAddress());
+    private void assertDefaultConfiguration(Configuration config) {
+        assertEquals("Server address should be set to the default,",
+                ConfigurationConstants.DEFAULT_ADDRESS, config
+                        .getServerAddress());
         assertEquals("Server port should be set to the default,",
-                DatabaseConfigurationConstants.DEFAULT_PORT, config
-                        .getServerPort());
+                ConfigurationConstants.DEFAULT_PORT, config.getServerPort());
         assertEquals("Server database file path should be set to the default,",
-                DatabaseConfigurationConstants.DEFAULT_PATH, config
+                ConfigurationConstants.DEFAULT_PATH, config
                         .getDatabaseFilePath());
     }
 
@@ -206,20 +201,19 @@ public class DatabaseConfigurationTest extends TestCase {
         String expectedPort = "port";
         String expectedPath = "path";
 
-        DatabaseConfiguration configuration = new DatabaseConfiguration(
-                fileName);
-        configuration.setServerIpAddress(expectedAddress);
+        Configuration configuration = new Configuration(fileName);
+        configuration.setServerAddress(expectedAddress);
         configuration.setServerPort(expectedPort);
         configuration.setDatabaseFilePath(expectedPath);
         configuration.saveConfiguration();
 
         Properties props = loadTestProperties(fileName);
-        assertEquals("Server IP address comparison,", expectedAddress, props
-                .getProperty(DatabaseConfigurationConstants.ADDRESS_PROPERTY));
+        assertEquals("Server address comparison,", expectedAddress, props
+                .getProperty(ConfigurationConstants.ADDRESS_PROPERTY));
         assertEquals("Server port comparison,", expectedPort, props
-                .getProperty(DatabaseConfigurationConstants.PORT_PROPERTY));
+                .getProperty(ConfigurationConstants.PORT_PROPERTY));
         assertEquals("Database file path comparison,", expectedPath, props
-                .getProperty(DatabaseConfigurationConstants.PATH_PROPERTY));
+                .getProperty(ConfigurationConstants.PATH_PROPERTY));
     }
 
     private void createFile(String fileName, File file) throws IOException {

@@ -101,6 +101,15 @@
             <formatter type="xml" toFile="${checkstyle.errors.file}"/>
         </checkstyle>
     </target>
+    <target name="checkstyle-single" depends="compile,compile-test">
+        <checkstyle config="${checkstyle.checks.file}"
+                file="${checkstyle.run.file}">
+            <classpath>
+                <path path="${run.test.classpath}"/>
+            </classpath>
+            <formatter type="plain"/>
+        </checkstyle>
+    </target>
     <!--
     =================
     COBERTURA SECTION
@@ -136,18 +145,25 @@
     FITNESSE SECTION
     ================
     -->
-    <target name="fitnesse" depends="jar,test">
+    <target name="fitnesse" depends="compile,compile-test">
         <java fork="true" classname="fitnesse.runner.TestRunner"
                 dir="${work.dir}" failonerror="false"
                 resultproperty="java.result">
-            <arg line="localhost 8091 AcceptanceTests.SuiteScjdAssignment -v"/>
-            <arg line="-html ${fitnesse.report.file} -nopath"/>
+            <arg line="localhost 8091 ScjdAssignment.AcceptanceTests.SuiteScjdAssignment${fitnesse.filter} -v"/>
+            <arg line="-results stdout -html ${fitnesse.report.file} -nopath"/>
             <classpath>
                 <path path="${run.test.classpath}"/>
             </classpath>
         </java>
         <condition property="tests.failed">
-            <equals arg1="${java.result}" arg2="1"/>
+            <and>
+                <not>
+                    <equals arg1="${java.result}" arg2="0"/>
+                </not>
+                <not>
+                    <equals arg1="${java.result}" arg2="-1"/>
+                </not>
+            </and>
         </condition>
         <fail message="Acceptance tests failed. Check test reports." if="tests.failed"/>
     </target>

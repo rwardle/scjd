@@ -1,8 +1,9 @@
 /*
- * DatabaseConfiguration.java
+ * Configuration.java
  *
  * Created on 05-Jun-2005
  */
+
 
 package suncertify.startup;
 
@@ -20,30 +21,30 @@ import java.util.logging.Logger;
 
 
 /**
- * Encapsulates database configuration, reading and writing to permanent storage
- * in the form of a properties file.
- *
+ * Encapsulates application configuration properties, reading and writing to
+ * permanent storage in the form of a properties file.
+ * 
  * @author Richard Wardle
  */
-public class DatabaseConfiguration {
+public class Configuration {
 
-    private static Logger logger = Logger.getLogger(DatabaseConfiguration.class
+    private static Logger logger = Logger.getLogger(Configuration.class
             .getName());
 
     private String databaseFilePath;
     private String propertiesFilePath;
-    private String serverIpAddress;
+    private String serverAddress;
     private String serverPort;
 
     /**
-     * Creates a new DatabaseConfiguration with the default configuration.
-     *
+     * Creates a new Configuration with the default configuration.
+     * 
      * @param propertiesFilePath
      *        The path to the properties file that holds the configuration.
      * @throws IllegalArgumentException
      *         If the propertiesFilePath is null or is an empty string.
      */
-    public DatabaseConfiguration(String propertiesFilePath) {
+    public Configuration(String propertiesFilePath) {
         if (propertiesFilePath == null || propertiesFilePath.equals("")) {
             throw new IllegalArgumentException(
                     "propertiesFilePath should be non-null and should not be "
@@ -51,14 +52,14 @@ public class DatabaseConfiguration {
         }
 
         this.propertiesFilePath = propertiesFilePath;
-        this.serverIpAddress = DatabaseConfigurationConstants.DEFAULT_ADDRESS;
-        this.serverPort = DatabaseConfigurationConstants.DEFAULT_PORT;
-        this.databaseFilePath = DatabaseConfigurationConstants.DEFAULT_PATH;
+        this.serverAddress = ConfigurationConstants.DEFAULT_ADDRESS;
+        this.serverPort = ConfigurationConstants.DEFAULT_PORT;
+        this.databaseFilePath = ConfigurationConstants.DEFAULT_PATH;
     }
 
     /**
      * Gets the databaseFilePath.
-     *
+     * 
      * @return Returns the databaseFilePath.
      */
     public String getDatabaseFilePath() {
@@ -66,17 +67,26 @@ public class DatabaseConfiguration {
     }
 
     /**
-     * Gets the serverIpAddress.
-     *
-     * @return Returns the serverIpAddress.
+     * Gets the propertiesFilePath.
+     * 
+     * @return Returns the propertiesFilePath.
      */
-    public String getServerIpAddress() {
-        return this.serverIpAddress;
+    public String getPropertiesFilePath() {
+        return this.propertiesFilePath;
+    }
+
+    /**
+     * Gets the serverAddress.
+     * 
+     * @return Returns the serverAddress.
+     */
+    public String getServerAddress() {
+        return this.serverAddress;
     }
 
     /**
      * Gets the serverPort.
-     *
+     * 
      * @return Returns the serverPort.
      */
     public String getServerPort() {
@@ -85,7 +95,7 @@ public class DatabaseConfiguration {
 
     /**
      * Loads the configuration from the properties file (if it exists).
-     *
+     * 
      * @return true if the configuration was loaded from the properties file.
      */
     public boolean loadConfiguration() {
@@ -121,6 +131,10 @@ public class DatabaseConfiguration {
                     }
                 }
             }
+        } else {
+            logger.info("Properties file doesn't exist, using default "
+                    + "configuration (path='" + propertiesFile.getPath()
+                    + "').");
         }
 
         return loaded;
@@ -128,7 +142,7 @@ public class DatabaseConfiguration {
 
     /**
      * Saves the configuration to the properties file, creating it if necessary.
-     *
+     * 
      * @throws IOException
      *         If the properties cannot be written to the file.
      */
@@ -158,7 +172,7 @@ public class DatabaseConfiguration {
 
     /**
      * Sets the databaseFilePath.
-     *
+     * 
      * @param databaseFilePath
      *        The databaseFilePath to set.
      */
@@ -167,18 +181,18 @@ public class DatabaseConfiguration {
     }
 
     /**
-     * Sets the serverIpAddress.
-     *
-     * @param serverIpAddress
-     *        The serverIpAddress to set.
+     * Sets the serverAddress.
+     * 
+     * @param serverAddress
+     *        The serverAddress to set.
      */
-    public void setServerIpAddress(String serverIpAddress) {
-        this.serverIpAddress = serverIpAddress;
+    public void setServerAddress(String serverAddress) {
+        this.serverAddress = serverAddress;
     }
 
     /**
      * Sets the serverPort.
-     *
+     * 
      * @param serverPort
      *        The serverPort to set.
      */
@@ -187,31 +201,31 @@ public class DatabaseConfiguration {
     }
 
     private void getProperties(Properties properties) {
-        String ip = properties
-                .getProperty(DatabaseConfigurationConstants.ADDRESS_PROPERTY);
-        if (ip != null && !ip.equals("")) {
-            setServerIpAddress(ip);
+        String address = properties
+                .getProperty(ConfigurationConstants.ADDRESS_PROPERTY);
+        if (address != null && !address.equals("")) {
+            setServerAddress(address);
         }
 
         String port = properties
-                .getProperty(DatabaseConfigurationConstants.PORT_PROPERTY);
+                .getProperty(ConfigurationConstants.PORT_PROPERTY);
         if (port != null && !port.equals("")) {
             setServerPort(port);
         }
 
         String path = properties
-                .getProperty(DatabaseConfigurationConstants.PATH_PROPERTY);
+                .getProperty(ConfigurationConstants.PATH_PROPERTY);
         if (path != null && !path.equals("")) {
             setDatabaseFilePath(path);
         }
     }
 
     private void setProperties(Properties properties) {
-        properties.setProperty(DatabaseConfigurationConstants.ADDRESS_PROPERTY,
-                getServerIpAddress());
-        properties.setProperty(DatabaseConfigurationConstants.PORT_PROPERTY,
+        properties.setProperty(ConfigurationConstants.ADDRESS_PROPERTY,
+                getServerAddress());
+        properties.setProperty(ConfigurationConstants.PORT_PROPERTY,
                 getServerPort());
-        properties.setProperty(DatabaseConfigurationConstants.PATH_PROPERTY,
+        properties.setProperty(ConfigurationConstants.PATH_PROPERTY,
                 getDatabaseFilePath());
     }
 }
