@@ -8,7 +8,6 @@
 package suncertify.startup;
 
 import java.awt.EventQueue;
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
@@ -23,32 +22,64 @@ import javax.swing.JOptionPane;
  *
  * @author Richard Wardle
  */
-public class Application {
+public final class Application {
 
     private static Logger logger = Logger
             .getLogger(Application.class.getName());
-    private static final String PROPERTIES_FILE_NAME = "suncertify.properties";
 
     private ApplicationMode mode;
 
     /**
-     * Creates a new Application.
+     * Creates a new instance of Application.
      *
-     * @param mode
-     *        The application mode.
+     * @param args The command line arguments.
+     * @throws NullPointerException If the command line arguments are null.
+     * @throws IllegalArgumentException If the command line mode flag is not
+     * recognised.
      */
-    public Application(ApplicationMode mode) {
-        this.mode = mode;
+    public Application(String[] args) {
+        parseModeFlag(args);
+        Application.logger.info("Running in '" + this.mode + "' mode");
+    }
+
+    private void parseModeFlag(String[] args) {
+        if (args == null) {
+            String message = "Command line argument array is null";
+            Application.logger.severe(message);
+            throw new NullPointerException(message);
+        }
+
+        if (args.length == 0) {
+            this.mode = ApplicationMode.CLIENT;
+        } else if (args[0].equals("server")) {
+            this.mode = ApplicationMode.SERVER;
+        } else if (args[0].equals("alone")) {
+            this.mode = ApplicationMode.STANDALONE;
+        } else {
+            Application.logger.severe("Unrecognised command line mode flag: '"
+                    + args[0] + "'");
+            throw new IllegalArgumentException("'" + args[0]
+                    + "' is not a valid mode flag. If specified, the mode "
+                    + "flag must be either 'server' or 'alone'.");
+        }
+    }
+
+    /**
+     * Gets the mode.
+     *
+     * @return The mode.
+     */
+    public ApplicationMode getMode() {
+        return this.mode;
     }
 
     /**
      * Configures the application. Loads any existing configuration, presents it
      * to the user for modification and then saves it.
      *
-     * @param configuration
-     *        The configuration.
+     * @param configuration The configuration.
      * @return true if the user completed the configuration process, false if
-     *         not.
+     * not.
      */
     public boolean configure(Configuration configuration) {
         configuration.loadConfiguration();
@@ -57,9 +88,11 @@ public class Application {
             try {
                 configuration.saveConfiguration();
             } catch (IOException e) {
-                logger.log(Level.WARNING,
-                        "Unable to save configuration properties file.", e);
-                showSaveConfigurationWarning(configuration);
+                Application.logger.log(Level.WARNING,
+                        "Unable to save configuration properties file at: '"
+                        + configuration.getPropertiesFilePath() + "'", e);
+                showSaveConfigurationWarning(configuration
+                        .getPropertiesFilePath());
             }
 
             return true;
@@ -71,17 +104,15 @@ public class Application {
     /**
      * Shows the configuration dialog.
      *
-     * @param configuration
-     *        The configuration.
+     * @param configuration The configuration.
      * @return The dialog return status: 1 if the user clicked OK, 0 if the user
-     *         clicked cancel.
+     * clicked cancel.
      */
-    public int showConfigurationDialog(Configuration configuration) {
-        // TODO: Add call to factory here 
+    private int showConfigurationDialog(Configuration configuration) {
         final ConfigurationView dialog = ConfigurationViewFactory
                 .createConfigurationDialog(this.mode);
         dialog.initialiseComponents();
-        
+
         ConfigurationPresenter presenter = new ConfigurationPresenter(
                 configuration, dialog);
 
@@ -92,30 +123,28 @@ public class Application {
                 }
             });
         } catch (InterruptedException e) {
-            logger.log(Level.WARNING,
+            Application.logger.log(Level.WARNING,
                     "Configuration dialog thread interrupted", e);
         } catch (InvocationTargetException e) {
-            // TODO: Auto-generated catch block
+            // TODO: Decide on exception handling
             e.printStackTrace();
         }
 
-        logger.info("Status '" + presenter.getReturnStatus()
+        Application.logger.info("Status '" + presenter.getReturnStatus()
                 + "' returned from dialog");
         return presenter.getReturnStatus();
     }
 
     /**
-     * Shows the warning dialog if the configuration properties could not be
-     * saved.
+     * Shows a warning dialog explaining that the configuration properties could
+     * not be saved.
      *
-     * @param configuration
-     *        The configuration.
+     * @param path The path to the configuration properties file.
      */
-    public void showSaveConfigurationWarning(Configuration configuration) {
+    private void showSaveConfigurationWarning(String path) {
+        // TODO: Make this message briefer
         final String message = "Unable to save configuration properties to: '"
-                + new File(configuration.getPropertiesFilePath())
-                        .getAbsolutePath()
-                + "'.\nPlease ensure that you have write permissions to "
+                + path + "'.\nPlease ensure that you have write permissions to "
                 + "this location next time you run the application.";
         try {
             EventQueue.invokeAndWait(new Runnable() {
@@ -125,61 +154,27 @@ public class Application {
                 }
             });
         } catch (InterruptedException e) {
-            logger.log(Level.WARNING,
+            Application.logger.log(Level.WARNING,
                     "Save properties error dialog thread interrupted", e);
         } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
+            // TODO: Decide on appropriate exception handling
             e.printStackTrace();
         }
     }
 
-    /**
-     * Parses the command line flag to get the application mode.
-     *
-     * @param args 
-     * The command line arguments.
-     * @return The application mode.
-     */
-    public static ApplicationMode getModeFromCommandLine(String[] args) {
-        if (args == null) {
-            logger.severe("Command line argument array is null.");
-            throw new NullPointerException("Command line arguments are null.");
-        }
-
-        ApplicationMode mode = null;
-        
-        if (args.length == 0) {
-            mode = ApplicationMode.CLIENT;
-        } else if (args[0].equals("server")) {
-            mode = ApplicationMode.SERVER;
-        } else if (args[0].equals("alone")) {
-            mode = ApplicationMode.STANDALONE;
-        } else {
-            logger.severe("Unrecognised command line mode flag: '" + args[0]
-                    + "'.");
-            throw new IllegalArgumentException("'" + args[0]
-                    + "' is not a valid mode flag. If specified, the mode "
-                    + "flag must be either 'server' or 'alone'.");
-        }
-
-        return mode;
-    }
 
     /**
      * The entry point to the application.
      *
-     * @param args
-     *        Command line arguments.
+     * @param args Command line arguments.
      */
     public static void main(String[] args) {
-        ApplicationMode mode = getModeFromCommandLine(args);
-        logger.info("Running in " + mode + " mode");        
-        Application application = new Application(mode);
-        
-        Configuration configuration = new Configuration(PROPERTIES_FILE_NAME);
+        Application application = new Application(args);
+        Configuration configuration =
+                new Configuration("suncertify.properties");
         if (!application.configure(configuration)) {
-            logger.info("User cancelled configuration dialog, "
-                    + "exiting application.");
+            Application.logger.info("User cancelled configuration dialog, "
+                    + "exiting application");
             System.exit(0);
         }
     }

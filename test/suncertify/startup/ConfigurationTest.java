@@ -20,53 +20,67 @@ import junit.framework.TestCase;
 
 /**
  * Unit tests for {@link suncertify.startup.Configuration}.
- * 
+ *
  * @author Richard Wardle
  */
-public class ConfigurationTest extends TestCase {
+public final class ConfigurationTest extends TestCase {
 
     private static Logger logger = Logger.getLogger(ConfigurationTest.class
             .getName());
 
     /**
      * Creates a new ConfigurationTest.
-     * 
-     * @param name
-     *        Test case name.
+     *
+     * @param name Test case name.
      */
     public ConfigurationTest(String name) {
         super(name);
     }
 
     /**
-     * Tests constructor behaviour when called with an invalid properties file
-     * path.
+     * Tests {@link Configuration#Configuration(String)} with a null properties
+     * file path.
      */
-    public void testInvalidPropertiesFilePath() {
+    public void testNullPropertiesFilePath() {
         try {
             new Configuration(null);
-            fail("Properties file path passed to constructor must be "
-                    + "non-null.");
+            fail("IllegalArgumentException expected when properties file path "
+                    + "is null");
         } catch (IllegalArgumentException e) {
-            logger.info("Caught expected IllegalArgumentException: "
-                    + e.getMessage());
-        }
-
-        try {
-            new Configuration("");
-            fail("Properties file path passed to constructor must not be an "
-                    + "empty string.");
-        } catch (IllegalArgumentException e) {
-            logger.info("Caught expected IllegalArgumentException: "
-                    + e.getMessage());
+            ConfigurationTest.logger.info("Caught expected "
+                    + "IllegalArgumentException: " + e.getMessage());
         }
     }
 
     /**
-     * Tests the loading of the configuration from the file.
-     * 
-     * @throws IOException
-     *         If the test properties file cannot be read.
+     * Tests {@link Configuration#Configuration(String)} with an empty string
+     * properties file path.
+     */
+    public void testEmptyStringPropertiesFilePath() {
+        try {
+            new Configuration("");
+            fail("IllegalArgumentException expected when properties file path "
+                    + "is an empty string");
+        } catch (IllegalArgumentException e) {
+            ConfigurationTest.logger.info("Caught expected "
+                    + "IllegalArgumentException: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Tests {@link Configuration#Configuration(String)} with a valid
+     * properties file path string.
+     */
+    public void testValidPropertiesFilePath() {
+        Configuration configuration = new Configuration("valid.properties");
+        assertDefaultConfiguration(configuration);
+    }
+
+    /**
+     * Tests {@link Configuration#loadConfiguration} with a properties file
+     * containing all keys and values.
+     *
+     * @throws IOException If the properties file cannot be read.
      */
     public void testLoadConfiguration() throws IOException {
         URL url = getResourceUrl("suncertify/startup/suncertify.properties");
@@ -86,9 +100,8 @@ public class ConfigurationTest extends TestCase {
     }
 
     /**
-     * Tests the loading of the configuration from the file when some properties
-     * are missing/empty. The configuration corresponding to the missing/empty
-     * properties should retain the default values.
+     * Tests {@link Configuration#loadConfiguration} with a properties file
+     * in which all properties are either missing or empty.
      */
     public void testLoadConfigurationMissingEmptyProperties() {
         URL url = getResourceUrl("suncertify/startup/missingempty.properties");
@@ -98,14 +111,14 @@ public class ConfigurationTest extends TestCase {
     }
 
     /**
-     * Tests that the configuration is still set to the default after calling
-     * loadProperties if the specified properties file does not exist.
+     * Tests {@link Configuration#loadConfiguration} with a properties file
+     * that doesn't exist.
      */
     public void testPropertiesFileDoesntExist() {
         String filename = "doesntexist.properties";
         if (new File(filename).exists()) {
             throw new IllegalStateException("Unexpected file exists at '"
-                    + filename + "'; remove file to allow correct test run.");
+                    + filename + "'; remove file to allow correct test run");
         }
 
         Configuration configuration = new Configuration(filename);
@@ -114,10 +127,10 @@ public class ConfigurationTest extends TestCase {
     }
 
     /**
-     * Tests saving the configuration to a file that already exists.
-     * 
-     * @throws IOException
-     *         If the file cannot be created.
+     * Tests {@link Configuration#saveConfiguration} with a properties file
+     * that already exists.
+     *
+     * @throws IOException If the test file cannot be created.
      */
     public void testSaveConfigurationExistingFile() throws IOException {
         String fileName = "test.properties";
@@ -125,18 +138,17 @@ public class ConfigurationTest extends TestCase {
         createFile(fileName, file);
 
         try {
-            assertExpectedConfiguration(fileName);
+            assertExpectedConfigurationAfterSave(fileName);
         } finally {
             deleteFile(file);
         }
     }
 
     /**
-     * Tests that the appropriate exception is thrown if the properties file
-     * cannot be written to.
-     * 
-     * @throws IOException
-     *         If the test properties file cannot be created.
+     * Tests {@link Configuration#saveConfiguration} with a properties file
+     * that already exists and is readonly.
+     *
+     * @throws IOException If the test file cannot be created.
      */
     public void testSaveConfigurationExistingFileReadOnly() throws IOException {
         String fileName = "test.properties";
@@ -146,42 +158,34 @@ public class ConfigurationTest extends TestCase {
         if (!file.setReadOnly()) {
             throw new IllegalStateException(
                     "Unable to set read only on file in working directory "
-                            + "called: '" + fileName + "'.");
+                            + "called: '" + fileName + "'");
         }
 
         try {
             Configuration configuration = new Configuration(fileName);
             configuration.saveConfiguration();
-            fail("IOException expected when properties cannot be written to.");
+            fail("IOException expected when properties file is read only");
         } catch (IOException e) {
-            logger.info("Caught expected IOException: " + e.getMessage());
+            ConfigurationTest.logger.info("Caught expected IOException: "
+                    + e.getMessage());
         } finally {
             deleteFile(file);
         }
     }
 
     /**
-     * Tests saving the configuration to a file that doesn't yet exist.
-     * 
-     * @throws IOException
-     *         If the file cannot be created.
+     * Tests {@link Configuration#saveConfiguration} with a file that doesn't
+     * yet exist.
+     *
+     * @throws IOException If the file cannot be created.
      */
     public void testSaveConfigurationNewFile() throws IOException {
         String fileName = "test.properties";
         try {
-            assertExpectedConfiguration(fileName);
+            assertExpectedConfigurationAfterSave(fileName);
         } finally {
             deleteFile(new File(fileName));
         }
-    }
-
-    /**
-     * Tests that the default configuration is loaded if the constructor is
-     * called with a valid properties file path.
-     */
-    public void testValidPropertiesFilePath() {
-        Configuration configuration = new Configuration("valid.properties");
-        assertDefaultConfiguration(configuration);
     }
 
     private void assertDefaultConfiguration(Configuration config) {
@@ -195,8 +199,8 @@ public class ConfigurationTest extends TestCase {
                         .getDatabaseFilePath());
     }
 
-    private void assertExpectedConfiguration(String fileName)
-            throws IOException {
+    private void assertExpectedConfigurationAfterSave(String fileName) throws
+            IOException {
         String expectedAddress = "address";
         String expectedPort = "port";
         String expectedPath = "path";
@@ -220,14 +224,14 @@ public class ConfigurationTest extends TestCase {
         if (!file.createNewFile()) {
             throw new IllegalStateException(
                     "Unable to create file in working directory called: '"
-                            + fileName + "'.");
+                            + fileName + "'");
         }
     }
 
     private void deleteFile(File file) {
         if (!file.delete()) {
             System.err.println("Unable to delete test file at: '"
-                    + file.getPath() + "'.");
+                    + file.getPath() + "'");
         }
     }
 
@@ -236,7 +240,7 @@ public class ConfigurationTest extends TestCase {
         if (url == null) {
             throw new IllegalStateException("Missing resource at '"
                     + resourceName
-                    + "'; resource is required for correct test run.");
+                    + "'; resource is required for correct test run");
         }
         return url;
     }
