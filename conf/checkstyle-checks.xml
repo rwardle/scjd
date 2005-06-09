@@ -126,7 +126,9 @@
         <module name="FallThrough"/>
         <module name="MultipleStringLiterals"/>
         <module name="MultipleVariableDeclarations"/>
-        <module name="RequireThis"/>
+        <module name="RequireThis">
+            <property name="checkMethods" value="false"/>
+        </module>
         <module name="UnnecessaryParentheses"/>
 
         <!-- Class design -->
@@ -164,7 +166,7 @@
         </module> -->
         <module name="UpperEll"/>
         <module name="ArrayTypeStyle"/>
-        <module name="FinalParameters"/>
+        <!-- <module name="FinalParameters"/> -->
         <!-- <module name="DescendantToken"/> -->
         <module name="Indentation">
             <property name="caseIndent" value="0"/>
