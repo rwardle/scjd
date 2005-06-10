@@ -1,37 +1,73 @@
+/*
+ * ConfigurationViewFactoryTest.java
+ *
+ * Created on 08 June 2005
+ */
+
+
 package suncertify.startup;
 
-import junit.framework.*;
+import junit.framework.TestCase;
+
 
 /**
+ * Unit tests for {@link ConfigurationViewFactory}.
  *
  * @author Richard Wardle
  */
-public class ConfigurationViewFactoryTest extends TestCase {
-    
-    public ConfigurationViewFactoryTest(String testName) {
-        super(testName);
-    }
+public final class ConfigurationViewFactoryTest extends TestCase {
 
-    protected void setUp() throws Exception {
-    }
-
-    protected void tearDown() throws Exception {
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite(ConfigurationViewFactoryTest.class);
-        
-        return suite;
+    /**
+     * Creates a new instance of ConfigurationViewFactoryTest.
+     *
+     * @param name The test case name.
+     */
+    public ConfigurationViewFactoryTest(String name) {
+        super(name);
     }
 
     /**
-     * Test of createConfigurationDialog method, of class suncertify.startup.ConfigurationViewFactory.
+     * Tests
+     * {@link ConfigurationViewFactory#createConfigurationView(ApplicationMode}
+     * with the client application mode.
      */
-    public void testCreateConfigurationDialog() {
-        System.out.println("testCreateConfigurationDialog");
-        
-        // TODO add your test code below by replacing the default call to fail.
-        //fail("The test case is empty.");
+    public void testCreateClientConfigurationView() {
+        assertTrue(
+                "Factory should create an instance of "
+                        + "ClientConfigurationDialog when the mode argument is "
+                        + "'" + ApplicationMode.CLIENT + "'",
+                ConfigurationViewFactory
+                        .createConfigurationView(ApplicationMode.CLIENT)
+                                instanceof ClientConfigurationDialog);
     }
-    
+
+    /**
+     * Tests
+     * {@link ConfigurationViewFactory#createConfigurationView(ApplicationMode}
+     * with the server application mode.
+     */
+    public void testCreateServerConfigurationView() {
+        assertTrue(
+                "Factory should create an instance of "
+                        + "ServerConfigurationDialog when the mode argument "
+                        + "is '" + ApplicationMode.SERVER + "'",
+                ConfigurationViewFactory
+                        .createConfigurationView(ApplicationMode.SERVER)
+                                instanceof ServerConfigurationDialog);
+    }
+
+    /**
+     * Tests
+     * {@link ConfigurationViewFactory#createConfigurationView(ApplicationMode}
+     * with the standalone application mode.
+     */
+    public void testCreateStandaloneConfigurationView() {
+        assertTrue(
+                "Factory should create an instance of "
+                        + "StandaloneConfigurationDialog when the mode "
+                        + "argument is '" + ApplicationMode.STANDALONE + "'",
+                ConfigurationViewFactory
+                        .createConfigurationView(ApplicationMode.STANDALONE)
+                                instanceof StandaloneConfigurationDialog);
+    }
 }
