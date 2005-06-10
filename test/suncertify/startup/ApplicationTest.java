@@ -68,9 +68,10 @@ public final class ApplicationTest extends TestCase {
      */
     public void testNoModeFlag() {
         Application application = new Application(new String[0]);
-        assertEquals("Mode should be '" + ApplicationMode.CLIENT
-                + "' when there is no mode flag,", ApplicationMode.CLIENT,
-                application.getMode());
+        assertEquals(
+                "Mode should be '" + ApplicationMode.CLIENT
+                        + "' when there is no mode flag,",
+                ApplicationMode.CLIENT, application.getMode());
     }
 
     /**
@@ -79,9 +80,10 @@ public final class ApplicationTest extends TestCase {
      */
     public void testServerModeFlag() {
         Application application = new Application(new String[] {"server"});
-        assertEquals("Mode should be '" + ApplicationMode.SERVER
-                + "' when there is no mode flag,", ApplicationMode.SERVER,
-                application.getMode());
+        assertEquals(
+                "Mode should be '" + ApplicationMode.SERVER
+                        + "' when there is no mode flag,",
+                ApplicationMode.SERVER, application.getMode());
     }
 
     /**
@@ -90,8 +92,9 @@ public final class ApplicationTest extends TestCase {
      */
     public void testStandalonerModeFlag() {
         Application application = new Application(new String[] {"alone"});
-        assertEquals("Mode should be '" + ApplicationMode.STANDALONE
-                + "' when there is no mode flag,", ApplicationMode.STANDALONE,
-                application.getMode());
+        assertEquals(
+                "Mode should be '" + ApplicationMode.STANDALONE
+                        + "' when there is no mode flag,",
+                ApplicationMode.STANDALONE, application.getMode());
     }
 }

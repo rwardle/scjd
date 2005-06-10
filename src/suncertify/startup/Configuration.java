@@ -46,9 +46,8 @@ public final class Configuration {
      */
     public Configuration(String propertiesFilePath) {
         if (propertiesFilePath == null || propertiesFilePath.equals("")) {
-            throw new IllegalArgumentException(
-                    "propertiesFilePath should be non-null and should not be "
-                            + "an empty string");
+            throw new IllegalArgumentException("propertiesFilePath should be "
+                    + "non-null and should not be an empty string");
         }
 
         this.propertiesFile = new File(propertiesFilePath);
@@ -90,7 +89,8 @@ public final class Configuration {
                         Configuration.logger.log(Level.WARNING,
                                 "Error closing InputStream for file: '"
                                         + this.propertiesFile.getAbsolutePath()
-                                        + "'", e);
+                                        + "'",
+                                e);
                     }
                 }
             }
@@ -127,7 +127,8 @@ public final class Configuration {
                     Configuration.logger.log(Level.WARNING,
                             "Error closing OutputStream for file: '"
                                     + this.propertiesFile.getAbsolutePath()
-                                    + "'", e);
+                                    + "'",
+                            e);
                 }
             }
         }

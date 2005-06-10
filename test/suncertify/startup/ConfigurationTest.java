@@ -88,14 +88,17 @@ public final class ConfigurationTest extends TestCase {
         Configuration configuration = new Configuration(url.getPath());
         assertTrue(configuration.loadConfiguration());
 
-        assertEquals("Server address comparison,", properties
-                .getProperty(ConfigurationConstants.ADDRESS_PROPERTY),
+        assertEquals("Server address comparison,",
+                properties.getProperty(ConfigurationConstants
+                        .ADDRESS_PROPERTY),
                 configuration.getServerAddress());
-        assertEquals("Server port comparison,", properties
-                .getProperty(ConfigurationConstants.PORT_PROPERTY),
+        assertEquals("Server port comparison,",
+                properties.getProperty(ConfigurationConstants
+                        .PORT_PROPERTY),
                 configuration.getServerPort());
-        assertEquals("Database file path comparison,", properties
-                .getProperty(ConfigurationConstants.PATH_PROPERTY),
+        assertEquals("Database file path comparison,",
+                properties.getProperty(ConfigurationConstants
+                        .PATH_PROPERTY),
                 configuration.getDatabaseFilePath());
     }
 
@@ -156,9 +159,8 @@ public final class ConfigurationTest extends TestCase {
         createFile(fileName, file);
 
         if (!file.setReadOnly()) {
-            throw new IllegalStateException(
-                    "Unable to set read only on file in working directory "
-                            + "called: '" + fileName + "'");
+            throw new IllegalStateException("Unable to set read-only on file "
+                    + "in working directory called: '" + fileName + "'");
         }
 
         try {
@@ -190,13 +192,13 @@ public final class ConfigurationTest extends TestCase {
 
     private void assertDefaultConfiguration(Configuration config) {
         assertEquals("Server address should be set to the default,",
-                ConfigurationConstants.DEFAULT_ADDRESS, config
-                        .getServerAddress());
+                ConfigurationConstants.DEFAULT_ADDRESS,
+                config.getServerAddress());
         assertEquals("Server port should be set to the default,",
                 ConfigurationConstants.DEFAULT_PORT, config.getServerPort());
         assertEquals("Server database file path should be set to the default,",
-                ConfigurationConstants.DEFAULT_PATH, config
-                        .getDatabaseFilePath());
+                ConfigurationConstants.DEFAULT_PATH,
+                config.getDatabaseFilePath());
     }
 
     private void assertExpectedConfigurationAfterSave(String fileName) throws
@@ -212,12 +214,12 @@ public final class ConfigurationTest extends TestCase {
         configuration.saveConfiguration();
 
         Properties props = loadTestProperties(fileName);
-        assertEquals("Server address comparison,", expectedAddress, props
-                .getProperty(ConfigurationConstants.ADDRESS_PROPERTY));
-        assertEquals("Server port comparison,", expectedPort, props
-                .getProperty(ConfigurationConstants.PORT_PROPERTY));
-        assertEquals("Database file path comparison,", expectedPath, props
-                .getProperty(ConfigurationConstants.PATH_PROPERTY));
+        assertEquals("Server address comparison,", expectedAddress,
+                props.getProperty(ConfigurationConstants.ADDRESS_PROPERTY));
+        assertEquals("Server port comparison,", expectedPort,
+                props.getProperty(ConfigurationConstants.PORT_PROPERTY));
+        assertEquals("Database file path comparison,", expectedPath,
+                props.getProperty(ConfigurationConstants.PATH_PROPERTY));
     }
 
     private void createFile(String fileName, File file) throws IOException {

@@ -90,7 +90,8 @@ public final class Application {
             } catch (IOException e) {
                 Application.logger.log(Level.WARNING,
                         "Unable to save configuration properties file at: '"
-                        + configuration.getPropertiesFilePath() + "'", e);
+                                + configuration.getPropertiesFilePath() + "'",
+                        e);
                 showSaveConfigurationWarning(configuration
                         .getPropertiesFilePath());
             }
