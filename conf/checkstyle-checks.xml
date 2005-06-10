@@ -124,7 +124,7 @@
         <module name="DefaultComesLast"/>
         <module name="MissingCtor"/>
         <module name="FallThrough"/>
-        <module name="MultipleStringLiterals"/>
+        <!-- <module name="MultipleStringLiterals"/> -->
         <module name="MultipleVariableDeclarations"/>
         <module name="RequireThis">
             <property name="checkMethods" value="false"/>
