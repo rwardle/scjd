@@ -7,6 +7,8 @@
 
 package suncertify.startup;
 
+import java.awt.BorderLayout;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -17,13 +19,17 @@ import javax.swing.text.PlainDocument;
 
 
 /**
+ * Configuration dialog for standalone mode.
+ *
  * @author Richard Wardle
  */
-public class StandaloneConfigurationDialog extends AbstractConfigurationDialog {
+public final class StandaloneConfigurationDialog extends
+        AbstractConfigurationDialog {
 
-    private JPanel inputPanel;
+    private String serverAddress;
+    private String serverPort;
     private JTextField databaseFilePathField;
-    private JLabel databaseFilePathLabel;
+
 
     /**
      * Creates a new StandaloneConfigurationDialog.
@@ -35,36 +41,46 @@ public class StandaloneConfigurationDialog extends AbstractConfigurationDialog {
     /**
      * {@inheritDoc}
      */
-    protected JPanel getInputPanel() {
-        // TODO: resizing doesn't work
-        this.inputPanel = new JPanel();
-        this.databaseFilePathLabel = new JLabel("Database file path:");
-        this.inputPanel.add(this.databaseFilePathLabel);
-        
+    protected String getMessageText() {
+        // TODO: Add full text
+        return "Standalone message.";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected void initialiseInputPanel() {
+        JPanel inputPanel = new JPanel();
+        JLabel databaseFilePathLabel = new JLabel("Database file path:");
+        inputPanel.add(databaseFilePathLabel);
+
         this.databaseFilePathField = new JTextField() {
             // TODO: move this to a nicer place so the other dialogs can use it
             protected Document createDefaultModel() {
                 return new PlainDocument() {
                     public void insertString(int offs, String str,
                             AttributeSet a) throws BadLocationException {
-                        if (!isOkEnabled() && str != null && str.length() >= 0) {
-                            setOkEnabled();
+                        if (!isOkButtonEnabled() && str != null
+                                && str.length() >= 0) {
+                            setOkButtonEnabled(true);
                         }
                         super.insertString(offs, str, a);
                     }
 
                     protected void insertUpdate(DefaultDocumentEvent chng,
                             AttributeSet attr) {
-                        if (!isOkEnabled() && chng.getLength() >= 0) {
-                            setOkEnabled();
+                        if (!isOkButtonEnabled() && chng.getLength() >= 0) {
+                            setOkButtonEnabled(true);
                         }
                         super.insertUpdate(chng, attr);
                     }
 
                     protected void removeUpdate(DefaultDocumentEvent chng) {
-                        if (chng.getLength() >= databaseFilePathField.getText()
-                                .length()) {
-                            setOkDisabled();
+                        if (chng.getLength()
+                                >= StandaloneConfigurationDialog.this
+                                        .databaseFilePathField.getText()
+                                        .length()) {
+                            setOkButtonEnabled(false);
                         }
                         super.removeUpdate(chng);
                     }
@@ -72,33 +88,49 @@ public class StandaloneConfigurationDialog extends AbstractConfigurationDialog {
             }
         };
 
-        this.inputPanel.add(this.databaseFilePathField);
-        return this.inputPanel;
+        inputPanel.add(this.databaseFilePathField);
+        getDialog().getContentPane().add(inputPanel, BorderLayout.CENTER);
     }
 
     /**
      * {@inheritDoc}
      */
-    protected String getMessageText() {
-        String message = "Text for the standalone dialog";
-        return message;
+    public String getServerAddress() {
+        return this.serverAddress;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setServerAddress(String serverAddress) {
+        this.serverAddress = serverAddress;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getServerPort() {
+        return this.serverPort;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setServerPort(String serverPort) {
+        this.serverPort = serverPort;
     }
 
     /**
      * {@inheritDoc}
      */
     public String getDatabaseFilePath() {
-        // TODO change these implemetations?
-        super.setDatabaseFilePath(this.databaseFilePathField.getText());
-        return super.getDatabaseFilePath();
+        return this.databaseFilePathField.getText();
     }
 
     /**
      * {@inheritDoc}
      */
     public void setDatabaseFilePath(String databaseFilePath) {
-        super.setDatabaseFilePath(databaseFilePath);
         this.databaseFilePathField.setText(databaseFilePath);
     }
-
 }

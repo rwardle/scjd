@@ -7,21 +7,26 @@
 
 package suncertify.startup;
 
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 
 /**
+ * Configuration dialog for server mode.
+ *
  * @author Richard Wardle
  */
-public class ServerConfigurationDialog extends AbstractConfigurationDialog {
+public final class ServerConfigurationDialog extends
+        AbstractConfigurationDialog {
 
-    private JPanel inputPanel;
+    private String serverAddress;
     private JTextField databaseFilePathField;
     private JTextField serverPortField;
-    
+
     /**
      * Creates a new ServerConfigurationDialog.
      */
@@ -32,49 +37,75 @@ public class ServerConfigurationDialog extends AbstractConfigurationDialog {
     /**
      * {@inheritDoc}
      */
-    protected JPanel getInputPanel() {
-        this.inputPanel = new JPanel(new GridLayout(2, 1));
-
-        JPanel databaseFilePathPanel = new JPanel();
-        this.inputPanel.add(databaseFilePathPanel);
-                
-        JLabel databaseFilePathLabel = new JLabel("Database file path:");
-        databaseFilePathPanel.add(databaseFilePathLabel);
-        this.databaseFilePathField = new JTextField();
-        databaseFilePathPanel.add(this.databaseFilePathField);
-        
-        JPanel serverPortPanel = new JPanel();
-        this.inputPanel.add(serverPortPanel);
-                
-        JLabel serverPortLabel = new JLabel("Server port:");
-        serverPortPanel.add(serverPortLabel);
-        this.serverPortField = new JTextField();
-        serverPortPanel.add(this.serverPortField);
-        
-        return this.inputPanel;
+    protected String getMessageText() {
+        // TODO: Add full text
+        return "Server message.";
     }
 
     /**
      * {@inheritDoc}
      */
-    protected String getMessageText() {
-        return "server";
+    protected void initialiseInputPanel() {
+        JPanel inputPanel = new JPanel(new GridLayout(2, 1));
+
+        JPanel databaseFilePathPanel = new JPanel();
+        inputPanel.add(databaseFilePathPanel);
+
+        JLabel databaseFilePathLabel = new JLabel("Database file path:");
+        databaseFilePathPanel.add(databaseFilePathLabel);
+        this.databaseFilePathField = new JTextField();
+        databaseFilePathPanel.add(this.databaseFilePathField);
+
+        JPanel serverPortPanel = new JPanel();
+        inputPanel.add(serverPortPanel);
+
+        JLabel serverPortLabel = new JLabel("Server port:");
+        serverPortPanel.add(serverPortLabel);
+        this.serverPortField = new JTextField();
+        serverPortPanel.add(this.serverPortField);
+
+        getDialog().getContentPane().add(inputPanel, BorderLayout.CENTER);
     }
 
-    public void setServerPort(String serverPort) {
-        this.serverPortField.setText(serverPort);
+    /**
+     * {@inheritDoc}
+     */
+    public String getServerAddress() {
+        return this.serverAddress;
     }
 
-    public void setDatabaseFilePath(String databaseFilePath) {
-        this.databaseFilePathField.setText(databaseFilePath);
+    /**
+     * {@inheritDoc}
+     */
+    public void setServerAddress(String serverAddress) {
+        this.serverAddress = serverAddress;
     }
 
-    public String getServerPort() {
-        return this.serverPortField.getText();
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     public String getDatabaseFilePath() {
         return this.databaseFilePathField.getText();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void setDatabaseFilePath(String databaseFilePath) {
+        this.databaseFilePathField.setText(databaseFilePath);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getServerPort() {
+        return this.serverPortField.getText();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setServerPort(String serverPort) {
+        this.serverPortField.setText(serverPort);
+    }
 }

@@ -111,7 +111,7 @@ public final class Application {
      */
     private int showConfigurationDialog(Configuration configuration) {
         final ConfigurationView dialog = ConfigurationViewFactory
-                .createConfigurationDialog(this.mode);
+                .createConfigurationView(this.mode);
         dialog.initialiseComponents();
 
         ConfigurationPresenter presenter = new ConfigurationPresenter(
@@ -120,7 +120,7 @@ public final class Application {
         try {
             EventQueue.invokeAndWait(new Runnable() {
                 public void run() {
-                    dialog.packAndShow();
+                    dialog.realiseView();
                 }
             });
         } catch (InterruptedException e) {

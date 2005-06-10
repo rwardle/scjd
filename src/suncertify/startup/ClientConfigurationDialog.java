@@ -7,21 +7,26 @@
 
 package suncertify.startup;
 
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 
 /**
+ * Configuration dialog for client mode.
+ *
  * @author Richard Wardle
  */
-public class ClientConfigurationDialog extends AbstractConfigurationDialog {
+public final class ClientConfigurationDialog extends
+        AbstractConfigurationDialog {
 
-    private JPanel inputPanel;
+    private String databaseFilePath;
     private JTextField serverAddressField;
     private JTextField serverPortField;
-    
+
     /**
      * Creates a new ClientConfigurationDialog.
      */
@@ -32,40 +37,55 @@ public class ClientConfigurationDialog extends AbstractConfigurationDialog {
     /**
      * {@inheritDoc}
      */
-    protected JPanel getInputPanel() {
-        this.inputPanel = new JPanel(new GridLayout(2, 1));
+    protected String getMessageText() {
+        // TODO: Add full text
+        return "Client message.";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected void initialiseInputPanel() {
+        JPanel inputPanel = new JPanel(new GridLayout(2, 1));
 
         JPanel serverAddressPanel = new JPanel();
-        this.inputPanel.add(serverAddressPanel);
-                
+        inputPanel.add(serverAddressPanel);
+
         JLabel serverAddressLabel = new JLabel("Server address:");
         serverAddressPanel.add(serverAddressLabel);
         this.serverAddressField = new JTextField();
         serverAddressPanel.add(this.serverAddressField);
-        
+
         JPanel serverPortPanel = new JPanel();
-        this.inputPanel.add(serverPortPanel);
-                
+        inputPanel.add(serverPortPanel);
+
         JLabel serverPortLabel = new JLabel("Server port:");
         serverPortPanel.add(serverPortLabel);
         this.serverPortField = new JTextField();
         serverPortPanel.add(this.serverPortField);
-        
-        return this.inputPanel;
+
+        getDialog().getContentPane().add(inputPanel, BorderLayout.CENTER);
     }
 
     /**
      * {@inheritDoc}
      */
-    protected String getMessageText() {
-        return "Client";
+    public String getDatabaseFilePath() {
+        return this.databaseFilePath;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setServerPort(String serverPort) {
-        this.serverPortField.setText(serverPort);
+    public void setDatabaseFilePath(String databaseFilePath) {
+        this.databaseFilePath = databaseFilePath;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getServerAddress() {
+        return this.serverAddressField.getText();
     }
 
     /**
@@ -85,7 +105,7 @@ public class ClientConfigurationDialog extends AbstractConfigurationDialog {
     /**
      * {@inheritDoc}
      */
-    public String getServerAddress() {
-        return this.serverAddressField.getText();
+    public void setServerPort(String serverPort) {
+        this.serverPortField.setText(serverPort);
     }
 }
