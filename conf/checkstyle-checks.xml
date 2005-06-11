@@ -62,7 +62,7 @@
         <module name="ParameterNumber"/>
 
         <!-- Whitespace -->
-        <module name="EmptyForIteratorPad"/>
+        <module name="EmptyForInitializerPad"/>
         <module name="EmptyForIteratorPad"/>
         <module name="MethodParamPad"/>
         <module name="NoWhitespaceAfter"/>
