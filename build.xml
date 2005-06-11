@@ -14,6 +14,15 @@
         <property file="build.properties"/>
     </target>
     <!--
+    ============
+    RMIC SECTION
+    ============
+    -->
+    <target name="rmic" depends="compile">
+        <rmic verify="true" stubversion="1.2" base="${build.classes.dir}"
+                classname="suncertify.service.RemoteBrokerServiceImpl"/>
+    </target>
+    <!--
     ==================
     CHECKSTYLE SECTION
     ==================
@@ -135,5 +144,5 @@
         <fail message="Tests failed. Check test reports." if="tests.failed"/>
     </target>
     <target name="cruise-build"
-            depends="clean,jar,cruise-test,fitnesse,cruise-checkstyle,coverage-report,javadoc"/>
+            depends="clean,jar,cruise-test,cruise-checkstyle,coverage-report,javadoc"/>
 </project>
