@@ -191,12 +191,12 @@ public final class ConfigurationTest extends TestCase {
     }
 
     private void assertDefaultConfiguration(Configuration config) {
-        assertEquals("Server address should be set to the default,",
+        assertEquals("Server address comparison,",
                 ConfigurationConstants.DEFAULT_ADDRESS,
                 config.getServerAddress());
-        assertEquals("Server port should be set to the default,",
+        assertEquals("Server port comparison,",
                 ConfigurationConstants.DEFAULT_PORT, config.getServerPort());
-        assertEquals("Server database file path should be set to the default,",
+        assertEquals("Database file path comparison,",
                 ConfigurationConstants.DEFAULT_PATH,
                 config.getDatabaseFilePath());
     }
