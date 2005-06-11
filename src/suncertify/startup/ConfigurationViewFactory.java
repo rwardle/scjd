@@ -17,6 +17,7 @@ package suncertify.startup;
 public final class ConfigurationViewFactory {
 
     private ConfigurationViewFactory() {
+        // No instantiation allowed
     }
 
     /**
