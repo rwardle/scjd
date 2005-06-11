@@ -10,11 +10,19 @@ package suncertify.startup;
 import java.awt.EventQueue;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.rmi.Naming;
+import java.rmi.registry.LocateRegistry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.WindowConstants;
+
+import suncertify.service.BrokerService;
+import suncertify.service.BrokerServiceLocator;
+import suncertify.service.RemoteBrokerService;
+import suncertify.service.RemoteBrokerServiceImpl;
 
 
 /**
@@ -23,6 +31,9 @@ import javax.swing.JOptionPane;
  * @author Richard Wardle
  */
 public final class Application {
+
+    /** The name under which the remote service object is regstered with RMI. */
+    public static final String REMOTE_BROKER_SERVICE_NAME = "BrokerService";
 
     private static Logger logger = Logger
             .getLogger(Application.class.getName());
@@ -163,6 +174,41 @@ public final class Application {
         }
     }
 
+    public void showMainWindow(final BrokerService service) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                // TODO: Move this to a new class
+                JFrame frame = new JFrame();
+                frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+                try {
+                    frame.setTitle(service.getHelloWorld());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                frame.pack();
+                frame.setVisible(true);
+            }
+        });
+    }
+
+    public void startRmiServer(Configuration configuration) {
+        try {
+            LocateRegistry.createRegistry(Integer.parseInt(configuration
+                    .getServerPort()));
+
+            // TODO: Move the creational code into the Locator
+            RemoteBrokerService service = new RemoteBrokerServiceImpl(
+                    configuration.getDatabaseFilePath());
+
+            Naming.rebind("//127.0.0.1:" + configuration.getServerPort() + "/"
+                    + Application.REMOTE_BROKER_SERVICE_NAME, service);
+        } catch (Exception e) {
+            // TODO: Implement proper exception handling
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * The entry point to the application.
@@ -177,6 +223,15 @@ public final class Application {
             Application.logger.info("User cancelled configuration dialog, "
                     + "exiting application");
             System.exit(0);
+        }
+
+        if (application.getMode() == ApplicationMode.CLIENT
+                || application.getMode() == ApplicationMode.STANDALONE) {
+            BrokerService service = BrokerServiceLocator
+                    .getBrokerService(application.getMode(), configuration);
+            application.showMainWindow(service);
+        } else {
+            application.startRmiServer(configuration);
         }
     }
 }
