@@ -1,5 +1,5 @@
 /*
- * Configuration.java
+ * DefaultConfiguration.java
  *
  * Created on 05-Jun-2005
  */
@@ -26,9 +26,9 @@ import java.util.logging.Logger;
  *
  * @author Richard Wardle
  */
-public final class Configuration {
+public final class DefaultConfiguration {
 
-    private static Logger logger = Logger.getLogger(Configuration.class
+    private static Logger logger = Logger.getLogger(DefaultConfiguration.class
             .getName());
 
     private File propertiesFile;
@@ -44,7 +44,7 @@ public final class Configuration {
      * @throws IllegalArgumentException
      *         If the propertiesFilePath is null or is an empty string.
      */
-    public Configuration(String propertiesFilePath) {
+    public DefaultConfiguration(String propertiesFilePath) {
         if (propertiesFilePath == null || propertiesFilePath.equals("")) {
             throw new IllegalArgumentException("propertiesFilePath should be "
                     + "non-null and should not be an empty string");
@@ -76,7 +76,7 @@ public final class Configuration {
                 // If there is an error reading from the properties file we want
                 // to fall back gracefully to using the default configuration,
                 // so we catch this exception, log it and continue.
-                Configuration.logger.log(Level.WARNING,
+                DefaultConfiguration.logger.log(Level.WARNING,
                         "Error reading from properties file at: '"
                                 + this.propertiesFile.getAbsolutePath()
                                 + "', falling back to default configuration",
@@ -86,7 +86,7 @@ public final class Configuration {
                     try {
                         in.close();
                     } catch (IOException e) {
-                        Configuration.logger.log(Level.WARNING,
+                        DefaultConfiguration.logger.log(Level.WARNING,
                                 "Error closing InputStream for file: '"
                                         + this.propertiesFile.getAbsolutePath()
                                         + "'",
@@ -95,7 +95,7 @@ public final class Configuration {
                 }
             }
         } else {
-            Configuration.logger.info("Properties file doesn't exist, using "
+            DefaultConfiguration.logger.info("Properties file doesn't exist, using "
                     + "default configuration (path='"
                     + this.propertiesFile.getAbsolutePath() + "')");
         }
@@ -124,7 +124,7 @@ public final class Configuration {
                 try {
                     out.close();
                 } catch (IOException e) {
-                    Configuration.logger.log(Level.WARNING,
+                    DefaultConfiguration.logger.log(Level.WARNING,
                             "Error closing OutputStream for file: '"
                                     + this.propertiesFile.getAbsolutePath()
                                     + "'",
