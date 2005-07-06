@@ -5,13 +5,14 @@
  */
 
 
-package suncertify.startup;
+package suncertify;
 
 import java.util.logging.Logger;
 
 
+
 /**
- * The starting point for the application.
+ * The starting class for the application.
  *
  * @author Richard Wardle
  */
@@ -21,7 +22,7 @@ public final class Main {
     private String[] args;
 
     /**
-     * Creates a new Main.
+     * Creates a new instance of <code>Main</code>.
      *
      * @param args The command-line arguments.
      */
@@ -63,7 +64,7 @@ public final class Main {
     }
 
     /**
-     * The entry point to the application.
+     * The starting method for the application.
      *
      * @param args Command line arguments.
      * @throws NullPointerException If the command-line arguments are null.

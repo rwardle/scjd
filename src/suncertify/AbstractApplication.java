@@ -5,7 +5,7 @@
  */
 
 
-package suncertify.startup;
+package suncertify;
 
 import java.awt.EventQueue;
 import java.io.IOException;
@@ -15,6 +15,9 @@ import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+
+import suncertify.startup.ConfigurationPresenter;
+import suncertify.startup.ConfigurationView;
 
 
 /**

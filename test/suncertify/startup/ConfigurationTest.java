@@ -17,9 +17,12 @@ import java.util.logging.Logger;
 
 import junit.framework.TestCase;
 
+import suncertify.Configuration;
+import suncertify.ConfigurationConstants;
+
 
 /**
- * Unit tests for {@link suncertify.startup.Configuration}.
+ * Unit tests for {@link suncertify.Configuration}.
  *
  * @author Richard Wardle
  */

@@ -10,6 +10,8 @@ package suncertify.startup;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import suncertify.Configuration;
+
 
 /**
  * Encapsulates the presentation behaviour of the configuration dialog.

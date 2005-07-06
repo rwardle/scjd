@@ -5,8 +5,7 @@
  */
 
 
-package suncertify.startup;
-
+package suncertify;
 
 import java.util.logging.Logger;
 
@@ -14,7 +13,7 @@ import junit.framework.TestCase;
 
 
 /**
- * Unit tests for {@link suncertify.startup.Main}.
+ * Unit tests for {@link suncertify.Main}.
  *
  * @author Richard Wardle
  */
@@ -23,7 +22,7 @@ public final class MainTest extends TestCase {
     private static Logger logger = Logger.getLogger(MainTest.class.getName());
 
     /**
-     * Creates a new MainTest.
+     * Creates a new instance of <code>MainTest</code>.
      *
      * @param name The test case name.
      */

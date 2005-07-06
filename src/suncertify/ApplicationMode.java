@@ -5,7 +5,7 @@
  */
 
 
-package suncertify.startup;
+package suncertify;
 
 
 /**

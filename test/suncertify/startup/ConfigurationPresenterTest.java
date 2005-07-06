@@ -14,6 +14,8 @@ import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
 import org.jmock.core.constraint.IsInstanceOf;
 
+import suncertify.Configuration;
+
 
 /**
  * Unit tests for {@link ConfigurationPresenterTest}.

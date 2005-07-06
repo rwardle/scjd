@@ -5,7 +5,7 @@
  */
 
 
-package suncertify.startup;
+package suncertify;
 
 import java.awt.EventQueue;
 import java.io.IOException;
@@ -15,6 +15,8 @@ import javax.swing.WindowConstants;
 
 import suncertify.service.BrokerService;
 import suncertify.service.BrokerServiceImpl;
+import suncertify.startup.ConfigurationView;
+import suncertify.startup.StandaloneConfigurationDialog;
 
 
 /**

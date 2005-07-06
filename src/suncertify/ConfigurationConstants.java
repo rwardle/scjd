@@ -5,7 +5,7 @@
  */
 
 
-package suncertify.startup;
+package suncertify;
 
 /**
  * Constants for use in database configuration.
