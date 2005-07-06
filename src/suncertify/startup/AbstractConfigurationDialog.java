@@ -49,6 +49,9 @@ public abstract class AbstractConfigurationDialog implements ConfigurationView {
 
     /**
      * {@inheritDoc}
+     * <p/>
+     * This implementation calls the <code>initialiseInputPanel</code> method
+     * to initialise the input panel components.
      */
     public final void initialiseComponents() {
         // TODO: Resizing doesn't work
@@ -84,6 +87,8 @@ public abstract class AbstractConfigurationDialog implements ConfigurationView {
 
     /**
      * Initialises the input panel.
+     * <p/>
+     * This method is called from the <code>initialiseComponents</code> method.
      */
     protected abstract void initialiseInputPanel();
 
