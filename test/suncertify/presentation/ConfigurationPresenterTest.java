@@ -5,7 +5,7 @@
  */
 
 
-package suncertify.startup;
+package suncertify.presentation;
 
 import java.awt.event.ActionListener;
 import java.util.logging.Logger;
@@ -15,6 +15,8 @@ import org.jmock.MockObjectTestCase;
 import org.jmock.core.constraint.IsInstanceOf;
 
 import suncertify.Configuration;
+import suncertify.presentation.ConfigurationPresenter;
+import suncertify.presentation.ConfigurationView;
 
 
 /**

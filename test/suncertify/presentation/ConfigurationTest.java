@@ -5,7 +5,7 @@
  */
 
 
-package suncertify.startup;
+package suncertify.presentation;
 
 import java.io.BufferedInputStream;
 import java.io.File;
