@@ -5,7 +5,7 @@
  */
 
 
-package suncertify.presentation;
+package suncertify;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -86,7 +86,7 @@ public final class ConfigurationTest extends TestCase {
      * @throws IOException If the properties file cannot be read.
      */
     public void testLoadConfiguration() throws IOException {
-        URL url = getResourceUrl("suncertify/startup/suncertify.properties");
+        URL url = getResourceUrl("suncertify/suncertify.properties");
         Properties properties = loadTestProperties(url.getPath());
         Configuration configuration = new Configuration(url.getPath());
         assertTrue(configuration.loadConfiguration());
@@ -110,7 +110,7 @@ public final class ConfigurationTest extends TestCase {
      * in which all properties are either missing or empty.
      */
     public void testLoadConfigurationMissingEmptyProperties() {
-        URL url = getResourceUrl("suncertify/startup/missingempty.properties");
+        URL url = getResourceUrl("suncertify/missingempty.properties");
         Configuration configuration = new Configuration(url.getPath());
         assertTrue(configuration.loadConfiguration());
         assertDefaultConfiguration(configuration);
