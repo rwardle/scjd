@@ -20,13 +20,14 @@ import suncertify.service.BrokerServiceImpl;
 
 
 /**
- * 
+ * The standalone mode application.
+ *
  * @author Richard Wardle
  */
 public final class StandaloneApplication extends AbstractApplication {
 
     /**
-     * Creates a new StandaloneApplication.
+     * Creates a new instance of <code>StandaloneApplication</code>.
      */
     public StandaloneApplication() {
         super();
@@ -44,10 +45,12 @@ public final class StandaloneApplication extends AbstractApplication {
      * <p/>
      * Displays the main application window.
      */
-    public void execute(final Configuration configuration) {
+    public void run(final Configuration configuration) {
+        // TODO:
+
         final BrokerService service = new BrokerServiceImpl(configuration
                 .getDatabaseFilePath());
-        
+
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 JFrame frame = new JFrame();

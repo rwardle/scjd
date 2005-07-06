@@ -25,12 +25,7 @@ import suncertify.presentation.ConfigurationView;
  *
  * @author Richard Wardle
  */
-public abstract class AbstractApplication {
-
-    /**
-     * The name under which the remote service object is regstered with RMI.
-     */
-    public static final String REMOTE_BROKER_SERVICE_NAME = "BrokerService";
+public abstract class AbstractApplication implements Application {
 
     private static Logger logger = Logger
             .getLogger(AbstractApplication.class.getName());
@@ -43,16 +38,11 @@ public abstract class AbstractApplication {
     }
 
     /**
-     * Configures the application. Loads any existing configuration, presents it
-     * to the user for modification and then saves it.
+     * {@inheritDoc}
      * <p/>
      * This implementation indirectly calls the
      * <code>createConfigurationView</code> method to get the configuration view
      * to display to the user.
-     *
-     * @param configuration The configuration.
-     * @return true if the user completed the configuration process, false if
-     * not.
      */
     public final boolean configure(Configuration configuration) {
         configuration.loadConfiguration();
@@ -130,11 +120,4 @@ public abstract class AbstractApplication {
             e.printStackTrace();
         }
     }
-
-    /**
-     * Runs the main application.
-     *
-     * @param configuration The application configuration.
-     */
-    public abstract void execute(Configuration configuration);
 }

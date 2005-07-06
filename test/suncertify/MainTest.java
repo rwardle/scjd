@@ -32,7 +32,7 @@ public final class MainTest extends TestCase {
 
     /**
      * Tests {@link Main#getApplicationMode()} when the command-line arguments
-     * are null.
+     * are <code>null</code>.
      */
     public void testGetApplicationModeNullArgs() {
         try {

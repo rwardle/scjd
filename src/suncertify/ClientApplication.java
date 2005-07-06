@@ -9,10 +9,7 @@ package suncertify;
 
 import java.awt.EventQueue;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.rmi.Naming;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
@@ -23,14 +20,14 @@ import suncertify.service.BrokerService;
 
 
 /**
- *
+ * The client mode application.
  *
  * @author Richard Wardle
  */
 public final class ClientApplication extends AbstractApplication {
 
     /**
-     * Creates a new ClientApplication.
+     * Creates a new instance <code>ClientApplication</code>.
      */
     public ClientApplication() {
         super();
@@ -49,7 +46,9 @@ public final class ClientApplication extends AbstractApplication {
      * Looks up the remote <code>BrokerService</code> object in the RMI registry
      * and displays the main application window.
      */
-    public void execute(Configuration configuration) {
+    public void run(Configuration configuration) {
+        // TODO: Implement this properly
+
         final BrokerService brokerService = lookupBrokerService(configuration);
 
         EventQueue.invokeLater(new Runnable() {
@@ -58,9 +57,9 @@ public final class ClientApplication extends AbstractApplication {
                 frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
                 try {
-
                     frame.setTitle(brokerService.getHelloWorld());
                 } catch (IOException e) {
+                    // TODO: Handle this properly
                     e.printStackTrace();
                 }
 
@@ -75,14 +74,8 @@ public final class ClientApplication extends AbstractApplication {
             return (BrokerService) Naming.lookup("//"
                     + configuration.getServerAddress() + ":"
                     + configuration.getServerPort() + "/"
-                    + AbstractApplication.REMOTE_BROKER_SERVICE_NAME);
-        } catch (MalformedURLException e) {
-            // TODO: Implement proper exception handling
-            throw new RuntimeException(e);
-        } catch (RemoteException e) {
-            // TODO: Implement proper exception handling
-            throw new RuntimeException(e);
-        } catch (NotBoundException e) {
+                    + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME);
+        } catch (Exception e) {
             // TODO: Implement proper exception handling
             throw new RuntimeException(e);
         }

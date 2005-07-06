@@ -17,14 +17,14 @@ import suncertify.service.RemoteBrokerServiceImpl;
 
 
 /**
- * The server version of the application.
+ * The server mode application.
  *
  * @author Richard Wardle
  */
 public final class ServerApplication extends AbstractApplication {
 
     /**
-     * Creates a new ServerApplication.
+     * Creates a new instance of <code>ServerApplication</code>.
      */
     public ServerApplication() {
         super();
@@ -43,14 +43,16 @@ public final class ServerApplication extends AbstractApplication {
      * Starts the RMI registry and binds the <code>BrokerService</code> object
      * into it.
      */
-    public void execute(Configuration configuration) {
+    public void run(Configuration configuration) {
+        // TODO:
+
         try {
             LocateRegistry.createRegistry(Integer.parseInt(configuration
                     .getServerPort()));
             RemoteBrokerService service = new RemoteBrokerServiceImpl(
                     configuration.getDatabaseFilePath());
             Naming.rebind("//127.0.0.1:" + configuration.getServerPort() + "/"
-                    + AbstractApplication.REMOTE_BROKER_SERVICE_NAME, service);
+                    + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME, service);
         } catch (Exception e) {
             // TODO: Implement proper exception handling
             throw new RuntimeException(e);

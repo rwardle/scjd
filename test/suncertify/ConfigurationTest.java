@@ -17,9 +17,6 @@ import java.util.logging.Logger;
 
 import junit.framework.TestCase;
 
-import suncertify.Configuration;
-import suncertify.ConfigurationConstants;
-
 
 /**
  * Unit tests for {@link suncertify.Configuration}.
@@ -32,17 +29,17 @@ public final class ConfigurationTest extends TestCase {
             .getName());
 
     /**
-     * Creates a new ConfigurationTest.
+     * Creates a new instance of <code>ConfigurationTest</code>.
      *
-     * @param name Test case name.
+     * @param name The test case name.
      */
     public ConfigurationTest(String name) {
         super(name);
     }
 
     /**
-     * Tests {@link Configuration#Configuration(String)} with a null properties
-     * file path.
+     * Tests {@link Configuration#Configuration(String)} with a
+     * <code>null</code> properties file path.
      */
     public void testNullPropertiesFilePath() {
         try {
@@ -92,15 +89,15 @@ public final class ConfigurationTest extends TestCase {
         assertTrue(configuration.loadConfiguration());
 
         assertEquals("Server address comparison,",
-                properties.getProperty(ConfigurationConstants
+                properties.getProperty(ApplicationConstants
                         .ADDRESS_PROPERTY),
                 configuration.getServerAddress());
         assertEquals("Server port comparison,",
-                properties.getProperty(ConfigurationConstants
+                properties.getProperty(ApplicationConstants
                         .PORT_PROPERTY),
                 configuration.getServerPort());
         assertEquals("Database file path comparison,",
-                properties.getProperty(ConfigurationConstants
+                properties.getProperty(ApplicationConstants
                         .PATH_PROPERTY),
                 configuration.getDatabaseFilePath());
     }
@@ -195,12 +192,12 @@ public final class ConfigurationTest extends TestCase {
 
     private void assertDefaultConfiguration(Configuration config) {
         assertEquals("Server address comparison,",
-                ConfigurationConstants.DEFAULT_ADDRESS,
+                ApplicationConstants.DEFAULT_ADDRESS,
                 config.getServerAddress());
         assertEquals("Server port comparison,",
-                ConfigurationConstants.DEFAULT_PORT, config.getServerPort());
+                ApplicationConstants.DEFAULT_PORT, config.getServerPort());
         assertEquals("Database file path comparison,",
-                ConfigurationConstants.DEFAULT_PATH,
+                ApplicationConstants.DEFAULT_PATH,
                 config.getDatabaseFilePath());
     }
 
@@ -218,11 +215,11 @@ public final class ConfigurationTest extends TestCase {
 
         Properties props = loadTestProperties(fileName);
         assertEquals("Server address comparison,", expectedAddress,
-                props.getProperty(ConfigurationConstants.ADDRESS_PROPERTY));
+                props.getProperty(ApplicationConstants.ADDRESS_PROPERTY));
         assertEquals("Server port comparison,", expectedPort,
-                props.getProperty(ConfigurationConstants.PORT_PROPERTY));
+                props.getProperty(ApplicationConstants.PORT_PROPERTY));
         assertEquals("Database file path comparison,", expectedPath,
-                props.getProperty(ConfigurationConstants.PATH_PROPERTY));
+                props.getProperty(ApplicationConstants.PATH_PROPERTY));
     }
 
     private void createFile(String fileName, File file) throws IOException {
@@ -265,6 +262,7 @@ public final class ConfigurationTest extends TestCase {
                 }
             }
         }
+
         return properties;
     }
 }

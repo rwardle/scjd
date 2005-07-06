@@ -10,7 +10,6 @@ package suncertify;
 import java.util.logging.Logger;
 
 
-
 /**
  * The starting class for the application.
  *
@@ -75,7 +74,7 @@ public final class Main {
         Main main = new Main(args);
         ApplicationMode mode = main.getApplicationMode();
 
-        AbstractApplication application = null;
+        Application application = null;
         if (mode == ApplicationMode.CLIENT) {
             application = new ClientApplication();
         } else if (mode == ApplicationMode.SERVER) {
@@ -96,6 +95,6 @@ public final class Main {
             System.exit(0);
         }
 
-        application.execute(configuration);
+        application.run(configuration);
     }
 }

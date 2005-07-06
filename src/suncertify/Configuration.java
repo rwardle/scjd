@@ -20,7 +20,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-
 /**
  * Encapsulates application configuration properties, reading and writing to
  * permanent storage in the form of a properties file.
@@ -38,12 +37,13 @@ public final class Configuration {
     private String serverPort;
 
     /**
-     * Creates a new Configuration with the default configuration.
+     * Creates a new instance of <code>Configuration</code> with the default
+     * configuration.
      *
-     * @param propertiesFilePath
-     *        The path to the properties file that holds the configuration.
-     * @throws IllegalArgumentException
-     *         If the propertiesFilePath is null or is an empty string.
+     * @param propertiesFilePath The path to the properties file that holds the
+     * configuration.
+     * @throws IllegalArgumentException If the <code>propertiesFilePath</code>
+     * is <code>null</code> or is an empty string.
      */
     public Configuration(String propertiesFilePath) {
         if (propertiesFilePath == null || propertiesFilePath.equals("")) {
@@ -52,15 +52,16 @@ public final class Configuration {
         }
 
         this.propertiesFile = new File(propertiesFilePath);
-        this.serverAddress = ConfigurationConstants.DEFAULT_ADDRESS;
-        this.serverPort = ConfigurationConstants.DEFAULT_PORT;
-        this.databaseFilePath = ConfigurationConstants.DEFAULT_PATH;
+        this.serverAddress = ApplicationConstants.DEFAULT_ADDRESS;
+        this.serverPort = ApplicationConstants.DEFAULT_PORT;
+        this.databaseFilePath = ApplicationConstants.DEFAULT_PATH;
     }
 
     /**
      * Loads the configuration from the properties file (if it exists).
      *
-     * @return true if the configuration was loaded from the properties file.
+     * @return <code>true</code> if the configuration was loaded from the
+     * properties file, <code>false</code> otherwise.
      */
     public boolean loadConfiguration() {
         boolean loaded = false;
@@ -137,37 +138,37 @@ public final class Configuration {
 
     private void getProperties(Properties properties) {
         String address = properties
-                .getProperty(ConfigurationConstants.ADDRESS_PROPERTY);
+                .getProperty(ApplicationConstants.ADDRESS_PROPERTY);
         if (address != null && !address.equals("")) {
             setServerAddress(address);
         }
 
         String port = properties
-                .getProperty(ConfigurationConstants.PORT_PROPERTY);
+                .getProperty(ApplicationConstants.PORT_PROPERTY);
         if (port != null && !port.equals("")) {
             setServerPort(port);
         }
 
         String path = properties
-                .getProperty(ConfigurationConstants.PATH_PROPERTY);
+                .getProperty(ApplicationConstants.PATH_PROPERTY);
         if (path != null && !path.equals("")) {
             setDatabaseFilePath(path);
         }
     }
 
     private void setProperties(Properties properties) {
-        properties.setProperty(ConfigurationConstants.ADDRESS_PROPERTY,
+        properties.setProperty(ApplicationConstants.ADDRESS_PROPERTY,
                 getServerAddress());
-        properties.setProperty(ConfigurationConstants.PORT_PROPERTY,
+        properties.setProperty(ApplicationConstants.PORT_PROPERTY,
                 getServerPort());
-        properties.setProperty(ConfigurationConstants.PATH_PROPERTY,
+        properties.setProperty(ApplicationConstants.PATH_PROPERTY,
                 getDatabaseFilePath());
     }
 
     /**
-     * Gets the absolute path to the propertiesFile.
+     * Gets the absolute path to the properties file.
      *
-     * @return Returns the absolute path to the propertiesFile.
+     * @return The absolute path to the properties file.
      */
     public String getPropertiesFilePath() {
         return this.propertiesFile.getAbsolutePath();
@@ -176,7 +177,7 @@ public final class Configuration {
     /**
      * Gets the databaseFilePath.
      *
-     * @return Returns the databaseFilePath.
+     * @return The databaseFilePath.
      */
     public String getDatabaseFilePath() {
         return this.databaseFilePath;
@@ -185,8 +186,7 @@ public final class Configuration {
     /**
      * Sets the databaseFilePath.
      *
-     * @param databaseFilePath
-     *        The databaseFilePath to set.
+     * @param databaseFilePath The databaseFilePath.
      */
     public void setDatabaseFilePath(String databaseFilePath) {
         this.databaseFilePath = databaseFilePath;
@@ -195,7 +195,7 @@ public final class Configuration {
     /**
      * Gets the serverAddress.
      *
-     * @return Returns the serverAddress.
+     * @return The serverAddress.
      */
     public String getServerAddress() {
         return this.serverAddress;
@@ -204,8 +204,7 @@ public final class Configuration {
     /**
      * Sets the serverAddress.
      *
-     * @param serverAddress
-     *        The serverAddress to set.
+     * @param serverAddress The serverAddress.
      */
     public void setServerAddress(String serverAddress) {
         this.serverAddress = serverAddress;
@@ -214,7 +213,7 @@ public final class Configuration {
     /**
      * Gets the serverPort.
      *
-     * @return Returns the serverPort.
+     * @return The serverPort.
      */
     public String getServerPort() {
         return this.serverPort;
@@ -223,8 +222,7 @@ public final class Configuration {
     /**
      * Sets the serverPort.
      *
-     * @param serverPort
-     *        The serverPort to set.
+     * @param serverPort The serverPort.
      */
     public void setServerPort(String serverPort) {
         this.serverPort = serverPort;
