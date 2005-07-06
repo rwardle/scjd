@@ -16,7 +16,7 @@ import javax.swing.JTextField;
 
 
 /**
- * Configuration dialog for client mode.
+ * Client mode configuration dialog.
  *
  * @author Richard Wardle
  */
@@ -28,7 +28,7 @@ public final class ClientConfigurationDialog extends
     private JTextField serverPortField;
 
     /**
-     * Creates a new ClientConfigurationDialog.
+     * Creates a new instance of <code>ClientConfigurationDialog</code>.
      */
     public ClientConfigurationDialog() {
         super();

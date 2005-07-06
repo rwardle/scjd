@@ -15,8 +15,6 @@ import org.jmock.MockObjectTestCase;
 import org.jmock.core.constraint.IsInstanceOf;
 
 import suncertify.Configuration;
-import suncertify.presentation.ConfigurationPresenter;
-import suncertify.presentation.ConfigurationView;
 
 
 /**
@@ -36,9 +34,9 @@ public final class ConfigurationPresenterTest extends MockObjectTestCase {
     private Mock mockView;
 
     /**
-     * Creates a new instance of ConfigurationPresenterTest.
+     * Creates a new instance of <code>ConfigurationPresenterTest</code>.
      *
-     * @param name Test case name.
+     * @param name The test case name.
      */
     public ConfigurationPresenterTest(String name) {
         super(name);
@@ -73,7 +71,7 @@ public final class ConfigurationPresenterTest extends MockObjectTestCase {
 
     /**
      * Tests {@link ConfigurationPresenter#ConfigurationPresenter(
-     * Configuration,ConfigurationView)} with a null configuration.
+     * Configuration,ConfigurationView)} with a <code>null</code> configuration.
      */
     public void testConstructionNullConfiguration() {
         try {
@@ -90,7 +88,7 @@ public final class ConfigurationPresenterTest extends MockObjectTestCase {
 
     /**
      * Tests {@link ConfigurationPresenter#ConfigurationPresenter(
-     * Configuration,ConfigurationView)} with a null view.
+     * Configuration,ConfigurationView)} with a <code>null</code> view.
      */
     public void testConstructionNullView() {
         try {

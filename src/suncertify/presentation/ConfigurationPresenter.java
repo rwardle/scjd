@@ -31,11 +31,12 @@ public final class ConfigurationPresenter {
     private int returnStatus;
 
     /**
-     * Creates a new instance of ConfigurationPresenter.
+     * Creates a new instance of <code>ConfigurationPresenter</code>.
      *
      * @param configuration The configuration model.
      * @param view The configuration view.
-     * @throws NullPointerException If the configuration or view is null.
+     * @throws NullPointerException If the configuration or view is
+     * <code>null</code>.
      */
     public ConfigurationPresenter(Configuration configuration,
             ConfigurationView view) {

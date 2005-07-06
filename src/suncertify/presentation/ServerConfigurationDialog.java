@@ -16,7 +16,7 @@ import javax.swing.JTextField;
 
 
 /**
- * Configuration dialog for server mode.
+ * Server mode configuration dialog.
  *
  * @author Richard Wardle
  */
@@ -28,7 +28,7 @@ public final class ServerConfigurationDialog extends
     private JTextField serverPortField;
 
     /**
-     * Creates a new ServerConfigurationDialog.
+     * Creates a new instance of <code>ServerConfigurationDialog</code>.
      */
     public ServerConfigurationDialog() {
         super();

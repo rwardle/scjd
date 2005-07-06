@@ -19,7 +19,7 @@ import javax.swing.text.PlainDocument;
 
 
 /**
- * Configuration dialog for standalone mode.
+ * Standalone mode configuration dialog.
  *
  * @author Richard Wardle
  */
@@ -32,7 +32,7 @@ public final class StandaloneConfigurationDialog extends
 
 
     /**
-     * Creates a new StandaloneConfigurationDialog.
+     * Creates a new instance of <code>StandaloneConfigurationDialog</code>.
      */
     public StandaloneConfigurationDialog() {
         super();

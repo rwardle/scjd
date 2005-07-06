@@ -15,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 
 /**
@@ -34,7 +35,7 @@ public abstract class AbstractConfigurationDialog implements ConfigurationView {
     public AbstractConfigurationDialog() {
         this.dialog = new JDialog();
         this.dialog.setModal(true);
-        this.dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        this.dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         // TODO: Set title
     }
 
@@ -125,7 +126,8 @@ public abstract class AbstractConfigurationDialog implements ConfigurationView {
     /**
      * Gets the state of the OK button.
      *
-     * @return true if it is enabled, false if it is disabled.
+     * @return <code>true</code> if it is enabled, <code>false</code> if it is
+     * disabled.
      */
     protected final boolean isOkButtonEnabled() {
         return this.okButton.isEnabled();
@@ -134,8 +136,8 @@ public abstract class AbstractConfigurationDialog implements ConfigurationView {
     /**
      * Sets the state of the OK button.
      *
-     * @param enabled true if it should be enabled, false if it should be
-     * disabled.
+     * @param enabled <code>true</code> if it should be enabled,
+     * <code>false</code> if it should be disabled.
      */
     protected final void setOkButtonEnabled(boolean enabled) {
         this.okButton.setEnabled(enabled);

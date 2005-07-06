@@ -186,7 +186,7 @@ public final class Configuration {
     /**
      * Sets the databaseFilePath.
      *
-     * @param databaseFilePath The databaseFilePath.
+     * @param databaseFilePath The databaseFilePath to set.
      */
     public void setDatabaseFilePath(String databaseFilePath) {
         this.databaseFilePath = databaseFilePath;
@@ -204,7 +204,7 @@ public final class Configuration {
     /**
      * Sets the serverAddress.
      *
-     * @param serverAddress The serverAddress.
+     * @param serverAddress The serverAddress to set.
      */
     public void setServerAddress(String serverAddress) {
         this.serverAddress = serverAddress;
@@ -222,7 +222,7 @@ public final class Configuration {
     /**
      * Sets the serverPort.
      *
-     * @param serverPort The serverPort.
+     * @param serverPort The serverPort to set.
      */
     public void setServerPort(String serverPort) {
         this.serverPort = serverPort;
