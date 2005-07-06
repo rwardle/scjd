@@ -16,8 +16,8 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import suncertify.startup.ConfigurationPresenter;
-import suncertify.startup.ConfigurationView;
+import suncertify.presentation.ConfigurationPresenter;
+import suncertify.presentation.ConfigurationView;
 
 
 /**

@@ -13,10 +13,10 @@ import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
+import suncertify.presentation.ConfigurationView;
+import suncertify.presentation.StandaloneConfigurationDialog;
 import suncertify.service.BrokerService;
 import suncertify.service.BrokerServiceImpl;
-import suncertify.startup.ConfigurationView;
-import suncertify.startup.StandaloneConfigurationDialog;
 
 
 /**

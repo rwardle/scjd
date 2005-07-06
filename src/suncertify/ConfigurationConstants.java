@@ -15,8 +15,13 @@ package suncertify;
 public final class ConfigurationConstants {
 
     /** Server address property name. */
-    public static final String ADDRESS_PROPERTY = "suncertify.startup"
-            + ".server-address";
+    public static final String ADDRESS_PROPERTY = "suncertify.server-address";
+
+    /** Database file path property name. */
+    public static final String PATH_PROPERTY = "suncertify.database-file-path";
+
+    /** Server port property name. */
+    public static final String PORT_PROPERTY = "suncertify.server-port";
 
     // TODO: use localhost?
     /** Default value used for the server's address. */
@@ -28,13 +33,6 @@ public final class ConfigurationConstants {
 
     /** Default value used for the server's port number. */
     public static final String DEFAULT_PORT = "1099";
-
-    /** Database file path property name. */
-    public static final String PATH_PROPERTY = "suncertify.startup"
-            + ".database-file-path";
-
-    /** Server port property name. */
-    public static final String PORT_PROPERTY = "suncertify.startup.server-port";
 
     private ConfigurationConstants() {
         // Disallow instantiation.

@@ -17,9 +17,9 @@ import java.rmi.RemoteException;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
+import suncertify.presentation.ClientConfigurationDialog;
+import suncertify.presentation.ConfigurationView;
 import suncertify.service.BrokerService;
-import suncertify.startup.ClientConfigurationDialog;
-import suncertify.startup.ConfigurationView;
 
 
 /**

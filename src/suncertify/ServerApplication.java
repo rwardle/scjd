@@ -10,10 +10,10 @@ package suncertify;
 import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
 
+import suncertify.presentation.ConfigurationView;
+import suncertify.presentation.ServerConfigurationDialog;
 import suncertify.service.RemoteBrokerService;
 import suncertify.service.RemoteBrokerServiceImpl;
-import suncertify.startup.ConfigurationView;
-import suncertify.startup.ServerConfigurationDialog;
 
 
 /**
