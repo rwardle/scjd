@@ -1,5 +1,5 @@
 /*
- * ConfigurationConstants.java
+ * ApplicationConstants.java
  *
  * Created on 05-Jun-2005
  */
@@ -8,11 +8,11 @@
 package suncertify;
 
 /**
- * Constants for use in database configuration.
- * 
+ * Application constants.
+ *
  * @author Richard Wardle
  */
-public final class ConfigurationConstants {
+public final class ApplicationConstants {
 
     /** Server address property name. */
     public static final String ADDRESS_PROPERTY = "suncertify.server-address";
@@ -34,7 +34,10 @@ public final class ConfigurationConstants {
     /** Default value used for the server's port number. */
     public static final String DEFAULT_PORT = "1099";
 
-    private ConfigurationConstants() {
+    /** Name under which the remote service object is registered with RMI. */
+    public static final String REMOTE_BROKER_SERVICE_NAME = "BrokerService";
+
+    private ApplicationConstants() {
         // Disallow instantiation.
     }
 }
