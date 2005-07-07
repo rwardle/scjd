@@ -23,9 +23,13 @@ public final class StandaloneApplication extends AbstractGuiApplication {
 
     /**
      * Creates a new instance of <code>StandaloneApplication</code>.
+     *
+     * @param configuration The application configuration.
+     * @throws NullPointerException If the <code>configuration</code> parameter
+     * is <code>null</code>.
      */
-    public StandaloneApplication() {
-        super();
+    public StandaloneApplication(Configuration configuration) {
+        super(configuration);
     }
 
     /**
@@ -38,10 +42,10 @@ public final class StandaloneApplication extends AbstractGuiApplication {
     /**
      * {@inheritDoc}
      */
-    protected BrokerService getBrokerService(Configuration configuration) {
+    protected BrokerService getBrokerService() {
         // TODO: If BrokerServiceImpl not singleton should we do something
         // here to prevent multiple instances?
         return new BrokerServiceImpl(
-                new Data(configuration.getDatabaseFilePath()));
+                new Data(getConfiguration().getDatabaseFilePath()));
     }
 }

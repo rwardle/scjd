@@ -16,21 +16,15 @@ package suncertify;
 public interface Application {
 
     /**
-     * Configures the application. Loads any existing configuration from
-     * persistent storage, presents it to the user for modification, and saves
-     * it to persistent storage.
+     * Configures the application.
      *
-     * @param configuration A <code>Configuration</code> object in which the
-     * result of the configuration process will be stored.
      * @return <code>true</code> if the user completed the configuration
      * process, <code>false</code> otherwise.
      */
-    boolean configure(Configuration configuration);
+    boolean configure();
 
     /**
-     * Runs the application using the configuration information supplied.
-     *
-     * @param configuration The application configuration.
+     * Runs the application.
      */
-    void run(Configuration configuration);
+    void run();
 }

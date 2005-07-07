@@ -74,27 +74,27 @@ public final class Main {
         Main main = new Main(args);
         ApplicationMode mode = main.getApplicationMode();
 
+        // The properties file is expected to be in the working directory
+        Configuration configuration = new Configuration(
+                "suncertify.properties");
+        
         Application application = null;
         if (mode == ApplicationMode.CLIENT) {
-            application = new ClientApplication();
+            application = new ClientApplication(configuration);
         } else if (mode == ApplicationMode.SERVER) {
-            application = new ServerApplication();
+            application = new ServerApplication(configuration);
         } else if (mode == ApplicationMode.STANDALONE) {
-            application = new StandaloneApplication();
+            application = new StandaloneApplication(configuration);
         } else {
             assert false : mode;
         }
 
-        // The properties file is expected to be in the working directory
-        Configuration configuration = new Configuration(
-                "suncertify.properties");
-
-        if (!application.configure(configuration)) {
+        if (!application.configure()) {
             Main.logger.info("User cancelled configuration dialog, exiting "
                     + "application");
             System.exit(0);
         }
 
-        application.run(configuration);
+        application.run();
     }
 }

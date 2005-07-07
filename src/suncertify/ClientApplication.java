@@ -23,9 +23,13 @@ public final class ClientApplication extends AbstractGuiApplication {
 
     /**
      * Creates a new instance <code>ClientApplication</code>.
+     *
+     * @param configuration The application configuration.
+     * @throws NullPointerException If the <code>configuration</code> parameter
+     * is <code>null</code>.
      */
-    public ClientApplication() {
-        super();
+    public ClientApplication(Configuration configuration) {
+        super(configuration);
     }
 
     /**
@@ -38,11 +42,11 @@ public final class ClientApplication extends AbstractGuiApplication {
     /**
      * {@inheritDoc}
      */
-    protected BrokerService getBrokerService(Configuration configuration) {
+    protected BrokerService getBrokerService() {
         try {
             return (BrokerService) Naming.lookup("//"
-                    + configuration.getServerAddress() + ":"
-                    + configuration.getServerPort() + "/"
+                    + getConfiguration().getServerAddress() + ":"
+                    + getConfiguration().getServerPort() + "/"
                     + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME);
         } catch (Exception e) {
             // TODO: Implement proper exception handling

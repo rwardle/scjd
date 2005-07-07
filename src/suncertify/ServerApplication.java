@@ -26,9 +26,13 @@ public final class ServerApplication extends AbstractApplication {
 
     /**
      * Creates a new instance of <code>ServerApplication</code>.
+     *
+     * @param configuration The application configuration.
+     * @throws NullPointerException If the <code>configuration</code> parameter
+     * is <code>null</code>.
      */
-    public ServerApplication() {
-        super();
+    public ServerApplication(Configuration configuration) {
+        super(configuration);
     }
 
     /**
@@ -44,14 +48,16 @@ public final class ServerApplication extends AbstractApplication {
      * Starts the RMI registry and binds the <code>BrokerService</code> object
      * into it.
      */
-    public void run(Configuration configuration) {
+    public void run() {
         try {
-            LocateRegistry.createRegistry(Integer.parseInt(configuration
-                    .getServerPort()));
+            LocateRegistry.createRegistry(
+                    Integer.parseInt(getConfiguration().getServerPort()));
             RemoteBrokerService service = new RemoteBrokerServiceImpl(
-                    new Data(configuration.getDatabaseFilePath()));
-            Naming.rebind("//127.0.0.1:" + configuration.getServerPort() + "/"
-                    + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME, service);
+                    new Data(getConfiguration().getDatabaseFilePath()));
+            Naming.rebind(
+                    "//127.0.0.1:" + getConfiguration().getServerPort() + "/"
+                            + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME,
+                    service);
         } catch (Exception e) {
             // TODO: Implement proper exception handling
             throw new RuntimeException(e);

@@ -29,33 +29,56 @@ public abstract class AbstractApplication implements Application {
 
     private static Logger logger = Logger
             .getLogger(AbstractApplication.class.getName());
+    private Configuration configuration;
 
     /**
      * Creates a new instance of <code>AbstractApplication</code>.
+     *
+     * @param configuration The application configuration.
+     * @throws NullPointerException If the <code>configuration</code> parameter
+     * is <code>null</code>.
      */
-    public AbstractApplication() {
-        super();
+    public AbstractApplication(Configuration configuration) {
+        if (configuration == null) {
+            throw new NullPointerException(
+                    "configuration parameter must be non-null");
+        }
+
+        this.configuration = configuration;
+    }
+
+    /**
+     * Gets the configuration.
+     *
+     * @return The configuration.
+     */
+    protected final Configuration getConfiguration() {
+        return this.configuration;
     }
 
     /**
      * {@inheritDoc}
      * <p/>
+     * Loads any existing configuration from persistent storage, presents it to
+     * the user for modification, and saves it to persistent storage.
+     * <p/>
      * This implementation indirectly calls the
      * <code>createConfigurationView</code> method to get the configuration view
      * to display to the user.
      */
-    public final boolean configure(Configuration configuration) {
-        configuration.loadConfiguration();
-        int returnStatus = showConfigurationDialog(configuration);
+    public final boolean configure() {
+        getConfiguration().loadConfiguration();
+        int returnStatus = showConfigurationDialog();
         if (returnStatus == ConfigurationPresenter.RETURN_OK) {
             try {
-                configuration.saveConfiguration();
+                getConfiguration().saveConfiguration();
             } catch (IOException e) {
                 AbstractApplication.logger.log(Level.WARNING,
                         "Unable to save configuration properties file at: '"
-                                + configuration.getPropertiesFilePath() + "'",
+                                + getConfiguration().getPropertiesFilePath()
+                                + "'",
                         e);
-                showSaveConfigurationWarning(configuration
+                showSaveConfigurationWarning(getConfiguration()
                         .getPropertiesFilePath());
             }
 
@@ -65,12 +88,12 @@ public abstract class AbstractApplication implements Application {
         return false;
     }
 
-    private int showConfigurationDialog(Configuration configuration) {
+    private int showConfigurationDialog() {
         final ConfigurationView dialog = createConfigurationView();
         dialog.initialiseComponents();
 
         ConfigurationPresenter presenter = new ConfigurationPresenter(
-                configuration, dialog);
+                getConfiguration(), dialog);
 
         try {
             EventQueue.invokeAndWait(new Runnable() {

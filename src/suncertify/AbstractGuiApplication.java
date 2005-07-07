@@ -30,9 +30,13 @@ public abstract class AbstractGuiApplication extends AbstractApplication {
 
     /**
      * Creates a new instance of <code>AbstractGuiApplication</code>.
+     *
+     * @param configuration The application configuration.
+     * @throws NullPointerException If the <code>configuration</code> parameter
+     * is <code>null</code>.
      */
-    public AbstractGuiApplication() {
-        super();
+    public AbstractGuiApplication(Configuration configuration) {
+        super(configuration);
     }
 
     /**
@@ -43,8 +47,8 @@ public abstract class AbstractGuiApplication extends AbstractApplication {
      * This implementation calls the <code>getBrokerService</code> method to
      * obtain the broker service object used in the main application.
      */
-    public final void run(Configuration configuration) {
-        BrokerService brokerService = getBrokerService(configuration);
+    public final void run() {
+        BrokerService brokerService = getBrokerService();
         final MainView view = new MainFrame();
         view.initialiseComponents();
         new MainPresenter(brokerService, view);
@@ -69,9 +73,7 @@ public abstract class AbstractGuiApplication extends AbstractApplication {
      * <p/>
      * This method is called from the <code>run</code> method.
      *
-     * @param configuration The configuration.
      * @return The broker service object.
      */
-    protected abstract BrokerService getBrokerService(
-                Configuration configuration);
+    protected abstract BrokerService getBrokerService();
 }
