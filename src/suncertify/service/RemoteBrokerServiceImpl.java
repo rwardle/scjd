@@ -11,6 +11,8 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.logging.Logger;
 
+import suncertify.db.DBMain;
+
 
 /**
  *
@@ -30,15 +32,13 @@ public class RemoteBrokerServiceImpl extends UnicastRemoteObject implements
     /**
      * Creates a new instance of RemoteBrokerServiceImpl.
      */
-    public RemoteBrokerServiceImpl(String databaseFilePath) throws
+    public RemoteBrokerServiceImpl(DBMain data) throws
             RemoteException {
-        super();
-        this.service = new BrokerServiceImpl(databaseFilePath);
-        RemoteBrokerServiceImpl.logger.info("Database file path: '"
-                + databaseFilePath + "'");
+        // TODO: Check for null
+        this.service = new BrokerServiceImpl(data);
     }
 
     public String getHelloWorld() {
-        return this.service.getHelloWorld();
+        return "Remote " + this.service.getHelloWorld();
     }
 }

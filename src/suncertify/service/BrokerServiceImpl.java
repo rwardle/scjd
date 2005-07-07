@@ -9,6 +9,8 @@ package suncertify.service;
 
 import java.util.logging.Logger;
 
+import suncertify.db.DBMain;
+
 
 /**
  *
@@ -20,10 +22,12 @@ public final class BrokerServiceImpl implements BrokerService {
 
     private static Logger logger = Logger.getLogger(BrokerServiceImpl.class
             .getName());
+    
+    private DBMain data;
 
-    public BrokerServiceImpl(String databaseFilePath) {
-        BrokerServiceImpl.logger.info("Database file path: '"
-                + databaseFilePath + "'");
+    public BrokerServiceImpl(DBMain data) {
+        // TODO: Check for null
+        this.data = data;
     }
 
     public String getHelloWorld() {
