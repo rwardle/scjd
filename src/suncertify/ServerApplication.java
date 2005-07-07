@@ -10,6 +10,7 @@ package suncertify;
 import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
 
+import suncertify.db.Data;
 import suncertify.presentation.ConfigurationView;
 import suncertify.presentation.ServerConfigurationDialog;
 import suncertify.service.RemoteBrokerService;
@@ -44,13 +45,11 @@ public final class ServerApplication extends AbstractApplication {
      * into it.
      */
     public void run(Configuration configuration) {
-        // TODO:
-
         try {
             LocateRegistry.createRegistry(Integer.parseInt(configuration
                     .getServerPort()));
             RemoteBrokerService service = new RemoteBrokerServiceImpl(
-                    configuration.getDatabaseFilePath());
+                    new Data(configuration.getDatabaseFilePath()));
             Naming.rebind("//127.0.0.1:" + configuration.getServerPort() + "/"
                     + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME, service);
         } catch (Exception e) {
