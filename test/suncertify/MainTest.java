@@ -181,6 +181,24 @@ public final class MainTest extends MockObjectTestCase {
     }
 
     /**
+     * Should exit the application gracefully when the configure method throws
+     * an <code>ApplicationException</code> and the error dialog cannot be
+     * displayed.
+     */
+    public void testConfigureApplicationWhenErrorDialogThrowsException() {
+        this.mockApplication.expects(once()).method("configure")
+                .with(isA(File.class)).will(throwException(
+                        new ApplicationException()));
+        this.mockApplication.expects(once()).method("showErrorDialog")
+                .with(isA(String.class))
+                .will(throwException(new ApplicationException()));
+        this.mockApplication.expects(once()).method("exit").with(eq(1));
+        this.main.configureApplication(
+                (Application) this.mockApplication.proxy(),
+                this.dummyPropertiesFilePath);
+    }
+
+    /**
      * Should not exit the application when the configuration is okayed by the
      * user.
      */
@@ -238,6 +256,22 @@ public final class MainTest extends MockObjectTestCase {
                 .will(throwException(new ApplicationException()));
         this.mockApplication.expects(once()).method("showErrorDialog")
                 .with(isA(String.class));
+        this.mockApplication.expects(once()).method("exit")
+                .with(eq(1));
+        this.main.runApplication((Application) this.mockApplication.proxy());
+    }
+
+    /**
+     * Should exit the application gracefully when the run method throws an
+     * <code>ApplicationException</code> and the error dialog cannot be
+     * displayed.
+     */
+    public void testRunApplicationWhenErrorDialogThrowsException() {
+        this.mockApplication.expects(once()).method("run")
+                .will(throwException(new ApplicationException()));
+        this.mockApplication.expects(once()).method("showErrorDialog")
+                .with(isA(String.class))
+                .will(throwException(new ApplicationException()));
         this.mockApplication.expects(once()).method("exit")
                 .with(eq(1));
         this.main.runApplication((Application) this.mockApplication.proxy());

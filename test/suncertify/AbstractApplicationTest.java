@@ -216,6 +216,52 @@ public final class AbstractApplicationTest extends MockObjectTestCase {
         this.application.configure(new File(this.dummyPropertiesFilePath));
     }
 
+    /**
+     * Should throw an <code>ApplicationException</code> when the
+     * <code>loadConfiguration</code> method throws an <code>IOException</code>.
+     *
+     * @throws IOException If the dummy properties file cannot be created.
+     */
+    public void testConfigureWhenLoadConfigurationFails() throws IOException {
+        setUpDefaultExpectations();
+        File propertiesFile = new File(this.dummyPropertiesFilePath);
+        propertiesFile.createNewFile();
+        this.mockConfiguration.expects(once()).method("loadConfiguration")
+                .with(isA(InputStream.class))
+                .will(throwException(new IOException()));
+        this.mockPresenter.expects(never()).method(eq("getReturnStatus"));
+        this.mockConfiguration.expects(never()).method("saveConfiguration");
+
+        try {
+            this.application.configure(propertiesFile);
+            fail("ApplicationException expected");
+        } catch (ApplicationException e) {
+            AbstractApplicationTest.logger.info(
+                    "Caught expected ApplicationException: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Should throw an <code>ApplicationException</code> when the
+     * <code>saveConfiguration</code> method throws an <code>IOException</code>.
+     */
+    public void testConfigureWhenSaveConfigurationFails() {
+        setUpDefaultExpectations();
+        this.mockPresenter.expects(once()).method(eq("getReturnStatus"))
+                .will(returnValue(ConfigurationPresenter.RETURN_OK));
+        this.mockConfiguration.expects(once()).method("saveConfiguration")
+                .with(isA(OutputStream.class))
+                .will(throwException(new IOException()));
+
+        try {
+            this.application.configure(new File(this.dummyPropertiesFilePath));
+            fail("ApplicationException expected");
+        } catch (ApplicationException e) {
+            AbstractApplicationTest.logger.info(
+                    "Caught expected ApplicationException: " + e.getMessage());
+        }
+    }
+
     private class StubAbstractApplication extends AbstractApplication {
 
         StubAbstractApplication(Configuration configuration) {
