@@ -31,5 +31,5 @@
     =====================
     -->
     <target name="cruise-build"
-            depends="clean,compile,rmic,jar,-pre-test-run,junit-xml,checkstyle-xml,cobertura-report,javadoc"/>
+            depends="clean,compile,rmic,jar,compile-test,-pre-test-run,junit-xml,checkstyle-xml,cobertura-report,javadoc"/>
 </project>
