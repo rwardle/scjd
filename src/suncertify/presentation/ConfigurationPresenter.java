@@ -18,7 +18,7 @@ import suncertify.Configuration;
  *
  * @author Richard Wardle
  */
-public final class ConfigurationPresenter {
+public class ConfigurationPresenter {
 
     /** Indicates that the Cancel button was clicked in the view. */
     public static final int RETURN_CANCEL = 0;
@@ -48,9 +48,23 @@ public final class ConfigurationPresenter {
         this.configuration = configuration;
         this.view = view;
         this.returnStatus = ConfigurationPresenter.RETURN_CANCEL;
+    }
+
+    /**
+     * Initialises the view.
+     */
+    public void initialiseView() {
+        this.view.initialiseComponents();
         addOKButtonListener();
         addCancelButtonListener();
         loadViewFromModel();
+    }
+
+    /**
+     * Realises the view.
+     */
+    public void realiseView() {
+        this.view.realise();
     }
 
     /**
@@ -70,7 +84,7 @@ public final class ConfigurationPresenter {
         });
     }
 
-    void okButtonActionPerformed() {
+    final void okButtonActionPerformed() {
         this.returnStatus = ConfigurationPresenter.RETURN_OK;
         saveViewToModel();
         this.view.close();
@@ -84,7 +98,7 @@ public final class ConfigurationPresenter {
         });
     }
 
-    void cancelButtonActionPerformed() {
+    final void cancelButtonActionPerformed() {
         this.view.close();
     }
 

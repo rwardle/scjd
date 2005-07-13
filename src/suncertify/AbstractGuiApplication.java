@@ -44,36 +44,55 @@ public abstract class AbstractGuiApplication extends AbstractApplication {
      * <p/>
      * Displays the main application window.
      * <p/>
-     * This implementation calls the <code>getBrokerService</code> method to
-     * obtain the broker service object used in the main application.
+     * This implementation calls the <code>createMainPresenter</code> method to
+     * obtain the main application presenter.
      */
-    public final void run() {
-        BrokerService brokerService = getBrokerService();
-        final MainView view = new MainFrame();
-        view.initialiseComponents();
-        new MainPresenter(brokerService, view);
+    public final void run() throws ApplicationException {
+        final MainPresenter presenter = createMainPresenter();
+        presenter.initialiseView();
 
         try {
             EventQueue.invokeAndWait(new Runnable() {
                 public void run() {
-                    view.realiseView();
+                    presenter.realiseView();
                 }
             });
         } catch (InterruptedException e) {
             AbstractGuiApplication.logger.log(Level.WARNING,
                     "Main frame thread interrupted", e);
         } catch (InvocationTargetException e) {
-            // TODO: Decide on exception handling
-            e.printStackTrace();
+            throw new ApplicationException("Error in application main GUI", e);
         }
     }
 
     /**
-     * Gets the broker service using the supplied configuration information.
+     * Creates the main application presenter.
      * <p/>
      * This method is called from the <code>run</code> method.
+     * <p/>
+     * This implementation calls the <code>getBrokerService</code> method to get
+     * the broker service.
+     *
+     * @return The presenter.
+     * @throws ApplicationException If the presenter cannot be created.
+     */
+    protected MainPresenter createMainPresenter() throws ApplicationException {
+        return new MainPresenter(getBrokerService(), createMainView());
+    }
+
+    /**
+     * Gets the broker service.
+     * <p/>
+     * This method is called from the <code>createMainPresenter</code> method.
      *
      * @return The broker service object.
+     * @throws ApplicationException If there is an error getting the broker
+     * service.
      */
-    protected abstract BrokerService getBrokerService();
+    protected abstract BrokerService getBrokerService() throws
+            ApplicationException;
+
+    private MainView createMainView() {
+        return new MainFrame();
+    }
 }

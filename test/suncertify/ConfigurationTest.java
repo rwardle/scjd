@@ -7,15 +7,14 @@
 
 package suncertify;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import junit.framework.TestCase;
+import org.jmock.Mock;
+import org.jmock.cglib.MockObjectTestCase;
 
 
 /**
@@ -23,246 +22,264 @@ import junit.framework.TestCase;
  *
  * @author Richard Wardle
  */
-public final class ConfigurationTest extends TestCase {
+public final class ConfigurationTest extends MockObjectTestCase {
 
     private static Logger logger = Logger.getLogger(ConfigurationTest.class
             .getName());
 
+    private Configuration configuration;
+    private Mock mockProperties;
+    private String dummyServerPort;
+    private String dummyDatabaseFilePath;
+    private String dummyServerAddress;
+
     /**
      * Creates a new instance of <code>ConfigurationTest</code>.
-     *
-     * @param name The test case name.
      */
-    public ConfigurationTest(String name) {
-        super(name);
+    public ConfigurationTest() {
+        super();
+        this.dummyServerPort = "dummy-server-port";
+        this.dummyDatabaseFilePath = "dummy-database-file-path";
+        this.dummyServerAddress = "dummy-server-address";
     }
 
     /**
-     * Tests {@link Configuration#Configuration(String)} with a
-     * <code>null</code> properties file path.
+     * {@inheritDoc}
      */
-    public void testNullPropertiesFilePath() {
+    protected void setUp() throws Exception {
+        super.setUp();
+        this.mockProperties = mock(Properties.class);
+        this.configuration = new Configuration(
+                (Properties) this.mockProperties.proxy());
+    }
+
+    /**
+     * Tests {@link Configuration#Configuration(Properties)} with a
+     * <code>null</code> properties object.
+     */
+    public void testConstructorWithNullProperties() {
         try {
             new Configuration(null);
-            fail("IllegalArgumentException expected when properties file path "
-                    + "is null");
-        } catch (IllegalArgumentException e) {
+            fail("NullPointerException expected when properties object is "
+                    + "null");
+        } catch (NullPointerException e) {
             ConfigurationTest.logger.info("Caught expected "
-                    + "IllegalArgumentException: " + e.getMessage());
+                    + "NullPointerException: " + e.getMessage());
         }
     }
 
     /**
-     * Tests {@link Configuration#Configuration(String)} with an empty string
-     * properties file path.
-     */
-    public void testEmptyStringPropertiesFilePath() {
-        try {
-            new Configuration("");
-            fail("IllegalArgumentException expected when properties file path "
-                    + "is an empty string");
-        } catch (IllegalArgumentException e) {
-            ConfigurationTest.logger.info("Caught expected "
-                    + "IllegalArgumentException: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Tests {@link Configuration#Configuration(String)} with a valid
-     * properties file path string.
-     */
-    public void testValidPropertiesFilePath() {
-        Configuration configuration = new Configuration("valid.properties");
-        assertDefaultConfiguration(configuration);
-    }
-
-    /**
-     * Tests {@link Configuration#loadConfiguration} with a properties file
-     * containing all keys and values.
+     * Should throw <code>NullPointerException</code> if the input stream is
+     * <code>null</code>.
      *
-     * @throws IOException If the properties file cannot be read.
+     * @throws IOException If there is an IO error.
+     */
+    public void testLoadConfigurationNullStream() throws IOException {
+        try {
+            this.mockProperties.expects(never()).method("load");
+            this.configuration.loadConfiguration(null);
+            fail("NullPointerException expected");
+        } catch (NullPointerException e) {
+            ConfigurationTest.logger.info(
+                    "Caught expected NullPointerException: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Should call the <code>load</code> method on the properties object.
+     *
+     * @throws IOException If there is an IO error.
      */
     public void testLoadConfiguration() throws IOException {
-        URL url = getResourceUrl("suncertify/suncertify.properties");
-        Properties properties = loadTestProperties(url.getPath());
-        Configuration configuration = new Configuration(url.getPath());
-        assertTrue(configuration.loadConfiguration());
-
-        assertEquals("Server address comparison,",
-                properties.getProperty(ApplicationConstants
-                        .ADDRESS_PROPERTY),
-                configuration.getServerAddress());
-        assertEquals("Server port comparison,",
-                properties.getProperty(ApplicationConstants
-                        .PORT_PROPERTY),
-                configuration.getServerPort());
-        assertEquals("Database file path comparison,",
-                properties.getProperty(ApplicationConstants
-                        .PATH_PROPERTY),
-                configuration.getDatabaseFilePath());
+        Mock mockInputStream = mock(InputStream.class);
+        this.mockProperties.expects(once()).method("load")
+                .with(eq(mockInputStream.proxy())).isVoid();
+        this.configuration.loadConfiguration(
+                (InputStream) mockInputStream.proxy());
     }
 
     /**
-     * Tests {@link Configuration#loadConfiguration} with a properties file
-     * in which all properties are either missing or empty.
+     * Should throw <code>IOException</code> if the properties cannot be read.
      */
-    public void testLoadConfigurationMissingEmptyProperties() {
-        URL url = getResourceUrl("suncertify/missingempty.properties");
-        Configuration configuration = new Configuration(url.getPath());
-        assertTrue(configuration.loadConfiguration());
-        assertDefaultConfiguration(configuration);
-    }
-
-    /**
-     * Tests {@link Configuration#loadConfiguration} with a properties file
-     * that doesn't exist.
-     */
-    public void testPropertiesFileDoesntExist() {
-        String filename = "doesntexist.properties";
-        if (new File(filename).exists()) {
-            throw new IllegalStateException("Unexpected file exists at '"
-                    + filename + "'; remove file to allow correct test run");
-        }
-
-        Configuration configuration = new Configuration(filename);
-        assertFalse(configuration.loadConfiguration());
-        assertDefaultConfiguration(configuration);
-    }
-
-    /**
-     * Tests {@link Configuration#saveConfiguration} with a properties file
-     * that already exists.
-     *
-     * @throws IOException If the test file cannot be created.
-     */
-    public void testSaveConfigurationExistingFile() throws IOException {
-        String fileName = "test.properties";
-        File file = new File(fileName);
-        createFile(fileName, file);
-
+    public void testLoadConfigurationReadError() {
         try {
-            assertExpectedConfigurationAfterSave(fileName);
-        } finally {
-            deleteFile(file);
-        }
-    }
-
-    /**
-     * Tests {@link Configuration#saveConfiguration} with a properties file
-     * that already exists and is readonly.
-     *
-     * @throws IOException If the test file cannot be created.
-     */
-    public void testSaveConfigurationExistingFileReadOnly() throws IOException {
-        String fileName = "test.properties";
-        File file = new File(fileName);
-        createFile(fileName, file);
-
-        if (!file.setReadOnly()) {
-            throw new IllegalStateException("Unable to set read-only on file "
-                    + "in working directory called: '" + fileName + "'");
-        }
-
-        try {
-            Configuration configuration = new Configuration(fileName);
-            configuration.saveConfiguration();
-            fail("IOException expected when properties file is read only");
+            Mock mockInputStream = mock(InputStream.class);
+            this.mockProperties.expects(once()).method("load")
+                    .with(eq(mockInputStream.proxy()))
+                    .will(throwException(
+                            new IOException("Error loading properties")));
+            this.configuration.loadConfiguration(
+                    (InputStream) mockInputStream.proxy());
+            fail("IOException expected");
         } catch (IOException e) {
             ConfigurationTest.logger.info("Caught expected IOException: "
                     + e.getMessage());
-        } finally {
-            deleteFile(file);
         }
     }
 
     /**
-     * Tests {@link Configuration#saveConfiguration} with a file that doesn't
-     * yet exist.
+     * Should throw <code>NullPointerException</code> if the output stream is
+     * <code>null</code>.
      *
-     * @throws IOException If the file cannot be created.
+     * @throws IOException If there is an IO error.
      */
-    public void testSaveConfigurationNewFile() throws IOException {
-        String fileName = "test.properties";
+    public void testSaveConfigurationNullStream() throws IOException {
         try {
-            assertExpectedConfigurationAfterSave(fileName);
-        } finally {
-            deleteFile(new File(fileName));
+            this.mockProperties.expects(never()).method("save");
+            this.configuration.saveConfiguration(null);
+            fail("NullPointerException expected");
+        } catch (NullPointerException e) {
+            ConfigurationTest.logger.info(
+                    "Caught expected NullPointerException: " + e.getMessage());
         }
     }
 
-    private void assertDefaultConfiguration(Configuration config) {
-        assertEquals("Server address comparison,",
-                ApplicationConstants.DEFAULT_ADDRESS,
-                config.getServerAddress());
-        assertEquals("Server port comparison,",
-                ApplicationConstants.DEFAULT_PORT, config.getServerPort());
-        assertEquals("Database file path comparison,",
-                ApplicationConstants.DEFAULT_PATH,
-                config.getDatabaseFilePath());
+    /**
+     * Should call the <code>store</code> method on the properties object.
+     *
+     * @throws IOException If there is an IO error.
+     */
+    public void testSaveConfiguration() throws IOException {
+        Mock mockOutputStream = mock(OutputStream.class);
+        this.mockProperties.expects(once()).method("store")
+                .with(eq(mockOutputStream.proxy()), isA(String.class)).isVoid();
+        this.configuration.saveConfiguration(
+                (OutputStream) mockOutputStream.proxy());
     }
 
-    private void assertExpectedConfigurationAfterSave(String fileName) throws
-            IOException {
-        String expectedAddress = "address";
-        String expectedPort = "port";
-        String expectedPath = "path";
-
-        Configuration configuration = new Configuration(fileName);
-        configuration.setServerAddress(expectedAddress);
-        configuration.setServerPort(expectedPort);
-        configuration.setDatabaseFilePath(expectedPath);
-        configuration.saveConfiguration();
-
-        Properties props = loadTestProperties(fileName);
-        assertEquals("Server address comparison,", expectedAddress,
-                props.getProperty(ApplicationConstants.ADDRESS_PROPERTY));
-        assertEquals("Server port comparison,", expectedPort,
-                props.getProperty(ApplicationConstants.PORT_PROPERTY));
-        assertEquals("Database file path comparison,", expectedPath,
-                props.getProperty(ApplicationConstants.PATH_PROPERTY));
-    }
-
-    private void createFile(String fileName, File file) throws IOException {
-        if (!file.createNewFile()) {
-            throw new IllegalStateException(
-                    "Unable to create file in working directory called: '"
-                            + fileName + "'");
-        }
-    }
-
-    private void deleteFile(File file) {
-        if (!file.delete()) {
-            System.err.println("Unable to delete test file at: '"
-                    + file.getPath() + "'");
-        }
-    }
-
-    private URL getResourceUrl(String resourceName) {
-        URL url = ClassLoader.getSystemResource(resourceName);
-        if (url == null) {
-            throw new IllegalStateException("Missing resource at '"
-                    + resourceName
-                    + "'; resource is required for correct test run");
-        }
-        return url;
-    }
-
-    private Properties loadTestProperties(String path) throws IOException {
-        Properties properties = new Properties();
-        BufferedInputStream in = null;
+    /**
+     * Should throw an <code>IOException</code> if the properties file cannot
+     * be written.
+     */
+    public void testSaveConfigurationWriteError() {
         try {
-            in = new BufferedInputStream(new FileInputStream(path));
-            properties.load(in);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            Mock mockOutputStream = mock(OutputStream.class);
+            this.mockProperties.expects(once()).method("store")
+                    .with(eq(mockOutputStream.proxy()), isA(String.class))
+                    .will(throwException(
+                            new IOException("Error storing properties")));
+            this.configuration.saveConfiguration(
+                    (OutputStream) mockOutputStream.proxy());
+            fail("IOException expected");
+        } catch (IOException e) {
+            ConfigurationTest.logger.info("Caught expected IOException: "
+                    + e.getMessage());
         }
+    }
 
-        return properties;
+    /**
+     * Should call the <code>getProperty</code> method on the properties object
+     * with the database file path property name.
+     */
+    public void testGetDatabaseFilePath() {
+        this.mockProperties.expects(once()).method("getProperty")
+                .with(eq(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY))
+                .will(returnValue(this.dummyDatabaseFilePath));
+        assertEquals(this.dummyDatabaseFilePath,
+                this.configuration.getDatabaseFilePath());
+    }
+
+    /**
+     * Should call the <code>setProperty</code> method on the properties object
+     * with the database file path property name and new value.
+     */
+    public void testSetDatabaseFilePath() {
+        this.mockProperties.expects(once()).method("setProperty")
+                .with(eq(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY),
+                        eq(this.dummyDatabaseFilePath))
+                .isVoid();
+        this.configuration.setDatabaseFilePath(this.dummyDatabaseFilePath);
+    }
+
+    /**
+     * Should throw <code>NullPointerException</code> when argument is
+     * <code>null</code>.
+     */
+    public void testSetDatabaseFilePathWithNull() {
+        try {
+            this.mockProperties.expects(never()).method("setProperty");
+            this.configuration.setDatabaseFilePath(null);
+            fail("NullPointerException expected");
+        } catch (NullPointerException e) {
+            ConfigurationTest.logger.info(
+                    "Caught expected NullPointerException: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Should call the <code>getProperty</code> method on the properties object
+     * with the server address property name.
+     */
+    public void testGetServerAddress() {
+        this.mockProperties.expects(once()).method("getProperty")
+                .with(eq(ApplicationConstants.SERVER_ADDRESS_PROPERTY))
+                .will(returnValue(this.dummyServerAddress));
+        assertEquals(this.dummyServerAddress,
+                this.configuration.getServerAddress());
+    }
+
+    /**
+     * Should call the <code>setProperty</code> method on the properties object
+     * with the server address property name and new value.
+     */
+    public void testSetServerAddress() {
+        this.mockProperties.expects(once()).method("setProperty")
+                .with(eq(ApplicationConstants.SERVER_ADDRESS_PROPERTY),
+                        eq(this.dummyServerAddress))
+                .isVoid();
+        this.configuration.setServerAddress(this.dummyServerAddress);
+    }
+
+    /**
+     * Should throw <code>NullPointerException</code> when argument is
+     * <code>null</code>.
+     */
+    public void testSetServerAddressWithNull() {
+        try {
+            this.mockProperties.expects(never()).method("setProperty");
+            this.configuration.setServerAddress(null);
+            fail("NullPointerException expected");
+        } catch (NullPointerException e) {
+            ConfigurationTest.logger.info(
+                    "Caught expected NullPointerException: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Should call the <code>getProperty</code> method on the properties object
+     * with the server port property name.
+     */
+    public void testGetServerPort() {
+        this.mockProperties.expects(once()).method("getProperty")
+                .with(eq(ApplicationConstants.SERVER_PORT_PROPERTY))
+                .will(returnValue(this.dummyServerPort));
+        assertEquals(this.dummyServerPort, this.configuration.getServerPort());
+    }
+
+    /**
+     * Should call the <code>setProperty</code> method on the properties object
+     * with the server port property name and new value.
+     */
+    public void testSetServerPort() {
+        this.mockProperties.expects(once()).method("setProperty")
+                .with(eq(ApplicationConstants.SERVER_PORT_PROPERTY),
+                        eq(this.dummyServerPort))
+                .isVoid();
+        this.configuration.setServerPort(this.dummyServerPort);
+    }
+
+    /**
+     * Should throw <code>NullPointerException</code> when argument is
+     * <code>null</code>.
+     */
+    public void testSetServerPortWithNull() {
+        try {
+            this.mockProperties.expects(never()).method("setProperty");
+            this.configuration.setServerPort(null);
+            fail("NullPointerException expected");
+        } catch (NullPointerException e) {
+            ConfigurationTest.logger.info(
+                    "Caught expected NullPointerException: " + e.getMessage());
+        }
     }
 }

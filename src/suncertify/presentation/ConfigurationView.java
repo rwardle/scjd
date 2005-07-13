@@ -27,7 +27,7 @@ public interface ConfigurationView {
     /**
      * Realises the view and its components.
      */
-    void realiseView();
+    void realise();
 
     /**
      * Closes the view.

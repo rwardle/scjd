@@ -7,9 +7,12 @@
 
 package suncertify;
 
+import java.io.File;
+import java.util.Properties;
 import java.util.logging.Logger;
 
-import junit.framework.TestCase;
+import org.jmock.Mock;
+import org.jmock.cglib.MockObjectTestCase;
 
 
 /**
@@ -17,29 +20,42 @@ import junit.framework.TestCase;
  *
  * @author Richard Wardle
  */
-public final class MainTest extends TestCase {
+public final class MainTest extends MockObjectTestCase {
 
     private static Logger logger = Logger.getLogger(MainTest.class.getName());
 
+    private Main main;
+    private Mock mockConfiguration;
+    private Mock mockApplication;
+    private String dummyPropertiesFilePath;
+
     /**
      * Creates a new instance of <code>MainTest</code>.
-     *
-     * @param name The test case name.
      */
-    public MainTest(String name) {
-        super(name);
+    public MainTest() {
+        super();
     }
 
     /**
-     * Tests {@link Main#getApplicationMode()} when the command-line arguments
-     * are <code>null</code>.
+     * {@inheritDoc}
      */
-    public void testGetApplicationModeNullArgs() {
+    protected void setUp() {
+        this.dummyPropertiesFilePath = "dummy-properties-file-path";
+        this.main = new Main();
+        this.mockConfiguration = mock(Configuration.class,
+                new Class[] {Properties.class},
+                new Object[] {new Properties()});
+        this.mockApplication = mock(Application.class);
+    }
+
+    /**
+     * Should throw a <code>NullPointerException</code> when the command-line
+     * arguments are <code>null</code>.
+     */
+    public void testGetApplicationModeDisallowNullArgs() {
         try {
-            Main main = new Main(null);
-            main.getApplicationMode();
-            fail("NullPointerException expected when the command line argument "
-                    + "array is null");
+            this.main.getApplicationMode(null);
+            fail("NullPointerException expected");
         } catch (NullPointerException e) {
             MainTest.logger.info("Caught expected NullPointerException: "
                     + e.getMessage());
@@ -47,15 +63,13 @@ public final class MainTest extends TestCase {
     }
 
     /**
-     * Tests {@link Main#getApplicationMode()} when the command-line argument is
-     * invalid.
+     * Should throw a <code>IllegalArgumentException</code> when the
+     * command-line argument is invalid.
      */
-    public void testGetApplicationModeInvalidArg() {
+    public void testGetApplicationModeDisallowInvalidArg() {
         try {
-            Main main = new Main(new String[] {"invalid"});
-            main.getApplicationMode();
-            fail("IllegalArgumentException expected when the mode flag is "
-                    + "invalid");
+            this.main.getApplicationMode(new String[] {"invalid-mode"});
+            fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException e) {
             MainTest.logger.info("Caught expected "
                     + "IllegalArgumentException: " + e.getMessage());
@@ -63,32 +77,169 @@ public final class MainTest extends TestCase {
     }
 
     /**
-     * Tests {@link Main#getApplicationMode()} when the there are no
-     * command-line arguments.
+     * Should give client application mode when there are no command-line
+     * arguments.
      */
-    public void testGetApplicationModeNoArgs() {
-        Main main = new Main(new String[0]);
-        assertEquals("Mode comparison,", ApplicationMode.CLIENT,
-                main.getApplicationMode());
+    public void testGetApplicationModeWithNoArgs() {
+        assertEquals("Application mode comparison,", ApplicationMode.CLIENT,
+                this.main.getApplicationMode(new String[0]));
     }
 
     /**
-     * Tests {@link Main#getApplicationMode()} when the command-line argument is
+     * Should give server application mode when the command-line argument is
      * "server".
      */
-    public void testGetApplicationModeServerArg() {
-        Main main = new Main(new String[] {"server"});
-        assertEquals("Mode comparison,", ApplicationMode.SERVER,
-                main.getApplicationMode());
+    public void testGetApplicationModeWithServerArg() {
+        assertEquals("Application mode comparison,", ApplicationMode.SERVER,
+                this.main.getApplicationMode(new String[] {"server"}));
     }
 
     /**
-     * Tests {@link Main#getApplicationMode()} when the command-line argument is
-     * "alone".
+     * Should give standalone mode when the command-line argument is "alone".
      */
-    public void testStandalonerModeFlag() {
-        Main main = new Main(new String[] {"alone"});
-        assertEquals("Mode comparison,", ApplicationMode.STANDALONE,
-                main.getApplicationMode());
+    public void testGetApplicationModeWithAloneArg() {
+        assertEquals("Application mode comparison,", ApplicationMode.STANDALONE,
+                this.main.getApplicationMode(new String[] {"alone"}));
+    }
+
+    /**
+     * Should create client application when called with client application
+     * mode.
+     */
+    public void testCreateApplicationWithClientMode() {
+        assertTrue("Instance of ClientApplication expected",
+                this.main.createApplication(ApplicationMode.CLIENT,
+                        (Configuration) this.mockConfiguration.proxy())
+                instanceof ClientApplication);
+    }
+
+    /**
+     * Should create server application when called with server application
+     * mode.
+     */
+    public void testCreateApplicationWithServerMode() {
+        assertTrue("Instance of ServerApplication expected",
+                this.main.createApplication(ApplicationMode.SERVER,
+                        (Configuration) this.mockConfiguration.proxy())
+                instanceof ServerApplication);
+    }
+
+    /**
+     * Should create standalone application when called with standalone
+     * application mode.
+     */
+    public void testCreateApplicationWithStandaloneMode() {
+        assertTrue("Instance of StandaloneApplication expected",
+                this.main.createApplication(ApplicationMode.STANDALONE,
+                        (Configuration) this.mockConfiguration.proxy())
+                instanceof StandaloneApplication);
+    }
+
+    /**
+     * Should throw a <code>NullPointerException</code> when called with a
+     * <code>null</code> application argument.
+     */
+    public void testConfigureApplicationDisallowNullApplication() {
+        try {
+            this.main.configureApplication(null, this.dummyPropertiesFilePath);
+            fail("NullPointerException expected");
+        } catch (NullPointerException e) {
+            MainTest.logger.info("Caught expected NullPointerException: "
+                    + e.getMessage());
+        }
+    }
+
+    /**
+     * Should throw a <code>NullPointerException</code> when called with a
+     * <code>null</code> properties file path argument.
+     */
+    public void testConfigureApplicationDisallowNullPropertiesFilePath() {
+        try {
+            this.main.configureApplication(
+                    (Application) this.mockApplication.proxy(), null);
+            fail("NullPointerException expected");
+        } catch (NullPointerException e) {
+            MainTest.logger.info("Caught expected NullPointerException: "
+                    + e.getMessage());
+        }
+    }
+
+    /**
+     * Should should show the error dialog and exit the application when the
+     * configure method throws an <code>ApplicationException</code>.
+     */
+    public void testConfigureApplicationWhenConfigureThrowsException() {
+        this.mockApplication.expects(once()).method("configure")
+                .with(isA(File.class)).will(throwException(
+                        new ApplicationException()));
+        this.mockApplication.expects(once()).method("showErrorDialog")
+                .with(isA(String.class));
+        this.mockApplication.expects(once()).method("exit").with(eq(1));
+        this.main.configureApplication(
+                (Application) this.mockApplication.proxy(),
+                this.dummyPropertiesFilePath);
+    }
+
+    /**
+     * Should not exit the application when the configuration is okayed by the
+     * user.
+     */
+    public void testConfigureApplicationNotExitWhenOkayed() {
+        this.mockApplication.expects(once()).method("configure")
+                .with(isA(File.class))
+                .will(returnValue(true));
+        this.mockApplication.expects(never()).method("exit");
+        this.main.configureApplication(
+                (Application) this.mockApplication.proxy(),
+                this.dummyPropertiesFilePath);
+    }
+
+    /**
+     * Should exit the application when the configuration is cancelled by the
+     * user.
+     */
+    public void testConfigureApplicationExitWhenCancelled() {
+        this.mockApplication.expects(once()).method("configure")
+                .will(returnValue(false));
+        this.mockApplication.expects(once()).method("exit").with(eq(0));
+        this.main.configureApplication(
+                (Application) this.mockApplication.proxy(),
+                this.dummyPropertiesFilePath);
+    }
+
+    /**
+     * Should throw a <code>NullPointerException</code> if called with a
+     * <code>null</code> application argument.
+     */
+    public void testRunApplicationDisallowNullApplication() {
+        try {
+            this.main.runApplication(null);
+            fail("NullPointerException expected");
+        } catch (NullPointerException e) {
+            MainTest.logger.info("Caught expected NullPointerException: "
+                    + e.getMessage());
+        }
+    }
+
+    /**
+     * Should call the application run method.
+     */
+    public void testRunApplication() {
+        this.mockApplication.expects(once()).method("run");
+        this.main.runApplication((Application) this.mockApplication.proxy());
+    }
+
+    /**
+     * Should show the error dialog and exit the application when the run method
+     * throws an <code>ApplicationException</code>.
+     */
+    public void testRunApplicationRunThrowsApplicationException() {
+        this.mockApplication.expects(once()).method("run")
+                .will(throwException(new ApplicationException()));
+        this.mockApplication.expects(once()).method("showErrorDialog")
+                .with(isA(String.class));
+        this.mockApplication.expects(once()).method("exit")
+                .with(eq(1));
+        this.main.runApplication((Application) this.mockApplication.proxy());
     }
 }

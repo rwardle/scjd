@@ -7,171 +7,65 @@
 
 package suncertify;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 /**
- * Encapsulates application configuration properties, reading and writing to
+ * Encapsulates application configuration information. Reads and writes to
  * permanent storage in the form of a properties file.
  *
  * @author Richard Wardle
  */
-public final class Configuration {
+public class Configuration {
 
-    private static Logger logger = Logger.getLogger(Configuration.class
-            .getName());
-
-    private File propertiesFile;
-    private String databaseFilePath;
-    private String serverAddress;
-    private String serverPort;
+    private Properties properties;
 
     /**
-     * Creates a new instance of <code>Configuration</code> with the default
-     * configuration.
+     * Creates a new instance of <code>Configuration</code>.
      *
-     * @param propertiesFilePath The path to the properties file that holds the
-     * configuration.
-     * @throws IllegalArgumentException If the <code>propertiesFilePath</code>
-     * is <code>null</code> or is an empty string.
+     * @param properties The properties.
      */
-    public Configuration(String propertiesFilePath) {
-        if (propertiesFilePath == null || propertiesFilePath.equals("")) {
-            throw new IllegalArgumentException("propertiesFilePath should be "
-                    + "non-null and should not be an empty string");
+    public Configuration(Properties properties) {
+        if (properties == null) {
+            throw new NullPointerException(
+                    "properties argument must be non-null");
         }
 
-        this.propertiesFile = new File(propertiesFilePath);
-        this.serverAddress = ApplicationConstants.DEFAULT_ADDRESS;
-        this.serverPort = ApplicationConstants.DEFAULT_PORT;
-        this.databaseFilePath = ApplicationConstants.DEFAULT_PATH;
+        this.properties = properties;
     }
 
     /**
-     * Loads the configuration from the properties file (if it exists).
+     * Loads the configuration using the supplied input stream.
      *
-     * @return <code>true</code> if the configuration was loaded from the
-     * properties file, <code>false</code> otherwise.
+     * @param in The input stream.
+     * @throws IOException If there is an error reading from the input stream.
+     * @throws NullPointerException If the input stream is <code>null</code>.
      */
-    public boolean loadConfiguration() {
-        boolean loaded = false;
-        if (this.propertiesFile.exists()) {
-            InputStream in = null;
-            try {
-                in = new BufferedInputStream(
-                        new FileInputStream(this.propertiesFile));
-                Properties properties = new Properties();
-                properties.load(in);
-                getProperties(properties);
-                loaded = true;
-            } catch (IOException e) {
-                // If there is an error reading from the properties file we want
-                // to fall back gracefully to using the default configuration,
-                // so we catch this exception, log it and continue.
-                Configuration.logger.log(Level.WARNING,
-                        "Error reading from properties file at: '"
-                                + this.propertiesFile.getAbsolutePath()
-                                + "', falling back to default configuration",
-                        e);
-            } finally {
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (IOException e) {
-                        Configuration.logger.log(Level.WARNING,
-                                "Error closing InputStream for file: '"
-                                        + this.propertiesFile.getAbsolutePath()
-                                        + "'",
-                                e);
-                    }
-                }
-            }
-        } else {
-            Configuration.logger.info("Properties file doesn't exist, using "
-                    + "default configuration (path='"
-                    + this.propertiesFile.getAbsolutePath() + "')");
+    public void loadConfiguration(InputStream in) throws IOException {
+        if (in == null) {
+            throw new NullPointerException("Input stream must be non-null");
         }
 
-        return loaded;
+        this.properties.load(in);
     }
 
     /**
-     * Saves the configuration to the properties file, creating it if necessary.
+     * Saves the configuration using the supplied output stream.
      *
-     * @throws IOException If the properties cannot be written to the file.
+     * @param out The output stream.
+     * @throws IOException If there is an error writing to the output stream.
+     * @throws NullPointerException If the output stream is <code>null</code>.
      */
-    public void saveConfiguration() throws IOException {
-        Properties properties = new Properties();
-        setProperties(properties);
-
-        OutputStream out = null;
-        try {
-            out = new BufferedOutputStream(new FileOutputStream(
-                    this.propertiesFile));
-            properties.store(out,
-                    "This file stores configuration properties between "
-                            + "application runs.");
-        } finally {
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    Configuration.logger.log(Level.WARNING,
-                            "Error closing OutputStream for file: '"
-                                    + this.propertiesFile.getAbsolutePath()
-                                    + "'",
-                            e);
-                }
-            }
-        }
-    }
-
-    private void getProperties(Properties properties) {
-        String address = properties
-                .getProperty(ApplicationConstants.ADDRESS_PROPERTY);
-        if (address != null && !address.equals("")) {
-            setServerAddress(address);
+    public void saveConfiguration(OutputStream out) throws IOException {
+        if (out == null) {
+            throw new NullPointerException("Output stream must be non-null");
         }
 
-        String port = properties
-                .getProperty(ApplicationConstants.PORT_PROPERTY);
-        if (port != null && !port.equals("")) {
-            setServerPort(port);
-        }
-
-        String path = properties
-                .getProperty(ApplicationConstants.PATH_PROPERTY);
-        if (path != null && !path.equals("")) {
-            setDatabaseFilePath(path);
-        }
-    }
-
-    private void setProperties(Properties properties) {
-        properties.setProperty(ApplicationConstants.ADDRESS_PROPERTY,
-                getServerAddress());
-        properties.setProperty(ApplicationConstants.PORT_PROPERTY,
-                getServerPort());
-        properties.setProperty(ApplicationConstants.PATH_PROPERTY,
-                getDatabaseFilePath());
-    }
-
-    /**
-     * Gets the absolute path to the properties file.
-     *
-     * @return The absolute path to the properties file.
-     */
-    public String getPropertiesFilePath() {
-        return this.propertiesFile.getAbsolutePath();
+        this.properties.store(out, "This file stores configuration properties "
+                + "between application runs.");
     }
 
     /**
@@ -180,16 +74,26 @@ public final class Configuration {
      * @return The databaseFilePath.
      */
     public String getDatabaseFilePath() {
-        return this.databaseFilePath;
+        return this.properties.getProperty(
+                ApplicationConstants.DATABASE_FILE_PATH_PROPERTY);
     }
 
     /**
      * Sets the databaseFilePath.
      *
      * @param databaseFilePath The databaseFilePath to set.
+     * @throws NullPointerException If the <code>databaseFilePath</code>
+     * parameter is <code>null</code>.
      */
     public void setDatabaseFilePath(String databaseFilePath) {
-        this.databaseFilePath = databaseFilePath;
+        if (databaseFilePath == null) {
+            throw new NullPointerException(
+                    "The parameter databaseFilePath must be non-null");
+        }
+
+        this.properties.setProperty(
+                ApplicationConstants.DATABASE_FILE_PATH_PROPERTY,
+                databaseFilePath);
     }
 
     /**
@@ -198,16 +102,25 @@ public final class Configuration {
      * @return The serverAddress.
      */
     public String getServerAddress() {
-        return this.serverAddress;
+        return this.properties.getProperty(
+                ApplicationConstants.SERVER_ADDRESS_PROPERTY);
     }
 
     /**
      * Sets the serverAddress.
      *
      * @param serverAddress The serverAddress to set.
+     * @throws NullPointerException If the <code>serverAddress</code> parameter
+     * is <code>null</code>.
      */
     public void setServerAddress(String serverAddress) {
-        this.serverAddress = serverAddress;
+        if (serverAddress == null) {
+            throw new NullPointerException(
+                    "The parameter serverAddress must be non-null");
+        }
+
+        this.properties.setProperty(
+                ApplicationConstants.SERVER_ADDRESS_PROPERTY, serverAddress);
     }
 
     /**
@@ -216,15 +129,24 @@ public final class Configuration {
      * @return The serverPort.
      */
     public String getServerPort() {
-        return this.serverPort;
+        return this.properties.getProperty(
+                ApplicationConstants.SERVER_PORT_PROPERTY);
     }
 
     /**
      * Sets the serverPort.
      *
      * @param serverPort The serverPort to set.
+     * @throws NullPointerException If the <code>serverPort</code> parameter is
+     * <code>null</code>.
      */
     public void setServerPort(String serverPort) {
-        this.serverPort = serverPort;
+        if (serverPort == null) {
+            throw new NullPointerException(
+                    "The parameter serverPort must be non-null");
+        }
+
+        this.properties.setProperty(ApplicationConstants.SERVER_PORT_PROPERTY,
+                serverPort);
     }
 }

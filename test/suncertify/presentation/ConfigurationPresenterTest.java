@@ -8,11 +8,11 @@
 package suncertify.presentation;
 
 import java.awt.event.ActionListener;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 import org.jmock.Mock;
-import org.jmock.MockObjectTestCase;
-import org.jmock.core.constraint.IsInstanceOf;
+import org.jmock.cglib.MockObjectTestCase;
 
 import suncertify.Configuration;
 
@@ -27,19 +27,18 @@ public final class ConfigurationPresenterTest extends MockObjectTestCase {
     private static Logger logger = Logger
             .getLogger(ConfigurationPresenterTest.class.getName());
 
+    private ConfigurationPresenter presenter;
     private String databaseFilePath;
     private String serverAddress;
     private String serverPort;
-    private Configuration configuration;
+    private Mock mockConfiguration;
     private Mock mockView;
 
     /**
      * Creates a new instance of <code>ConfigurationPresenterTest</code>.
-     *
-     * @param name The test case name.
      */
-    public ConfigurationPresenterTest(String name) {
-        super(name);
+    public ConfigurationPresenterTest() {
+        super();
         this.databaseFilePath = "databaseFilePath";
         this.serverAddress = "serverAddress";
         this.serverPort = "serverPort";
@@ -49,128 +48,131 @@ public final class ConfigurationPresenterTest extends MockObjectTestCase {
      * {@inheritDoc}
      */
     protected void setUp() {
-        this.configuration = new Configuration("dummy.properties");
-        this.configuration.setDatabaseFilePath(this.databaseFilePath);
-        this.configuration.setServerAddress(this.serverAddress);
-        this.configuration.setServerPort(this.serverPort);
-        this.mockView = new Mock(ConfigurationView.class);
+        this.mockConfiguration = mock(Configuration.class,
+                new Class[] {Properties.class},
+                new Object[] {new Properties()});
+        this.mockView = mock(ConfigurationView.class);
+        this.presenter = new ConfigurationPresenter(
+                (Configuration) this.mockConfiguration.proxy(),
+                (ConfigurationView) this.mockView.proxy());
     }
 
-    private void setUpMockView() {
+    /**
+     * Should throw <code>NullPointerException</code> when called with a
+     * <code>null</code> configuration.
+     */
+    public void testConstructorDisallowNullConfiguration() {
+        try {
+            new ConfigurationPresenter(null,
+                    (ConfigurationView) this.mockView.proxy());
+            fail("NullPointerException expected");
+        } catch (NullPointerException e) {
+            ConfigurationPresenterTest.logger
+                    .info("Caught expected NullPointerException: "
+                            + e.getMessage());
+        }
+    }
+
+    /**
+     * Should throw <code>NullPointerException</code> when called with a
+     * <code>null</code> view.
+     */
+    public void testConstructorDisallowNullView() {
+        try {
+            new ConfigurationPresenter(
+                    (Configuration) this.mockConfiguration.proxy(), null);
+            fail("NullPointerException expected");
+        } catch (NullPointerException e) {
+            ConfigurationPresenterTest.logger
+                    .info("Caught expected NullPointerException: "
+                            + e.getMessage());
+        }
+    }
+
+    /**
+     * The return status should be "cancel" after the constructor runs.
+     */
+    public void testConstructorReturnStatus() {
+        assertEquals(
+                "Return status comparison,",
+                ConfigurationPresenter.RETURN_CANCEL,
+                this.presenter.getReturnStatus());
+    }
+
+    /**
+     * Should intialise the view components, add the listeners and load the
+     * model into the view.
+     */
+    public void testInitialiseView() {
+        this.mockView.expects(once()).method("initialiseComponents");
         this.mockView.expects(once()).method("addOkButtonListener")
-                .with(new IsInstanceOf(ActionListener.class));
+                .with(isA(ActionListener.class));
         this.mockView.expects(once()).method("addCancelButtonListener")
-                .with(new IsInstanceOf(ActionListener.class));
+                .with(isA(ActionListener.class));
+        
+        this.mockConfiguration.expects(once()).method("getDatabaseFilePath")
+                .will(returnValue(this.databaseFilePath));
+        this.mockConfiguration.expects(once()).method("getServerAddress")
+                .will(returnValue(this.serverAddress));
+        this.mockConfiguration.expects(once()).method("getServerPort")
+                .will(returnValue(this.serverPort));
+
+        
         this.mockView.expects(once()).method("setDatabaseFilePath")
                 .with(eq(this.databaseFilePath));
         this.mockView.expects(once()).method("setServerAddress")
                 .with(eq(this.serverAddress));
         this.mockView.expects(once()).method("setServerPort")
                 .with(eq(this.serverPort));
+
+        this.presenter.initialiseView();
     }
 
     /**
-     * Tests {@link ConfigurationPresenter#ConfigurationPresenter(
-     * Configuration,ConfigurationView)} with a <code>null</code> configuration.
+     * Should call realise on the view.
      */
-    public void testConstructionNullConfiguration() {
-        try {
-            new ConfigurationPresenter(null,
-                    (ConfigurationView) this.mockView.proxy());
-            fail("NullPointerException expected when constructor called with "
-                    + "null configuration");
-        } catch (NullPointerException e) {
-            ConfigurationPresenterTest.logger
-                    .info("Caught expected NullPointerException: "
-                            + e.getMessage());
-        }
+    public void testRealiseView() {
+        this.mockView.expects(once()).method("realise");
+        this.presenter.realiseView();
     }
 
     /**
-     * Tests {@link ConfigurationPresenter#ConfigurationPresenter(
-     * Configuration,ConfigurationView)} with a <code>null</code> view.
-     */
-    public void testConstructionNullView() {
-        try {
-            new ConfigurationPresenter(this.configuration, null);
-            fail("NullPointerException expected when constructor called with "
-                    + "null view");
-        } catch (NullPointerException e) {
-            ConfigurationPresenterTest.logger
-                    .info("Caught expected NullPointerException: "
-                            + e.getMessage());
-        }
-    }
-
-    /**
-     * Tests {@link ConfigurationPresenter#ConfigurationPresenter(
-     * Configuration,ConfigurationView)}.
-     */
-    public void testConstruction() {
-        setUpMockView();
-        ConfigurationPresenter presenter = new ConfigurationPresenter(
-                this.configuration,
-                (ConfigurationView) this.mockView.proxy());
-        assertEquals(
-                "Return status should be '"
-                        + ConfigurationPresenter.RETURN_CANCEL
-                        + "'after construction",
-                ConfigurationPresenter.RETURN_CANCEL,
-                presenter.getReturnStatus());
-    }
-
-    /**
-     * Tests {@link ConfigurationPresenter#okButtonActionPerformed}.
+     * Should update the model from the view and return status "ok".
      */
     public void testOkButtonActionPerformed() {
-        setUpMockView();
         String newDatabaseFilePath = "newDatabaseFilePath";
+        String newServerAddress = "newServerAddress";
+        String newServerPort = "newServerPort";
+
         this.mockView.expects(once()).method("getDatabaseFilePath")
                 .will(returnValue(newDatabaseFilePath));
-        String newServerAddress = "newServerAddress";
         this.mockView.expects(once()).method("getServerAddress")
                 .will(returnValue(newServerAddress));
-        String newServerPort = "newServerPort";
         this.mockView.expects(once()).method("getServerPort")
                 .will(returnValue(newServerPort));
         this.mockView.expects(once()).method("close");
 
-        ConfigurationPresenter presenter = new ConfigurationPresenter(
-                this.configuration,
-                (ConfigurationView) this.mockView.proxy());
+        this.mockConfiguration.expects(once()).method("setDatabaseFilePath")
+                .with(eq(newDatabaseFilePath));
+        this.mockConfiguration.expects(once()).method("setServerAddress")
+                .with(eq(newServerAddress));
+        this.mockConfiguration.expects(once()).method("setServerPort")
+                .with(eq(newServerPort));
 
-        presenter.okButtonActionPerformed();
+        this.presenter.okButtonActionPerformed();
         assertEquals("Return status comparison",
-                ConfigurationPresenter.RETURN_OK, presenter.getReturnStatus());
-        assertEquals("Model database file path comparison,",
-                this.configuration.getDatabaseFilePath(), newDatabaseFilePath);
-        assertEquals("Model server address comparison,",
-                this.configuration.getServerAddress(), newServerAddress);
-        assertEquals("Model server port comparison,",
-                this.configuration.getServerPort(), newServerPort);
+                ConfigurationPresenter.RETURN_OK,
+                this.presenter.getReturnStatus());
     }
 
     /**
-     * Tests {@link ConfigurationPresenter#cancelButtonActionPerformed}.
+     * Should return status "cancel".
      */
     public void testCancelButtonActionPerformed() {
-        setUpMockView();
         this.mockView.expects(once()).method("close");
-
-        ConfigurationPresenter presenter = new ConfigurationPresenter(
-                this.configuration,
-                (ConfigurationView) this.mockView.proxy());
-
-        presenter.cancelButtonActionPerformed();
+        this.presenter.cancelButtonActionPerformed();
         assertEquals("Return status comparison",
                 ConfigurationPresenter.RETURN_CANCEL,
-                presenter.getReturnStatus());
-        assertEquals("Model database file path comparison,",
-                this.configuration.getDatabaseFilePath(),
-                this.databaseFilePath);
-        assertEquals("Model server address comparison,",
-                this.configuration.getServerAddress(), this.serverAddress);
-        assertEquals("Model server port comparison,",
-                this.configuration.getServerPort(), this.serverPort);
+                this.presenter.getReturnStatus());
     }
 }

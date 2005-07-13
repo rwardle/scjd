@@ -31,7 +31,18 @@ public class MainPresenter {
         
         this.service = service;
         this.view = view;
+    }
+    
+    public void initialiseView() {
+        this.view.initialiseComponents();
         addHelloButtonListener();
+    }
+    
+    /**
+     * 
+     */
+    public void realiseView() {
+        this.view.realise();
     }
     
     private void addHelloButtonListener() {

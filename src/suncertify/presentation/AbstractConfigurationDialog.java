@@ -96,7 +96,7 @@ public abstract class AbstractConfigurationDialog implements ConfigurationView {
     /**
      * {@inheritDoc}
      */
-    public final void realiseView() {
+    public final void realise() {
         this.dialog.pack();
         this.dialog.setVisible(true);
     }

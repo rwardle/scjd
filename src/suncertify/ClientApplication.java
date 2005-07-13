@@ -7,7 +7,10 @@
 
 package suncertify;
 
+import java.net.MalformedURLException;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 
 import suncertify.presentation.ClientConfigurationDialog;
 import suncertify.presentation.ConfigurationView;
@@ -42,15 +45,28 @@ public final class ClientApplication extends AbstractGuiApplication {
     /**
      * {@inheritDoc}
      */
-    protected BrokerService getBrokerService() {
+    protected BrokerService getBrokerService() throws ApplicationException {
+        String url = "//" + getConfiguration().getServerAddress() + ":"
+                + getConfiguration().getServerPort() + "/"
+                + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME;
+
         try {
-            return (BrokerService) Naming.lookup("//"
-                    + getConfiguration().getServerAddress() + ":"
-                    + getConfiguration().getServerPort() + "/"
-                    + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME);
-        } catch (Exception e) {
-            // TODO: Implement proper exception handling
-            throw new RuntimeException(e);
+            return (BrokerService) Naming.lookup(url);
+        } catch (MalformedURLException e) {
+            throw new ApplicationException(
+                    "The URL used to lookup the remote broker service object "
+                            + "is malformed: '" + url + "'",
+                    e);
+        } catch (RemoteException e) {
+            throw new ApplicationException(
+                    "Error communicating with the remote server", e);
+        } catch (NotBoundException e) {
+            throw new ApplicationException(
+                    "Attempted to lookup a name that has not been bound in the "
+                            + "RMI registry: '"
+                            + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME
+                            + "'",
+                    e);
         }
     }
 }

@@ -8,7 +8,14 @@
 package suncertify;
 
 import java.awt.EventQueue;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +36,7 @@ public abstract class AbstractApplication implements Application {
 
     private static Logger logger = Logger
             .getLogger(AbstractApplication.class.getName());
+
     private Configuration configuration;
 
     /**
@@ -41,7 +49,7 @@ public abstract class AbstractApplication implements Application {
     public AbstractApplication(Configuration configuration) {
         if (configuration == null) {
             throw new NullPointerException(
-                    "configuration parameter must be non-null");
+                    "The configuration parameter must be non-null");
         }
 
         this.configuration = configuration;
@@ -59,27 +67,54 @@ public abstract class AbstractApplication implements Application {
     /**
      * {@inheritDoc}
      * <p/>
-     * Loads any existing configuration from persistent storage, presents it to
-     * the user for modification, and saves it to persistent storage.
-     * <p/>
-     * This implementation indirectly calls the
-     * <code>createConfigurationView</code> method to get the configuration view
-     * to display to the user.
+     * This implementation calls the <code>createConfigurationPresenter</code>
+     * method to get the configuration presenter.
      */
-    public final boolean configure() {
-        getConfiguration().loadConfiguration();
-        int returnStatus = showConfigurationDialog();
-        if (returnStatus == ConfigurationPresenter.RETURN_OK) {
+    public final boolean configure(File propertiesFile) throws
+            ApplicationException {
+        if (propertiesFile == null) {
+            throw new NullPointerException(
+                    "The propertiesFile parameter must be non-null");
+        }
+
+        if (propertiesFile.exists()) {
+            InputStream in = null;
             try {
-                getConfiguration().saveConfiguration();
+                in = new BufferedInputStream(
+                        new FileInputStream(propertiesFile));
+                getConfiguration().loadConfiguration(in);
             } catch (IOException e) {
-                AbstractApplication.logger.log(Level.WARNING,
-                        "Unable to save configuration properties file at: '"
-                                + getConfiguration().getPropertiesFilePath()
-                                + "'",
+                throw new ApplicationException("Error loading configuration",
                         e);
-                showSaveConfigurationWarning(getConfiguration()
-                        .getPropertiesFilePath());
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (IOException e) {
+                        AbstractApplication.logger.log(Level.WARNING,
+                                "Error closing input stream", e);
+                    }
+                }
+            }
+        }
+
+        if (showConfigurationDialog() == ConfigurationPresenter.RETURN_OK) {
+            OutputStream out = null;
+            try {
+                out = new BufferedOutputStream(
+                        new FileOutputStream(propertiesFile));
+                getConfiguration().saveConfiguration(out);
+            } catch (IOException e) {
+                throw new ApplicationException("Error saving configuration", e);
+            } finally {
+                if (out != null) {
+                    try {
+                        out.close();
+                    } catch (IOException e) {
+                        AbstractApplication.logger.log(Level.WARNING,
+                                "Error closing output stream", e);
+                    }
+                }
             }
 
             return true;
@@ -88,59 +123,78 @@ public abstract class AbstractApplication implements Application {
         return false;
     }
 
-    private int showConfigurationDialog() {
-        final ConfigurationView dialog = createConfigurationView();
-        dialog.initialiseComponents();
-
-        ConfigurationPresenter presenter = new ConfigurationPresenter(
-                getConfiguration(), dialog);
-
+    private int showConfigurationDialog() throws ApplicationException {
+        final ConfigurationPresenter presenter = createConfigurationPresenter();
+        presenter.initialiseView();
         try {
             EventQueue.invokeAndWait(new Runnable() {
                 public void run() {
-                    dialog.realiseView();
+                    presenter.realiseView();
                 }
             });
         } catch (InterruptedException e) {
             AbstractApplication.logger.log(Level.WARNING,
                     "Configuration dialog thread interrupted", e);
         } catch (InvocationTargetException e) {
-            // TODO: Decide on exception handling
-            e.printStackTrace();
+            throw new ApplicationException(
+                    "Error in application configuration GUI", e);
         }
 
-        AbstractApplication.logger.info("Status '" + presenter.getReturnStatus()
+        int returnStatus = presenter.getReturnStatus();
+        AbstractApplication.logger.info("Status '" + returnStatus
                 + "' returned from dialog");
-        return presenter.getReturnStatus();
+        return returnStatus;
+    }
+
+    /**
+     * Creates the configuration presenter.
+     * <p/>
+     * This method is called by the <code>configure</code> method.
+     * <p/>
+     * This implementation calls the <code>createConfigurationView</code>
+     * method to get the configuration view.
+     *
+     * @return The configuration presenter.
+     */
+    protected ConfigurationPresenter createConfigurationPresenter() {
+        return new ConfigurationPresenter(getConfiguration(),
+                createConfigurationView());
     }
 
     /**
      * Creates the configuration view.
      * <p/>
-     * This method is called indirectly by the <code>configure</code> method.
+     * This method is called by the <code>createConfigurationPresenter</code>
+     * method.
      *
      * @return The view.
      */
     protected abstract ConfigurationView createConfigurationView();
 
-    private void showSaveConfigurationWarning(String path) {
-        // TODO: Make this message briefer
-        final String message = "Unable to save configuration properties to: '"
-                + path + "'.\nPlease ensure that you have write permissions to "
-                + "this location next time you run the application.";
+    /**
+     * {@inheritDoc}
+     */
+    public final void showErrorDialog(final String message) throws
+            ApplicationException {
         try {
             EventQueue.invokeAndWait(new Runnable() {
                 public void run() {
                     JOptionPane.showMessageDialog(new JFrame(), message,
-                            "Warning", JOptionPane.WARNING_MESSAGE);
+                            "Error", JOptionPane.ERROR_MESSAGE);
                 }
             });
         } catch (InterruptedException e) {
             AbstractApplication.logger.log(Level.WARNING,
-                    "Save properties error dialog thread interrupted", e);
+                    "Error dialog thread interrupted", e);
         } catch (InvocationTargetException e) {
-            // TODO: Decide on appropriate exception handling
-            e.printStackTrace();
+            throw new ApplicationException("Error showing error dialog", e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public final void exit(int status) {
+        System.exit(status);
     }
 }

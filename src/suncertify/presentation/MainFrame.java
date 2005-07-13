@@ -50,7 +50,7 @@ public class MainFrame implements MainView {
     /**
      * {@inheritDoc}
      */
-    public void realiseView() {
+    public void realise() {
         this.frame.pack();
         this.frame.setVisible(true);
     }

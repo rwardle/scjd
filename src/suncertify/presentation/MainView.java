@@ -26,7 +26,7 @@ public interface MainView {
     /**
      * Realises the view and its components.
      */
-    void realiseView();
+    void realise();
 
 
     void addHelloButtonListener(ActionListener listener);
