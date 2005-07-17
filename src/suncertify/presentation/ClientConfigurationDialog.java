@@ -54,6 +54,8 @@ public final class ClientConfigurationDialog extends
         JLabel serverAddressLabel = new JLabel("Server address:");
         serverAddressPanel.add(serverAddressLabel);
         this.serverAddressField = new JTextField();
+        this.serverAddressField.setName(
+                "ClientConfigurationDialog.serverAddressField");
         serverAddressPanel.add(this.serverAddressField);
 
         JPanel serverPortPanel = new JPanel();
@@ -62,6 +64,8 @@ public final class ClientConfigurationDialog extends
         JLabel serverPortLabel = new JLabel("Server port:");
         serverPortPanel.add(serverPortLabel);
         this.serverPortField = new JTextField();
+        this.serverPortField.setName(
+                "ClientConfigurationDialog.serverPortField");
         serverPortPanel.add(this.serverPortField);
 
         getDialog().getContentPane().add(inputPanel, BorderLayout.CENTER);

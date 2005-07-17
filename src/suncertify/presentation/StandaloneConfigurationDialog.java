@@ -88,6 +88,9 @@ public final class StandaloneConfigurationDialog extends
             }
         };
 
+        // TODO:
+        this.databaseFilePathField.setName(
+                "StandaloneConfigurationDialog.databaseFilePathField");
         inputPanel.add(this.databaseFilePathField);
         getDialog().getContentPane().add(inputPanel, BorderLayout.CENTER);
     }

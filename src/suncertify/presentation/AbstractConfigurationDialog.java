@@ -73,9 +73,11 @@ public abstract class AbstractConfigurationDialog implements ConfigurationView {
         this.dialog.getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
         this.okButton = new JButton("OK");
+        this.okButton.setName("AbstractConfigurationDialog.okButton");
         buttonPanel.add(this.okButton);
 
         this.cancelButton = new JButton("Cancel");
+        this.cancelButton.setName("AbstractConfigurationDialog.cancelButton");
         buttonPanel.add(this.cancelButton);
     }
 

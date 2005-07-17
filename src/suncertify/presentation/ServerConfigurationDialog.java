@@ -54,6 +54,8 @@ public final class ServerConfigurationDialog extends
         JLabel databaseFilePathLabel = new JLabel("Database file path:");
         databaseFilePathPanel.add(databaseFilePathLabel);
         this.databaseFilePathField = new JTextField();
+        this.databaseFilePathField.setName(
+                "ServerConfigurationDialog.databaseFilePathField");
         databaseFilePathPanel.add(this.databaseFilePathField);
 
         JPanel serverPortPanel = new JPanel();
@@ -62,6 +64,8 @@ public final class ServerConfigurationDialog extends
         JLabel serverPortLabel = new JLabel("Server port:");
         serverPortPanel.add(serverPortLabel);
         this.serverPortField = new JTextField();
+        this.serverPortField.setName(
+                "ServerConfigurationDialog.serverPortField");
         serverPortPanel.add(this.serverPortField);
 
         getDialog().getContentPane().add(inputPanel, BorderLayout.CENTER);
