@@ -8,6 +8,7 @@
     <import file="/home/rwardle/projects/ant/build-checkstyle.xml"/>
     <import file="/home/rwardle/projects/ant/build-cobertura.xml"/>
     <import file="/home/rwardle/projects/ant/build-junit.xml"/>
+    <import file="/home/rwardle/projects/ant/build-fitnesse.xml"/>
     <!--
     ======================
     INITIALIZATION SECTION
