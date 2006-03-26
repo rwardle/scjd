@@ -5,10 +5,10 @@
 <project name="scjdAssignment" default="default" basedir="." xmlns:macro="macro">
     <description>Builds, tests, and runs the project scjdAssignment.</description>
     <import file="nbproject/build-impl.xml"/>
-    <import file="/home/rwardle/projects/ant/build-checkstyle.xml"/>
-    <import file="/home/rwardle/projects/ant/build-cobertura.xml"/>
-    <import file="/home/rwardle/projects/ant/build-junit.xml"/>
-    <import file="/home/rwardle/projects/ant/build-fitnesse.xml"/>
+    <import file="../ant/build-checkstyle.xml"/>
+    <import file="../ant/build-cobertura.xml"/>
+    <import file="../ant/build-junit.xml"/>
+    <import file="../ant/build-fitnesse.xml"/>
     <!--
     ======================
     INITIALIZATION SECTION
