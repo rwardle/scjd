@@ -1,53 +1,29 @@
-/*
- * ConfigurationPresenterTest.java
- *
- * Created on 10 June 2005
- */
-
-
 package suncertify.presentation;
 
 import java.awt.event.ActionListener;
 import java.util.Properties;
-import java.util.logging.Logger;
-
 import org.jmock.Mock;
 import org.jmock.cglib.MockObjectTestCase;
-
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.internal.runners.TestClassRunner;
+import org.junit.runner.RunWith;
 import suncertify.Configuration;
 
-
-/**
- * Unit tests for {@link ConfigurationPresenterTest}.
- *
- * @author Richard Wardle
- */
-public final class ConfigurationPresenterTest extends MockObjectTestCase {
-
-    private static Logger logger = Logger
-            .getLogger(ConfigurationPresenterTest.class.getName());
+@RunWith(TestClassRunner.class)
+public class ConfigurationPresenterTest extends MockObjectTestCase {
 
     private ConfigurationPresenter presenter;
-    private String databaseFilePath;
-    private String serverAddress;
-    private String serverPort;
+    private final String databaseFilePath = "databaseFilePath";
+    private final String serverAddress = "serverAddress";
+    private final String serverPort = "serverPort";
     private Mock mockConfiguration;
     private Mock mockView;
 
-    /**
-     * Creates a new instance of <code>ConfigurationPresenterTest</code>.
-     */
-    public ConfigurationPresenterTest() {
-        super();
-        this.databaseFilePath = "databaseFilePath";
-        this.serverAddress = "serverAddress";
-        this.serverPort = "serverPort";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected void setUp() {
+    @Before
+    public void setUp() {
         this.mockConfiguration = mock(Configuration.class,
                 new Class[] {Properties.class},
                 new Object[] {new Properties()});
@@ -56,54 +32,34 @@ public final class ConfigurationPresenterTest extends MockObjectTestCase {
                 (Configuration) this.mockConfiguration.proxy(),
                 (ConfigurationView) this.mockView.proxy());
     }
-
-    /**
-     * Should throw <code>NullPointerException</code> when called with a
-     * <code>null</code> configuration.
-     */
-    public void testConstructorDisallowNullConfiguration() {
-        try {
-            new ConfigurationPresenter(null,
-                    (ConfigurationView) this.mockView.proxy());
-            fail("NullPointerException expected");
-        } catch (NullPointerException e) {
-            ConfigurationPresenterTest.logger
-                    .info("Caught expected NullPointerException: "
-                            + e.getMessage());
-        }
+    
+    @After
+    public void verify() {
+        super.verify();
     }
 
-    /**
-     * Should throw <code>NullPointerException</code> when called with a
-     * <code>null</code> view.
-     */
-    public void testConstructorDisallowNullView() {
-        try {
-            new ConfigurationPresenter(
-                    (Configuration) this.mockConfiguration.proxy(), null);
-            fail("NullPointerException expected");
-        } catch (NullPointerException e) {
-            ConfigurationPresenterTest.logger
-                    .info("Caught expected NullPointerException: "
-                            + e.getMessage());
-        }
+    @Test(expected=NullPointerException.class)
+    public void constructorDisallowNullConfiguration() {
+        new ConfigurationPresenter(null,
+                (ConfigurationView) this.mockView.proxy());
     }
 
-    /**
-     * The return status should be "cancel" after the constructor runs.
-     */
-    public void testConstructorReturnStatus() {
-        assertEquals(
+    @Test(expected=NullPointerException.class)
+    public void constructorDisallowNullView() {
+        new ConfigurationPresenter(
+                (Configuration) this.mockConfiguration.proxy(), null);
+    }
+
+    @Test
+    public void constructorReturnStatus() {
+        Assert.assertEquals(
                 "Return status comparison,",
                 ConfigurationPresenter.RETURN_CANCEL,
                 this.presenter.getReturnStatus());
     }
 
-    /**
-     * Should intialise the view components, add the listeners and load the
-     * model into the view.
-     */
-    public void testInitialiseView() {
+    @Test
+    public void initialiseView() {
         this.mockView.expects(once()).method("initialiseComponents");
         this.mockView.expects(once()).method("addOkButtonListener")
                 .with(isA(ActionListener.class));
@@ -128,18 +84,14 @@ public final class ConfigurationPresenterTest extends MockObjectTestCase {
         this.presenter.initialiseView();
     }
 
-    /**
-     * Should call realise on the view.
-     */
-    public void testRealiseView() {
+    @Test
+    public void realiseView() {
         this.mockView.expects(once()).method("realise");
         this.presenter.realiseView();
     }
 
-    /**
-     * Should update the model from the view and return status "ok".
-     */
-    public void testOkButtonActionPerformed() {
+    @Test
+    public void okButtonActionPerformed() {
         String newDatabaseFilePath = "newDatabaseFilePath";
         String newServerAddress = "newServerAddress";
         String newServerPort = "newServerPort";
@@ -160,18 +112,16 @@ public final class ConfigurationPresenterTest extends MockObjectTestCase {
                 .with(eq(newServerPort));
 
         this.presenter.okButtonActionPerformed();
-        assertEquals("Return status comparison",
+        Assert.assertEquals("Return status comparison",
                 ConfigurationPresenter.RETURN_OK,
                 this.presenter.getReturnStatus());
     }
 
-    /**
-     * Should return status "cancel".
-     */
-    public void testCancelButtonActionPerformed() {
+    @Test
+    public void cancelButtonActionPerformed() {
         this.mockView.expects(once()).method("close");
         this.presenter.cancelButtonActionPerformed();
-        assertEquals("Return status comparison",
+        Assert.assertEquals("Return status comparison",
                 ConfigurationPresenter.RETURN_CANCEL,
                 this.presenter.getReturnStatus());
     }

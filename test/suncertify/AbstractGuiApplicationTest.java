@@ -1,45 +1,27 @@
-/*
- * AbstractGuiApplicationTest.java
- *
- * Created on 12-Jul-2005
- */
-
-
 package suncertify;
 
 import java.util.Properties;
-
 import org.jmock.Mock;
 import org.jmock.cglib.MockObjectTestCase;
 import org.jmock.expectation.AssertMo;
-
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.internal.runners.TestClassRunner;
+import org.junit.runner.RunWith;
 import suncertify.presentation.ConfigurationView;
 import suncertify.presentation.MainPresenter;
 import suncertify.presentation.MainView;
 import suncertify.service.BrokerService;
 
-
-/**
- * Unit tests for {@link suncertify.AbstractGuiApplication}.
- *
- * @author Richard Wardle
- */
-public final class AbstractGuiApplicationTest extends MockObjectTestCase {
+@RunWith(TestClassRunner.class)
+public class AbstractGuiApplicationTest extends MockObjectTestCase {
 
     Mock mockPresenter;
     private AbstractGuiApplication application;
 
-    /**
-     * Creates a new instance of <code>AbstractGuiApplicationTest</code>.
-     */
-    public AbstractGuiApplicationTest() {
-        super();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected void setUp() {
+    @Before
+    public void setUp() {
         this.application = new StubAbstractGuiApplication(
                 new Configuration(new Properties()));
         this.mockPresenter = mock(MainPresenter.class,
@@ -49,14 +31,14 @@ public final class AbstractGuiApplicationTest extends MockObjectTestCase {
                     newDummy(MainView.class),
                 });
     }
+    
+    @After
+    public void verify() {
+        super.verify();
+    }
 
-    /**
-     * Should initialise and realise the view.
-     *
-     * @throws ApplicationException If there is an error running the
-     * application.
-     */
-    public void testRun() throws ApplicationException {
+    @Test
+    public void runApplication() throws ApplicationException {
         this.mockPresenter.expects(once()).method("initialiseView");
         this.mockPresenter.expects(once()).method("realiseView");
         this.application.run();
