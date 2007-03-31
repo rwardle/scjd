@@ -4,13 +4,11 @@
  * Created on 11 June 2005
  */
 
-
 package suncertify.service;
 
 import java.util.logging.Logger;
 
 import suncertify.db.DBMain;
-
 
 /**
  *
@@ -30,6 +28,9 @@ public final class BrokerServiceImpl implements BrokerService {
         this.data = data;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getHelloWorld() {
         return "Hello world!";
     }

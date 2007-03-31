@@ -4,14 +4,9 @@
  * Created on 06-Jun-2005
  */
 
-
 package suncertify.presentation;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import suncertify.Configuration;
-
 
 /**
  * Encapsulates the presentation behaviour of the configuration dialog.
@@ -51,19 +46,10 @@ public class ConfigurationPresenter {
     }
 
     /**
-     * Initialises the view.
-     */
-    public void initialiseView() {
-        this.view.initialiseComponents();
-        addOKButtonListener();
-        addCancelButtonListener();
-        loadViewFromModel();
-    }
-
-    /**
      * Realises the view.
      */
     public void realiseView() {
+        loadViewFromModel();
         this.view.realise();
     }
 
@@ -76,32 +62,17 @@ public class ConfigurationPresenter {
         return this.returnStatus;
     }
 
-    private void addOKButtonListener() {
-        this.view.addOkButtonListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                okButtonActionPerformed();
-            }
-        });
-    }
-
-    final void okButtonActionPerformed() {
+    public final void okButtonActionPerformed() {
         this.returnStatus = ConfigurationPresenter.RETURN_OK;
         saveViewToModel();
         this.view.close();
     }
 
-    private void addCancelButtonListener() {
-        this.view.addCancelButtonListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                cancelButtonActionPerformed();
-            }
-        });
-    }
-
-    final void cancelButtonActionPerformed() {
+    public final void cancelButtonActionPerformed() {
         this.view.close();
     }
 
+    // TODO: This should be on the EDT
     private void loadViewFromModel() {
         this.view.setDatabaseFilePath(this.configuration.getDatabaseFilePath());
         this.view.setServerAddress(this.configuration.getServerAddress());

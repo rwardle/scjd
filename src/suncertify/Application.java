@@ -4,11 +4,9 @@
  * Created on 06-Jul-2005
  */
 
-
 package suncertify;
 
 import java.io.File;
-
 
 /**
  * The application.
@@ -32,6 +30,7 @@ public interface Application {
      */
     boolean configure(File propertiesFile) throws ApplicationException;
 
+    // TODO: Change this method name to avoid confusion with Runnable?
     /**
      * Runs the application.
      *

@@ -4,16 +4,14 @@
  * Created on 07-Jun-2005
  */
 
-
 package suncertify.presentation;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-
+import java.util.ResourceBundle;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
 
 /**
  * Server mode configuration dialog.
@@ -28,47 +26,41 @@ public final class ServerConfigurationDialog extends
     private JTextField serverPortField;
 
     /**
-     * Creates a new instance of <code>ServerConfigurationDialog</code>.
-     */
-    public ServerConfigurationDialog() {
-        super();
-    }
-
-    /**
      * {@inheritDoc}
      */
     protected String getMessageText() {
-        // TODO: Add full text
-        return "Server message.";
+        return this.getResourceBundle().getString("ServerConfigurationDialog.message.text");
     }
 
     /**
      * {@inheritDoc}
      */
-    protected void initialiseInputPanel() {
-        JPanel inputPanel = new JPanel(new GridLayout(2, 1));
+    protected void initInputPanel(JPanel inputPanel) {
+        inputPanel.setLayout(new GridLayout(2, 1));
 
         JPanel databaseFilePathPanel = new JPanel();
         inputPanel.add(databaseFilePathPanel);
 
-        JLabel databaseFilePathLabel = new JLabel("Database file path:");
+        JLabel databaseFilePathLabel = new JLabel(
+                this.getResourceBundle().getString("ServerConfigurationDialog.databaseFilePathLabel.text"));
         databaseFilePathPanel.add(databaseFilePathLabel);
         this.databaseFilePathField = new JTextField();
         this.databaseFilePathField.setName(
-                "ServerConfigurationDialog.databaseFilePathField");
+                "ServerConfigurationDialog.databaseFilePathField.name");
         databaseFilePathPanel.add(this.databaseFilePathField);
 
         JPanel serverPortPanel = new JPanel();
         inputPanel.add(serverPortPanel);
 
-        JLabel serverPortLabel = new JLabel("Server port:");
+        JLabel serverPortLabel = new JLabel(
+                this.getResourceBundle().getString("ServerConfigurationDialog.serverPortLabel.text"));
         serverPortPanel.add(serverPortLabel);
         this.serverPortField = new JTextField();
         this.serverPortField.setName(
-                "ServerConfigurationDialog.serverPortField");
+                "ServerConfigurationDialog.serverPortField.name");
         serverPortPanel.add(this.serverPortField);
 
-        getDialog().getContentPane().add(inputPanel, BorderLayout.CENTER);
+        getContentPane().add(inputPanel, BorderLayout.CENTER);
     }
 
     /**

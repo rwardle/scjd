@@ -4,11 +4,7 @@
  * Created on 06-Jun-2005
  */
 
-
 package suncertify.presentation;
-
-import java.awt.event.ActionListener;
-
 
 /**
  * The application configuration view.
@@ -17,12 +13,7 @@ import java.awt.event.ActionListener;
  */
 public interface ConfigurationView {
 
-    /**
-     * Initialise the view's components. This method should not realise the
-     * components.
-     */
-    void initialiseComponents();
-
+    void setPresenter(ConfigurationPresenter presenter);
 
     /**
      * Realises the view and its components.
@@ -33,20 +24,6 @@ public interface ConfigurationView {
      * Closes the view.
      */
     void close();
-
-    /**
-     * Adds an action listener fall the OK button.
-     *
-     * @param listener The action listener.
-     */
-    void addCancelButtonListener(ActionListener listener);
-
-    /**
-     * Adds an action listener for the Cancel button.
-     *
-     * @param listener The action listener.
-     */
-    void addOkButtonListener(ActionListener listener);
 
     /**
      * Gets the database file path.

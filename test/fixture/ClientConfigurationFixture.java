@@ -1,10 +1,3 @@
-/*
- * ClientConfigurationFixture.java
- *
- * Created on 17-Jul-2005
- */
-
-
 package fixture;
 
 import java.util.Properties;
@@ -26,21 +19,12 @@ import suncertify.Configuration;
 import suncertify.presentation.ClientConfigurationDialog;
 import suncertify.presentation.ConfigurationPresenter;
 
+public class ClientConfigurationFixture extends Fixture {
 
-/**
- * Fixture for client mode configuration acceptance tests.
- *
- * @author Richard Wardle
- */
-public final class ClientConfigurationFixture extends Fixture {
-
-    private Configuration configuration;
+    private final Configuration configuration;
+    private final GuiTest guiTest;
     private ConfigurationPresenter presenter;
-    private GuiTest guiTest;
 
-    /**
-     * Creates a new instance of <code>ClientConfigurationFixture</code>.
-     */
     public ClientConfigurationFixture() {
         this.configuration = new Configuration(
                 new Properties(ApplicationConstants.DEFAULT_PROPERTIES));
@@ -48,72 +32,36 @@ public final class ClientConfigurationFixture extends Fixture {
         this.guiTest.initialise();
     }
 
-    /**
-     * Sets the robot delay.
-     *
-     * @param delay The delay.
-     */
     public void delay(int delay) {
         Robot.setAutoDelay(delay);
     }
 
-    /**
-     * Enters the server address.
-     *
-     * @param address The address.
-     */
     public void serverAddress(String address) {
         new JTextComponentTester().actionEnterText(
                 this.guiTest.getServerAddressField(), address);
     }
 
-    /**
-     * Enters the server port.
-     *
-     * @param port The server port.
-     */
     public void serverPort(String port) {
         new JTextComponentTester().actionEnterText(
                 this.guiTest.getServerPortField(), port);
     }
 
-    /**
-     * Clicks OK.
-     */
     public void ok() {
         new ComponentTester().actionClick(this.guiTest.getOkButton());
     }
 
-    /**
-     * Clicks Cancel.
-     */
     public void cancel() {
         new ComponentTester().actionClick(this.guiTest.getCancelButton());
     }
 
-    /**
-     * Gets the server address value.
-     *
-     * @return The server address.
-     */
     public String serverAddressValue() {
         return this.configuration.getServerAddress();
     }
 
-    /**
-     * Gets the server port value.
-     *
-     * @return The server port.
-     */
     public String serverPortValue() {
         return this.configuration.getServerPort();
     }
 
-    /**
-     * Gets the dialog return status.
-     *
-     * @return The return status.
-     */
     public String returnStatusValue() {
         return Integer.toString(this.presenter.getReturnStatus());
     }
@@ -157,7 +105,6 @@ public final class ClientConfigurationFixture extends Fixture {
                                 ClientConfigurationFixture.this
                                         .configuration,
                                 dialog);
-                ClientConfigurationFixture.this.presenter.initialiseView();
 
                 showModalDialog(new Runnable() {
                     public void run() {

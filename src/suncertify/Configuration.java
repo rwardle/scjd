@@ -4,14 +4,12 @@
  * Created on 05-Jun-2005
  */
 
-
 package suncertify;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
-
 
 /**
  * Encapsulates application configuration information. Reads and writes to

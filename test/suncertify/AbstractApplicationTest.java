@@ -20,21 +20,26 @@ import suncertify.presentation.ConfigurationView;
 @RunWith(TestClassRunner.class)
 public class AbstractApplicationTest extends MockObjectTestCase {
 
-    Mock mockPresenter;
     Mock mockView;
-    private AbstractApplication application;
-    private String dummyPropertiesFilePath;
+    Mock mockPresenter;
+    private final String dummyPropertiesFilePath = "dummy-properties-file-path";
     private Mock mockConfiguration;
+    private AbstractApplication application;
 
     @Before
     public void setUp() {
-        this.dummyPropertiesFilePath = "dummy-properties-file-path";
+        this.mockView = mock(ConfigurationView.class);
         this.mockConfiguration = mock(Configuration.class,
                 new Class[] {Properties.class},
                 new Object[] {new Properties()});
+        this.mockPresenter = mock(ConfigurationPresenter.class,
+                new Class[] {Configuration.class, ConfigurationView.class},
+                new Object[] {
+                    (Configuration) this.mockConfiguration.proxy(),
+                    (ConfigurationView) this.mockView.proxy(),
+                });
         this.application = new StubAbstractApplication(
                 (Configuration) this.mockConfiguration.proxy());
-        this.mockView = mock(ConfigurationView.class);
     }
     
     @After
@@ -51,13 +56,6 @@ public class AbstractApplicationTest extends MockObjectTestCase {
     }
 
     private void setUpDefaultExpectations() {
-        this.mockPresenter = mock(ConfigurationPresenter.class,
-                new Class[] {Configuration.class, ConfigurationView.class},
-                new Object[] {
-                    (Configuration) this.mockConfiguration.proxy(),
-                    (ConfigurationView) this.mockView.proxy(),
-                });
-        this.mockPresenter.stubs().method(eq("initialiseView"));
         this.mockPresenter.stubs().method(eq("realiseView"));
         this.mockPresenter.stubs().method(eq("getReturnStatus"))
                 .will(returnValue(ConfigurationPresenter.RETURN_CANCEL));
@@ -133,7 +131,6 @@ public class AbstractApplicationTest extends MockObjectTestCase {
     @Test
     public void configureDisplaysView() throws Exception {
         setUpDefaultExpectations();
-        this.mockPresenter.expects(once()).method(eq("initialiseView"));
         this.mockPresenter.expects(once()).method(eq("realiseView"));
         this.application.configure(new File(this.dummyPropertiesFilePath));
     }
@@ -168,25 +165,18 @@ public class AbstractApplicationTest extends MockObjectTestCase {
             super(configuration);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         protected ConfigurationPresenter createConfigurationPresenter() {
             return (ConfigurationPresenter) AbstractApplicationTest.this
                     .mockPresenter.proxy();
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         protected ConfigurationView createConfigurationView() {
             return (ConfigurationView) AbstractApplicationTest.this
                     .mockView.proxy();
         }
 
-        /**
-         * {@inheritDoc}
-         */
         public void run() {
             AssertMo.notImplemented("StubAbstractApplication");
         }

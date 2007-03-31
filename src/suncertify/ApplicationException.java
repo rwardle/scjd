@@ -4,16 +4,14 @@
  * Created on 12-Jul-2005
  */
 
-
 package suncertify;
-
 
 /**
  * Exceptions class representing generic application exceptions.
  *
  * @author Richard Wardle
  */
-public class ApplicationException extends Exception {
+public final class ApplicationException extends Exception {
 
     private static final long serialVersionUID = -7250388825196167973L;
 

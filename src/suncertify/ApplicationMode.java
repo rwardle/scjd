@@ -4,16 +4,14 @@
  * Created on 08 June 2005
  */
 
-
 package suncertify;
-
 
 /**
  * Represents the run mode of the application.
  *
  * @author Richard Wardle
  */
-public final class ApplicationMode {
+public class ApplicationMode {
 
     /**
      * Client mode: the GUI runs and connects to the database server over the

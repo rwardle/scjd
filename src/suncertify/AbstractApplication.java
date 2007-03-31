@@ -4,7 +4,6 @@
  * Created on 05-Jun-2005
  */
 
-
 package suncertify;
 
 import java.awt.EventQueue;
@@ -25,7 +24,6 @@ import javax.swing.JOptionPane;
 
 import suncertify.presentation.ConfigurationPresenter;
 import suncertify.presentation.ConfigurationView;
-
 
 /**
  * The abstract base class for the application.
@@ -125,7 +123,6 @@ public abstract class AbstractApplication implements Application {
 
     private int showConfigurationDialog() throws ApplicationException {
         final ConfigurationPresenter presenter = createConfigurationPresenter();
-        presenter.initialiseView();
         try {
             EventQueue.invokeAndWait(new Runnable() {
                 public void run() {
@@ -157,8 +154,11 @@ public abstract class AbstractApplication implements Application {
      * @return The configuration presenter.
      */
     protected ConfigurationPresenter createConfigurationPresenter() {
-        return new ConfigurationPresenter(getConfiguration(),
-                createConfigurationView());
+        ConfigurationView view = createConfigurationView();
+        ConfigurationPresenter presenter = new ConfigurationPresenter(getConfiguration(),
+                view);
+        view.setPresenter(presenter);
+        return presenter;
     }
 
     /**

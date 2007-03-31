@@ -4,7 +4,6 @@
  * Created on 05-Jul-2005
  */
 
-
 package suncertify;
 
 import java.net.MalformedURLException;
@@ -15,7 +14,6 @@ import java.rmi.RemoteException;
 import suncertify.presentation.ClientConfigurationDialog;
 import suncertify.presentation.ConfigurationView;
 import suncertify.service.BrokerService;
-
 
 /**
  * The client mode application.
@@ -38,6 +36,7 @@ public final class ClientApplication extends AbstractGuiApplication {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected ConfigurationView createConfigurationView() {
         return new ClientConfigurationDialog();
     }
@@ -45,6 +44,7 @@ public final class ClientApplication extends AbstractGuiApplication {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected BrokerService getBrokerService() throws ApplicationException {
         String url = "//" + getConfiguration().getServerAddress() + ":"
                 + getConfiguration().getServerPort() + "/"

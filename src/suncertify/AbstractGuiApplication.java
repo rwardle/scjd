@@ -4,19 +4,17 @@
  * Created on 07-Jul-2005
  */
 
-
 package suncertify;
 
 import java.awt.EventQueue;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import suncertify.presentation.MainFrame;
 import suncertify.presentation.MainFrame;
 import suncertify.presentation.MainPresenter;
 import suncertify.presentation.MainView;
 import suncertify.service.BrokerService;
-
 
 /**
  * Abstract base class for application modes that display a main GUI window.
@@ -49,8 +47,6 @@ public abstract class AbstractGuiApplication extends AbstractApplication {
      */
     public final void run() throws ApplicationException {
         final MainPresenter presenter = createMainPresenter();
-        presenter.initialiseView();
-
         try {
             EventQueue.invokeAndWait(new Runnable() {
                 public void run() {
@@ -77,7 +73,10 @@ public abstract class AbstractGuiApplication extends AbstractApplication {
      * @throws ApplicationException If the presenter cannot be created.
      */
     protected MainPresenter createMainPresenter() throws ApplicationException {
-        return new MainPresenter(getBrokerService(), createMainView());
+        MainView mainView = createMainView();
+        MainPresenter mainPresenter = new MainPresenter(getBrokerService(), mainView);
+        mainView.setPresenter(mainPresenter);
+        return mainPresenter;
     }
 
     /**

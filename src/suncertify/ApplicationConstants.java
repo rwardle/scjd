@@ -4,18 +4,16 @@
  * Created on 05-Jun-2005
  */
 
-
 package suncertify;
 
 import java.util.Properties;
-
 
 /**
  * Application constants.
  *
  * @author Richard Wardle
  */
-public final class ApplicationConstants {
+public class ApplicationConstants {
 
     /** Database file path property name. */
     public static final String DATABASE_FILE_PATH_PROPERTY =

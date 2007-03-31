@@ -4,7 +4,6 @@
  * Created on 05-Jul-2005
  */
 
-
 package suncertify;
 
 import java.net.MalformedURLException;
@@ -18,7 +17,6 @@ import suncertify.presentation.ConfigurationView;
 import suncertify.presentation.ServerConfigurationDialog;
 import suncertify.service.RemoteBrokerService;
 import suncertify.service.RemoteBrokerServiceImpl;
-
 
 /**
  * The server mode application.
@@ -44,6 +42,7 @@ public final class ServerApplication extends AbstractApplication {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected ConfigurationView createConfigurationView() {
         return new ServerConfigurationDialog();
     }

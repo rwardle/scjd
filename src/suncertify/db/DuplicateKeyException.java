@@ -1,3 +1,9 @@
+/*
+ * DuplicateKeyException.java
+ *
+ * Created on 07-Jul-2005
+ */
+
 package suncertify.db;
 
 /**
@@ -5,7 +11,7 @@ package suncertify.db;
  * 
  * @author Richard Wardle
  */
-public class DuplicateKeyException extends Exception {
+public final class DuplicateKeyException extends Exception {
 
     /**
      * Creates a new <code>DuplicateKeyException</code>.
@@ -48,5 +54,4 @@ public class DuplicateKeyException extends Exception {
     public DuplicateKeyException(String message, Throwable cause) {
         super(message, cause);
     }
-
 }

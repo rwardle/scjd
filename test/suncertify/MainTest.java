@@ -14,10 +14,10 @@ import org.junit.runner.RunWith;
 @RunWith(TestClassRunner.class)
 public class MainTest extends MockObjectTestCase {
 
+    private final String dummyPropertiesFilePath = "dummy-properties-file-path";
     private Main main;
     private Mock mockConfiguration;
     private Mock mockApplication;
-    private final String dummyPropertiesFilePath = "dummy-properties-file-path";
 
     @Before
     public void setUp() {

@@ -15,12 +15,12 @@ import suncertify.Configuration;
 @RunWith(TestClassRunner.class)
 public class ConfigurationPresenterTest extends MockObjectTestCase {
 
-    private ConfigurationPresenter presenter;
     private final String databaseFilePath = "databaseFilePath";
     private final String serverAddress = "serverAddress";
     private final String serverPort = "serverPort";
     private Mock mockConfiguration;
     private Mock mockView;
+    private ConfigurationPresenter presenter;
 
     @Before
     public void setUp() {
@@ -59,20 +59,13 @@ public class ConfigurationPresenterTest extends MockObjectTestCase {
     }
 
     @Test
-    public void initialiseView() {
-        this.mockView.expects(once()).method("initialiseComponents");
-        this.mockView.expects(once()).method("addOkButtonListener")
-                .with(isA(ActionListener.class));
-        this.mockView.expects(once()).method("addCancelButtonListener")
-                .with(isA(ActionListener.class));
-        
+    public void realiseView() {
         this.mockConfiguration.expects(once()).method("getDatabaseFilePath")
                 .will(returnValue(this.databaseFilePath));
         this.mockConfiguration.expects(once()).method("getServerAddress")
                 .will(returnValue(this.serverAddress));
         this.mockConfiguration.expects(once()).method("getServerPort")
                 .will(returnValue(this.serverPort));
-
         
         this.mockView.expects(once()).method("setDatabaseFilePath")
                 .with(eq(this.databaseFilePath));
@@ -80,12 +73,7 @@ public class ConfigurationPresenterTest extends MockObjectTestCase {
                 .with(eq(this.serverAddress));
         this.mockView.expects(once()).method("setServerPort")
                 .with(eq(this.serverPort));
-
-        this.presenter.initialiseView();
-    }
-
-    @Test
-    public void realiseView() {
+        
         this.mockView.expects(once()).method("realise");
         this.presenter.realiseView();
     }

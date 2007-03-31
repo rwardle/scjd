@@ -4,13 +4,11 @@
  * Created on 05-Jul-2005
  */
 
-
 package suncertify;
 
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 
 /**
  * The starting class for the application.
@@ -20,13 +18,6 @@ import java.util.logging.Logger;
 public final class Main {
 
     private static Logger logger = Logger.getLogger(Main.class.getName());
-
-    /**
-     * Creates a new instance of <code>Main</code>.
-     */
-    public Main() {
-        super();
-    }
 
     /**
      * Gets the application mode based on the command-line arguments.

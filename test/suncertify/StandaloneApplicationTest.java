@@ -15,8 +15,8 @@ import suncertify.service.BrokerServiceImpl;
 @RunWith(TestClassRunner.class)
 public class StandaloneApplicationTest extends MockObjectTestCase {
 
-    private StandaloneApplication application;
     private Mock mockConfiguration;
+    private StandaloneApplication application;
 
     @Before
     public void setUp() {

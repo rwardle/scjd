@@ -1,10 +1,3 @@
-/*
- * StandaloneConfigurationFixture.java
- *
- * Created on 17-Jul-2005
- */
-
-
 package fixture;
 
 import java.util.Properties;
@@ -26,21 +19,12 @@ import suncertify.Configuration;
 import suncertify.presentation.ConfigurationPresenter;
 import suncertify.presentation.StandaloneConfigurationDialog;
 
+public class StandaloneConfigurationFixture extends Fixture {
 
-/**
- * Fixture for standalone mode configuration acceptance tests.
- *
- * @author Richard Wardle
- */
-public final class StandaloneConfigurationFixture extends Fixture {
-
-    private Configuration configuration;
+    private final Configuration configuration;
+    private final GuiTest guiTest;
     private ConfigurationPresenter presenter;
-    private GuiTest guiTest;
 
-    /**
-     * Creates a new instance of <code>StandaloneConfigurationFixture</code>.
-     */
     public StandaloneConfigurationFixture() {
         this.configuration = new Configuration(
                 new Properties(ApplicationConstants.DEFAULT_PROPERTIES));
@@ -48,57 +32,30 @@ public final class StandaloneConfigurationFixture extends Fixture {
         this.guiTest.initialise();
     }
 
-    /**
-     * Sets the robot delay.
-     *
-     * @param delay The delay.
-     */
     public void delay(int delay) {
         Robot.setAutoDelay(delay);
     }
 
-    /**
-     * Enters the database file path.
-     *
-     * @param path The path.
-     */
     public void databaseFilePath(String path) {
         new JTextComponentTester().actionEnterText(
                 this.guiTest.getDatabaseFilePathField(), path);
     }
 
-    /**
-     * Clicks OK.
-     */
     public void ok() {
         new ComponentTester().actionClick(this.guiTest.getOkButton());
     }
 
-    /**
-     * Clicks Cancel.
-     */
     public void cancel() {
         new ComponentTester().actionClick(this.guiTest.getCancelButton());
     }
 
-    /**
-     * Gets the database file path value.
-     *
-     * @return The database file path.
-     */
     public String databaseFilePathValue() {
         return this.configuration.getDatabaseFilePath();
     }
 
-    /**
-     * Gets the dialog return status.
-     *
-     * @return The return status.
-     */
     public String returnStatusValue() {
         return Integer.toString(this.presenter.getReturnStatus());
     }
-
 
     private class GuiTest extends ComponentTestFixture {
 
@@ -133,7 +90,6 @@ public final class StandaloneConfigurationFixture extends Fixture {
                                 StandaloneConfigurationFixture.this
                                         .configuration,
                                 dialog);
-                StandaloneConfigurationFixture.this.presenter.initialiseView();
 
                 showModalDialog(new Runnable() {
                     public void run() {

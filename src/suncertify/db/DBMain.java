@@ -1,3 +1,9 @@
+/*
+ * DBMain.java
+ *
+ * Created on 07-Jul-2005
+ */
+
 package suncertify.db;
 
 /**
@@ -86,5 +92,4 @@ public interface DBMain {
      * @throws RecordNotFoundException
      */
     boolean isLocked(int recNo) throws RecordNotFoundException;
-
 }

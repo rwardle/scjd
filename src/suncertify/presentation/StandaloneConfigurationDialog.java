@@ -4,11 +4,10 @@
  * Created on 07-Jun-2005
  */
 
-
 package suncertify.presentation;
 
 import java.awt.BorderLayout;
-
+import java.util.ResourceBundle;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -16,7 +15,6 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
-
 
 /**
  * Standalone mode configuration dialog.
@@ -30,28 +28,19 @@ public final class StandaloneConfigurationDialog extends
     private String serverPort;
     private JTextField databaseFilePathField;
 
-
-    /**
-     * Creates a new instance of <code>StandaloneConfigurationDialog</code>.
-     */
-    public StandaloneConfigurationDialog() {
-        super();
-    }
-
     /**
      * {@inheritDoc}
      */
     protected String getMessageText() {
-        // TODO: Add full text
-        return "Standalone message.";
+        return this.getResourceBundle().getString("StandaloneConfigurationDialog.message.text");
     }
 
     /**
      * {@inheritDoc}
      */
-    protected void initialiseInputPanel() {
-        JPanel inputPanel = new JPanel();
-        JLabel databaseFilePathLabel = new JLabel("Database file path:");
+    protected void initInputPanel(JPanel inputPanel) {
+        JLabel databaseFilePathLabel = new JLabel(
+                this.getResourceBundle().getString("StandaloneConfigurationDialog.databaseFilePathLabel.text"));
         inputPanel.add(databaseFilePathLabel);
 
         this.databaseFilePathField = new JTextField() {
@@ -88,11 +77,10 @@ public final class StandaloneConfigurationDialog extends
             }
         };
 
-        // TODO:
         this.databaseFilePathField.setName(
-                "StandaloneConfigurationDialog.databaseFilePathField");
+                "StandaloneConfigurationDialog.databaseFilePathField.name");
         inputPanel.add(this.databaseFilePathField);
-        getDialog().getContentPane().add(inputPanel, BorderLayout.CENTER);
+        getContentPane().add(inputPanel, BorderLayout.CENTER);
     }
 
     /**

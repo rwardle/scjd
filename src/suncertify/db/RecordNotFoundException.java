@@ -1,3 +1,9 @@
+/*
+ * RecordNotFoundException.java
+ *
+ * Created on 07-Jul-2005
+ */
+
 package suncertify.db;
 
 /**
@@ -6,7 +12,7 @@ package suncertify.db;
  * 
  * @author Richard Wardle
  */
-public class RecordNotFoundException extends Exception {
+public final class RecordNotFoundException extends Exception {
 
     /**
      * Creates a new <code>RecordNotFoundException</code>.
@@ -49,5 +55,4 @@ public class RecordNotFoundException extends Exception {
     public RecordNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
-
 }

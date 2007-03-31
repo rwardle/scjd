@@ -4,15 +4,13 @@
  * Created on 07-Jul-2005
  */
 
-
 package suncertify.db;
-
 
 /**
  * 
  * @author Richard Wardle
  */
-public class Data implements DBMain {
+public final class Data implements DBMain {
 
     private String databaseFilePath;
     
@@ -36,16 +34,14 @@ public class Data implements DBMain {
      * {@inheritDoc}
      */
     public void update(int recNo, String[] data) throws RecordNotFoundException {
-    // TODO Auto-generated method stub
-
+        // TODO Auto-generated method stub
     }
 
     /**
      * {@inheritDoc}
      */
     public void delete(int recNo) throws RecordNotFoundException {
-    // TODO Auto-generated method stub
-
+        // TODO Auto-generated method stub
     }
 
     /**
@@ -68,16 +64,14 @@ public class Data implements DBMain {
      * {@inheritDoc}
      */
     public void lock(int recNo) throws RecordNotFoundException {
-    // TODO Auto-generated method stub
-
+        // TODO Auto-generated method stub
     }
 
     /**
      * {@inheritDoc}
      */
     public void unlock(int recNo) throws RecordNotFoundException {
-    // TODO Auto-generated method stub
-
+        // TODO Auto-generated method stub
     }
 
     /**

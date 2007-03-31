@@ -4,15 +4,10 @@
  * Created on 06-Jul-2005
  */
 
-
 package suncertify.presentation;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
-
 import suncertify.service.BrokerService;
-
 
 /**
  * 
@@ -28,32 +23,15 @@ public class MainPresenter {
      */
     public MainPresenter(BrokerService service, MainView view) {
         // TODO: Check args for null
-        
         this.service = service;
         this.view = view;
     }
-    
-    public void initialiseView() {
-        this.view.initialiseComponents();
-        addHelloButtonListener();
-    }
-    
-    /**
-     * 
-     */
+ 
     public void realiseView() {
         this.view.realise();
     }
     
-    private void addHelloButtonListener() {
-        this.view.addHelloButtonListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                helloButtonActionPerformed();
-            }
-        });
-    }
-
-    protected void helloButtonActionPerformed() {
+    public final void helloButtonActionPerformed() {
         try {
             this.view.setLabelText(this.service.getHelloWorld());
         } catch (IOException e) {

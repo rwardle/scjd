@@ -16,11 +16,11 @@ import org.junit.runner.RunWith;
 @RunWith(TestClassRunner.class)
 public class ConfigurationTest extends MockObjectTestCase {
 
-    private Configuration configuration;
-    private Mock mockProperties;
     private final String dummyServerPort = "dummy-server-port";
     private final String dummyDatabaseFilePath = "dummy-database-file-path";
     private final String dummyServerAddress = "dummy-server-address";
+    private Mock mockProperties;
+    private Configuration configuration;
 
     @Before
     public void setUp() {

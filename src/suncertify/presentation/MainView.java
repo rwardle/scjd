@@ -4,11 +4,7 @@
  * Created on 06-Jul-2005
  */
 
-
 package suncertify.presentation;
-
-import java.awt.event.ActionListener;
-
 
 /**
  * 
@@ -16,21 +12,12 @@ import java.awt.event.ActionListener;
  */
 public interface MainView {
 
-    /**
-     * Initialise the view's components. This method should not realise the
-     * components.
-     */
-    void initialiseComponents();
-
-
+    void setPresenter(MainPresenter presenter);
+    
     /**
      * Realises the view and its components.
      */
     void realise();
-
-
-    void addHelloButtonListener(ActionListener listener);
-
 
     void setLabelText(String text);
 }

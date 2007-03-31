@@ -22,14 +22,14 @@ public class AbstractGuiApplicationTest extends MockObjectTestCase {
 
     @Before
     public void setUp() {
-        this.application = new StubAbstractGuiApplication(
-                new Configuration(new Properties()));
         this.mockPresenter = mock(MainPresenter.class,
                 new Class[] {BrokerService.class, MainView.class},
                 new Object[] {
                     newDummy(BrokerService.class),
                     newDummy(MainView.class),
                 });
+        this.application = new StubAbstractGuiApplication(
+                new Configuration(new Properties()));
     }
     
     @After
@@ -39,7 +39,6 @@ public class AbstractGuiApplicationTest extends MockObjectTestCase {
 
     @Test
     public void runApplication() throws ApplicationException {
-        this.mockPresenter.expects(once()).method("initialiseView");
         this.mockPresenter.expects(once()).method("realiseView");
         this.application.run();
     }
@@ -50,25 +49,19 @@ public class AbstractGuiApplicationTest extends MockObjectTestCase {
             super(configuration);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         protected ConfigurationView createConfigurationView() {
             AssertMo.notImplemented("StubAbstractGuiApplication");
             return null;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         protected BrokerService getBrokerService() {
             AssertMo.notImplemented("StubAbstractGuiApplication");
             return null;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         protected MainPresenter createMainPresenter() {
             return (MainPresenter) AbstractGuiApplicationTest.this
                     .mockPresenter.proxy();
