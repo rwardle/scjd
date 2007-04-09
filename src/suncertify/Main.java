@@ -158,6 +158,7 @@ public final class Main {
                 // error message to standard error before exiting
                 Main.logger.log(Level.SEVERE, "Error displaying error dialog",
                         e1);
+                // TODO: Does this need to printed to stderr?
                 System.err.println(message);
             }
 

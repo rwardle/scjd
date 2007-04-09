@@ -25,6 +25,7 @@ public final class MainFrame extends JFrame implements MainView {
     }
     
     public void realise() {
+        this.pack();
         this.setVisible(true);
     }
     

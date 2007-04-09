@@ -1,36 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- You may freely edit this file. See commented blocks below for -->
-<!-- some examples of how to customize the build. -->
-<!-- (If you delete it and reopen the project it will be recreated.) -->
-<project name="scjdAssignment" default="default" basedir="." xmlns:macro="macro">
+<project name="scjdAssignment" default="default" basedir="."
+        xmlns:macro="macro">
     <description>Builds, tests, and runs the project scjdAssignment.</description>
     <import file="nbproject/build-impl.xml"/>
-    <import file="../ant/build-checkstyle.xml"/>
-    <import file="../ant/build-cobertura.xml"/>
-    <import file="../ant/build-junit.xml"/>
-    <import file="../ant/build-fitnesse.xml"/>
-    <!--
-    ======================
-    INITIALIZATION SECTION
-    ======================
-    -->
+
+    <property name="ant.common.home" value="../ant"/>
+    <import file="${ant.common.home}/build-checkstyle.xml"/>
+    <import file="${ant.common.home}/build-cobertura.xml"/>
+    <import file="${ant.common.home}/build-findbugs.xml"/>
+    <import file="${ant.common.home}/build-jdepend.xml"/>
+    <import file="${ant.common.home}/build-junit.xml"/>
+    <import file="${ant.common.home}/build-pmd.xml"/>
+
     <target name="-post-init">
         <property file="build.properties"/>
     </target>
-    <!--
-    ============
-    RMIC SECTION
-    ============
-    -->
-    <target name="rmic" depends="compile">
-        <rmic verify="true" stubversion="1.2" base="${build.classes.dir}"
-                classname="suncertify.service.RemoteBrokerServiceImpl"/>
-    </target>
-    <!--
-    =====================
-    CRUISECONTROL SECTION
-    =====================
-    -->
-    <target name="cruise-build"
-            depends="clean,compile,rmic,jar,compile-test,-pre-test-run,junit-xml,checkstyle-xml,cobertura-report,javadoc"/>
+
+    <target name="report"
+            depends="checkstyle-report,findbugs-report,pmd-report,jdepend-report,junit-report,cobertura-report"/>
 </project>
