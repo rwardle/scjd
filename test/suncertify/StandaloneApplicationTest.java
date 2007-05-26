@@ -1,8 +1,8 @@
 package suncertify;
 
-import java.util.Properties;
-import org.jmock.Mock;
-import org.jmock.cglib.MockObjectTestCase;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,37 +13,37 @@ import suncertify.presentation.StandaloneConfigurationDialog;
 import suncertify.service.BrokerServiceImpl;
 
 @RunWith(TestClassRunner.class)
-public class StandaloneApplicationTest extends MockObjectTestCase {
+public class StandaloneApplicationTest {
 
-    private Mock mockConfiguration;
+    private final Mockery context = new Mockery() {{
+        setImposteriser(ClassImposteriser.INSTANCE);
+    }};
+    private Configuration mockConfiguration;
     private StandaloneApplication application;
 
     @Before
     public void setUp() {
-        this.mockConfiguration = mock(Configuration.class,
-                new Class[] {Properties.class},
-                new Object[] {new Properties()});
-        this.application = new StandaloneApplication(
-                (Configuration) this.mockConfiguration.proxy());
+        this.mockConfiguration = this.context.mock(Configuration.class);
+        this.application = new StandaloneApplication(this.mockConfiguration);
     }
 
     @After
     public void verify() {
-        super.verify();
+        this.context.assertIsSatisfied();
     }
-    
+
     @Test
     public void createConfigurationView() {
-        Assert.assertTrue("Instance of StandaloneConfigurationDialog expected",
-                this.application.createConfigurationView()
-                        instanceof StandaloneConfigurationDialog);
+        Assert.assertTrue(
+                this.application.createConfigurationView() instanceof StandaloneConfigurationDialog);
     }
 
     @Test
     public void getBrokerService() {
-        this.mockConfiguration.expects(once()).method("getDatabaseFilePath");
-        Assert.assertTrue("Instance of BrokerServiceImpl expected",
-                this.application.getBrokerService()
-                        instanceof BrokerServiceImpl);
+        this.context.checking(new Expectations() {{
+            ignoring(StandaloneApplicationTest.this.mockConfiguration);
+        }});
+        Assert.assertTrue(
+                this.application.getBrokerService() instanceof BrokerServiceImpl);
     }
 }

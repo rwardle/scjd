@@ -12,10 +12,21 @@
     <import file="${ant.common.home}/build-junit.xml"/>
     <import file="${ant.common.home}/build-pmd.xml"/>
 
-    <target name="-post-init">
+    <target name="-post-init" depends="-map-includes">
         <property file="build.properties"/>
+    </target>
+
+    <target name="-map-includes" if="filter">
+        <property name="javac.includes" value="${filter}"/>
+        <property name="test.includes" value="${filter}"/>
+        <property name="checkstyle.includes" value="${filter}/**/*"/>
+        <property name="findbugs.includes" value="${filter}"/>
+        <property name="pmd.includes" value="${filter}/**/*"/>
     </target>
 
     <target name="report"
             depends="checkstyle-report,findbugs-report,pmd-report,jdepend-report,junit-report,cobertura-report"/>
+    <target name="report-single"
+            depends="checkstyle-single-report,findbugs-single-report,pmd-single-report"/>
 </project>
+

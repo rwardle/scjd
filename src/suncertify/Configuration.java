@@ -14,7 +14,7 @@ import java.util.Properties;
 /**
  * Encapsulates application configuration information. Reads and writes to
  * permanent storage in the form of a properties file.
- *
+ * 
  * @author Richard Wardle
  */
 public class Configuration {
@@ -23,8 +23,9 @@ public class Configuration {
 
     /**
      * Creates a new instance of <code>Configuration</code>.
-     *
-     * @param properties The properties.
+     * 
+     * @param properties
+     *            The properties.
      */
     public Configuration(Properties properties) {
         if (properties == null) {
@@ -37,10 +38,13 @@ public class Configuration {
 
     /**
      * Loads the configuration using the supplied input stream.
-     *
-     * @param in The input stream.
-     * @throws IOException If there is an error reading from the input stream.
-     * @throws NullPointerException If the input stream is <code>null</code>.
+     * 
+     * @param in
+     *            The input stream.
+     * @throws IOException
+     *             If there is an error reading from the input stream.
+     * @throws NullPointerException
+     *             If the input stream is <code>null</code>.
      */
     public void loadConfiguration(InputStream in) throws IOException {
         if (in == null) {
@@ -52,10 +56,13 @@ public class Configuration {
 
     /**
      * Saves the configuration using the supplied output stream.
-     *
-     * @param out The output stream.
-     * @throws IOException If there is an error writing to the output stream.
-     * @throws NullPointerException If the output stream is <code>null</code>.
+     * 
+     * @param out
+     *            The output stream.
+     * @throws IOException
+     *             If there is an error writing to the output stream.
+     * @throws NullPointerException
+     *             If the output stream is <code>null</code>.
      */
     public void saveConfiguration(OutputStream out) throws IOException {
         if (out == null) {
@@ -68,20 +75,22 @@ public class Configuration {
 
     /**
      * Gets the databaseFilePath.
-     *
+     * 
      * @return The databaseFilePath.
      */
     public String getDatabaseFilePath() {
-        return this.properties.getProperty(
-                ApplicationConstants.DATABASE_FILE_PATH_PROPERTY);
+        return this.properties
+                .getProperty(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY);
     }
 
     /**
      * Sets the databaseFilePath.
-     *
-     * @param databaseFilePath The databaseFilePath to set.
-     * @throws NullPointerException If the <code>databaseFilePath</code>
-     * parameter is <code>null</code>.
+     * 
+     * @param databaseFilePath
+     *            The databaseFilePath to set.
+     * @throws NullPointerException
+     *             If the <code>databaseFilePath</code> parameter is
+     *             <code>null</code>.
      */
     public void setDatabaseFilePath(String databaseFilePath) {
         if (databaseFilePath == null) {
@@ -96,20 +105,22 @@ public class Configuration {
 
     /**
      * Gets the serverAddress.
-     *
+     * 
      * @return The serverAddress.
      */
     public String getServerAddress() {
-        return this.properties.getProperty(
-                ApplicationConstants.SERVER_ADDRESS_PROPERTY);
+        return this.properties
+                .getProperty(ApplicationConstants.SERVER_ADDRESS_PROPERTY);
     }
 
     /**
      * Sets the serverAddress.
-     *
-     * @param serverAddress The serverAddress to set.
-     * @throws NullPointerException If the <code>serverAddress</code> parameter
-     * is <code>null</code>.
+     * 
+     * @param serverAddress
+     *            The serverAddress to set.
+     * @throws NullPointerException
+     *             If the <code>serverAddress</code> parameter is
+     *             <code>null</code>.
      */
     public void setServerAddress(String serverAddress) {
         if (serverAddress == null) {
@@ -123,20 +134,22 @@ public class Configuration {
 
     /**
      * Gets the serverPort.
-     *
+     * 
      * @return The serverPort.
      */
     public String getServerPort() {
-        return this.properties.getProperty(
-                ApplicationConstants.SERVER_PORT_PROPERTY);
+        return this.properties
+                .getProperty(ApplicationConstants.SERVER_PORT_PROPERTY);
     }
 
     /**
      * Sets the serverPort.
-     *
-     * @param serverPort The serverPort to set.
-     * @throws NullPointerException If the <code>serverPort</code> parameter is
-     * <code>null</code>.
+     * 
+     * @param serverPort
+     *            The serverPort to set.
+     * @throws NullPointerException
+     *             If the <code>serverPort</code> parameter is
+     *             <code>null</code>.
      */
     public void setServerPort(String serverPort) {
         if (serverPort == null) {

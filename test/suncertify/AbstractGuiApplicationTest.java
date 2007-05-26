@@ -1,9 +1,9 @@
 package suncertify;
 
 import java.util.Properties;
-import org.jmock.Mock;
-import org.jmock.cglib.MockObjectTestCase;
-import org.jmock.expectation.AssertMo;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,39 +11,40 @@ import org.junit.internal.runners.TestClassRunner;
 import org.junit.runner.RunWith;
 import suncertify.presentation.ConfigurationView;
 import suncertify.presentation.MainPresenter;
-import suncertify.presentation.MainView;
 import suncertify.service.BrokerService;
 
 @RunWith(TestClassRunner.class)
-public class AbstractGuiApplicationTest extends MockObjectTestCase {
+public class AbstractGuiApplicationTest {
 
-    Mock mockPresenter;
+    private final Mockery context = new Mockery() {{
+        setImposteriser(ClassImposteriser.INSTANCE);
+    }};
+    private MainPresenter mockPresenter;
     private AbstractGuiApplication application;
 
     @Before
     public void setUp() {
-        this.mockPresenter = mock(MainPresenter.class,
-                new Class[] {BrokerService.class, MainView.class},
-                new Object[] {
-                    newDummy(BrokerService.class),
-                    newDummy(MainView.class),
-                });
-        this.application = new StubAbstractGuiApplication(
-                new Configuration(new Properties()));
+        this.mockPresenter = this.context.mock(MainPresenter.class);
+        this.application = new StubAbstractGuiApplication(new Configuration(
+                new Properties()));
     }
-    
+
     @After
     public void verify() {
-        super.verify();
+        this.context.assertIsSatisfied();
     }
 
     @Test
-    public void runApplication() throws ApplicationException {
-        this.mockPresenter.expects(once()).method("realiseView");
+    public void runApplicationRealisesView() throws ApplicationException {
+        this.context.checking(new Expectations() {{
+            one(AbstractGuiApplicationTest.this.mockPresenter)
+                    .realiseView();
+        }});
         this.application.run();
     }
 
-    private class StubAbstractGuiApplication extends AbstractGuiApplication {
+    private class StubAbstractGuiApplication
+            extends AbstractGuiApplication {
 
         StubAbstractGuiApplication(Configuration configuration) {
             super(configuration);
@@ -51,20 +52,19 @@ public class AbstractGuiApplicationTest extends MockObjectTestCase {
 
         @Override
         protected ConfigurationView createConfigurationView() {
-            AssertMo.notImplemented("StubAbstractGuiApplication");
-            return null;
+            throw new UnsupportedOperationException(
+                    "createConfigurationView() not implemented");
         }
 
         @Override
         protected BrokerService getBrokerService() {
-            AssertMo.notImplemented("StubAbstractGuiApplication");
-            return null;
+            throw new UnsupportedOperationException(
+                    "getBrokerService() not implemented");
         }
 
         @Override
         protected MainPresenter createMainPresenter() {
-            return (MainPresenter) AbstractGuiApplicationTest.this
-                    .mockPresenter.proxy();
+            return AbstractGuiApplicationTest.this.mockPresenter;
         }
     }
 }

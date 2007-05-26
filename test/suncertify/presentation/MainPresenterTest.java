@@ -1,7 +1,7 @@
 package suncertify.presentation;
 
-import org.jmock.Mock;
-import org.jmock.MockObjectTestCase;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,37 +10,43 @@ import org.junit.runner.RunWith;
 import suncertify.service.BrokerService;
 
 @RunWith(TestClassRunner.class)
-public class MainPresenterTest extends MockObjectTestCase {
-    
-    private Mock mockBrokerService;
-    private Mock mockView;   
+public class MainPresenterTest {
+
+    private final Mockery context = new Mockery();
+    private BrokerService mockBrokerService;
+    private MainView mockView;
     private MainPresenter presenter;
-    
+
     @Before
     public void setUp() {
-        this.mockBrokerService = mock(BrokerService.class);
-        this.mockView = mock(MainView.class);
-        this.presenter = new MainPresenter((BrokerService) this.mockBrokerService.proxy(), 
-                (MainView) this.mockView.proxy());
+        this.mockBrokerService = this.context.mock(BrokerService.class);
+        this.mockView = this.context.mock(MainView.class);
+        this.presenter = new MainPresenter(this.mockBrokerService,
+                this.mockView);
     }
- 
+
     @After
     public void verify() {
-        super.verify();
+        this.context.assertIsSatisfied();
     }
-    
+
     @Test
     public void realiseView() {
-        this.mockView.expects(once()).method("realise");
+        this.context.checking(new Expectations() {{
+            one(MainPresenterTest.this.mockView).realise();
+        }});
         this.presenter.realiseView();
     }
-    
+
     @Test
-    public void helloButtonActionPerformed() {
-        String text = "hello";
-        this.mockBrokerService.expects(once()).method("getHelloWorld")
-                .will(returnValue(text));
-        this.mockView.expects(once()).method("setLabelText").with(eq(text));
+    public void helloButtonActionPerformed() throws Exception {
+        final String text = "hello";
+        this.context.checking(new Expectations() {{
+            one(MainPresenterTest.this.mockBrokerService).getHelloWorld();
+               will(returnValue(text));
+            one(MainPresenterTest.this.mockView).setLabelText(
+                    with(equal(text)));
+        }});
         this.presenter.helloButtonActionPerformed();
     }
 }

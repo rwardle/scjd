@@ -1,9 +1,9 @@
 package suncertify;
 
 import java.io.File;
-import java.util.Properties;
-import org.jmock.Mock;
-import org.jmock.cglib.MockObjectTestCase;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,168 +12,181 @@ import org.junit.internal.runners.TestClassRunner;
 import org.junit.runner.RunWith;
 
 @RunWith(TestClassRunner.class)
-public class MainTest extends MockObjectTestCase {
+public class MainTest {
 
+    private final Mockery context = new Mockery() {{
+        setImposteriser(ClassImposteriser.INSTANCE);
+    }};
     private final String dummyPropertiesFilePath = "dummy-properties-file-path";
     private Main main;
-    private Mock mockConfiguration;
-    private Mock mockApplication;
+    private Configuration mockConfiguration;
+    private Application mockApplication;
 
     @Before
     public void setUp() {
         this.main = new Main();
-        this.mockConfiguration = mock(Configuration.class,
-                new Class[] {Properties.class},
-                new Object[] {new Properties()});
-        this.mockApplication = mock(Application.class);
+        this.mockConfiguration = this.context.mock(Configuration.class);
+        this.mockApplication = this.context.mock(Application.class);
     }
 
     @After
     public void verify() {
-        super.verify();
+        this.context.assertIsSatisfied();
     }
 
-    @Test(expected=NullPointerException.class)
-    public void getApplicationModeDisallowNullArgs() {
+    @Test(expected = NullPointerException.class)
+    public void commandLineArgsCannotBeNull() {
         this.main.getApplicationMode(null);
     }
 
-    @Test(expected=IllegalArgumentException.class)
-    public void getApplicationModeDisallowInvalidArg() {
-        this.main.getApplicationMode(new String[] {"invalid-mode"});
+    @Test(expected = IllegalArgumentException.class)
+    public void commandLineArgsMustBeValid() {
+        this.main.getApplicationMode(new String[] { "invalid-mode" });
     }
 
     @Test
-    public void getApplicationModeWithNoArgs() {
-        Assert.assertEquals("Application mode comparison,", ApplicationMode.CLIENT,
-                this.main.getApplicationMode(new String[0]));
+    public void noCommandLineArgGivesClientMode() {
+        Assert.assertEquals(ApplicationMode.CLIENT, this.main.getApplicationMode(new String[0]));
     }
 
     @Test
-    public void getApplicationModeWithServerArg() {
-        Assert.assertEquals("Application mode comparison,", ApplicationMode.SERVER,
-                this.main.getApplicationMode(new String[] {"server"}));
+    public void serverCommandLineArgGivesServerMode() {
+        Assert.assertEquals(ApplicationMode.SERVER, this.main
+                .getApplicationMode(new String[] { "server" }));
     }
 
     @Test
-    public void getApplicationModeWithAloneArg() {
-        Assert.assertEquals("Application mode comparison,", ApplicationMode.STANDALONE,
-                this.main.getApplicationMode(new String[] {"alone"}));
+    public void aloneCommandLineArgGivesStandaloneMode() {
+        Assert.assertEquals(ApplicationMode.STANDALONE, this.main
+                .getApplicationMode(new String[] { "alone" }));
     }
 
     @Test
-    public void createApplicationWithClientMode() {
-        Assert.assertTrue("Instance of ClientApplication expected",
-                this.main.createApplication(ApplicationMode.CLIENT,
-                        (Configuration) this.mockConfiguration.proxy())
-                instanceof ClientApplication);
+    public void createWithClientModeGivesClientApplication() {
+        Assert.assertTrue(this.main.createApplication(ApplicationMode.CLIENT,
+                this.mockConfiguration) instanceof ClientApplication);
     }
 
     @Test
-    public void createApplicationWithServerMode() {
-        Assert.assertTrue("Instance of ServerApplication expected",
-                this.main.createApplication(ApplicationMode.SERVER,
-                        (Configuration) this.mockConfiguration.proxy())
-                instanceof ServerApplication);
+    public void createWithServerModeGivesServerApplication() {
+        Assert.assertTrue(this.main.createApplication(ApplicationMode.SERVER,
+                this.mockConfiguration) instanceof ServerApplication);
     }
 
     @Test
-    public void createApplicationWithStandaloneMode() {
-        Assert.assertTrue("Instance of StandaloneApplication expected",
-                this.main.createApplication(ApplicationMode.STANDALONE,
-                        (Configuration) this.mockConfiguration.proxy())
-                instanceof StandaloneApplication);
+    public void createWithStandaloneModeGivesStandaloneApplication() {
+        Assert.assertTrue(this.main.createApplication(ApplicationMode.STANDALONE,
+                this.mockConfiguration) instanceof StandaloneApplication);
     }
 
-    @Test(expected=NullPointerException.class)
-    public void configureApplicationDisallowNullApplication() {
+    @Test(expected = NullPointerException.class)
+    public void cannotConfigureNullApplication() {
         this.main.configureApplication(null, this.dummyPropertiesFilePath);
     }
 
-    @Test(expected=NullPointerException.class)
-    public void configureApplicationDisallowNullPropertiesFilePath() {
-        this.main.configureApplication((Application) this.mockApplication.proxy(), null);
+    @Test(expected = NullPointerException.class)
+    public void cannotConfigureWithNullPropertiesFilePath() {
+        this.main.configureApplication(this.mockApplication, null);
     }
 
     @Test
-    public void configureApplicationWhenConfigureThrowsException() {
-        this.mockApplication.expects(once()).method("configure")
-                .with(isA(File.class)).will(throwException(
-                        new ApplicationException()));
-        this.mockApplication.expects(once()).method("showErrorDialog")
-                .with(isA(String.class));
-        this.mockApplication.expects(once()).method("exit").with(eq(1));
-        this.main.configureApplication(
-                (Application) this.mockApplication.proxy(),
-                this.dummyPropertiesFilePath);
+    public void errorDialogShownWhenConfigureThrowsException() throws Exception {
+        this.context.checking(new Expectations() {{
+            one(MainTest.this.mockApplication).configure(with(an(File.class)));
+               will(throwException(new ApplicationException()));
+            one(MainTest.this.mockApplication).showErrorDialog(with(an(String.class)));
+            ignoring(MainTest.this.mockApplication).exit(with(any(Integer.class)));
+        }});
+        this.main.configureApplication(this.mockApplication, this.dummyPropertiesFilePath);
     }
 
     @Test
-    public void configureApplicationWhenErrorDialogThrowsException() {
-        this.mockApplication.expects(once()).method("configure")
-                .with(isA(File.class)).will(throwException(
-                        new ApplicationException()));
-        this.mockApplication.expects(once()).method("showErrorDialog")
-                .with(isA(String.class))
-                .will(throwException(new ApplicationException()));
-        this.mockApplication.expects(once()).method("exit").with(eq(1));
-        this.main.configureApplication(
-                (Application) this.mockApplication.proxy(),
-                this.dummyPropertiesFilePath);
+    public void applicationExitsWhenWhenConfigureThrowsException() throws Exception {
+        this.context.checking(new Expectations() {{
+            one(MainTest.this.mockApplication).configure(with(an(File.class)));
+               will(throwException(new ApplicationException()));
+            ignoring(MainTest.this.mockApplication).showErrorDialog(with(any(String.class)));
+            one(MainTest.this.mockApplication).exit(with(equal(1)));
+        }});
+        this.main.configureApplication(this.mockApplication, this.dummyPropertiesFilePath);
     }
 
     @Test
-    public void configureApplicationNotExitWhenOkayed() {
-        this.mockApplication.expects(once()).method("configure")
-                .with(isA(File.class))
-                .will(returnValue(true));
-        this.mockApplication.expects(never()).method("exit");
-        this.main.configureApplication(
-                (Application) this.mockApplication.proxy(),
-                this.dummyPropertiesFilePath);
+    public void applicationExitsWhenConfigureErrorDialogThrowsException() throws Exception {
+        this.context.checking(new Expectations() {{
+            one(MainTest.this.mockApplication).configure(with(an(File.class)));
+               will(throwException(new ApplicationException()));
+            one(MainTest.this.mockApplication).showErrorDialog(with(an(String.class)));
+                will(throwException(new ApplicationException()));
+            one(MainTest.this.mockApplication).exit(with(equal(1)));
+        }});
+        this.main.configureApplication(this.mockApplication, this.dummyPropertiesFilePath);
     }
 
     @Test
-    public void configureApplicationExitWhenCancelled() {
-        this.mockApplication.expects(once()).method("configure")
-                .will(returnValue(false));
-        this.mockApplication.expects(once()).method("exit").with(eq(0));
-        this.main.configureApplication(
-                (Application) this.mockApplication.proxy(),
-                this.dummyPropertiesFilePath);
+    public void applicationExitsWhenConfigureCancelled() throws Exception {
+        this.context.checking(new Expectations() {{
+            one(MainTest.this.mockApplication).configure(with(an(File.class)));
+               will(returnValue(false));
+            one(MainTest.this.mockApplication).exit(with(equal(0)));
+        }});
+        this.main.configureApplication(this.mockApplication, this.dummyPropertiesFilePath);
     }
 
-    @Test(expected=NullPointerException.class)
-    public void runApplicationDisallowNullApplication() {
+    @Test
+    public void applicationDoesNotExitWhenConfigureOkayed() throws Exception {
+        this.context.checking(new Expectations() {{
+            one(MainTest.this.mockApplication).configure(with(an(File.class)));
+               will(returnValue(true));
+            never(MainTest.this.mockApplication).exit(with(any(Integer.class)));
+        }});
+        this.main.configureApplication(this.mockApplication, this.dummyPropertiesFilePath);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void cannotRunNullApplication() {
         this.main.runApplication(null);
     }
 
     @Test
-    public void runApplication() {
-        this.mockApplication.expects(once()).method("run");
-        this.main.runApplication((Application) this.mockApplication.proxy());
+    public void runApplication() throws Exception {
+        this.context.checking(new Expectations() {{
+            one(MainTest.this.mockApplication).run();
+        }});
+        this.main.runApplication(this.mockApplication);
     }
 
     @Test
-    public void runApplicationRunThrowsApplicationException() {
-        this.mockApplication.expects(once()).method("run")
-                .will(throwException(new ApplicationException()));
-        this.mockApplication.expects(once()).method("showErrorDialog")
-                .with(isA(String.class));
-        this.mockApplication.expects(once()).method("exit")
-                .with(eq(1));
-        this.main.runApplication((Application) this.mockApplication.proxy());
+    public void showErrorDialogWhenRunThrowsException() throws Exception {
+        this.context.checking(new Expectations() {{
+            one(MainTest.this.mockApplication).run();
+               will(throwException(new ApplicationException()));
+            one(MainTest.this.mockApplication).showErrorDialog(with(an(String.class)));
+            ignoring(MainTest.this.mockApplication).exit(with(any(Integer.class)));
+        }});
+        this.main.runApplication(this.mockApplication);
     }
 
     @Test
-    public void runApplicationWhenErrorDialogThrowsException() {
-        this.mockApplication.expects(once()).method("run")
-                .will(throwException(new ApplicationException()));
-        this.mockApplication.expects(once()).method("showErrorDialog")
-                .with(isA(String.class))
-                .will(throwException(new ApplicationException()));
-        this.mockApplication.expects(once()).method("exit")
-                .with(eq(1));
-        this.main.runApplication((Application) this.mockApplication.proxy());
+    public void applicationExitsWhenRunThrowsException() throws Exception {
+        this.context.checking(new Expectations() {{
+            one(MainTest.this.mockApplication).run();
+               will(throwException(new ApplicationException()));
+            ignoring(MainTest.this.mockApplication).showErrorDialog(with(any(String.class)));
+            one(MainTest.this.mockApplication).exit(with(equal(1)));
+        }});
+        this.main.runApplication(this.mockApplication);
+    }
+
+    @Test
+    public void applicationExitsWhenRunErrorDialogThrowsException() throws Exception {
+        this.context.checking(new Expectations() {{
+            one(MainTest.this.mockApplication).run();
+               will(throwException(new ApplicationException()));
+            one(MainTest.this.mockApplication).showErrorDialog(with(an(String.class)));
+                will(throwException(new ApplicationException()));
+            one(MainTest.this.mockApplication).exit(with(equal(1)));
+        }});
+        this.main.runApplication(this.mockApplication);
     }
 }

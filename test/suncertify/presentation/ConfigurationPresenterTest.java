@@ -1,9 +1,8 @@
 package suncertify.presentation;
 
-import java.awt.event.ActionListener;
-import java.util.Properties;
-import org.jmock.Mock;
-import org.jmock.cglib.MockObjectTestCase;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,104 +12,110 @@ import org.junit.runner.RunWith;
 import suncertify.Configuration;
 
 @RunWith(TestClassRunner.class)
-public class ConfigurationPresenterTest extends MockObjectTestCase {
+@SuppressWarnings("boxing")
+public class ConfigurationPresenterTest {
 
+    private final Mockery context = new Mockery() {{
+        setImposteriser(ClassImposteriser.INSTANCE);
+    }};
     private final String databaseFilePath = "databaseFilePath";
     private final String serverAddress = "serverAddress";
     private final String serverPort = "serverPort";
-    private Mock mockConfiguration;
-    private Mock mockView;
+    private Configuration mockConfiguration;
+    private ConfigurationView mockView;
     private ConfigurationPresenter presenter;
 
     @Before
     public void setUp() {
-        this.mockConfiguration = mock(Configuration.class,
-                new Class[] {Properties.class},
-                new Object[] {new Properties()});
-        this.mockView = mock(ConfigurationView.class);
-        this.presenter = new ConfigurationPresenter(
-                (Configuration) this.mockConfiguration.proxy(),
-                (ConfigurationView) this.mockView.proxy());
+        this.mockConfiguration = this.context.mock(Configuration.class);
+        this.mockView = this.context.mock(ConfigurationView.class);
+        this.presenter = new ConfigurationPresenter(this.mockConfiguration,
+                this.mockView);
     }
-    
+
     @After
     public void verify() {
-        super.verify();
+        this.context.assertIsSatisfied();
     }
 
-    @Test(expected=NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void constructorDisallowNullConfiguration() {
-        new ConfigurationPresenter(null,
-                (ConfigurationView) this.mockView.proxy());
+        new ConfigurationPresenter(null, this.mockView);
     }
 
-    @Test(expected=NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void constructorDisallowNullView() {
-        new ConfigurationPresenter(
-                (Configuration) this.mockConfiguration.proxy(), null);
+        new ConfigurationPresenter(this.mockConfiguration, null);
     }
 
     @Test
     public void constructorReturnStatus() {
-        Assert.assertEquals(
-                "Return status comparison,",
-                ConfigurationPresenter.RETURN_CANCEL,
+        Assert.assertEquals(ConfigurationPresenter.RETURN_CANCEL,
                 this.presenter.getReturnStatus());
     }
 
     @Test
     public void realiseView() {
-        this.mockConfiguration.expects(once()).method("getDatabaseFilePath")
-                .will(returnValue(this.databaseFilePath));
-        this.mockConfiguration.expects(once()).method("getServerAddress")
-                .will(returnValue(this.serverAddress));
-        this.mockConfiguration.expects(once()).method("getServerPort")
-                .will(returnValue(this.serverPort));
-        
-        this.mockView.expects(once()).method("setDatabaseFilePath")
-                .with(eq(this.databaseFilePath));
-        this.mockView.expects(once()).method("setServerAddress")
-                .with(eq(this.serverAddress));
-        this.mockView.expects(once()).method("setServerPort")
-                .with(eq(this.serverPort));
-        
-        this.mockView.expects(once()).method("realise");
+        this.context.checking(new Expectations() {{
+            one(ConfigurationPresenterTest.this.mockConfiguration)
+                    .getDatabaseFilePath();
+                will(returnValue(ConfigurationPresenterTest.this.databaseFilePath));
+            one(ConfigurationPresenterTest.this.mockConfiguration)
+                    .getServerAddress();
+                will(returnValue(ConfigurationPresenterTest.this.serverAddress));
+            one(ConfigurationPresenterTest.this.mockConfiguration)
+                    .getServerPort();
+                will(returnValue(ConfigurationPresenterTest.this.serverPort));
+            one(ConfigurationPresenterTest.this.mockView)
+                    .setDatabaseFilePath(
+                            with(equal(ConfigurationPresenterTest.this.databaseFilePath)));
+            one(ConfigurationPresenterTest.this.mockView)
+                    .setServerAddress(
+                            with(equal(ConfigurationPresenterTest.this.serverAddress)));
+            one(ConfigurationPresenterTest.this.mockView)
+                    .setServerPort(
+                            with(equal(ConfigurationPresenterTest.this.serverPort)));
+            one(ConfigurationPresenterTest.this.mockView).realise();
+        }});
         this.presenter.realiseView();
     }
 
     @Test
     public void okButtonActionPerformed() {
-        String newDatabaseFilePath = "newDatabaseFilePath";
-        String newServerAddress = "newServerAddress";
-        String newServerPort = "newServerPort";
+        final String newDatabaseFilePath = "newDatabaseFilePath";
+        final String newServerAddress = "newServerAddress";
+        final String newServerPort = "newServerPort";
 
-        this.mockView.expects(once()).method("getDatabaseFilePath")
-                .will(returnValue(newDatabaseFilePath));
-        this.mockView.expects(once()).method("getServerAddress")
-                .will(returnValue(newServerAddress));
-        this.mockView.expects(once()).method("getServerPort")
-                .will(returnValue(newServerPort));
-        this.mockView.expects(once()).method("close");
-
-        this.mockConfiguration.expects(once()).method("setDatabaseFilePath")
-                .with(eq(newDatabaseFilePath));
-        this.mockConfiguration.expects(once()).method("setServerAddress")
-                .with(eq(newServerAddress));
-        this.mockConfiguration.expects(once()).method("setServerPort")
-                .with(eq(newServerPort));
+        this.context.checking(new Expectations() {{
+            one(ConfigurationPresenterTest.this.mockView)
+                    .getDatabaseFilePath();
+               will(returnValue(newDatabaseFilePath));
+            one(ConfigurationPresenterTest.this.mockView)
+                    .getServerAddress();
+                will(returnValue(newServerAddress));
+            one(ConfigurationPresenterTest.this.mockView).getServerPort();
+                will(returnValue(newServerPort));
+            one(ConfigurationPresenterTest.this.mockView).close();
+            one(ConfigurationPresenterTest.this.mockConfiguration)
+                    .setDatabaseFilePath(with(equal(newDatabaseFilePath)));
+            one(ConfigurationPresenterTest.this.mockConfiguration)
+                    .setServerAddress(with(equal(newServerAddress)));
+            one(ConfigurationPresenterTest.this.mockConfiguration)
+                    .setServerPort(with(equal(newServerPort)));
+        }});
 
         this.presenter.okButtonActionPerformed();
-        Assert.assertEquals("Return status comparison",
-                ConfigurationPresenter.RETURN_OK,
-                this.presenter.getReturnStatus());
+        Assert.assertEquals(ConfigurationPresenter.RETURN_OK, this.presenter
+                .getReturnStatus());
     }
 
     @Test
     public void cancelButtonActionPerformed() {
-        this.mockView.expects(once()).method("close");
+        this.context.checking(new Expectations() {{
+            one(ConfigurationPresenterTest.this.mockView).close();
+        }});
         this.presenter.cancelButtonActionPerformed();
-        Assert.assertEquals("Return status comparison",
-                ConfigurationPresenter.RETURN_CANCEL,
+        Assert.assertEquals(ConfigurationPresenter.RETURN_CANCEL,
                 this.presenter.getReturnStatus());
     }
 }

@@ -4,44 +4,36 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Properties;
-import org.jmock.Mock;
-import org.jmock.cglib.MockObjectTestCase;
-import org.jmock.expectation.AssertMo;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.internal.runners.TestClassRunner;
-import org.junit.runner.RunWith;
 import suncertify.presentation.ConfigurationPresenter;
 import suncertify.presentation.ConfigurationView;
 
-@RunWith(TestClassRunner.class)
-public class AbstractApplicationTest extends MockObjectTestCase {
+//@RunWith(TestClassRunner.class)
+public class AbstractApplicationTest {
 
-    Mock mockView;
-    Mock mockPresenter;
+    private final Mockery context = new Mockery() {{
+        setImposteriser(ClassImposteriser.INSTANCE);
+    }};
     private final String dummyPropertiesFilePath = "dummy-properties-file-path";
-    private Mock mockConfiguration;
+    private ConfigurationView mockView;
+    private Configuration mockConfiguration;
+    private ConfigurationPresenter mockPresenter;
     private AbstractApplication application;
 
     @Before
     public void setUp() {
-        this.mockView = mock(ConfigurationView.class);
-        this.mockConfiguration = mock(Configuration.class,
-                new Class[] {Properties.class},
-                new Object[] {new Properties()});
-        this.mockPresenter = mock(ConfigurationPresenter.class,
-                new Class[] {Configuration.class, ConfigurationView.class},
-                new Object[] {
-                    (Configuration) this.mockConfiguration.proxy(),
-                    (ConfigurationView) this.mockView.proxy(),
-                });
-        this.application = new StubAbstractApplication(
-                (Configuration) this.mockConfiguration.proxy());
+        this.mockView = this.context.mock(ConfigurationView.class);
+        this.mockConfiguration = this.context.mock(Configuration.class);
+        this.mockPresenter = this.context.mock(ConfigurationPresenter.class);
+        this.application = new StubAbstractApplication(this.mockConfiguration);
     }
-    
+
     @After
     public void tearDown() {
         File dummyPropertiesFile = new File(this.dummyPropertiesFilePath);
@@ -49,117 +41,146 @@ public class AbstractApplicationTest extends MockObjectTestCase {
             dummyPropertiesFile.delete();
         }
     }
-    
+
     @After
     public void verify() {
-        super.verify();
+        this.context.assertIsSatisfied();
     }
 
-    private void setUpDefaultExpectations() {
-        this.mockPresenter.stubs().method(eq("realiseView"));
-        this.mockPresenter.stubs().method(eq("getReturnStatus"))
-                .will(returnValue(ConfigurationPresenter.RETURN_CANCEL));
-        this.mockConfiguration.stubs().method("loadConfiguration");
-        this.mockConfiguration.stubs().method("saveConfiguration");
-    }
-
-    @Test(expected=NullPointerException.class)
-    public void constructorDisallowNullConfiguration() {
+    @Test(expected = NullPointerException.class)
+    public void cannotBeConstructedWithNullConfiguration() {
         new StubAbstractApplication(null);
     }
 
-    @Test(expected=NullPointerException.class)
-    public void configureDisallowNullPropertiesFile() throws Exception {
+    @Test(expected = NullPointerException.class)
+    public void cannotBeConfiguredWithNullPropertiesFile() throws Exception {
         this.application.configure(null);
     }
 
     @Test
-    public void configureNotLoadConfigurationWhenPropertiesFileNotExist()
-            throws ApplicationException {
-        setUpDefaultExpectations();
-        this.mockConfiguration.expects(never()).method("loadConfiguration");
+    public void configurationNotLoadedWhenPropertiesFileDoesNotExist()
+            throws Exception {
+        this.context.checking(new Expectations() {{
+            ignoring(AbstractApplicationTest.this.mockPresenter);
+            never(AbstractApplicationTest.this.mockConfiguration)
+                    .loadConfiguration(with(any(InputStream.class)));
+        }});
         this.application.configure(new File(this.dummyPropertiesFilePath));
     }
 
     @Test
-    public void configureLoadConfigurationWhenPropertiesFileExists() throws Exception {
-        setUpDefaultExpectations();
+    public void configurationLoadedWhenPropertiesFileExists() throws Exception {
         File propertiesFile = new File(this.dummyPropertiesFilePath);
         propertiesFile.createNewFile();
-        this.mockConfiguration.expects(once()).method("loadConfiguration")
-                .with(isA(InputStream.class));
+        this.context.checking(new Expectations() {{
+            ignoring(AbstractApplicationTest.this.mockPresenter);
+            one(AbstractApplicationTest.this.mockConfiguration)
+                    .loadConfiguration(with(an(InputStream.class)));
+        }});
         this.application.configure(propertiesFile);
     }
 
     @Test
-    public void configureReturnFalseWhenCancelled() throws Exception {
-        setUpDefaultExpectations();
-        this.mockPresenter.expects(once()).method("getReturnStatus")
-                .will(returnValue(ConfigurationPresenter.RETURN_CANCEL));
-        Assert.assertFalse("User should cancel configuration process",
-                this.application.configure(
-                        new File(this.dummyPropertiesFilePath)));
+    public void configureReturnsFalseWhenDialogCancelled() throws Exception {
+        this.context.checking(new Expectations() {{
+            ignoring(AbstractApplicationTest.this.mockPresenter)
+                    .realiseView();
+            one(AbstractApplicationTest.this.mockPresenter)
+                    .getReturnStatus();
+                will(returnValue(ConfigurationPresenter.RETURN_CANCEL));
+        }});
+        Assert.assertFalse(this.application.configure(new File(
+                this.dummyPropertiesFilePath)));
     }
 
     @Test
-    public void configureNotSaveConfigurationWhenCancelled() throws Exception {
-        setUpDefaultExpectations();
-        this.mockConfiguration.expects(never()).method("saveConfiguration");
+    public void configurationNotSavedWhenDialogCancelled() throws Exception {
+        this.context.checking(new Expectations() {{
+            ignoring(AbstractApplicationTest.this.mockPresenter)
+                    .realiseView();
+            one(AbstractApplicationTest.this.mockPresenter)
+                    .getReturnStatus();
+                will(returnValue(ConfigurationPresenter.RETURN_CANCEL));
+            never(AbstractApplicationTest.this.mockConfiguration)
+                    .saveConfiguration(with(any(OutputStream.class)));
+        }});
         this.application.configure(new File(this.dummyPropertiesFilePath));
     }
 
     @Test
-    public void configureReturnTrueWhenOkayed() throws Exception {
-        setUpDefaultExpectations();
-        this.mockPresenter.expects(once()).method(eq("getReturnStatus"))
-                .will(returnValue(ConfigurationPresenter.RETURN_OK));
+    public void configureReturnsTrueWhenDialogOkayed() throws Exception {
+        this.context.checking(new Expectations() {{
+            ignoring(AbstractApplicationTest.this.mockPresenter)
+                    .realiseView();
+            one(AbstractApplicationTest.this.mockPresenter)
+                    .getReturnStatus();
+                will(returnValue(ConfigurationPresenter.RETURN_OK));
+            ignoring(AbstractApplicationTest.this.mockConfiguration);
+        }});
         Assert.assertTrue("User should OK configuration process",
-                this.application.configure(
-                        new File(this.dummyPropertiesFilePath)));
+                this.application.configure(new File(
+                        this.dummyPropertiesFilePath)));
     }
 
     @Test
-    public void configureSaveConfigurationWhenOkayed() throws Exception {
-        setUpDefaultExpectations();
-        this.mockPresenter.expects(once()).method(eq("getReturnStatus"))
-                .will(returnValue(ConfigurationPresenter.RETURN_OK));
-        this.mockConfiguration.expects(once()).method("saveConfiguration")
-                .with(isA(OutputStream.class));
+    public void configurationSavedWhenDialogOkayed() throws Exception {
+        this.context.checking(new Expectations() {{
+            ignoring(AbstractApplicationTest.this.mockPresenter)
+                    .realiseView();
+            one(AbstractApplicationTest.this.mockPresenter)
+                    .getReturnStatus();
+                will(returnValue(ConfigurationPresenter.RETURN_OK));
+            one(AbstractApplicationTest.this.mockConfiguration)
+                    .saveConfiguration(with(an(OutputStream.class)));
+        }});
         this.application.configure(new File(this.dummyPropertiesFilePath));
     }
 
     @Test
     public void configureDisplaysView() throws Exception {
-        setUpDefaultExpectations();
-        this.mockPresenter.expects(once()).method(eq("realiseView"));
+        this.context.checking(new Expectations() {{
+            one(AbstractApplicationTest.this.mockPresenter).realiseView();
+            ignoring(AbstractApplicationTest.this.mockPresenter)
+                    .getReturnStatus();
+        }});
         this.application.configure(new File(this.dummyPropertiesFilePath));
     }
 
-    @Test(expected=ApplicationException.class)
-    public void configureWhenLoadConfigurationFails() throws Exception {
-        setUpDefaultExpectations();
+    @Test(expected = ApplicationException.class)
+    public void configureTerminatesWhenLoadConfigurationFails()
+            throws Exception {
         File propertiesFile = new File(this.dummyPropertiesFilePath);
         propertiesFile.createNewFile();
-        this.mockConfiguration.expects(once()).method("loadConfiguration")
-                .with(isA(InputStream.class))
-                .will(throwException(new IOException()));
-        this.mockPresenter.expects(never()).method(eq("getReturnStatus"));
-        this.mockConfiguration.expects(never()).method("saveConfiguration");
+        this.context.checking(new Expectations() {{
+            one(AbstractApplicationTest.this.mockConfiguration)
+                    .loadConfiguration(with(an(InputStream.class)));
+                will(throwException(new IOException()));
+            never(AbstractApplicationTest.this.mockConfiguration)
+                    .saveConfiguration(with(any(OutputStream.class)));
+            never(AbstractApplicationTest.this.mockPresenter)
+                    .getReturnStatus();
+        }});
         this.application.configure(propertiesFile);
     }
 
-    @Test(expected=ApplicationException.class)
-    public void testConfigureWhenSaveConfigurationFails() throws Exception {
-        setUpDefaultExpectations();
-        this.mockPresenter.expects(once()).method(eq("getReturnStatus"))
-                .will(returnValue(ConfigurationPresenter.RETURN_OK));
-        this.mockConfiguration.expects(once()).method("saveConfiguration")
-                .with(isA(OutputStream.class))
-                .will(throwException(new IOException()));
+    @Test(expected = ApplicationException.class)
+    public void configureTerminatesWhenSaveConfigurationFails()
+            throws Exception {
+        this.context.checking(new Expectations() {{
+            ignoring(AbstractApplicationTest.this.mockPresenter)
+                    .realiseView();
+            one(AbstractApplicationTest.this.mockPresenter)
+                    .getReturnStatus();
+                will(returnValue(ConfigurationPresenter.RETURN_OK));
+            one(AbstractApplicationTest.this.mockConfiguration)
+                    .saveConfiguration(with(an(OutputStream.class)));
+                will(throwException(new IOException()));
+        }});
         this.application.configure(new File(this.dummyPropertiesFilePath));
     }
 
-    private class StubAbstractApplication extends AbstractApplication {
+    private class StubAbstractApplication
+            extends AbstractApplication {
 
         StubAbstractApplication(Configuration configuration) {
             super(configuration);
@@ -167,18 +188,16 @@ public class AbstractApplicationTest extends MockObjectTestCase {
 
         @Override
         protected ConfigurationPresenter createConfigurationPresenter() {
-            return (ConfigurationPresenter) AbstractApplicationTest.this
-                    .mockPresenter.proxy();
+            return AbstractApplicationTest.this.mockPresenter;
         }
 
         @Override
         protected ConfigurationView createConfigurationView() {
-            return (ConfigurationView) AbstractApplicationTest.this
-                    .mockView.proxy();
+            return AbstractApplicationTest.this.mockView;
         }
 
         public void run() {
-            AssertMo.notImplemented("StubAbstractApplication");
+            throw new UnsupportedOperationException("run() not implemented");
         }
     }
 }
