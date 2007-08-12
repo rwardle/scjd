@@ -5,11 +5,8 @@ import org.jmock.Mockery;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.internal.runners.TestClassRunner;
-import org.junit.runner.RunWith;
 import suncertify.service.BrokerService;
 
-@RunWith(TestClassRunner.class)
 public class MainPresenterTest {
 
     private final Mockery context = new Mockery();
@@ -30,6 +27,8 @@ public class MainPresenterTest {
         this.context.assertIsSatisfied();
     }
 
+    // TODO Add tests for construction with null args
+    
     @Test
     public void realiseView() {
         this.context.checking(new Expectations() {{
@@ -43,7 +42,8 @@ public class MainPresenterTest {
         final String text = "hello";
         this.context.checking(new Expectations() {{
             one(MainPresenterTest.this.mockBrokerService).getHelloWorld();
-               will(returnValue(text));
+            will(returnValue(text));
+
             one(MainPresenterTest.this.mockView).setLabelText(
                     with(equal(text)));
         }});

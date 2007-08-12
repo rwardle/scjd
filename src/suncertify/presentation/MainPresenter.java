@@ -1,7 +1,7 @@
 /*
  * MainPresenter.java
  *
- * Created on 06-Jul-2005
+ * Created on 06-Jul-2007
  */
 
 package suncertify.presentation;
@@ -10,6 +10,7 @@ import java.io.IOException;
 import suncertify.service.BrokerService;
 
 /**
+ * Encapsulates the presentation behaviour of the main frame.
  * 
  * @author Richard Wardle
  */
@@ -20,6 +21,9 @@ public class MainPresenter {
     
     /**
      * Creates a new instance of <code>MainPresenter</code>.
+     * 
+     * @param service The broker service.
+     * @param view The main view.
      */
     public MainPresenter(BrokerService service, MainView view) {
         // TODO: Check args for null
@@ -27,6 +31,7 @@ public class MainPresenter {
         this.view = view;
     }
  
+    /** Realises the view. */
     public void realiseView() {
         this.view.realise();
     }

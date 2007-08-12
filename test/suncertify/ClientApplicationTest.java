@@ -1,27 +1,38 @@
 package suncertify;
 
+import static org.junit.Assert.*;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
 import org.junit.Assert;
-import java.util.Properties;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.internal.runners.TestClassRunner;
-import org.junit.runner.RunWith;
 import suncertify.presentation.ClientConfigurationDialog;
 
-@RunWith(TestClassRunner.class)
 public class ClientApplicationTest {
 
+    private final Mockery context = new Mockery();
+    private Configuration mockConfiguration;
+    private ExceptionHandler mockExceptionHandler;
+    private ShutdownHandler mockShutdownHandler;
     private ClientApplication application;
 
     @Before
     public void setUp() {
-        this.application = new ClientApplication(new Configuration(
-                new Properties()));
+        this.mockConfiguration = this.context.mock(Configuration.class);
+        this.mockExceptionHandler = this.context.mock(ExceptionHandler.class);
+        this.mockShutdownHandler = this.context.mock(ShutdownHandler.class);
     }
 
     @Test
     public void createConfigurationView() {
-        Assert.assertTrue(
-                this.application.createConfigurationView() instanceof ClientConfigurationDialog);
+        this.context.checking(new Expectations() {{
+            ignoring(ClientApplicationTest.this.mockConfiguration);
+        }});
+        this.application = new ClientApplication(this.mockConfiguration, 
+                this.mockExceptionHandler, this.mockShutdownHandler);
+        Assert.assertTrue(this.application.createConfigurationView() 
+                instanceof ClientConfigurationDialog);
     }
+    
+    // TODO How can we test RMI lookup here?
 }

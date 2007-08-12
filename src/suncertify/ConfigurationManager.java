@@ -1,0 +1,143 @@
+/*
+ * ConfigurationManager.java
+ *
+ * Created on 05-Jun-2007
+ */
+
+package suncertify;
+
+import static suncertify.ApplicationConstants.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ * Provides a simplified interface to the <code>Configuration</code> (facade
+ * pattern).
+ * 
+ * @author Richard Wardle
+ */
+public final class ConfigurationManager {
+
+    private static final Logger LOGGER 
+            = Logger.getLogger(ConfigurationManager.class.getName());
+    private final Configuration configuration;
+
+    /**
+     * Creates a new instance of <code>ConfigurationManager</code> using the
+     * supplied configuration.
+     * 
+     * @param configuration The configuration.
+     * @throws IllegalArgumentException If the configuration is 
+     * <code>null</code>.
+     */
+    public ConfigurationManager(Configuration configuration) {
+        if (configuration == null) {
+            throw new IllegalArgumentException(
+                    "configuration must be non-null");
+        }
+        this.configuration = configuration;
+
+        if (this.configuration.exists()) {
+            try {
+                this.configuration.load();
+            } 
+            catch (ConfigurationException e) {
+                LOGGER.log(Level.WARNING, "Error loading configuration", e);
+            }
+        }
+        verifyConfiguration();
+    }
+
+    private void verifyConfiguration() {
+        if (getDatabaseFilePath() == null) {
+            setDatabaseFilePath(DEFAULT_DATABASE_FILE_PATH);
+        }
+        if (getServerAddress() == null) {
+            setServerAddress(DEFAULT_SERVER_ADDRESS);
+        }
+        if (getServerPort() == null) {
+            setServerPort(DEFAULT_SERVER_PORT);
+        }
+    }
+
+    /**
+     * Saves the configuration.
+     * 
+     * @throws ConfigurationException If the configuration cannot be saved.
+     */
+    public void save() throws ConfigurationException {
+        this.configuration.save();
+    }
+
+    /**
+     * Gets the database file path.
+     * 
+     * @return The database file path.
+     */
+    public String getDatabaseFilePath() {
+        return this.configuration.getProperty(DATABASE_FILE_PATH_PROPERTY);
+    }
+
+    /**
+     * Sets the database file path.
+     * 
+     * @param databaseFilePath The database file path to set.
+     * @throws IllegalArgumentException If the supplied path is 
+     * <code>null</code>.
+     */
+    public void setDatabaseFilePath(String databaseFilePath) {
+        if (databaseFilePath == null) {
+            throw new IllegalArgumentException(
+                    "databaseFilePath must be non-null");
+        }
+        this.configuration.setProperty(DATABASE_FILE_PATH_PROPERTY,
+                databaseFilePath);
+    }
+
+    /**
+     * Gets the server address.
+     * 
+     * @return The server address.
+     */
+    public String getServerAddress() {
+        return this.configuration.getProperty(SERVER_ADDRESS_PROPERTY);
+    }
+
+    /**
+     * Sets the server address.
+     * 
+     * @param serverAddress The server address to set.
+     * @throws IllegalArgumentException If the supplied address is 
+     * <code>null</code>.
+     */
+    public void setServerAddress(String serverAddress) {
+        if (serverAddress == null) {
+            throw new IllegalArgumentException(
+                    "serverAddress must be non-null");
+        }
+        this.configuration.setProperty(SERVER_ADDRESS_PROPERTY, serverAddress);
+    }
+
+    /**
+     * Gets the server port.
+     * 
+     * @return The server port.
+     */
+    public String getServerPort() {
+        return this.configuration.getProperty(SERVER_PORT_PROPERTY);
+    }
+
+    /**
+     * Sets the server port.
+     * 
+     * @param serverPort The server port to set.
+     * @throws IllegalArgumentException If the supplied port is 
+     * <code>null</code>.
+     */
+    public void setServerPort(String serverPort) {
+        if (serverPort == null) {
+            throw new IllegalArgumentException("serverPort must be non-null");
+        }
+        this.configuration.setProperty(SERVER_PORT_PROPERTY, serverPort);
+    }
+}

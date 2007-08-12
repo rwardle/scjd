@@ -1,19 +1,19 @@
 /*
  * ApplicationException.java
  *
- * Created on 12-Jul-2005
+ * Created on 12-Jul-2007
  */
 
 package suncertify;
 
 /**
- * Exceptions class representing generic application exceptions.
+ * Represents generic application exceptions.
  *
  * @author Richard Wardle
  */
 public final class ApplicationException extends Exception {
 
-    private static final long serialVersionUID = -7250388825196167973L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Creates a new instance of <code>ApplicationException</code>.

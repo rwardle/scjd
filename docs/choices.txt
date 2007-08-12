@@ -1,0 +1,4 @@
+1. Updated UI creation for new version of Swing EDT rule.
+2. Used MVC pattern for UI with controller as mediator to facilitate testing.
+3. Adding a new line after if,else,catch,finally statements to improve readability.
+4. ConfigurationPresenter is not final to facilitate testing.

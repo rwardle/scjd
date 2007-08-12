@@ -1,7 +1,7 @@
 /*
  * ConfigurationView.java
  *
- * Created on 06-Jun-2005
+ * Created on 06-Jun-2007
  */
 
 package suncertify.presentation;
@@ -13,6 +13,11 @@ package suncertify.presentation;
  */
 public interface ConfigurationView {
 
+    /**
+     * Sets the <code>ConfigurationPresenter</code>.
+     * 
+     * @param presenter The presenter.
+     */
     void setPresenter(ConfigurationPresenter presenter);
 
     /**

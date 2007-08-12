@@ -22,7 +22,7 @@ public final class RemoteBrokerServiceImpl extends UnicastRemoteObject implement
 
     // TODO: Make this a singleton?
 
-    private static Logger logger = Logger.getLogger(RemoteBrokerServiceImpl
+    private static Logger LOGGER = Logger.getLogger(RemoteBrokerServiceImpl
             .class.getName());
 
     private BrokerServiceImpl service;

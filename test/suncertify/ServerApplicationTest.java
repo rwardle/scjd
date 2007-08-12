@@ -1,27 +1,37 @@
 package suncertify;
 
-import java.util.Properties;
-import org.junit.Assert;
+import static org.junit.Assert.*;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.internal.runners.TestClassRunner;
-import org.junit.runner.RunWith;
 import suncertify.presentation.ServerConfigurationDialog;
 
-@RunWith(TestClassRunner.class)
 public class ServerApplicationTest {
 
+    private final Mockery context = new Mockery();
+    private Configuration mockConfiguration;
+    private ExceptionHandler mockExceptionHandler;
+    private ShutdownHandler mockShutdownHandler;
     private ServerApplication application;
 
     @Before
     public void setUp() {
-        this.application = new ServerApplication(new Configuration(
-                new Properties()));
+        this.mockConfiguration = this.context.mock(Configuration.class);
+        this.mockExceptionHandler = this.context.mock(ExceptionHandler.class);
+        this.mockShutdownHandler = this.context.mock(ShutdownHandler.class);
     }
 
     @Test
     public void createConfigurationView() {
-        Assert.assertTrue(
-                this.application.createConfigurationView() instanceof ServerConfigurationDialog);
+        this.context.checking(new Expectations() {{
+            ignoring(ServerApplicationTest.this.mockConfiguration);
+        }});
+        this.application = new ServerApplication(this.mockConfiguration, 
+                this.mockExceptionHandler, this.mockShutdownHandler);
+        assertTrue(this.application.createConfigurationView() 
+                instanceof ServerConfigurationDialog);
     }
+    
+    // TODO How can we test RMI startup here?
 }

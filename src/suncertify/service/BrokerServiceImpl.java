@@ -18,7 +18,7 @@ public final class BrokerServiceImpl implements BrokerService {
 
     // TODO: Make this a singleton?
 
-    private static Logger logger = Logger.getLogger(BrokerServiceImpl.class
+    private static final Logger LOGGER = Logger.getLogger(BrokerServiceImpl.class
             .getName());
     
     private DBMain data;

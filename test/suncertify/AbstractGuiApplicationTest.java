@@ -1,32 +1,32 @@
 package suncertify;
 
-import java.util.Properties;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.internal.runners.TestClassRunner;
-import org.junit.runner.RunWith;
 import suncertify.presentation.ConfigurationView;
 import suncertify.presentation.MainPresenter;
 import suncertify.service.BrokerService;
 
-@RunWith(TestClassRunner.class)
 public class AbstractGuiApplicationTest {
 
     private final Mockery context = new Mockery() {{
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
+    private Configuration mockConfiguration;
+    private ExceptionHandler mockExceptionHandler;
+    private ShutdownHandler mockShutdownHandler;
     private MainPresenter mockPresenter;
     private AbstractGuiApplication application;
 
     @Before
     public void setUp() {
+        this.mockConfiguration = this.context.mock(Configuration.class);
+        this.mockExceptionHandler = this.context.mock(ExceptionHandler.class);
+        this.mockShutdownHandler = this.context.mock(ShutdownHandler.class);
         this.mockPresenter = this.context.mock(MainPresenter.class);
-        this.application = new StubAbstractGuiApplication(new Configuration(
-                new Properties()));
     }
 
     @After
@@ -35,19 +35,26 @@ public class AbstractGuiApplicationTest {
     }
 
     @Test
-    public void runApplicationRealisesView() throws ApplicationException {
+    public void startupApplicationRealisesMainView() 
+            throws ApplicationException {
         this.context.checking(new Expectations() {{
+            ignoring(AbstractGuiApplicationTest.this.mockConfiguration);
             one(AbstractGuiApplicationTest.this.mockPresenter)
                     .realiseView();
         }});
-        this.application.run();
+        this.application = new StubAbstractGuiApplication(this.mockConfiguration, 
+                this.mockExceptionHandler, this.mockShutdownHandler);
+        this.application.startup();
     }
 
-    private class StubAbstractGuiApplication
-            extends AbstractGuiApplication {
+    // TODO Add shutdown test
+    
+    private class StubAbstractGuiApplication extends AbstractGuiApplication {
 
-        StubAbstractGuiApplication(Configuration configuration) {
-            super(configuration);
+        StubAbstractGuiApplication(Configuration configuration, 
+                ExceptionHandler exceptionHandler, 
+                ShutdownHandler shutdownHandler) {
+            super(configuration, exceptionHandler, shutdownHandler);
         }
 
         @Override

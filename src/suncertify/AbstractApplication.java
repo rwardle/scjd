@@ -1,200 +1,122 @@
 /*
  * AbstractApplication.java
  *
- * Created on 05-Jun-2005
+ * Created on 05-Jun-2007
  */
 
 package suncertify;
 
-import java.awt.EventQueue;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
 import suncertify.presentation.ConfigurationPresenter;
 import suncertify.presentation.ConfigurationView;
 
 /**
  * The abstract base class for the application.
- *
+ * 
  * @author Richard Wardle
  */
 public abstract class AbstractApplication implements Application {
 
-    private static Logger logger = Logger
-            .getLogger(AbstractApplication.class.getName());
-
-    private Configuration configuration;
+    private static final Logger LOGGER 
+            = Logger.getLogger(AbstractApplication.class.getName());
+    private final ConfigurationManager configurationManager;
+    private final ExceptionHandler exceptionHandler;
+    private final ShutdownHandler shutdownHandler;
 
     /**
      * Creates a new instance of <code>AbstractApplication</code>.
-     *
+     * 
      * @param configuration The application configuration.
-     * @throws NullPointerException If the <code>configuration</code> parameter
-     * is <code>null</code>.
+     * @param exceptionHandler The application exception handler.
+     * @param shutdownHandler The application shutdown handler.
+     * @throws IllegalArgumentException If the any of the 
+     * <code>configuration</code>, <code>exceptionHandler</code> or
+     * <code>shutdownHandler</code> parameters are <code>null</code>.
      */
-    public AbstractApplication(Configuration configuration) {
+    public AbstractApplication(Configuration configuration,
+            ExceptionHandler exceptionHandler, ShutdownHandler shutdownHandler) {
         if (configuration == null) {
-            throw new NullPointerException(
-                    "The configuration parameter must be non-null");
+            throw new IllegalArgumentException("configuration must be non-null");
         }
-
-        this.configuration = configuration;
+        if (exceptionHandler == null) {
+            throw new IllegalArgumentException(
+                    "exceptionHandler must be non-null");
+        }
+        if (shutdownHandler == null) {
+            throw new IllegalArgumentException(
+                    "shutdownHandler must be non-null");
+        }
+        
+        this.configurationManager = new ConfigurationManager(configuration);
+        this.exceptionHandler = exceptionHandler;
+        this.shutdownHandler = shutdownHandler;
     }
 
     /**
-     * Gets the configuration.
-     *
-     * @return The configuration.
+     * Gets the configuration manager.
+     * 
+     * @return The configuration manager.
      */
-    protected final Configuration getConfiguration() {
-        return this.configuration;
+    protected final ConfigurationManager getConfigurationManager() {
+        return this.configurationManager;
     }
 
-    /**
-     * {@inheritDoc}
-     * <p/>
-     * This implementation calls the <code>createConfigurationPresenter</code>
-     * method to get the configuration presenter.
-     */
-    public final boolean configure(File propertiesFile) throws
-            ApplicationException {
-        if (propertiesFile == null) {
-            throw new NullPointerException(
-                    "The propertiesFile parameter must be non-null");
-        }
-
-        if (propertiesFile.exists()) {
-            InputStream in = null;
+    /** {@inheritDoc} */
+    public final void initialise() throws ApplicationException {
+        ReturnStatus returnStatus = showConfigurationDialog();
+        switch (returnStatus) {
+        case CANCEL:
+            AbstractApplication.LOGGER.info(
+                    "User cancelled configuration, exiting application");
+            shutdown();
+            break;
+        case OK:
             try {
-                in = new BufferedInputStream(
-                        new FileInputStream(propertiesFile));
-                getConfiguration().loadConfiguration(in);
-            } catch (IOException e) {
-                throw new ApplicationException("Error loading configuration",
-                        e);
-            } finally {
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (IOException e) {
-                        AbstractApplication.logger.log(Level.WARNING,
-                                "Error closing input stream", e);
-                    }
-                }
+                getConfigurationManager().save();
             }
-        }
-
-        if (showConfigurationDialog() == ConfigurationPresenter.RETURN_OK) {
-            OutputStream out = null;
-            try {
-                out = new BufferedOutputStream(
-                        new FileOutputStream(propertiesFile));
-                getConfiguration().saveConfiguration(out);
-            } catch (IOException e) {
-                throw new ApplicationException("Error saving configuration", e);
-            } finally {
-                if (out != null) {
-                    try {
-                        out.close();
-                    } catch (IOException e) {
-                        AbstractApplication.logger.log(Level.WARNING,
-                                "Error closing output stream", e);
-                    }
-                }
+            catch (ConfigurationException e) {
+                handleException(new ApplicationException(
+                        "Error saving configuration", e));
             }
-
-            return true;
+            break;
+        default:
+            assert false : returnStatus;
+            break;
         }
-
-        return false;
     }
 
-    private int showConfigurationDialog() throws ApplicationException {
-        final ConfigurationPresenter presenter = createConfigurationPresenter();
-        try {
-            EventQueue.invokeAndWait(new Runnable() {
-                public void run() {
-                    presenter.realiseView();
-                }
-            });
-        } catch (InterruptedException e) {
-            AbstractApplication.logger.log(Level.WARNING,
-                    "Configuration dialog thread interrupted", e);
-        } catch (InvocationTargetException e) {
-            throw new ApplicationException(
-                    "Error in application configuration GUI", e);
-        }
-
-        int returnStatus = presenter.getReturnStatus();
-        AbstractApplication.logger.info("Status '" + returnStatus
+    private ReturnStatus showConfigurationDialog() {
+        ConfigurationPresenter presenter = createConfigurationPresenter();
+        presenter.realiseView();
+        ReturnStatus returnStatus = presenter.getReturnStatus();
+        AbstractApplication.LOGGER.info("Status '" + returnStatus
                 + "' returned from dialog");
         return returnStatus;
     }
 
-    /**
-     * Creates the configuration presenter.
-     * <p/>
-     * This method is called by the <code>configure</code> method.
-     * <p/>
-     * This implementation calls the <code>createConfigurationView</code>
-     * method to get the configuration view.
-     *
-     * @return The configuration presenter.
-     */
-    protected ConfigurationPresenter createConfigurationPresenter() {
+    ConfigurationPresenter createConfigurationPresenter() {
         ConfigurationView view = createConfigurationView();
-        ConfigurationPresenter presenter = new ConfigurationPresenter(getConfiguration(),
-                view);
+        ConfigurationPresenter presenter 
+                = new ConfigurationPresenter(getConfigurationManager(), view);
         view.setPresenter(presenter);
         return presenter;
     }
 
     /**
-     * Creates the configuration view.
-     * <p/>
-     * This method is called by the <code>createConfigurationPresenter</code>
-     * method.
-     *
+     * Creates the configuration view. <p/> This method is called by the
+     * <code>createConfigurationPresenter</code> method.
+     * 
      * @return The view.
      */
     protected abstract ConfigurationView createConfigurationView();
 
-    /**
-     * {@inheritDoc}
-     */
-    public final void showErrorDialog(final String message) throws
-            ApplicationException {
-        try {
-            EventQueue.invokeAndWait(new Runnable() {
-                public void run() {
-                    JOptionPane.showMessageDialog(new JFrame(), message,
-                            "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            });
-        } catch (InterruptedException e) {
-            AbstractApplication.logger.log(Level.WARNING,
-                    "Error dialog thread interrupted", e);
-        } catch (InvocationTargetException e) {
-            throw new ApplicationException("Error showing error dialog", e);
-        }
+    /** {@inheritDoc} */
+    public final void handleException(ApplicationException exception) {
+        this.exceptionHandler.handleException(exception);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public final void exit(int status) {
-        System.exit(status);
+    /** {@inheritDoc} */
+    public void shutdown() {
+        this.shutdownHandler.handleShutdown();
     }
 }
