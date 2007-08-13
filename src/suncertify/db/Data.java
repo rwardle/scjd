@@ -1,7 +1,7 @@
 /*
  * Data.java
  *
- * Created on 07-Jul-2007
+ * 07 Jul 2007
  */
 
 package suncertify.db;
@@ -12,14 +12,12 @@ package suncertify.db;
  */
 public final class Data implements DBMain {
 
-    private String databaseFilePath;
-    
     /**
      * Creates a new instance of <code>Data</code>.
-     * @param databaseFilePath 
+     * 
+     * @param databaseFilePath
      */
     public Data(String databaseFilePath) {
-        this.databaseFilePath = databaseFilePath;
     }
 
     /**

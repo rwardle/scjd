@@ -1,7 +1,7 @@
 /*
  * ApplicationConstants.java
  *
- * Created on 05-Jun-2007
+ * 05 Jun 2007
  */
 
 package suncertify;
@@ -14,20 +14,17 @@ package suncertify;
 public class ApplicationConstants {
 
     /** Database file path property name. */
-    public static final String DATABASE_FILE_PATH_PROPERTY 
-            = "suncertify.database-file-path";
-    
+    public static final String DATABASE_FILE_PATH_PROPERTY = "suncertify.database-file-path";
+
     /** Server address property name. */
-    public static final String SERVER_ADDRESS_PROPERTY 
-            = "suncertify.server-address";
-    
+    public static final String SERVER_ADDRESS_PROPERTY = "suncertify.server-address";
+
     /** Server port property name. */
-    public static final String SERVER_PORT_PROPERTY 
-            = "suncertify.server-port";
-    
+    public static final String SERVER_PORT_PROPERTY = "suncertify.server-port";
+
     /** Default database file path. */
-    public static final String DEFAULT_DATABASE_FILE_PATH 
-            = System.getProperty("user.dir") 
+    public static final String DEFAULT_DATABASE_FILE_PATH = System
+            .getProperty("user.dir")
             + System.getProperty("file.separator") + "db-2x1.db";
 
     /** Default server address. */

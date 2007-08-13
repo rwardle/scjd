@@ -1,7 +1,7 @@
 /*
  * AbstractApplication.java
  *
- * Created on 05-Jun-2007
+ * 05 Jun 2007
  */
 
 package suncertify;
@@ -17,8 +17,8 @@ import suncertify.presentation.ConfigurationView;
  */
 public abstract class AbstractApplication implements Application {
 
-    private static final Logger LOGGER 
-            = Logger.getLogger(AbstractApplication.class.getName());
+    private static final Logger LOGGER = Logger
+            .getLogger(AbstractApplication.class.getName());
     private final ConfigurationManager configurationManager;
     private final ExceptionHandler exceptionHandler;
     private final ShutdownHandler shutdownHandler;
@@ -26,12 +26,17 @@ public abstract class AbstractApplication implements Application {
     /**
      * Creates a new instance of <code>AbstractApplication</code>.
      * 
-     * @param configuration The application configuration.
-     * @param exceptionHandler The application exception handler.
-     * @param shutdownHandler The application shutdown handler.
-     * @throws IllegalArgumentException If the any of the 
-     * <code>configuration</code>, <code>exceptionHandler</code> or
-     * <code>shutdownHandler</code> parameters are <code>null</code>.
+     * @param configuration
+     *                The application configuration.
+     * @param exceptionHandler
+     *                The application exception handler.
+     * @param shutdownHandler
+     *                The application shutdown handler.
+     * @throws IllegalArgumentException
+     *                 If the any of the <code>configuration</code>,
+     *                 <code>exceptionHandler</code> or
+     *                 <code>shutdownHandler</code> parameters are
+     *                 <code>null</code>.
      */
     public AbstractApplication(Configuration configuration,
             ExceptionHandler exceptionHandler, ShutdownHandler shutdownHandler) {
@@ -46,7 +51,7 @@ public abstract class AbstractApplication implements Application {
             throw new IllegalArgumentException(
                     "shutdownHandler must be non-null");
         }
-        
+
         this.configurationManager = new ConfigurationManager(configuration);
         this.exceptionHandler = exceptionHandler;
         this.shutdownHandler = shutdownHandler;
@@ -66,15 +71,14 @@ public abstract class AbstractApplication implements Application {
         ReturnStatus returnStatus = showConfigurationDialog();
         switch (returnStatus) {
         case CANCEL:
-            AbstractApplication.LOGGER.info(
-                    "User cancelled configuration, exiting application");
+            AbstractApplication.LOGGER
+                    .info("User cancelled configuration, exiting application");
             shutdown();
             break;
         case OK:
             try {
                 getConfigurationManager().save();
-            }
-            catch (ConfigurationException e) {
+            } catch (ConfigurationException e) {
                 handleException(new ApplicationException(
                         "Error saving configuration", e));
             }
@@ -96,8 +100,8 @@ public abstract class AbstractApplication implements Application {
 
     ConfigurationPresenter createConfigurationPresenter() {
         ConfigurationView view = createConfigurationView();
-        ConfigurationPresenter presenter 
-                = new ConfigurationPresenter(getConfigurationManager(), view);
+        ConfigurationPresenter presenter = new ConfigurationPresenter(
+                getConfigurationManager(), view);
         view.setPresenter(presenter);
         return presenter;
     }

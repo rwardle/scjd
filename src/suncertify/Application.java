@@ -1,7 +1,7 @@
 /*
  * Application.java
  *
- * Created on 05-Jul-2007
+ * 05 Jul 2007
  */
 
 package suncertify;
@@ -17,21 +17,24 @@ public interface Application {
     /**
      * Initialises the application, e.g. obtaining and applying configuration.
      * 
-     * @throws ApplicationException If the application cannot be initialised.
+     * @throws ApplicationException
+     *                 If the application cannot be initialised.
      */
     void initialise() throws ApplicationException;
 
     /**
      * Starts-up the application.
      * 
-     * @throws ApplicationException If the application cannot be started.
+     * @throws ApplicationException
+     *                 If the application cannot be started.
      */
     void startup() throws ApplicationException;
 
     /**
      * Handles the supplied application exception.
      * 
-     * @param exception The exception to handle.
+     * @param exception
+     *                The exception to handle.
      */
     void handleException(ApplicationException exception);
 

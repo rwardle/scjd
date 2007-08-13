@@ -1,11 +1,12 @@
 package suncertify;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
 import suncertify.presentation.ClientConfigurationDialog;
 
 public class ClientApplicationTest {
@@ -25,14 +26,15 @@ public class ClientApplicationTest {
 
     @Test
     public void createConfigurationView() {
-        this.context.checking(new Expectations() {{
-            ignoring(ClientApplicationTest.this.mockConfiguration);
-        }});
-        this.application = new ClientApplication(this.mockConfiguration, 
+        this.context.checking(new Expectations() {
+            {
+                ignoring(ClientApplicationTest.this.mockConfiguration);
+            }
+        });
+        this.application = new ClientApplication(this.mockConfiguration,
                 this.mockExceptionHandler, this.mockShutdownHandler);
-        Assert.assertTrue(this.application.createConfigurationView() 
-                instanceof ClientConfigurationDialog);
+        assertTrue(this.application.createConfigurationView() instanceof ClientConfigurationDialog);
     }
-    
+
     // TODO How can we test RMI lookup here?
 }

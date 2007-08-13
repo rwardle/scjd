@@ -1,7 +1,7 @@
 /*
  * StandaloneApplication.java
  *
- * Created on 05-Jul-2007
+ * 05 Jul 2007
  */
 
 package suncertify;
@@ -22,16 +22,20 @@ public final class StandaloneApplication extends AbstractGuiApplication {
     /**
      * Creates a new instance of <code>StandaloneApplication</code>.
      * 
-     * @param configuration The application configuration.
-     * @param exceptionHandler The application exception handler.
-     * @param shutdownHandler The application shutdown handler.
-     * @throws IllegalArgumentException If the any of the 
-     * <code>configuration</code>, <code>exceptionHandler</code> or
-     * <code>shutdownHandler</code> parameters are <code>null</code>.
+     * @param configuration
+     *                The application configuration.
+     * @param exceptionHandler
+     *                The application exception handler.
+     * @param shutdownHandler
+     *                The application shutdown handler.
+     * @throws IllegalArgumentException
+     *                 If the any of the <code>configuration</code>,
+     *                 <code>exceptionHandler</code> or
+     *                 <code>shutdownHandler</code> parameters are
+     *                 <code>null</code>.
      */
     public StandaloneApplication(Configuration configuration,
-            ExceptionHandler exceptionHandler, 
-            ShutdownHandler shutdownHandler) {
+            ExceptionHandler exceptionHandler, ShutdownHandler shutdownHandler) {
         super(configuration, exceptionHandler, shutdownHandler);
     }
 
@@ -46,7 +50,7 @@ public final class StandaloneApplication extends AbstractGuiApplication {
     protected BrokerService getBrokerService() {
         // TODO: If BrokerServiceImpl not singleton should we do something
         // here to prevent multiple instances?
-        return new BrokerServiceImpl(
-                new Data(getConfigurationManager().getDatabaseFilePath()));
+        return new BrokerServiceImpl(new Data(getConfigurationManager()
+                .getDatabaseFilePath()));
     }
 }

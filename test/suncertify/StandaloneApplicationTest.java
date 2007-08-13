@@ -1,11 +1,13 @@
 package suncertify;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import suncertify.presentation.StandaloneConfigurationDialog;
 import suncertify.service.BrokerServiceImpl;
 
@@ -31,23 +33,25 @@ public class StandaloneApplicationTest {
 
     @Test
     public void createConfigurationView() {
-        this.context.checking(new Expectations() {{
-            ignoring(StandaloneApplicationTest.this.mockConfiguration);
-        }});
-        this.application = new StandaloneApplication(this.mockConfiguration, 
+        this.context.checking(new Expectations() {
+            {
+                ignoring(StandaloneApplicationTest.this.mockConfiguration);
+            }
+        });
+        this.application = new StandaloneApplication(this.mockConfiguration,
                 this.mockExceptionHandler, this.mockShutdownHandler);
-        assertTrue(this.application.createConfigurationView() 
-                instanceof StandaloneConfigurationDialog);
+        assertTrue(this.application.createConfigurationView() instanceof StandaloneConfigurationDialog);
     }
 
     @Test
     public void getBrokerService() {
-        this.context.checking(new Expectations() {{
-            ignoring(StandaloneApplicationTest.this.mockConfiguration);
-        }});
-        this.application = new StandaloneApplication(this.mockConfiguration, 
+        this.context.checking(new Expectations() {
+            {
+                ignoring(StandaloneApplicationTest.this.mockConfiguration);
+            }
+        });
+        this.application = new StandaloneApplication(this.mockConfiguration,
                 this.mockExceptionHandler, this.mockShutdownHandler);
-        assertTrue(this.application.getBrokerService() 
-                instanceof BrokerServiceImpl);
+        assertTrue(this.application.getBrokerService() instanceof BrokerServiceImpl);
     }
 }

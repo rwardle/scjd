@@ -24,9 +24,15 @@
         <property name="pmd.includes" value="${filter}/**/*"/>
     </target>
 
+    <target name="-pre-jar" depends="-rmic"/>
+
+    <target name="-rmic">
+        <rmic base="${build.classes.dir}" classname="suncertify.service.RemoteBrokerServiceImpl"
+            stubversion="1.2"/>
+    </target>
+
     <target name="report"
             depends="checkstyle-report,findbugs-report,pmd-report,jdepend-report,junit-report,cobertura-report"/>
     <target name="report-single"
             depends="checkstyle-single-report,findbugs-single-report,pmd-single-report"/>
 </project>
-

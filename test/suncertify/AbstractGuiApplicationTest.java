@@ -12,9 +12,11 @@ import suncertify.service.BrokerService;
 
 public class AbstractGuiApplicationTest {
 
-    private final Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+    private final Mockery context = new Mockery() {
+        {
+            setImposteriser(ClassImposteriser.INSTANCE);
+        }
+    };
     private Configuration mockConfiguration;
     private ExceptionHandler mockExceptionHandler;
     private ShutdownHandler mockShutdownHandler;
@@ -35,24 +37,27 @@ public class AbstractGuiApplicationTest {
     }
 
     @Test
-    public void startupApplicationRealisesMainView() 
+    public void startupApplicationRealisesMainView()
             throws ApplicationException {
-        this.context.checking(new Expectations() {{
-            ignoring(AbstractGuiApplicationTest.this.mockConfiguration);
-            one(AbstractGuiApplicationTest.this.mockPresenter)
-                    .realiseView();
-        }});
-        this.application = new StubAbstractGuiApplication(this.mockConfiguration, 
-                this.mockExceptionHandler, this.mockShutdownHandler);
+        this.context.checking(new Expectations() {
+            {
+                ignoring(AbstractGuiApplicationTest.this.mockConfiguration);
+                one(AbstractGuiApplicationTest.this.mockPresenter)
+                        .realiseView();
+            }
+        });
+        this.application = new StubAbstractGuiApplication(
+                this.mockConfiguration, this.mockExceptionHandler,
+                this.mockShutdownHandler);
         this.application.startup();
     }
 
     // TODO Add shutdown test
-    
+
     private class StubAbstractGuiApplication extends AbstractGuiApplication {
 
-        StubAbstractGuiApplication(Configuration configuration, 
-                ExceptionHandler exceptionHandler, 
+        StubAbstractGuiApplication(Configuration configuration,
+                ExceptionHandler exceptionHandler,
                 ShutdownHandler shutdownHandler) {
             super(configuration, exceptionHandler, shutdownHandler);
         }

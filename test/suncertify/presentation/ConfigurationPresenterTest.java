@@ -1,13 +1,14 @@
 package suncertify.presentation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static suncertify.ApplicationConstants.*;
+import org.hamcrest.Matchers;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import suncertify.ApplicationConstants;
 import suncertify.Configuration;
 import suncertify.ConfigurationManager;
 import suncertify.ReturnStatus;
@@ -24,28 +25,31 @@ public class ConfigurationPresenterTest {
 
     @Before
     public void setUp() throws Exception {
-        this.mockConfiguration = this.context.mock(Configuration.class);        
+        this.mockConfiguration = this.context.mock(Configuration.class);
         this.mockView = this.context.mock(ConfigurationView.class);
-        
-        this.context.checking(new Expectations() {{
-            ignoring(ConfigurationPresenterTest.this.mockConfiguration)
-                    .exists();
-            ignoring(ConfigurationPresenterTest.this.mockConfiguration).load();
-            
-            ignoring(ConfigurationPresenterTest.this.mockConfiguration)
-                    .getProperty(DATABASE_FILE_PATH_PROPERTY);
-                will(returnValue(
-                        ConfigurationPresenterTest.this.databaseFilePath));
 
-            ignoring(ConfigurationPresenterTest.this.mockConfiguration)
-                    .getProperty(SERVER_ADDRESS_PROPERTY);
-                will(returnValue(
-                        ConfigurationPresenterTest.this.serverAddress));
+        this.context.checking(new Expectations() {
+            {
+                ignoring(ConfigurationPresenterTest.this.mockConfiguration)
+                        .exists();
+                ignoring(ConfigurationPresenterTest.this.mockConfiguration)
+                        .load();
 
-            ignoring(ConfigurationPresenterTest.this.mockConfiguration)
-                    .getProperty(SERVER_PORT_PROPERTY);
+                ignoring(ConfigurationPresenterTest.this.mockConfiguration)
+                        .getProperty(
+                                ApplicationConstants.DATABASE_FILE_PATH_PROPERTY);
+                will(returnValue(ConfigurationPresenterTest.this.databaseFilePath));
+
+                ignoring(ConfigurationPresenterTest.this.mockConfiguration)
+                        .getProperty(
+                                ApplicationConstants.SERVER_ADDRESS_PROPERTY);
+                will(returnValue(ConfigurationPresenterTest.this.serverAddress));
+
+                ignoring(ConfigurationPresenterTest.this.mockConfiguration)
+                        .getProperty(ApplicationConstants.SERVER_PORT_PROPERTY);
                 will(returnValue(ConfigurationPresenterTest.this.serverPort));
-        }});
+            }
+        });
         this.presenter = new ConfigurationPresenter(new ConfigurationManager(
                 this.mockConfiguration), this.mockView);
     }
@@ -62,27 +66,32 @@ public class ConfigurationPresenterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void constructorDisallowNullView() {
-        new ConfigurationPresenter(
-                new ConfigurationManager(this.mockConfiguration), null);
+        new ConfigurationPresenter(new ConfigurationManager(
+                this.mockConfiguration), null);
     }
 
     @Test
     public void defaultReturnStatus() {
-        assertThat(this.presenter.getReturnStatus(), is(ReturnStatus.CANCEL));
+        assertThat(this.presenter.getReturnStatus(), Matchers
+                .is(ReturnStatus.CANCEL));
     }
 
     @Test
     public void realiseView() {
-        this.context.checking(new Expectations() {{
-            one(ConfigurationPresenterTest.this.mockView).setDatabaseFilePath(
-                    with(equal(
-                            ConfigurationPresenterTest.this.databaseFilePath)));
-            one(ConfigurationPresenterTest.this.mockView).setServerAddress(
-                    with(equal(ConfigurationPresenterTest.this.serverAddress)));
-            one(ConfigurationPresenterTest.this.mockView).setServerPort(
-                    with(equal(ConfigurationPresenterTest.this.serverPort)));
-            one(ConfigurationPresenterTest.this.mockView).realise();
-        }});
+        this.context.checking(new Expectations() {
+            {
+                one(ConfigurationPresenterTest.this.mockView)
+                        .setDatabaseFilePath(
+                                with(equal(ConfigurationPresenterTest.this.databaseFilePath)));
+                one(ConfigurationPresenterTest.this.mockView)
+                        .setServerAddress(
+                                with(equal(ConfigurationPresenterTest.this.serverAddress)));
+                one(ConfigurationPresenterTest.this.mockView)
+                        .setServerPort(
+                                with(equal(ConfigurationPresenterTest.this.serverPort)));
+                one(ConfigurationPresenterTest.this.mockView).realise();
+            }
+        });
         this.presenter.realiseView();
     }
 
@@ -92,38 +101,49 @@ public class ConfigurationPresenterTest {
         final String newServerAddress = "newServerAddress";
         final String newServerPort = "newServerPort";
 
-        this.context.checking(new Expectations() {{
-            one(ConfigurationPresenterTest.this.mockView).getDatabaseFilePath();
+        this.context.checking(new Expectations() {
+            {
+                one(ConfigurationPresenterTest.this.mockView)
+                        .getDatabaseFilePath();
                 will(returnValue(newDatabaseFilePath));
 
-            one(ConfigurationPresenterTest.this.mockView).getServerAddress();
+                one(ConfigurationPresenterTest.this.mockView)
+                        .getServerAddress();
                 will(returnValue(newServerAddress));
 
-            one(ConfigurationPresenterTest.this.mockView).getServerPort();
+                one(ConfigurationPresenterTest.this.mockView).getServerPort();
                 will(returnValue(newServerPort));
 
-            one(ConfigurationPresenterTest.this.mockView).close();
-            one(ConfigurationPresenterTest.this.mockConfiguration).setProperty(
-                    with(equal(DATABASE_FILE_PATH_PROPERTY)),
-                    with(equal(newDatabaseFilePath)));
-            one(ConfigurationPresenterTest.this.mockConfiguration).setProperty(
-                    with(equal(SERVER_ADDRESS_PROPERTY)),
-                    with(equal(newServerAddress)));
-            one(ConfigurationPresenterTest.this.mockConfiguration).setProperty(
-                    with(equal(SERVER_PORT_PROPERTY)),
-                    with(equal(newServerPort)));
-        }});
+                one(ConfigurationPresenterTest.this.mockView).close();
+                one(ConfigurationPresenterTest.this.mockConfiguration)
+                        .setProperty(
+                                with(equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)),
+                                with(equal(newDatabaseFilePath)));
+                one(ConfigurationPresenterTest.this.mockConfiguration)
+                        .setProperty(
+                                with(equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)),
+                                with(equal(newServerAddress)));
+                one(ConfigurationPresenterTest.this.mockConfiguration)
+                        .setProperty(
+                                with(equal(ApplicationConstants.SERVER_PORT_PROPERTY)),
+                                with(equal(newServerPort)));
+            }
+        });
 
         this.presenter.okButtonActionPerformed();
-        assertThat(this.presenter.getReturnStatus(), is(ReturnStatus.OK));
+        assertThat(this.presenter.getReturnStatus(), Matchers
+                .is(ReturnStatus.OK));
     }
 
     @Test
     public void cancelButtonActionPerformed() {
-        this.context.checking(new Expectations() {{
-            one(ConfigurationPresenterTest.this.mockView).close();
-        }});
+        this.context.checking(new Expectations() {
+            {
+                one(ConfigurationPresenterTest.this.mockView).close();
+            }
+        });
         this.presenter.cancelButtonActionPerformed();
-        assertThat(this.presenter.getReturnStatus(), is(ReturnStatus.CANCEL));
+        assertThat(this.presenter.getReturnStatus(), Matchers
+                .is(ReturnStatus.CANCEL));
     }
 }

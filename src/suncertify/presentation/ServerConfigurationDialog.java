@@ -1,26 +1,27 @@
 /*
  * ServerConfigurationDialog.java
  *
- * Created on 07-Jun-2005
+ * 07 Jun 2007
  */
 
 package suncertify.presentation;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.util.ResourceBundle;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 /**
  * Server mode configuration dialog.
- *
+ * 
  * @author Richard Wardle
  */
 public final class ServerConfigurationDialog extends
         AbstractConfigurationDialog {
 
+    private static final long serialVersionUID = 1L;
     private String serverAddress;
     private JTextField databaseFilePathField;
     private JTextField serverPortField;
@@ -28,36 +29,40 @@ public final class ServerConfigurationDialog extends
     /**
      * {@inheritDoc}
      */
+    @Override
     protected String getMessageText() {
-        return this.getResourceBundle().getString("ServerConfigurationDialog.message.text");
+        return getResourceBundle().getString(
+                "ServerConfigurationDialog.message.text");
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void initInputPanel(JPanel inputPanel) {
         inputPanel.setLayout(new GridLayout(2, 1));
 
         JPanel databaseFilePathPanel = new JPanel();
         inputPanel.add(databaseFilePathPanel);
 
-        JLabel databaseFilePathLabel = new JLabel(
-                this.getResourceBundle().getString("ServerConfigurationDialog.databaseFilePathLabel.text"));
+        JLabel databaseFilePathLabel = new JLabel(getResourceBundle()
+                .getString(
+                        "ServerConfigurationDialog.databaseFilePathLabel.text"));
         databaseFilePathPanel.add(databaseFilePathLabel);
         this.databaseFilePathField = new JTextField();
-        this.databaseFilePathField.setName(
-                "ServerConfigurationDialog.databaseFilePathField.name");
+        this.databaseFilePathField
+                .setName("ServerConfigurationDialog.databaseFilePathField.name");
         databaseFilePathPanel.add(this.databaseFilePathField);
 
         JPanel serverPortPanel = new JPanel();
         inputPanel.add(serverPortPanel);
 
-        JLabel serverPortLabel = new JLabel(
-                this.getResourceBundle().getString("ServerConfigurationDialog.serverPortLabel.text"));
+        JLabel serverPortLabel = new JLabel(getResourceBundle().getString(
+                "ServerConfigurationDialog.serverPortLabel.text"));
         serverPortPanel.add(serverPortLabel);
         this.serverPortField = new JTextField();
-        this.serverPortField.setName(
-                "ServerConfigurationDialog.serverPortField.name");
+        this.serverPortField
+                .setName("ServerConfigurationDialog.serverPortField.name");
         serverPortPanel.add(this.serverPortField);
 
         getContentPane().add(inputPanel, BorderLayout.CENTER);

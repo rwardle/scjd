@@ -1,7 +1,7 @@
 /*
  * RecordNotFoundException.java
  *
- * Created on 07-Jul-2005
+ * 07 Jul 2007
  */
 
 package suncertify.db;
@@ -13,6 +13,8 @@ package suncertify.db;
  * @author Richard Wardle
  */
 public final class RecordNotFoundException extends Exception {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * Creates a new <code>RecordNotFoundException</code>.
@@ -26,33 +28,34 @@ public final class RecordNotFoundException extends Exception {
      * detail message.
      * 
      * @param message
-     *            The detail message.
+     *                The detail message.
      */
     public RecordNotFoundException(String message) {
         super(message);
     }
 
+    // TODO Only add other constructors if needed - semi-specified in SCJD instructions
     /**
      * Creates a new <code>RecordNotFoundException</code> with the specified
      * cause.
      * 
      * @param cause
-     *            The cause.
+     *                The cause.
      */
-    public RecordNotFoundException(Throwable cause) {
-        super(cause);
-    }
+//    public RecordNotFoundException(Throwable cause) {
+//        super(cause);
+//    }
 
     /**
      * Creates a new <code>RecordNotFoundException</code> with the specified
      * message and cause.
      * 
      * @param message
-     *            The message.
+     *                The message.
      * @param cause
-     *            The cause.
+     *                The cause.
      */
-    public RecordNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
+//    public RecordNotFoundException(String message, Throwable cause) {
+//        super(message, cause);
+//    }
 }

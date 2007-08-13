@@ -1,7 +1,7 @@
 /*
  * MainView.java
  *
- * Created on 06-Jul-2007
+ * 06 Jul 2007
  */
 
 package suncertify.presentation;
@@ -15,10 +15,11 @@ public interface MainView {
     /**
      * Sets the main presenter.
      * 
-     * @param presenter The presenter.
+     * @param presenter
+     *                The presenter.
      */
     void setPresenter(MainPresenter presenter);
-    
+
     /** Realises the view and its components. */
     void realise();
 

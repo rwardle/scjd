@@ -1,7 +1,7 @@
 /*
  * ClientApplication.java
  *
- * Created on 05-Jul-2007
+ * 05 Jul 2007
  */
 
 package suncertify;
@@ -24,16 +24,20 @@ public final class ClientApplication extends AbstractGuiApplication {
     /**
      * Creates a new instance of <code>ClientApplication</code>.
      * 
-     * @param configuration The application configuration.
-     * @param exceptionHandler The application exception handler.
-     * @param shutdownHandler The application shutdown handler.
-     * @throws IllegalArgumentException If the any of the 
-     * <code>configuration</code>, <code>exceptionHandler</code> or
-     * <code>shutdownHandler</code> parameters are <code>null</code>.
+     * @param configuration
+     *                The application configuration.
+     * @param exceptionHandler
+     *                The application exception handler.
+     * @param shutdownHandler
+     *                The application shutdown handler.
+     * @throws IllegalArgumentException
+     *                 If the any of the <code>configuration</code>,
+     *                 <code>exceptionHandler</code> or
+     *                 <code>shutdownHandler</code> parameters are
+     *                 <code>null</code>.
      */
-    public ClientApplication(Configuration configuration, 
-            ExceptionHandler exceptionHandler, 
-            ShutdownHandler shutdownHandler) {
+    public ClientApplication(Configuration configuration,
+            ExceptionHandler exceptionHandler, ShutdownHandler shutdownHandler) {
         super(configuration, exceptionHandler, shutdownHandler);
     }
 
@@ -52,17 +56,14 @@ public final class ClientApplication extends AbstractGuiApplication {
 
         try {
             return (BrokerService) Naming.lookup(url);
-        } 
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             throw new ApplicationException(
                     "The URL used to lookup the remote broker service object "
                             + "is malformed: '" + url + "'", e);
-        } 
-        catch (RemoteException e) {
+        } catch (RemoteException e) {
             throw new ApplicationException(
                     "Error communicating with the remote server", e);
-        } 
-        catch (NotBoundException e) {
+        } catch (NotBoundException e) {
             throw new ApplicationException(
                     "Attempted to lookup a name that has not been bound in the "
                             + "RMI registry: '"

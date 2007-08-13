@@ -1,10 +1,12 @@
 package suncertify;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
+
 import suncertify.presentation.ServerConfigurationDialog;
 
 public class ServerApplicationTest {
@@ -24,14 +26,15 @@ public class ServerApplicationTest {
 
     @Test
     public void createConfigurationView() {
-        this.context.checking(new Expectations() {{
-            ignoring(ServerApplicationTest.this.mockConfiguration);
-        }});
-        this.application = new ServerApplication(this.mockConfiguration, 
+        this.context.checking(new Expectations() {
+            {
+                ignoring(ServerApplicationTest.this.mockConfiguration);
+            }
+        });
+        this.application = new ServerApplication(this.mockConfiguration,
                 this.mockExceptionHandler, this.mockShutdownHandler);
-        assertTrue(this.application.createConfigurationView() 
-                instanceof ServerConfigurationDialog);
+        assertTrue(this.application.createConfigurationView() instanceof ServerConfigurationDialog);
     }
-    
+
     // TODO How can we test RMI startup here?
 }

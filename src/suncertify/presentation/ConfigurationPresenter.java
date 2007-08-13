@@ -1,7 +1,7 @@
 /*
  * ConfigurationPresenter.java
  *
- * Created on 06-Jun-2007
+ * 06 Jun 2007
  */
 
 package suncertify.presentation;
@@ -16,19 +16,19 @@ import suncertify.ReturnStatus;
  */
 public class ConfigurationPresenter {
 
-    private ConfigurationManager configurationManager;
-    private ConfigurationView view;
+    private final ConfigurationManager configurationManager;
+    private final ConfigurationView view;
     private ReturnStatus returnStatus;
 
     /**
      * Creates a new instance of <code>ConfigurationPresenter</code>.
      * 
      * @param configurationManager
-     *            The configuration model.
+     *                The configuration model.
      * @param view
-     *            The configuration view.
+     *                The configuration view.
      * @throws IllegalArgumentException
-     *             If the configuration or view is <code>null</code>.
+     *                 If the configuration or view is <code>null</code>.
      */
     public ConfigurationPresenter(ConfigurationManager configurationManager,
             ConfigurationView view) {
@@ -58,13 +58,13 @@ public class ConfigurationPresenter {
     }
 
     private void loadViewFromModel() {
-        this.view.setDatabaseFilePath(
-                this.configurationManager.getDatabaseFilePath());
-        this.view.setServerAddress(
-                this.configurationManager.getServerAddress());
+        this.view.setDatabaseFilePath(this.configurationManager
+                .getDatabaseFilePath());
+        this.view
+                .setServerAddress(this.configurationManager.getServerAddress());
         this.view.setServerPort(this.configurationManager.getServerPort());
     }
-    
+
     /** Performs the OK button action. */
     public void okButtonActionPerformed() {
         this.returnStatus = ReturnStatus.OK;
@@ -73,13 +73,13 @@ public class ConfigurationPresenter {
     }
 
     private void saveViewToModel() {
-        this.configurationManager.setDatabaseFilePath(
-                this.view.getDatabaseFilePath());
-        this.configurationManager.setServerAddress(
-                this.view.getServerAddress());
+        this.configurationManager.setDatabaseFilePath(this.view
+                .getDatabaseFilePath());
+        this.configurationManager
+                .setServerAddress(this.view.getServerAddress());
         this.configurationManager.setServerPort(this.view.getServerPort());
     }
-    
+
     /** Performs the Cancel button action. */
     public void cancelButtonActionPerformed() {
         this.view.close();

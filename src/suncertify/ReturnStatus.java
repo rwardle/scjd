@@ -1,7 +1,7 @@
 /*
  * ReturnStatus.java
- * 
- * Created on 08-Aug-2007
+ *
+ * 08 Aug 2007
  */
 
 package suncertify;

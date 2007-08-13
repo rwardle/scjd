@@ -28,25 +28,29 @@ public class MainPresenterTest {
     }
 
     // TODO Add tests for construction with null args
-    
+
     @Test
     public void realiseView() {
-        this.context.checking(new Expectations() {{
-            one(MainPresenterTest.this.mockView).realise();
-        }});
+        this.context.checking(new Expectations() {
+            {
+                one(MainPresenterTest.this.mockView).realise();
+            }
+        });
         this.presenter.realiseView();
     }
 
     @Test
     public void helloButtonActionPerformed() throws Exception {
         final String text = "hello";
-        this.context.checking(new Expectations() {{
-            one(MainPresenterTest.this.mockBrokerService).getHelloWorld();
-            will(returnValue(text));
+        this.context.checking(new Expectations() {
+            {
+                one(MainPresenterTest.this.mockBrokerService).getHelloWorld();
+                will(returnValue(text));
 
-            one(MainPresenterTest.this.mockView).setLabelText(
-                    with(equal(text)));
-        }});
+                one(MainPresenterTest.this.mockView).setLabelText(
+                        with(equal(text)));
+            }
+        });
         this.presenter.helloButtonActionPerformed();
     }
 }

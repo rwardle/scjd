@@ -1,14 +1,14 @@
 /*
  * ApplicationException.java
  *
- * Created on 12-Jul-2007
+ * 12 Jul 2007
  */
 
 package suncertify;
 
 /**
  * Represents generic application exceptions.
- *
+ * 
  * @author Richard Wardle
  */
 public final class ApplicationException extends Exception {
@@ -24,8 +24,9 @@ public final class ApplicationException extends Exception {
 
     /**
      * Creates a new instance of <code>ApplicationException</code>.
-     *
-     * @param message The error message.
+     * 
+     * @param message
+     *                The error message.
      */
     public ApplicationException(String message) {
         super(message);
@@ -33,8 +34,9 @@ public final class ApplicationException extends Exception {
 
     /**
      * Creates a new instance of <code>ApplicationException</code>.
-     *
-     * @param cause The root cause.
+     * 
+     * @param cause
+     *                The root cause.
      */
     public ApplicationException(Throwable cause) {
         super(cause);
@@ -42,9 +44,11 @@ public final class ApplicationException extends Exception {
 
     /**
      * Creates a new instance of <code>ApplicationException</code>.
-     *
-     * @param message The error message.
-     * @param cause The root cause.
+     * 
+     * @param message
+     *                The error message.
+     * @param cause
+     *                The root cause.
      */
     public ApplicationException(String message, Throwable cause) {
         super(message, cause);

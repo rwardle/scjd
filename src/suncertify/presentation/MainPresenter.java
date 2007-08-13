@@ -1,7 +1,7 @@
 /*
  * MainPresenter.java
  *
- * Created on 06-Jul-2007
+ * 06 Jul 2007
  */
 
 package suncertify.presentation;
@@ -16,26 +16,28 @@ import suncertify.service.BrokerService;
  */
 public class MainPresenter {
 
-    private BrokerService service;
-    private MainView view;
-    
+    private final BrokerService service;
+    private final MainView view;
+
     /**
      * Creates a new instance of <code>MainPresenter</code>.
      * 
-     * @param service The broker service.
-     * @param view The main view.
+     * @param service
+     *                The broker service.
+     * @param view
+     *                The main view.
      */
     public MainPresenter(BrokerService service, MainView view) {
         // TODO: Check args for null
         this.service = service;
         this.view = view;
     }
- 
+
     /** Realises the view. */
     public void realiseView() {
         this.view.realise();
     }
-    
+
     public final void helloButtonActionPerformed() {
         try {
             this.view.setLabelText(this.service.getHelloWorld());

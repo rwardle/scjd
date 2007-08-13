@@ -1,6 +1,12 @@
+/*
+ * SysErrExceptionHandler.java
+ *
+ * 05 Jul 2007
+ */
+
 package suncertify;
 
-public class SysErrExceptionHandler implements ExceptionHandler, 
+public class SysErrExceptionHandler implements ExceptionHandler,
         Thread.UncaughtExceptionHandler {
 
     public void handleException(ApplicationException exception) {

@@ -1,12 +1,16 @@
 package suncertify;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertTrue;
+
+import org.hamcrest.Matchers;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
+
+import suncertify.Launcher.ApplicationMode;
 
 public class LauncherTest {
 
@@ -32,84 +36,90 @@ public class LauncherTest {
 
     @Test
     public void getsClientApplicationModeIfNotSpecifiedOnCommandLine() {
-        assertSame(Launcher.ApplicationMode.CLIENT, 
-                this.launcher.getApplicationMode(new String[0]));
+        assertThat(this.launcher.getApplicationMode(new String[0]),
+                is(ApplicationMode.CLIENT));
     }
 
     @Test
     public void getsServerApplicationModeIfCommandLineArgumentIsServer() {
-        assertSame(Launcher.ApplicationMode.SERVER, 
-                this.launcher.getApplicationMode(new String[] { "server" }));
+        assertThat(this.launcher.getApplicationMode(new String[] { "server" }),
+                is(ApplicationMode.SERVER));
     }
 
     @Test
     public void getsStandaloneApplicationModeIfCommandLineArgumentIsAlone() {
-        assertSame(Launcher.ApplicationMode.STANDALONE, 
-                this.launcher.getApplicationMode(new String[] { "alone" }));
+        assertThat(this.launcher.getApplicationMode(new String[] { "alone" }),
+                is(ApplicationMode.STANDALONE));
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void throwsExceptionIfApplicationModeIsNull() {
         this.launcher.createApplication(null);
     }
-    
+
     @Test
     public void createsClientApplicationIfApplicationModeIsClient() {
-        assertTrue(this.launcher.createApplication(
-                Launcher.ApplicationMode.CLIENT) instanceof ClientApplication);
+        assertTrue(this.launcher
+                .createApplication(Launcher.ApplicationMode.CLIENT) instanceof ClientApplication);
     }
 
     @Test
     public void createsServerApplicationIfApplicationModeIsServer() {
-        assertTrue(this.launcher.createApplication(
-                Launcher.ApplicationMode.SERVER) instanceof ServerApplication);
+        assertTrue(this.launcher
+                .createApplication(Launcher.ApplicationMode.SERVER) instanceof ServerApplication);
     }
 
     @Test
     public void createsStandaloneApplicationIfApplicationModeIsStandalone() {
-        assertTrue(this.launcher.createApplication(
-                Launcher.ApplicationMode.STANDALONE) 
-                        instanceof StandaloneApplication);
+        assertTrue(this.launcher
+                .createApplication(Launcher.ApplicationMode.STANDALONE) instanceof StandaloneApplication);
     }
 
     @Test
     public void launchHappyPath() throws Exception {
-        this.context.checking(new Expectations() {{
-            one(LauncherTest.this.mockApplication).initialise();
-            one(LauncherTest.this.mockApplication).startup();
-        }});
+        this.context.checking(new Expectations() {
+            {
+                one(LauncherTest.this.mockApplication).initialise();
+                one(LauncherTest.this.mockApplication).startup();
+            }
+        });
         this.launcher.launch(this.mockApplication);
     }
 
     @Test
-    public void applicationIsShutdownWhenInitialiseThrowsException() 
+    public void applicationIsShutdownWhenInitialiseThrowsException()
             throws Exception {
-        final ApplicationException applicationException 
-                = new ApplicationException();
-        this.context.checking(new Expectations() {{
-            one(LauncherTest.this.mockApplication).initialise();
+        final ApplicationException applicationException = new ApplicationException();
+        this.context.checking(new Expectations() {
+            {
+                one(LauncherTest.this.mockApplication).initialise();
                 will(throwException(applicationException));
-            never(LauncherTest.this.mockApplication).startup();
-            one(LauncherTest.this.mockApplication).handleException(
-                    with(is(applicationException)));
-            one(LauncherTest.this.mockApplication).shutdown();
-        }});
+
+                never(LauncherTest.this.mockApplication).startup();
+                one(LauncherTest.this.mockApplication).handleException(
+                        with(Matchers.is(applicationException)));
+                one(LauncherTest.this.mockApplication).shutdown();
+            }
+        });
         this.launcher.launch(this.mockApplication);
     }
 
     @Test
-    public void applicationIsShutdownWhenStartupThrowsException() 
+    public void applicationIsShutdownWhenStartupThrowsException()
             throws Exception {
-        final ApplicationException applicationException 
-                = new ApplicationException();
-        this.context.checking(new Expectations() {{
-            one(LauncherTest.this.mockApplication).initialise();
-            one(LauncherTest.this.mockApplication).startup();
+        final ApplicationException applicationException = new ApplicationException();
+        this.context.checking(new Expectations() {
+            {
+                one(LauncherTest.this.mockApplication).initialise();
+
+                one(LauncherTest.this.mockApplication).startup();
                 will(throwException(applicationException));
-            one(LauncherTest.this.mockApplication).handleException(
-                    with(is(applicationException)));
-            one(LauncherTest.this.mockApplication).shutdown();
-        }});
+
+                one(LauncherTest.this.mockApplication).handleException(
+                        with(Matchers.is(applicationException)));
+                one(LauncherTest.this.mockApplication).shutdown();
+            }
+        });
         this.launcher.launch(this.mockApplication);
     }
 }

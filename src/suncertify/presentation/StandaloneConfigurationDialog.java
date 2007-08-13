@@ -1,13 +1,13 @@
 /*
  * StandaloneConfigurationDialog.java
  *
- * Created on 07-Jun-2005
+ * 07 Jun 2007
  */
 
 package suncertify.presentation;
 
 import java.awt.BorderLayout;
-import java.util.ResourceBundle;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -18,12 +18,13 @@ import javax.swing.text.PlainDocument;
 
 /**
  * Standalone mode configuration dialog.
- *
+ * 
  * @author Richard Wardle
  */
 public final class StandaloneConfigurationDialog extends
         AbstractConfigurationDialog {
 
+    private static final long serialVersionUID = 1L;
     private String serverAddress;
     private String serverPort;
     private JTextField databaseFilePathField;
@@ -31,22 +32,39 @@ public final class StandaloneConfigurationDialog extends
     /**
      * {@inheritDoc}
      */
+    @Override
     protected String getMessageText() {
-        return this.getResourceBundle().getString("StandaloneConfigurationDialog.message.text");
+        return getResourceBundle().getString(
+                "StandaloneConfigurationDialog.message.text");
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void initInputPanel(JPanel inputPanel) {
         JLabel databaseFilePathLabel = new JLabel(
-                this.getResourceBundle().getString("StandaloneConfigurationDialog.databaseFilePathLabel.text"));
+                getResourceBundle()
+                        .getString(
+                                "StandaloneConfigurationDialog.databaseFilePathLabel.text"));
         inputPanel.add(databaseFilePathLabel);
 
         this.databaseFilePathField = new JTextField() {
+            /**
+             * 
+             */
+            private static final long serialVersionUID = 1L;
+
             // TODO: move this to a nicer place so the other dialogs can use it
+            @Override
             protected Document createDefaultModel() {
                 return new PlainDocument() {
+                    /**
+                     * 
+                     */
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
                     public void insertString(int offs, String str,
                             AttributeSet a) throws BadLocationException {
                         if (!isOkButtonEnabled() && str != null
@@ -56,6 +74,7 @@ public final class StandaloneConfigurationDialog extends
                         super.insertString(offs, str, a);
                     }
 
+                    @Override
                     protected void insertUpdate(DefaultDocumentEvent chng,
                             AttributeSet attr) {
                         if (!isOkButtonEnabled() && chng.getLength() >= 0) {
@@ -64,11 +83,10 @@ public final class StandaloneConfigurationDialog extends
                         super.insertUpdate(chng, attr);
                     }
 
+                    @Override
                     protected void removeUpdate(DefaultDocumentEvent chng) {
-                        if (chng.getLength()
-                                >= StandaloneConfigurationDialog.this
-                                        .databaseFilePathField.getText()
-                                        .length()) {
+                        if (chng.getLength() >= StandaloneConfigurationDialog.this.databaseFilePathField
+                                .getText().length()) {
                             setOkButtonEnabled(false);
                         }
                         super.removeUpdate(chng);
@@ -77,8 +95,8 @@ public final class StandaloneConfigurationDialog extends
             }
         };
 
-        this.databaseFilePathField.setName(
-                "StandaloneConfigurationDialog.databaseFilePathField.name");
+        this.databaseFilePathField
+                .setName("StandaloneConfigurationDialog.databaseFilePathField.name");
         inputPanel.add(this.databaseFilePathField);
         getContentPane().add(inputPanel, BorderLayout.CENTER);
     }

@@ -1,7 +1,7 @@
 /*
  * Launcher.java
  *
- * Created on 05-Jul-2007
+ * 05 Jul 2007
  */
 
 package suncertify;
@@ -12,22 +12,26 @@ import javax.swing.SwingUtilities;
 
 /**
  * Launches the application.
- *
+ * 
  * @author Richard Wardle
  */
 public final class Launcher {
-    
-    static enum ApplicationMode {CLIENT, SERVER, STANDALONE};
-    private static final Logger LOGGER 
-            = Logger.getLogger(Launcher.class.getName());
+
+    static enum ApplicationMode {
+        CLIENT, SERVER, STANDALONE
+    }
+
+    private static final Logger LOGGER = Logger.getLogger(Launcher.class
+            .getName());
     private static final String CONFIG_FILE_NAME = "suncertify.properties";
 
     /**
      * The starting method for the application.
-     *
-     * @param args Command line arguments.
-     * @throws IllegalArgumentException If the command-line arguments are
-     * invalid.
+     * 
+     * @param args
+     *                Command line arguments.
+     * @throws IllegalArgumentException
+     *                 If the command-line arguments are invalid.
      */
     public static void main(String[] args) {
         // TODO Consider handlers
@@ -38,39 +42,35 @@ public final class Launcher {
         Application application = launcher.createApplication(applicationMode);
         launcher.launch(application);
     }
-    
+
     ApplicationMode getApplicationMode(String[] args) {
         if (args == null) {
             throw new IllegalArgumentException("args cannot be null");
         }
-        
+
         ApplicationMode mode;
         if (args.length == 0) {
             mode = ApplicationMode.CLIENT;
-        } 
-        else if (args[0].equals("server")) {
+        } else if (args[0].equals("server")) {
             mode = ApplicationMode.SERVER;
-        } 
-        else if (args[0].equals("alone")) {
+        } else if (args[0].equals("alone")) {
             mode = ApplicationMode.STANDALONE;
-        } 
-        else {
-            throw new IllegalArgumentException("Invalid mode flag: "
-                    + args[0] 
+        } else {
+            throw new IllegalArgumentException("Invalid mode flag: " + args[0]
                     + ". If specified, the mode flag must be either 'server' "
                     + "or 'alone'.");
         }
         return mode;
     }
-    
+
     Application createApplication(ApplicationMode mode) {
         if (mode == null) {
             throw new IllegalArgumentException("mode cannot be null");
         }
 
         // TODO Consider handlers
-        Configuration configuration = new PropertiesConfiguration(
-                new File(Launcher.CONFIG_FILE_NAME));
+        Configuration configuration = new PropertiesConfiguration(new File(
+                Launcher.CONFIG_FILE_NAME));
         Application application = null;
         switch (mode) {
         case CLIENT:
@@ -95,7 +95,8 @@ public final class Launcher {
     /**
      * Launches the application.
      * 
-     * @param application The application to launch.
+     * @param application
+     *                The application to launch.
      */
     public void launch(final Application application) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -103,8 +104,7 @@ public final class Launcher {
                 try {
                     application.initialise();
                     application.startup();
-                }
-                catch (ApplicationException e) {
+                } catch (ApplicationException e) {
                     application.handleException(e);
                     application.shutdown();
                 }
