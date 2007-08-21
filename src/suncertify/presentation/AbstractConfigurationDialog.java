@@ -6,12 +6,25 @@
 
 package suncertify.presentation;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
+import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
+
+import suncertify.ApplicationConstants;
 
 /**
  * 
@@ -21,18 +34,42 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
         ConfigurationView {
 
     private final ResourceBundle resourceBundle;
+    private final JButton okButton;
+    private final JButton cancelButton;
     private ConfigurationPresenter presenter;
+    private String databaseFilePath;
+    private String serverAddress;
+    private String serverPort;
 
     /** Constructor. */
     protected AbstractConfigurationDialog() {
         // TODO Dialog has no taskbar entry on Windows because it has no parent,
         // consider making this a JFrame so it does have one?
 
-        // TODO Change generated code to use this bundle
         this.resourceBundle = ResourceBundle
                 .getBundle("suncertify/presentation/Bundle");
+
+        this.okButton = new JButton(this.resourceBundle
+                .getString("AbstractConfigurationDialog.okButton.text"));
+        this.okButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                AbstractConfigurationDialog.this.presenter
+                        .okButtonActionPerformed();
+            }
+        });
+
+        this.cancelButton = new JButton(this.resourceBundle
+                .getString("AbstractConfigurationDialog.cancelButton.text"));
+        this.cancelButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                AbstractConfigurationDialog.this.presenter
+                        .cancelButtonActionPerformed();
+            }
+        });
+
         setModal(true);
-        initComponents();
+        setLayout(new GridBagLayout());
+        initialiseComponents();
     }
 
     /**
@@ -42,6 +79,10 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
      */
     protected final ResourceBundle getResourceBundle() {
         return this.resourceBundle;
+    }
+
+    protected final ConfigurationPresenter getPresenter() {
+        return this.presenter;
     }
 
     /** {@inheritDoc} */
@@ -66,6 +107,55 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public final Component getComponent() {
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getDatabaseFilePath() {
+        return this.databaseFilePath;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setDatabaseFilePath(String databaseFilePath) {
+        this.databaseFilePath = databaseFilePath;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getServerAddress() {
+        return this.serverAddress;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setServerAddress(String serverAddress) {
+        this.serverAddress = serverAddress;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getServerPort() {
+        return this.serverPort;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setServerPort(String serverPort) {
+        this.serverPort = serverPort;
+    }
+
+    /**
      * Gets the state of the OK button.
      * 
      * @return <code>true</code> if the button is enabled, <code>false</code>
@@ -86,155 +176,75 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
         this.okButton.setEnabled(enabled);
     }
 
-    /**
-     * Initialises the input panel. <p/> This method is called from the
-     * <code>initComponents</code> method.
-     * 
-     * @param inputPanel
-     *                The input panel.
-     */
-    protected abstract void initInputPanel(JPanel inputPanel);
+    private void initialiseComponents() {
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.weightx = 1;
+        add(initialiseMessagePanel(), constraints);
 
-    /**
-     * Gets the text to display in the message area.
-     * 
-     * @return The message text.
-     */
+        constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        constraints.weightx = 1;
+        add(new JSeparator(SwingConstants.HORIZONTAL), constraints);
+
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.LINE_START;
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.ipady = ApplicationConstants.DEFAULT_INSETS.top * 10;
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+        constraints.weightx = 1;
+        constraints.weighty = 1;
+        add(initialiseInputPanel(), constraints);
+
+        constraints = new GridBagConstraints();
+        constraints.gridx = 0;
+        constraints.gridy = 3;
+        constraints.weightx = 1;
+        add(new JPanel(), constraints);
+
+        constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.gridx = 1;
+        constraints.gridy = 3;
+        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        constraints.weightx = 0.15;
+        add(initialiseButtonPanel(), constraints);
+    }
+
+    private Component initialiseButtonPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(1, 2, 4, 4));
+        panel.add(this.okButton);
+        panel.add(this.cancelButton);
+        return panel;
+    }
+
+    private JPanel initialiseMessagePanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.setBackground(Color.WHITE);
+
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.FIRST_LINE_START;
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        constraints.weightx = 1;
+        panel.add(new JLabel(getMessageText()), constraints);
+        return panel;
+    }
+
     protected abstract String getMessageText();
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    // <editor-fold defaultstate="collapsed" desc=" Generated Code
-    // ">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
-        this.inputPanel = new javax.swing.JPanel();
-        this.buttonPanel = new javax.swing.JPanel();
-        this.okButton = new javax.swing.JButton();
-        this.cancelButton = new javax.swing.JButton();
-        this.messageLabel = new javax.swing.JLabel();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle
-                .getBundle("suncertify/presentation/Bundle"); // NOI18N
-        setTitle(bundle.getString("AbstractConfigurationDialog.title")); // NOI18N
-
-        initInputPanel(this.inputPanel);
-
-        this.okButton.setText(bundle
-                .getString("AbstractConfigurationDialog.okButton.text")); // NOI18N
-        this.okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
-
-        this.cancelButton.setText(bundle
-                .getString("AbstractConfigurationDialog.cancelButton.text")); // NOI18N
-        this.cancelButton
-                .addActionListener(new java.awt.event.ActionListener() {
-                    public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        cancelButtonActionPerformed(evt);
-                    }
-                });
-
-        org.jdesktop.layout.GroupLayout buttonPanelLayout = new org.jdesktop.layout.GroupLayout(
-                this.buttonPanel);
-        this.buttonPanel.setLayout(buttonPanelLayout);
-        buttonPanelLayout
-                .setHorizontalGroup(buttonPanelLayout
-                        .createParallelGroup(
-                                org.jdesktop.layout.GroupLayout.LEADING)
-                        .add(
-                                buttonPanelLayout
-                                        .createSequentialGroup()
-                                        .addContainerGap()
-                                        .add(this.okButton)
-                                        .addPreferredGap(
-                                                org.jdesktop.layout.LayoutStyle.RELATED)
-                                        .add(this.cancelButton)
-                                        .addContainerGap(31, Short.MAX_VALUE)));
-        buttonPanelLayout
-                .setVerticalGroup(buttonPanelLayout
-                        .createParallelGroup(
-                                org.jdesktop.layout.GroupLayout.LEADING)
-                        .add(
-                                buttonPanelLayout
-                                        .createSequentialGroup()
-                                        .addContainerGap()
-                                        .add(
-                                                buttonPanelLayout
-                                                        .createParallelGroup(
-                                                                org.jdesktop.layout.GroupLayout.BASELINE)
-                                                        .add(this.okButton)
-                                                        .add(this.cancelButton))
-                                        .addContainerGap(
-                                                org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-                                                Short.MAX_VALUE)));
-
-        this.messageLabel.setText(getMessageText());
-
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(
-                getContentPane());
-        getContentPane().setLayout(layout);
-        layout
-                .setHorizontalGroup(layout
-                        .createParallelGroup(
-                                org.jdesktop.layout.GroupLayout.LEADING)
-                        .add(
-                                layout
-                                        .createSequentialGroup()
-                                        .addContainerGap()
-                                        .add(
-                                                layout
-                                                        .createParallelGroup(
-                                                                org.jdesktop.layout.GroupLayout.LEADING)
-                                                        .add(
-                                                                this.inputPanel,
-                                                                org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-                                                                org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-                                                                org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                                        .add(
-                                                                this.buttonPanel,
-                                                                org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-                                                                org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-                                                                org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                                        .add(this.messageLabel))
-                                        .addContainerGap(16, Short.MAX_VALUE)));
-        layout.setVerticalGroup(layout.createParallelGroup(
-                org.jdesktop.layout.GroupLayout.LEADING).add(
-                layout.createSequentialGroup().addContainerGap().add(
-                        this.messageLabel).add(44, 44, 44).add(this.inputPanel,
-                        org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-                        org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-                        org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(
-                                org.jdesktop.layout.LayoutStyle.RELATED,
-                                org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-                                Short.MAX_VALUE).add(this.buttonPanel,
-                                org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-                                org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-                                org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(20, 20, 20)));
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        this.presenter.cancelButtonActionPerformed();
-    }
-
-    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        this.presenter.okButtonActionPerformed();
-    }
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel buttonPanel;
-    private javax.swing.JButton cancelButton;
-    private javax.swing.JPanel inputPanel;
-    private javax.swing.JLabel messageLabel;
-    private javax.swing.JButton okButton;
-    // End of variables declaration//GEN-END:variables
-
+    protected abstract JPanel initialiseInputPanel();
 }

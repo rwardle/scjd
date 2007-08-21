@@ -6,6 +6,8 @@
 
 package suncertify;
 
+import java.awt.Insets;
+
 /**
  * Application constants.
  * 
@@ -35,6 +37,9 @@ public class ApplicationConstants {
 
     /** Name under which the remote service object is registered with RMI. */
     public static final String REMOTE_BROKER_SERVICE_NAME = "BrokerService";
+
+    /** Default insets for the user interface. */
+    public static final Insets DEFAULT_INSETS = new Insets(4, 4, 4, 4);
 
     private ApplicationConstants() {
         // Disallow instantiation.

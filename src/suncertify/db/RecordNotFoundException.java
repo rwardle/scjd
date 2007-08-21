@@ -34,7 +34,8 @@ public final class RecordNotFoundException extends Exception {
         super(message);
     }
 
-    // TODO Only add other constructors if needed - semi-specified in SCJD instructions
+    // TODO Only add other constructors if needed - semi-specified in SCJD
+    // instructions
     /**
      * Creates a new <code>RecordNotFoundException</code> with the specified
      * cause.
@@ -42,10 +43,9 @@ public final class RecordNotFoundException extends Exception {
      * @param cause
      *                The cause.
      */
-//    public RecordNotFoundException(Throwable cause) {
-//        super(cause);
-//    }
-
+    // public RecordNotFoundException(Throwable cause) {
+    // super(cause);
+    // }
     /**
      * Creates a new <code>RecordNotFoundException</code> with the specified
      * message and cause.
@@ -55,7 +55,7 @@ public final class RecordNotFoundException extends Exception {
      * @param cause
      *                The cause.
      */
-//    public RecordNotFoundException(String message, Throwable cause) {
-//        super(message, cause);
-//    }
+    // public RecordNotFoundException(String message, Throwable cause) {
+    // super(message, cause);
+    // }
 }

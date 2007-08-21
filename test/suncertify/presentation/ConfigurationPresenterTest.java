@@ -1,9 +1,16 @@
 package suncertify.presentation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.awt.Component;
+import java.io.File;
+
+import javax.swing.JFileChooser;
+
 import org.hamcrest.Matchers;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,20 +20,27 @@ import suncertify.Configuration;
 import suncertify.ConfigurationManager;
 import suncertify.ReturnStatus;
 
+@SuppressWarnings("boxing")
 public class ConfigurationPresenterTest {
 
-    private final Mockery context = new Mockery();
+    private final Mockery context = new Mockery() {
+        {
+            setImposteriser(ClassImposteriser.INSTANCE);
+        }
+    };
     private final String databaseFilePath = "databaseFilePath";
     private final String serverAddress = "serverAddress";
     private final String serverPort = "serverPort";
     private Configuration mockConfiguration;
     private ConfigurationView mockView;
+    private JFileChooser mockFileChooser;
     private ConfigurationPresenter presenter;
 
     @Before
     public void setUp() throws Exception {
         this.mockConfiguration = this.context.mock(Configuration.class);
         this.mockView = this.context.mock(ConfigurationView.class);
+        this.mockFileChooser = this.context.mock(JFileChooser.class);
 
         this.context.checking(new Expectations() {
             {
@@ -50,8 +64,8 @@ public class ConfigurationPresenterTest {
                 will(returnValue(ConfigurationPresenterTest.this.serverPort));
             }
         });
-        this.presenter = new ConfigurationPresenter(new ConfigurationManager(
-                this.mockConfiguration), this.mockView);
+        this.presenter = new StubConfigurationPresenter(
+                new ConfigurationManager(this.mockConfiguration), this.mockView);
     }
 
     @After
@@ -145,5 +159,101 @@ public class ConfigurationPresenterTest {
         this.presenter.cancelButtonActionPerformed();
         assertThat(this.presenter.getReturnStatus(), Matchers
                 .is(ReturnStatus.CANCEL));
+    }
+
+    @Test
+    public void databaseFilePathNotUpdatedIfErrorInFileChooser() {
+        this.context.checking(new Expectations() {
+            {
+                allowing(ConfigurationPresenterTest.this.mockView)
+                        .getDatabaseFilePath();
+                will(returnValue(ConfigurationPresenterTest.this.databaseFilePath));
+
+                allowing(ConfigurationPresenterTest.this.mockView)
+                        .getComponent();
+                will(returnValue(null));
+
+                one(ConfigurationPresenterTest.this.mockFileChooser)
+                        .showDialog(with(any(Component.class)),
+                                with(any(String.class)));
+                will(returnValue(JFileChooser.ERROR_OPTION));
+
+                never(ConfigurationPresenterTest.this.mockFileChooser)
+                        .getSelectedFile();
+                never(ConfigurationPresenterTest.this.mockView)
+                        .setDatabaseFilePath(with(any(String.class)));
+            }
+        });
+        this.presenter.browseButtonActionPerformed();
+    }
+
+    @Test
+    public void databaseFilePathNotUpdatedIfFileChooserIsCancelled() {
+        this.context.checking(new Expectations() {
+            {
+                allowing(ConfigurationPresenterTest.this.mockView)
+                        .getDatabaseFilePath();
+                will(returnValue(ConfigurationPresenterTest.this.databaseFilePath));
+
+                allowing(ConfigurationPresenterTest.this.mockView)
+                        .getComponent();
+                will(returnValue(null));
+
+                one(ConfigurationPresenterTest.this.mockFileChooser)
+                        .showDialog(with(any(Component.class)),
+                                with(any(String.class)));
+                will(returnValue(JFileChooser.CANCEL_OPTION));
+
+                never(ConfigurationPresenterTest.this.mockFileChooser)
+                        .getSelectedFile();
+                never(ConfigurationPresenterTest.this.mockView)
+                        .setDatabaseFilePath(with(any(String.class)));
+            }
+        });
+        this.presenter.browseButtonActionPerformed();
+    }
+
+    @Test
+    public void databaseFilePathUpdatedIfFileChooserIsApproved() {
+        final File newDatabaseFile = new File("newDatabaseFilePath");
+        this.context.checking(new Expectations() {
+            {
+                allowing(ConfigurationPresenterTest.this.mockView)
+                        .getDatabaseFilePath();
+                will(returnValue(ConfigurationPresenterTest.this.databaseFilePath));
+
+                allowing(ConfigurationPresenterTest.this.mockView)
+                        .getComponent();
+                will(returnValue(null));
+
+                one(ConfigurationPresenterTest.this.mockFileChooser)
+                        .showDialog(with(any(Component.class)),
+                                with(any(String.class)));
+                will(returnValue(JFileChooser.APPROVE_OPTION));
+
+                one(ConfigurationPresenterTest.this.mockFileChooser)
+                        .getSelectedFile();
+                will(returnValue(newDatabaseFile));
+
+                one(ConfigurationPresenterTest.this.mockView)
+                        .setDatabaseFilePath(
+                                with(equal(newDatabaseFile.getAbsolutePath())));
+            }
+        });
+        this.presenter.browseButtonActionPerformed();
+    }
+
+    private class StubConfigurationPresenter extends ConfigurationPresenter {
+
+        public StubConfigurationPresenter(
+                ConfigurationManager configurationManager,
+                ConfigurationView view) {
+            super(configurationManager, view);
+        }
+
+        @Override
+        JFileChooser createFileChooser(String directoryPath) {
+            return ConfigurationPresenterTest.this.mockFileChooser;
+        }
     }
 }

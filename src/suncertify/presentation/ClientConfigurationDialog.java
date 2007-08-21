@@ -6,12 +6,14 @@
 
 package suncertify.presentation;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import suncertify.ApplicationConstants;
 
 /**
  * Client mode configuration dialog.
@@ -22,9 +24,16 @@ public final class ClientConfigurationDialog extends
         AbstractConfigurationDialog {
 
     private static final long serialVersionUID = 1L;
-    private String databaseFilePath;
     private JTextField serverAddressField;
     private JTextField serverPortField;
+
+    /**
+     * Creates a new instance of <code>ClientConfigurationDialog</code>.
+     */
+    public ClientConfigurationDialog() {
+        setTitle(getResourceBundle().getString(
+                "ClientConfigurationDialog.title"));
+    }
 
     /**
      * {@inheritDoc}
@@ -39,51 +48,6 @@ public final class ClientConfigurationDialog extends
      * {@inheritDoc}
      */
     @Override
-    protected void initInputPanel(JPanel inputPanel) {
-        inputPanel.setLayout(new GridLayout(2, 1));
-
-        JPanel serverAddressPanel = new JPanel();
-        inputPanel.add(serverAddressPanel);
-
-        JLabel serverAddressLabel = new JLabel(getResourceBundle().getString(
-                "ClientConfigurationDialog.serverAddressLabel.text"));
-        serverAddressPanel.add(serverAddressLabel);
-        this.serverAddressField = new JTextField();
-        this.serverAddressField
-                .setName("ClientConfigurationDialog.serverAddressField.name");
-        serverAddressPanel.add(this.serverAddressField);
-
-        JPanel serverPortPanel = new JPanel();
-        inputPanel.add(serverPortPanel);
-
-        JLabel serverPortLabel = new JLabel(getResourceBundle().getString(
-                "ClientConfigurationDialog.serverPortLabel.text"));
-        serverPortPanel.add(serverPortLabel);
-        this.serverPortField = new JTextField();
-        this.serverPortField
-                .setName("ClientConfigurationDialog.serverPortField.name");
-        serverPortPanel.add(this.serverPortField);
-
-        getContentPane().add(inputPanel, BorderLayout.CENTER);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getDatabaseFilePath() {
-        return this.databaseFilePath;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setDatabaseFilePath(String databaseFilePath) {
-        this.databaseFilePath = databaseFilePath;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public String getServerAddress() {
         return this.serverAddressField.getText();
     }
@@ -91,6 +55,7 @@ public final class ClientConfigurationDialog extends
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setServerAddress(String serverAddress) {
         this.serverAddressField.setText(serverAddress);
     }
@@ -98,6 +63,7 @@ public final class ClientConfigurationDialog extends
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getServerPort() {
         return this.serverPortField.getText();
     }
@@ -105,7 +71,56 @@ public final class ClientConfigurationDialog extends
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setServerPort(String serverPort) {
         this.serverPortField.setText(serverPort);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected JPanel initialiseInputPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.LINE_END;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        panel.add(new JLabel(getResourceBundle().getString(
+                "ClientConfigurationDialog.serverAddressLabel.text")),
+                constraints);
+
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.LINE_START;
+        constraints.gridx = 1;
+        constraints.gridy = 0;
+        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        constraints.weightx = 1;
+        this.serverAddressField = new JTextField();
+        panel.add(this.serverAddressField, constraints);
+
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.LINE_END;
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        panel
+                .add(new JLabel(getResourceBundle().getString(
+                        "ClientConfigurationDialog.serverPortLabel.text")),
+                        constraints);
+
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.LINE_START;
+        constraints.gridx = 1;
+        constraints.gridy = 1;
+        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        constraints.weightx = 1;
+        this.serverPortField = new JTextField();
+        panel.add(this.serverPortField, constraints);
+
+        return panel;
     }
 }

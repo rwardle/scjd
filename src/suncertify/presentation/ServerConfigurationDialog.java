@@ -6,12 +6,17 @@
 
 package suncertify.presentation;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import suncertify.ApplicationConstants;
 
 /**
  * Server mode configuration dialog.
@@ -22,9 +27,23 @@ public final class ServerConfigurationDialog extends
         AbstractConfigurationDialog {
 
     private static final long serialVersionUID = 1L;
-    private String serverAddress;
     private JTextField databaseFilePathField;
     private JTextField serverPortField;
+    private JButton browseButton;
+
+    /**
+     * Creates a new instance of <code>ServerConfigurationDialog</code>.
+     */
+    public ServerConfigurationDialog() {
+        setTitle(getResourceBundle().getString(
+                "ServerConfigurationDialog.title"));
+        this.browseButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ServerConfigurationDialog.this.getPresenter()
+                        .browseButtonActionPerformed();
+            }
+        });
+    }
 
     /**
      * {@inheritDoc}
@@ -39,52 +58,6 @@ public final class ServerConfigurationDialog extends
      * {@inheritDoc}
      */
     @Override
-    protected void initInputPanel(JPanel inputPanel) {
-        inputPanel.setLayout(new GridLayout(2, 1));
-
-        JPanel databaseFilePathPanel = new JPanel();
-        inputPanel.add(databaseFilePathPanel);
-
-        JLabel databaseFilePathLabel = new JLabel(getResourceBundle()
-                .getString(
-                        "ServerConfigurationDialog.databaseFilePathLabel.text"));
-        databaseFilePathPanel.add(databaseFilePathLabel);
-        this.databaseFilePathField = new JTextField();
-        this.databaseFilePathField
-                .setName("ServerConfigurationDialog.databaseFilePathField.name");
-        databaseFilePathPanel.add(this.databaseFilePathField);
-
-        JPanel serverPortPanel = new JPanel();
-        inputPanel.add(serverPortPanel);
-
-        JLabel serverPortLabel = new JLabel(getResourceBundle().getString(
-                "ServerConfigurationDialog.serverPortLabel.text"));
-        serverPortPanel.add(serverPortLabel);
-        this.serverPortField = new JTextField();
-        this.serverPortField
-                .setName("ServerConfigurationDialog.serverPortField.name");
-        serverPortPanel.add(this.serverPortField);
-
-        getContentPane().add(inputPanel, BorderLayout.CENTER);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getServerAddress() {
-        return this.serverAddress;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setServerAddress(String serverAddress) {
-        this.serverAddress = serverAddress;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public String getDatabaseFilePath() {
         return this.databaseFilePathField.getText();
     }
@@ -92,6 +65,7 @@ public final class ServerConfigurationDialog extends
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setDatabaseFilePath(String databaseFilePath) {
         this.databaseFilePathField.setText(databaseFilePath);
     }
@@ -99,6 +73,7 @@ public final class ServerConfigurationDialog extends
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getServerPort() {
         return this.serverPortField.getText();
     }
@@ -106,7 +81,64 @@ public final class ServerConfigurationDialog extends
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setServerPort(String serverPort) {
         this.serverPortField.setText(serverPort);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected JPanel initialiseInputPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.LINE_END;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        panel.add(new JLabel(getResourceBundle().getString(
+                "ServerConfigurationDialog.databaseFilePathLabel.text")),
+                constraints);
+
+        constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.gridx = 1;
+        constraints.gridy = 0;
+        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        constraints.weightx = 1;
+        this.databaseFilePathField = new JTextField();
+        this.databaseFilePathField.setEditable(false);
+        panel.add(this.databaseFilePathField, constraints);
+
+        constraints = new GridBagConstraints();
+        constraints.gridx = 2;
+        constraints.gridy = 0;
+        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        this.browseButton = new JButton(getResourceBundle().getString(
+                "ServerConfigurationDialog.browseButton.text"));
+        panel.add(this.browseButton, constraints);
+
+        constraints = new GridBagConstraints();
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        panel
+                .add(new JLabel(getResourceBundle().getString(
+                        "ServerConfigurationDialog.serverPortLabel.text")),
+                        constraints);
+
+        // TODO Make this a spinner
+        constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.LINE_START;
+        constraints.gridx = 1;
+        constraints.gridy = 1;
+        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        this.serverPortField = new JTextField();
+        panel.add(this.serverPortField, constraints);
+
+        return panel;
     }
 }

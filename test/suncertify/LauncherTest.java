@@ -2,7 +2,6 @@ package suncertify;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertTrue;
 
 import org.hamcrest.Matchers;
 import org.jmock.Expectations;
@@ -10,69 +9,49 @@ import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
 
-import suncertify.Launcher.ApplicationMode;
-
 public class LauncherTest {
 
     private final Mockery context = new Mockery();
-    private Launcher launcher;
     private Application mockApplication;
+    private Launcher launcher;
 
     @Before
     public void setUp() {
-        this.launcher = new Launcher();
         this.mockApplication = this.context.mock(Application.class);
+        this.launcher = new Launcher(new StubApplicationFactory());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void throwsExceptionIfCommandLineArgumentIsNull() {
-        this.launcher.getApplicationMode(null);
+        Launcher.getApplicationMode(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void throwsExceptionIfCommandLineArgumentIsInvalid() {
-        this.launcher.getApplicationMode(new String[] { "invalid-mode" });
+        Launcher.getApplicationMode(new String[] { "invalid-mode" });
     }
 
     @Test
     public void getsClientApplicationModeIfNotSpecifiedOnCommandLine() {
-        assertThat(this.launcher.getApplicationMode(new String[0]),
+        assertThat(Launcher.getApplicationMode(new String[0]),
                 is(ApplicationMode.CLIENT));
     }
 
     @Test
     public void getsServerApplicationModeIfCommandLineArgumentIsServer() {
-        assertThat(this.launcher.getApplicationMode(new String[] { "server" }),
+        assertThat(Launcher.getApplicationMode(new String[] { "server" }),
                 is(ApplicationMode.SERVER));
     }
 
     @Test
     public void getsStandaloneApplicationModeIfCommandLineArgumentIsAlone() {
-        assertThat(this.launcher.getApplicationMode(new String[] { "alone" }),
+        assertThat(Launcher.getApplicationMode(new String[] { "alone" }),
                 is(ApplicationMode.STANDALONE));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void throwsExceptionIfApplicationModeIsNull() {
-        this.launcher.createApplication(null);
-    }
-
-    @Test
-    public void createsClientApplicationIfApplicationModeIsClient() {
-        assertTrue(this.launcher
-                .createApplication(Launcher.ApplicationMode.CLIENT) instanceof ClientApplication);
-    }
-
-    @Test
-    public void createsServerApplicationIfApplicationModeIsServer() {
-        assertTrue(this.launcher
-                .createApplication(Launcher.ApplicationMode.SERVER) instanceof ServerApplication);
-    }
-
-    @Test
-    public void createsStandaloneApplicationIfApplicationModeIsStandalone() {
-        assertTrue(this.launcher
-                .createApplication(Launcher.ApplicationMode.STANDALONE) instanceof StandaloneApplication);
+    public void throwsExceptionIfApplicationFactoryIsNull() {
+        new Launcher(null);
     }
 
     @Test
@@ -83,7 +62,7 @@ public class LauncherTest {
                 one(LauncherTest.this.mockApplication).startup();
             }
         });
-        this.launcher.launch(this.mockApplication);
+        this.launcher.launch();
     }
 
     @Test
@@ -101,7 +80,7 @@ public class LauncherTest {
                 one(LauncherTest.this.mockApplication).shutdown();
             }
         });
-        this.launcher.launch(this.mockApplication);
+        this.launcher.launch();
     }
 
     @Test
@@ -120,6 +99,14 @@ public class LauncherTest {
                 one(LauncherTest.this.mockApplication).shutdown();
             }
         });
-        this.launcher.launch(this.mockApplication);
+        this.launcher.launch();
+    }
+
+    private class StubApplicationFactory extends AbstractApplicationFactory {
+
+        @Override
+        public Application createApplication(Configuration configuration) {
+            return LauncherTest.this.mockApplication;
+        }
     }
 }

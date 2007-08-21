@@ -2,3 +2,4 @@
 2. Used MVC pattern for UI with controller as mediator to facilitate testing.
 3. Adding a new line after if,else,catch,finally statements to improve readability.
 4. ConfigurationPresenter is not final to facilitate testing.
+5. Using a static method to look up the correct application factory based on the application mode. If this needed to be dynamic then we could have stored application factory instances against applicatin mode tokens in a hashmap enabling to add extra ones dynamically.

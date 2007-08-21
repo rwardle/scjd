@@ -7,6 +7,7 @@
 package suncertify;
 
 import java.util.logging.Logger;
+
 import suncertify.presentation.ConfigurationPresenter;
 import suncertify.presentation.ConfigurationView;
 

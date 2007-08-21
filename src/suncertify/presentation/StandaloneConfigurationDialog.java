@@ -6,15 +6,17 @@
 
 package suncertify.presentation;
 
-import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.PlainDocument;
+
+import suncertify.ApplicationConstants;
 
 /**
  * Standalone mode configuration dialog.
@@ -25,9 +27,19 @@ public final class StandaloneConfigurationDialog extends
         AbstractConfigurationDialog {
 
     private static final long serialVersionUID = 1L;
-    private String serverAddress;
-    private String serverPort;
     private JTextField databaseFilePathField;
+    private JButton browseButton;
+
+    public StandaloneConfigurationDialog() {
+        setTitle(getResourceBundle().getString(
+                "StandaloneConfigurationDialog.title"));
+        this.browseButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                StandaloneConfigurationDialog.this.getPresenter()
+                        .browseButtonActionPerformed();
+            }
+        });
+    }
 
     /**
      * {@inheritDoc}
@@ -42,96 +54,6 @@ public final class StandaloneConfigurationDialog extends
      * {@inheritDoc}
      */
     @Override
-    protected void initInputPanel(JPanel inputPanel) {
-        JLabel databaseFilePathLabel = new JLabel(
-                getResourceBundle()
-                        .getString(
-                                "StandaloneConfigurationDialog.databaseFilePathLabel.text"));
-        inputPanel.add(databaseFilePathLabel);
-
-        this.databaseFilePathField = new JTextField() {
-            /**
-             * 
-             */
-            private static final long serialVersionUID = 1L;
-
-            // TODO: move this to a nicer place so the other dialogs can use it
-            @Override
-            protected Document createDefaultModel() {
-                return new PlainDocument() {
-                    /**
-                     * 
-                     */
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public void insertString(int offs, String str,
-                            AttributeSet a) throws BadLocationException {
-                        if (!isOkButtonEnabled() && str != null
-                                && str.length() >= 0) {
-                            setOkButtonEnabled(true);
-                        }
-                        super.insertString(offs, str, a);
-                    }
-
-                    @Override
-                    protected void insertUpdate(DefaultDocumentEvent chng,
-                            AttributeSet attr) {
-                        if (!isOkButtonEnabled() && chng.getLength() >= 0) {
-                            setOkButtonEnabled(true);
-                        }
-                        super.insertUpdate(chng, attr);
-                    }
-
-                    @Override
-                    protected void removeUpdate(DefaultDocumentEvent chng) {
-                        if (chng.getLength() >= StandaloneConfigurationDialog.this.databaseFilePathField
-                                .getText().length()) {
-                            setOkButtonEnabled(false);
-                        }
-                        super.removeUpdate(chng);
-                    }
-                };
-            }
-        };
-
-        this.databaseFilePathField
-                .setName("StandaloneConfigurationDialog.databaseFilePathField.name");
-        inputPanel.add(this.databaseFilePathField);
-        getContentPane().add(inputPanel, BorderLayout.CENTER);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getServerAddress() {
-        return this.serverAddress;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setServerAddress(String serverAddress) {
-        this.serverAddress = serverAddress;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getServerPort() {
-        return this.serverPort;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setServerPort(String serverPort) {
-        this.serverPort = serverPort;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public String getDatabaseFilePath() {
         return this.databaseFilePathField.getText();
     }
@@ -139,7 +61,45 @@ public final class StandaloneConfigurationDialog extends
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setDatabaseFilePath(String databaseFilePath) {
         this.databaseFilePathField.setText(databaseFilePath);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected JPanel initialiseInputPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        panel.add(new JLabel(getResourceBundle().getString(
+                "StandaloneConfigurationDialog.databaseFilePathLabel.text")),
+                constraints);
+
+        constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.gridx = 1;
+        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        constraints.gridy = 0;
+        constraints.weightx = 1;
+        this.databaseFilePathField = new JTextField();
+        this.databaseFilePathField.setEditable(false);
+        panel.add(this.databaseFilePathField, constraints);
+
+        constraints = new GridBagConstraints();
+        constraints.gridx = 2;
+        constraints.gridy = 0;
+        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        this.browseButton = new JButton(getResourceBundle().getString(
+                "StandaloneConfigurationDialog.browseButton.text"));
+        panel.add(this.browseButton, constraints);
+
+        return panel;
     }
 }

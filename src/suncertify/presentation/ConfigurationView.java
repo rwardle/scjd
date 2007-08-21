@@ -6,6 +6,8 @@
 
 package suncertify.presentation;
 
+import java.awt.Component;
+
 /**
  * The application configuration view.
  * 
@@ -75,4 +77,11 @@ public interface ConfigurationView {
      *                The server port to set.
      */
     void setServerPort(String serverPort);
+
+    /**
+     * Gets the view component.
+     * 
+     * @return The component.
+     */
+    Component getComponent();
 }

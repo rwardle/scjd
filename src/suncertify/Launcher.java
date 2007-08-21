@@ -9,6 +9,8 @@ package suncertify;
 import java.io.File;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  * Launches the application.
@@ -17,13 +19,63 @@ import javax.swing.SwingUtilities;
  */
 public final class Launcher {
 
-    static enum ApplicationMode {
-        CLIENT, SERVER, STANDALONE
-    }
-
     private static final Logger LOGGER = Logger.getLogger(Launcher.class
             .getName());
     private static final String CONFIG_FILE_NAME = "suncertify.properties";
+    private final AbstractApplicationFactory applicationFactory;
+
+    /**
+     * Creates a new instance of <code>Launcher</code>.
+     * 
+     * @param applicationFactory
+     *                The application factory.
+     */
+    public Launcher(AbstractApplicationFactory applicationFactory) {
+        if (null == applicationFactory) {
+            throw new IllegalArgumentException(
+                    "applicationFactory cannot be null");
+        }
+        this.applicationFactory = applicationFactory;
+    }
+
+    /**
+     * Launches the application.
+     * 
+     * @param application
+     *                The application to launch.
+     */
+    public void launch() {
+        final Application application = this.applicationFactory
+                .createApplication(new PropertiesConfiguration(new File(
+                        CONFIG_FILE_NAME)));
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    setLookAndFeel();
+                    application.initialise();
+                    application.startup();
+                } catch (ApplicationException e) {
+                    application.handleException(e);
+                    application.shutdown();
+                }
+            }
+        });
+    }
+
+    private void setLookAndFeel() throws ApplicationException {
+        // TODO Catch Exception here for brevity?
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException e) {
+            throw new ApplicationException(e);
+        } catch (InstantiationException e) {
+            throw new ApplicationException(e);
+        } catch (IllegalAccessException e) {
+            throw new ApplicationException(e);
+        } catch (UnsupportedLookAndFeelException e) {
+            throw new ApplicationException(e);
+        }
+    }
 
     /**
      * The starting method for the application.
@@ -34,16 +86,29 @@ public final class Launcher {
      *                 If the command-line arguments are invalid.
      */
     public static void main(String[] args) {
-        // TODO Consider handlers
+        // TODO Set correct handler here
         Thread.setDefaultUncaughtExceptionHandler(new SysErrExceptionHandler());
-        Launcher launcher = new Launcher();
-        ApplicationMode applicationMode = launcher.getApplicationMode(args);
-        Launcher.LOGGER.info("Running in application mode: " + applicationMode);
-        Application application = launcher.createApplication(applicationMode);
-        launcher.launch(application);
+
+        ApplicationMode applicationMode = Launcher.getApplicationMode(args);
+        LOGGER.info("Running in application mode: " + applicationMode);
+
+        AbstractApplicationFactory applicationFactory = AbstractApplicationFactory
+                .getApplicationFactory(applicationMode);
+        Launcher launcher = new Launcher(applicationFactory);
+        launcher.launch();
     }
 
-    ApplicationMode getApplicationMode(String[] args) {
+    /**
+     * Gets the application mode corresponding to the supplied commmand line
+     * arguments.
+     * 
+     * @param args
+     *                The command line arguments.
+     * @return The application mode.
+     * @throws IllegalArgumentException
+     *                 If the command line arguments are <code>null</code>.
+     */
+    static ApplicationMode getApplicationMode(String[] args) {
         if (args == null) {
             throw new IllegalArgumentException("args cannot be null");
         }
@@ -61,54 +126,5 @@ public final class Launcher {
                     + "or 'alone'.");
         }
         return mode;
-    }
-
-    Application createApplication(ApplicationMode mode) {
-        if (mode == null) {
-            throw new IllegalArgumentException("mode cannot be null");
-        }
-
-        // TODO Consider handlers
-        Configuration configuration = new PropertiesConfiguration(new File(
-                Launcher.CONFIG_FILE_NAME));
-        Application application = null;
-        switch (mode) {
-        case CLIENT:
-            application = new ClientApplication(configuration,
-                    new SysErrExceptionHandler(), new SysExitShudownHandler());
-            break;
-        case SERVER:
-            application = new ServerApplication(configuration,
-                    new SysErrExceptionHandler(), new SysExitShudownHandler());
-            break;
-        case STANDALONE:
-            application = new StandaloneApplication(configuration,
-                    new SysErrExceptionHandler(), new SysExitShudownHandler());
-            break;
-        default:
-            assert false : mode;
-            break;
-        }
-        return application;
-    }
-
-    /**
-     * Launches the application.
-     * 
-     * @param application
-     *                The application to launch.
-     */
-    public void launch(final Application application) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    application.initialise();
-                    application.startup();
-                } catch (ApplicationException e) {
-                    application.handleException(e);
-                    application.shutdown();
-                }
-            }
-        });
     }
 }

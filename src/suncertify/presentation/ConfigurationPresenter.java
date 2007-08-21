@@ -6,6 +6,10 @@
 
 package suncertify.presentation;
 
+import java.util.ResourceBundle;
+
+import javax.swing.JFileChooser;
+
 import suncertify.ConfigurationManager;
 import suncertify.ReturnStatus;
 
@@ -67,6 +71,7 @@ public class ConfigurationPresenter {
 
     /** Performs the OK button action. */
     public void okButtonActionPerformed() {
+        // TODO Validation of URL/file here?
         this.returnStatus = ReturnStatus.OK;
         saveViewToModel();
         this.view.close();
@@ -83,5 +88,23 @@ public class ConfigurationPresenter {
     /** Performs the Cancel button action. */
     public void cancelButtonActionPerformed() {
         this.view.close();
+    }
+
+    /** Performs the Browse button action. */
+    public void browseButtonActionPerformed() {
+        JFileChooser fileChooser = createFileChooser(this.view
+                .getDatabaseFilePath());
+        int option = fileChooser
+                .showDialog(this.view.getComponent(), ResourceBundle.getBundle(
+                        "suncertify/presentation/Bundle").getString(
+                        "ConfigurationPresenter.approveButton.text"));
+        if (option == JFileChooser.APPROVE_OPTION) {
+            this.view.setDatabaseFilePath(fileChooser.getSelectedFile()
+                    .getAbsolutePath());
+        }
+    }
+
+    JFileChooser createFileChooser(String directoryPath) {
+        return new JFileChooser(directoryPath);
     }
 }
