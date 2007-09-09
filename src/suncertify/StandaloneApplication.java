@@ -6,7 +6,12 @@
 
 package suncertify;
 
+import java.io.FileNotFoundException;
+
 import suncertify.db.Data;
+import suncertify.db.DataAccessException;
+import suncertify.db.DataValidationException;
+import suncertify.db.DatabaseFileImpl;
 import suncertify.presentation.ConfigurationView;
 import suncertify.presentation.StandaloneConfigurationDialog;
 import suncertify.service.BrokerService;
@@ -47,10 +52,16 @@ public final class StandaloneApplication extends AbstractGuiApplication {
 
     /** {@inheritDoc} */
     @Override
-    protected BrokerService getBrokerService() {
-        // TODO: If BrokerServiceImpl not singleton should we do something
-        // here to prevent multiple instances?
-        return new BrokerServiceImpl(new Data(getConfigurationManager()
-                .getDatabaseFilePath()));
+    protected BrokerService createBrokerService() throws ApplicationException {
+        try {
+            return new BrokerServiceImpl(new Data(new DatabaseFileImpl(
+                    getConfigurationManager().getDatabaseFilePath())));
+        } catch (FileNotFoundException e) {
+            throw new ApplicationException("Database file not found", e);
+        } catch (DataAccessException e) {
+            throw new ApplicationException("Error reading database file", e);
+        } catch (DataValidationException e) {
+            throw new ApplicationException("Invalid database file", e);
+        }
     }
 }

@@ -6,12 +6,16 @@
 
 package suncertify;
 
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.util.logging.Logger;
 import suncertify.db.Data;
+import suncertify.db.DataAccessException;
+import suncertify.db.DataValidationException;
+import suncertify.db.DatabaseFileImpl;
 import suncertify.presentation.ConfigurationView;
 import suncertify.presentation.ServerConfigurationDialog;
 import suncertify.service.RemoteBrokerService;
@@ -59,6 +63,8 @@ public final class ServerApplication extends AbstractApplication {
      */
     public void startup() throws ApplicationException {
         // TODO We're on the EDT here - is that OK?
+        
+        // TODO Remove hardcoded strings
         String url = "//127.0.0.1:" + getConfigurationManager().getServerPort()
                 + "/" + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME;
 
@@ -68,11 +74,18 @@ public final class ServerApplication extends AbstractApplication {
         // factory method in the db package to return on unknown implementation
         // of the DBMain interface?
         try {
-            LocateRegistry.createRegistry(Integer
-                    .parseInt(getConfigurationManager().getServerPort()));
+            LocateRegistry.createRegistry(getConfigurationManager()
+                    .getServerPort());
             RemoteBrokerService service = new RemoteBrokerServiceImpl(new Data(
-                    getConfigurationManager().getDatabaseFilePath()));
+                    new DatabaseFileImpl(getConfigurationManager()
+                            .getDatabaseFilePath())));
             Naming.rebind(url, service);
+        } catch (FileNotFoundException e) {
+            throw new ApplicationException("Database file not found", e);
+        } catch (DataAccessException e) {
+            throw new ApplicationException("Error reading database file", e);
+        } catch (DataValidationException e) {
+            throw new ApplicationException("Invalid database file", e);
         } catch (RemoteException e) {
             throw new ApplicationException("Failed to export remote object", e);
         } catch (MalformedURLException e) {

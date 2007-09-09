@@ -49,7 +49,8 @@ public final class ClientApplication extends AbstractGuiApplication {
 
     /** {@inheritDoc} */
     @Override
-    protected BrokerService getBrokerService() throws ApplicationException {
+    protected BrokerService createBrokerService() throws ApplicationException {
+        // TODO Remove hardcoded strings
         String url = "//" + getConfigurationManager().getServerAddress() + ":"
                 + getConfigurationManager().getServerPort() + "/"
                 + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME;

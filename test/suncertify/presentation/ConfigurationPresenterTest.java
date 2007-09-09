@@ -30,7 +30,7 @@ public class ConfigurationPresenterTest {
     };
     private final String databaseFilePath = "databaseFilePath";
     private final String serverAddress = "serverAddress";
-    private final String serverPort = "serverPort";
+    private final String serverPort = "3333";
     private Configuration mockConfiguration;
     private ConfigurationView mockView;
     private JFileChooser mockFileChooser;
@@ -102,7 +102,8 @@ public class ConfigurationPresenterTest {
                                 with(equal(ConfigurationPresenterTest.this.serverAddress)));
                 one(ConfigurationPresenterTest.this.mockView)
                         .setServerPort(
-                                with(equal(ConfigurationPresenterTest.this.serverPort)));
+                                with(equal(Integer
+                                        .valueOf(ConfigurationPresenterTest.this.serverPort))));
                 one(ConfigurationPresenterTest.this.mockView).realise();
             }
         });
@@ -113,7 +114,7 @@ public class ConfigurationPresenterTest {
     public void okButtonActionPerformed() {
         final String newDatabaseFilePath = "newDatabaseFilePath";
         final String newServerAddress = "newServerAddress";
-        final String newServerPort = "newServerPort";
+        final Integer newServerPort = 9999;
 
         this.context.checking(new Expectations() {
             {
@@ -140,7 +141,7 @@ public class ConfigurationPresenterTest {
                 one(ConfigurationPresenterTest.this.mockConfiguration)
                         .setProperty(
                                 with(equal(ApplicationConstants.SERVER_PORT_PROPERTY)),
-                                with(equal(newServerPort)));
+                                with(equal(newServerPort.toString())));
             }
         });
 

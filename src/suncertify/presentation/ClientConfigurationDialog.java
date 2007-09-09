@@ -11,7 +11,9 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 
 import suncertify.ApplicationConstants;
 
@@ -25,7 +27,7 @@ public final class ClientConfigurationDialog extends
 
     private static final long serialVersionUID = 1L;
     private JTextField serverAddressField;
-    private JTextField serverPortField;
+    private JSpinner serverPortSpinner;
 
     /**
      * Creates a new instance of <code>ClientConfigurationDialog</code>.
@@ -64,16 +66,16 @@ public final class ClientConfigurationDialog extends
      * {@inheritDoc}
      */
     @Override
-    public String getServerPort() {
-        return this.serverPortField.getText();
+    public Integer getServerPort() {
+        return (Integer) this.serverPortSpinner.getValue();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setServerPort(String serverPort) {
-        this.serverPortField.setText(serverPort);
+    public void setServerPort(Integer serverPort) {
+        this.serverPortSpinner.setValue(serverPort);
     }
 
     /**
@@ -118,8 +120,18 @@ public final class ClientConfigurationDialog extends
         constraints.gridy = 1;
         constraints.insets = ApplicationConstants.DEFAULT_INSETS;
         constraints.weightx = 1;
-        this.serverPortField = new JTextField();
-        panel.add(this.serverPortField, constraints);
+
+        this.serverPortSpinner = new JSpinner(new SpinnerNumberModel(
+                SERVER_PORT_SPINNER_INITIAL_VALUE,
+                SERVER_PORT_SPINNER_MINIMUM_VALUE,
+                SERVER_PORT_SPINNER_MAXIMUM_VALUE,
+                SERVER_PORT_SPINNER_STEP_SIZE));
+        this.serverPortSpinner.setFont(this.serverAddressField.getFont());
+        JSpinner.DefaultEditor spinnerEditor = new JSpinner.NumberEditor(
+                this.serverPortSpinner, SERVER_PORT_SPINNER_FORMAT_PATTERN);
+        spinnerEditor.getTextField().setColumns(SERVER_PORT_SPINNER_COLUMNS);
+        this.serverPortSpinner.setEditor(spinnerEditor);
+        panel.add(this.serverPortSpinner, constraints);
 
         return panel;
     }

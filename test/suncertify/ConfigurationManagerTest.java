@@ -69,6 +69,9 @@ public class ConfigurationManagerTest {
             {
                 ignoring(ConfigurationManagerTest.this.mockConfiguration)
                         .getProperty(with(any(String.class)));
+                ignoring(ConfigurationManagerTest.this.mockConfiguration)
+                        .setProperty(with(a(String.class)),
+                                with(a(String.class)));
 
                 allowing(ConfigurationManagerTest.this.mockConfiguration)
                         .exists();
@@ -86,9 +89,14 @@ public class ConfigurationManagerTest {
             {
                 ignoring(ConfigurationManagerTest.this.mockConfiguration)
                         .getProperty(with(any(String.class)));
+                ignoring(ConfigurationManagerTest.this.mockConfiguration)
+                        .setProperty(with(a(String.class)),
+                                with(a(String.class)));
+
                 allowing(ConfigurationManagerTest.this.mockConfiguration)
                         .exists();
                 will(returnValue(true));
+
                 one(ConfigurationManagerTest.this.mockConfiguration).load();
             }
         });
@@ -115,7 +123,8 @@ public class ConfigurationManagerTest {
                 one(ConfigurationManagerTest.this.mockConfiguration)
                         .setProperty(
                                 with(equal(ApplicationConstants.SERVER_PORT_PROPERTY)),
-                                with(equal(ApplicationConstants.DEFAULT_SERVER_PORT)));
+                                with(equal(ApplicationConstants.DEFAULT_SERVER_PORT
+                                        .toString())));
             }
         });
         new ConfigurationManager(this.mockConfiguration);
@@ -125,13 +134,18 @@ public class ConfigurationManagerTest {
     public void settersUpdateConfiguration() throws Exception {
         final String newDatabaseFilePath = "newDatabaseFilePath";
         final String newServerAddress = "newServerAddress";
-        final String newServerPort = "newServerPort";
+        final Integer newServerPort = 9999;
         this.context.checking(new Expectations() {
             {
                 ignoring(ConfigurationManagerTest.this.mockConfiguration)
                         .exists();
                 ignoring(ConfigurationManagerTest.this.mockConfiguration)
                         .getProperty(with(any(String.class)));
+                one(ConfigurationManagerTest.this.mockConfiguration)
+                        .setProperty(
+                                with(equal(ApplicationConstants.SERVER_PORT_PROPERTY)),
+                                with(equal(ApplicationConstants.DEFAULT_SERVER_PORT
+                                        .toString())));
                 one(ConfigurationManagerTest.this.mockConfiguration)
                         .setProperty(
                                 with(equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)),
@@ -143,7 +157,7 @@ public class ConfigurationManagerTest {
                 one(ConfigurationManagerTest.this.mockConfiguration)
                         .setProperty(
                                 with(equal(ApplicationConstants.SERVER_PORT_PROPERTY)),
-                                with(equal(newServerPort)));
+                                with(equal(newServerPort.toString())));
             }
         });
         ConfigurationManager configurationManager = new ConfigurationManager(
@@ -161,6 +175,9 @@ public class ConfigurationManagerTest {
                         .exists();
                 ignoring(ConfigurationManagerTest.this.mockConfiguration)
                         .getProperty(with(any(String.class)));
+                ignoring(ConfigurationManagerTest.this.mockConfiguration)
+                        .setProperty(with(a(String.class)),
+                                with(a(String.class)));
                 one(ConfigurationManagerTest.this.mockConfiguration).save();
             }
         });

@@ -69,7 +69,7 @@ public class AbstractGuiApplicationTest {
         }
 
         @Override
-        protected BrokerService getBrokerService() {
+        protected BrokerService createBrokerService() {
             throw new UnsupportedOperationException(
                     "getBrokerService() not implemented");
         }

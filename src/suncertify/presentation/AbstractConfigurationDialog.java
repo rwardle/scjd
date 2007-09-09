@@ -33,13 +33,20 @@ import suncertify.ApplicationConstants;
 public abstract class AbstractConfigurationDialog extends JDialog implements
         ConfigurationView {
 
+    protected static final int SERVER_PORT_SPINNER_INITIAL_VALUE = 1;
+    protected static final int SERVER_PORT_SPINNER_MINIMUM_VALUE = 1;
+    protected static final int SERVER_PORT_SPINNER_MAXIMUM_VALUE = Integer.MAX_VALUE;
+    protected static final int SERVER_PORT_SPINNER_STEP_SIZE = 1;
+    protected static final int SERVER_PORT_SPINNER_COLUMNS = 5;
+    protected static final String SERVER_PORT_SPINNER_FORMAT_PATTERN = "#";
+
     private final ResourceBundle resourceBundle;
     private final JButton okButton;
     private final JButton cancelButton;
     private ConfigurationPresenter presenter;
     private String databaseFilePath;
     private String serverAddress;
-    private String serverPort;
+    private Integer serverPort;
 
     /** Constructor. */
     protected AbstractConfigurationDialog() {
@@ -144,14 +151,14 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
     /**
      * {@inheritDoc}
      */
-    public String getServerPort() {
+    public Integer getServerPort() {
         return this.serverPort;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setServerPort(String serverPort) {
+    public void setServerPort(Integer serverPort) {
         this.serverPort = serverPort;
     }
 

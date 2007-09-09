@@ -21,6 +21,11 @@ public final class BrokerServiceImpl implements BrokerService {
      * {@inheritDoc}
      */
     public String getHelloWorld() {
+        // Use lock/"process"/unlock idiom
         return "Hello world!";
     }
+
+    // TODO Check fields passed in match what is currently in the database
+    // before doing the booking
+    // public void book()
 }

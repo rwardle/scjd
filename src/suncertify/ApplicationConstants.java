@@ -33,7 +33,7 @@ public class ApplicationConstants {
     public static final String DEFAULT_SERVER_ADDRESS = "127.0.0.1";
 
     /** Default server port. */
-    public static final String DEFAULT_SERVER_PORT = "1099";
+    public static final Integer DEFAULT_SERVER_PORT = Integer.valueOf("1099");
 
     /** Name under which the remote service object is registered with RMI. */
     public static final String REMOTE_BROKER_SERVICE_NAME = "BrokerService";

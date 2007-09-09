@@ -58,21 +58,21 @@ public abstract class AbstractGuiApplication extends AbstractApplication {
      */
     protected MainPresenter createMainPresenter() throws ApplicationException {
         MainView mainView = createMainView();
-        MainPresenter mainPresenter = new MainPresenter(getBrokerService(),
+        MainPresenter mainPresenter = new MainPresenter(createBrokerService(),
                 mainView);
         mainView.setPresenter(mainPresenter);
         return mainPresenter;
     }
 
     /**
-     * Gets the broker service. <p/> This method is called from the
+     * Creates the broker service. <p/> This method is called from the
      * <code>createMainPresenter</code> method.
      * 
      * @return The broker service object.
      * @throws ApplicationException
      *                 If there is an error getting the broker service.
      */
-    protected abstract BrokerService getBrokerService()
+    protected abstract BrokerService createBrokerService()
             throws ApplicationException;
 
     private MainView createMainView() {

@@ -68,7 +68,7 @@ public interface ConfigurationView {
      * 
      * @return The server port.
      */
-    String getServerPort();
+    Integer getServerPort();
 
     /**
      * Sets the server port.
@@ -76,7 +76,7 @@ public interface ConfigurationView {
      * @param serverPort
      *                The server port to set.
      */
-    void setServerPort(String serverPort);
+    void setServerPort(Integer serverPort);
 
     /**
      * Gets the view component.

@@ -62,6 +62,9 @@ public class AbstractApplicationTest {
                         .exists();
                 ignoring(AbstractApplicationTest.this.mockConfiguration)
                         .getProperty(with(a(String.class)));
+                ignoring(AbstractApplicationTest.this.mockConfiguration)
+                        .setProperty(with(a(String.class)),
+                                with(a(String.class)));
                 one(AbstractApplicationTest.this.mockPresenter).realiseView();
 
                 allowing(AbstractApplicationTest.this.mockPresenter)
@@ -105,7 +108,10 @@ public class AbstractApplicationTest {
                 ignoring(AbstractApplicationTest.this.mockConfiguration)
                         .exists();
                 ignoring(AbstractApplicationTest.this.mockConfiguration)
-                        .getProperty(with(an(String.class)));
+                        .getProperty(with(a(String.class)));
+                ignoring(AbstractApplicationTest.this.mockConfiguration)
+                        .setProperty(with(a(String.class)),
+                                with(a(String.class)));
                 one(AbstractApplicationTest.this.mockPresenter).realiseView();
 
                 allowing(AbstractApplicationTest.this.mockPresenter)

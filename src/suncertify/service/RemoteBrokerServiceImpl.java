@@ -8,6 +8,7 @@ package suncertify.service;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+
 import suncertify.db.DBMain;
 
 /**
@@ -17,8 +18,6 @@ import suncertify.db.DBMain;
  */
 public final class RemoteBrokerServiceImpl extends UnicastRemoteObject
         implements RemoteBrokerService {
-
-    // TODO: Make this a singleton?
 
     private static final long serialVersionUID = 1L;
     private final BrokerServiceImpl service;
@@ -32,7 +31,6 @@ public final class RemoteBrokerServiceImpl extends UnicastRemoteObject
     }
 
     public String getHelloWorld() {
-        System.out.println("In remote getHelloWorld");
         return "Remote " + this.service.getHelloWorld();
     }
 }

@@ -54,7 +54,13 @@ public final class ConfigurationManager {
         if (getServerAddress() == null) {
             setServerAddress(ApplicationConstants.DEFAULT_SERVER_ADDRESS);
         }
-        if (getServerPort() == null) {
+
+        try {
+            if (getServerPort() == null) {
+                setServerPort(ApplicationConstants.DEFAULT_SERVER_PORT);
+            }
+        } catch (NumberFormatException e) {
+            // Server port is not a number - reset to the default
             setServerPort(ApplicationConstants.DEFAULT_SERVER_PORT);
         }
     }
@@ -127,10 +133,12 @@ public final class ConfigurationManager {
      * Gets the server port.
      * 
      * @return The server port.
+     * @throws NumberFormatException
+     *                 If the server port property is not a number.
      */
-    public String getServerPort() {
-        return this.configuration
-                .getProperty(ApplicationConstants.SERVER_PORT_PROPERTY);
+    public Integer getServerPort() {
+        return Integer.valueOf(this.configuration
+                .getProperty(ApplicationConstants.SERVER_PORT_PROPERTY));
     }
 
     /**
@@ -141,11 +149,12 @@ public final class ConfigurationManager {
      * @throws IllegalArgumentException
      *                 If the supplied port is <code>null</code>.
      */
-    public void setServerPort(String serverPort) {
+    public void setServerPort(Integer serverPort) {
         if (serverPort == null) {
             throw new IllegalArgumentException("serverPort must be non-null");
         }
         this.configuration.setProperty(
-                ApplicationConstants.SERVER_PORT_PROPERTY, serverPort);
+                ApplicationConstants.SERVER_PORT_PROPERTY, serverPort
+                        .toString());
     }
 }
