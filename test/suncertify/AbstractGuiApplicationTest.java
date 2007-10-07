@@ -6,6 +6,7 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import suncertify.presentation.ConfigurationView;
 import suncertify.presentation.MainPresenter;
 import suncertify.service.BrokerService;

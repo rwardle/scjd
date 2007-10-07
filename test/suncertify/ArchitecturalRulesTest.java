@@ -1,6 +1,7 @@
 package suncertify;
 
 import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;

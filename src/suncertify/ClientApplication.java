@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+
 import suncertify.presentation.ClientConfigurationDialog;
 import suncertify.presentation.ConfigurationView;
 import suncertify.service.BrokerService;

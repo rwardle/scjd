@@ -33,6 +33,8 @@ import suncertify.ApplicationConstants;
 public abstract class AbstractConfigurationDialog extends JDialog implements
         ConfigurationView {
 
+    // TODO Change this to a JFrame?
+
     protected static final int SERVER_PORT_SPINNER_INITIAL_VALUE = 1;
     protected static final int SERVER_PORT_SPINNER_MINIMUM_VALUE = 1;
     protected static final int SERVER_PORT_SPINNER_MAXIMUM_VALUE = Integer.MAX_VALUE;
@@ -50,9 +52,6 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
 
     /** Constructor. */
     protected AbstractConfigurationDialog() {
-        // TODO Dialog has no taskbar entry on Windows because it has no parent,
-        // consider making this a JFrame so it does have one?
-
         this.resourceBundle = ResourceBundle
                 .getBundle("suncertify/presentation/Bundle");
 

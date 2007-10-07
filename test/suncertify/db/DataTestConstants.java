@@ -22,11 +22,11 @@ class DataTestConstants {
     static final String[] RECORD_VALUES_SPACE_PADDED,
             RECORD_VALUES_NULL_PADDED;
     static {
-        RECORD_VALUES_SPACE_PADDED = buildRecord(RECORD_VALUES, ' ');
-        RECORD_VALUES_NULL_PADDED = buildRecord(RECORD_VALUES, '\u0000');
+        RECORD_VALUES_SPACE_PADDED = padRecord(RECORD_VALUES, ' ');
+        RECORD_VALUES_NULL_PADDED = padRecord(RECORD_VALUES, '\u0000');
     }
 
-    static String[] buildRecord(String[] values, char padChar) {
+    static String[] padRecord(String[] values, char padChar) {
         String[] paddedValues = new String[values.length];
         for (int i = 0; i < values.length; i++) {
             paddedValues[i] = padField(values[i],

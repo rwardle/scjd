@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Logger;
 
 import suncertify.db.DatabaseSchema.FieldDescription;
 
@@ -22,19 +25,27 @@ import suncertify.db.DatabaseSchema.FieldDescription;
  * @author Richard Wardle
  */
 public final class Data implements DBMain {
-    
-    // TODO Make this a singleton?
 
+    // TODO Hide this behind an adapter that has proper method signatures?
+    // TODO Maker this package private and use a factor to create it?
+    // TODO Make this a singleton?
+    // TODO Use a lock manager class?
+    // TODO Add runtime exceptions to method signatures (or just javadoc)
+
+    private static final Logger LOGGER = Logger.getLogger(Data.class.getName());
     private final DatabaseFile databaseFile;
     private final DatabaseSchema databaseSchema;
     private final long dataSectionOffset;
     private final SortedSet<Integer> deletedRecNos = Collections
             .synchronizedSortedSet(new TreeSet<Integer>());
-    private final Map<Integer, Long> lockMap = Collections
+    private final Map<Integer, Long> lockedRecords = Collections
             .synchronizedMap(new HashMap<Integer, Long>());
-    // TODO This is the count of all records including deleted ones - conside
+    // TODO This is the count of all records including deleted ones - consider
     // renaming this to make it clearer. Should this be volatile?
     private volatile int recordCount;
+
+    private final ReentrantLock lock = new ReentrantLock();
+    private final Map<Integer, Condition> conditionsMap = new HashMap<Integer, Condition>();
 
     /**
      * Creates a new instance of <code>Data</code>.
@@ -51,6 +62,7 @@ public final class Data implements DBMain {
         this.databaseSchema = new DatabaseSchema();
 
         try {
+            // TODO Move validation to a separate class?
             validateMagicCookie();
             validateSchema();
             this.dataSectionOffset = this.databaseFile.getFilePointer();
@@ -172,7 +184,7 @@ public final class Data implements DBMain {
     public String[] read(int recNo) throws RecordNotFoundException {
         validateRecordNumber(recNo);
 
-        String[] recordValues = new String[this.databaseSchema.getFieldCount()];
+        String record;
         synchronized (this.databaseFile) {
             if (isRecordDeleted(recNo)) {
                 throw new RecordNotFoundException("Record " + recNo
@@ -182,21 +194,15 @@ public final class Data implements DBMain {
             try {
                 this.databaseFile.seek(getOffsetForRecord(recNo)
                         + DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH);
-                // TODO Read all record in one go?
-                FieldDescription[] fieldDescriptions = this.databaseSchema
-                        .getFieldDescriptions();
-                for (int i = 0; i < fieldDescriptions.length; i++) {
-                    byte[] bytes = new byte[fieldDescriptions[i].getLength()];
-                    this.databaseFile.readFully(bytes);
-                    recordValues[i] = new String(bytes,
-                            DatabaseConstants.CHARACTER_SET).trim();
-                }
+                byte[] bytes = new byte[this.databaseSchema.getRecordLength()];
+                this.databaseFile.readFully(bytes);
+                record = new String(bytes, DatabaseConstants.CHARACTER_SET);
             } catch (IOException e) {
                 throw new DataAccessException(e);
             }
         }
 
-        return recordValues;
+        return splitRecord(record);
     }
 
     private void validateRecordNumber(int recNo) throws RecordNotFoundException {
@@ -212,12 +218,33 @@ public final class Data implements DBMain {
                         .getRecordLength());
     }
 
+    private String[] splitRecord(String record) {
+        String[] recordValues = new String[this.databaseSchema.getFieldCount()];
+        FieldDescription[] fieldDescriptions = this.databaseSchema
+                .getFieldDescriptions();
+        for (int i = 0; i < fieldDescriptions.length; i++) {
+            recordValues[i] = record.substring(
+                    fieldDescriptions[i].getRecordOffset(),
+                    fieldDescriptions[i].getRecordOffset()
+                            + fieldDescriptions[i].getLength()).trim();
+        }
+        return recordValues;
+    }
+
     /**
      * {@inheritDoc}
      */
     public void update(int recNo, String[] data) throws RecordNotFoundException {
-        // TODO Check lock
         validateRecordNumber(recNo);
+        if (isRecordDeleted(recNo)) {
+            throw new RecordNotFoundException("Record " + recNo
+                    + " has been deleted");
+        }
+        if (!isCurrentThreadHoldingLock(recNo)) {
+            throw new IllegalThreadStateException(
+                    "Calling thread does not hold the lock on record " + recNo);
+        }
+
         if (data == null) {
             throw new IllegalArgumentException("data cannot be null");
         }
@@ -225,29 +252,29 @@ public final class Data implements DBMain {
             throw new IllegalArgumentException("data array must be of length: "
                     + this.databaseSchema.getFieldCount());
         }
-        if (isRecordDeleted(recNo)) {
-            throw new RecordNotFoundException("Record " + recNo
-                    + " has been deleted");
-        }
 
         synchronized (this.databaseFile) {
             try {
-                writeRecord(recNo, data);
+                updateRecord(recNo, data);
             } catch (IOException e) {
                 throw new DataAccessException(e);
             }
         }
     }
 
-    private void writeRecord(int recNo, String[] data) throws IOException {
+    private boolean isCurrentThreadHoldingLock(int recNo) {
+        Long threadIdHoldingLock = this.lockedRecords.get(recNo);
+        return threadIdHoldingLock != null
+                && threadIdHoldingLock.equals(Thread.currentThread().getId());
+    }
+
+    private void updateRecord(int recNo, String[] data) throws IOException {
         long recValuesStartPos = getOffsetForRecord(recNo)
                 + DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH;
         FieldDescription[] fieldDescriptions = this.databaseSchema
                 .getFieldDescriptions();
         for (int i = 0; i < fieldDescriptions.length; i++) {
             if (data[i] != null) {
-                // TODO Check if file pointer is already at the correct location
-                // before seeking
                 this.databaseFile.seek(recValuesStartPos
                         + fieldDescriptions[i].getRecordOffset());
                 this.databaseFile.write(padOrTruncateData(data[i],
@@ -258,6 +285,8 @@ public final class Data implements DBMain {
     }
 
     private String padOrTruncateData(String data, short fieldLength) {
+        // TODO Start with a string of record length and then use StringBuilder
+        // to replace the fields in
         String sizedData;
         if (data.length() < fieldLength) {
             StringBuilder builder = new StringBuilder(data);
@@ -274,26 +303,32 @@ public final class Data implements DBMain {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} TODO Mention that there is no need for clients to call
+     * unlock after delete.
      */
     public void delete(int recNo) throws RecordNotFoundException {
-        // TODO Check lock
         validateRecordNumber(recNo);
         if (isRecordDeleted(recNo)) {
             throw new RecordNotFoundException("Record " + recNo
                     + " has been deleted");
         }
+        if (!isCurrentThreadHoldingLock(recNo)) {
+            throw new IllegalThreadStateException(
+                    "Calling thread does not hold the lock on record " + recNo);
+        }
+
         synchronized (this.databaseFile) {
             try {
                 this.databaseFile.seek(getOffsetForRecord(recNo));
                 this.databaseFile
                         .writeByte(DatabaseConstants.DELETED_RECORD_FLAG);
                 this.deletedRecNos.add(recNo);
-                // TODO add to record deleted cache
             } catch (IOException e) {
                 throw new DataAccessException(e);
             }
         }
+
+        unlockRecord(recNo);
     }
 
     /**
@@ -313,43 +348,41 @@ public final class Data implements DBMain {
 
         // TODO Should this be case insensitive?
         List<Integer> matchingRecNos = new ArrayList<Integer>();
-        // TODO Should the sync block just be around the seek/read of an
-        // individual record - i.e. we don't care if we read a record and it is
-        // deleted before we return the find results. isRecordDeleted should
-        // stay inside the sync block
-        synchronized (this.databaseFile) {
-            for (int recNo = 0; recNo < this.recordCount; recNo++) {
-                try {
-                    if (!isRecordDeleted(recNo)) {
-                        FieldDescription[] fieldDescriptions = this.databaseSchema
-                                .getFieldDescriptions();
-                        long recValuesStartPos = getOffsetForRecord(recNo)
-                                + DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH;
-                        for (int i = 0; i < fieldDescriptions.length; i++) {
-                            if (criteria[i] != null) {
-                                this.databaseFile.seek(recValuesStartPos
-                                        + fieldDescriptions[i]
-                                                .getRecordOffset());
+        for (int recNo = 0; recNo < this.recordCount; recNo++) {
+            try {
+                if (!isRecordDeleted(recNo)) {
+                    long recValuesStartPos = getOffsetForRecord(recNo)
+                            + DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH;
+                    byte[] bytes;
+                    synchronized (this.databaseFile) {
+                        this.databaseFile.seek(recValuesStartPos);
 
-                                byte[] b = new byte[fieldDescriptions[i]
-                                        .getLength()];
-                                this.databaseFile.readFully(b);
+                        bytes = new byte[this.databaseSchema.getRecordLength()];
+                        this.databaseFile.readFully(bytes);
+                    }
 
-                                if (!new String(b,
-                                        DatabaseConstants.CHARACTER_SET)
-                                        .startsWith(criteria[i])) {
-                                    break;
-                                }
+                    String record = new String(bytes,
+                            DatabaseConstants.CHARACTER_SET);
+                    FieldDescription[] fieldDescriptions = this.databaseSchema
+                            .getFieldDescriptions();
+                    for (int i = 0; i < fieldDescriptions.length; i++) {
+                        if (criteria[i] != null) {
+                            String recordValue = record.substring(
+                                    fieldDescriptions[i].getRecordOffset(),
+                                    fieldDescriptions[i].getRecordOffset()
+                                            + fieldDescriptions[i].getLength());
+                            if (!recordValue.startsWith(criteria[i])) {
+                                break;
+                            }
 
-                                if (i == fieldDescriptions.length - 1) {
-                                    matchingRecNos.add(recNo);
-                                }
+                            if (i == fieldDescriptions.length - 1) {
+                                matchingRecNos.add(recNo);
                             }
                         }
                     }
-                } catch (IOException e) {
-                    throw new DataAccessException(e);
                 }
+            } catch (IOException e) {
+                throw new DataAccessException(e);
             }
         }
 
@@ -392,11 +425,7 @@ public final class Data implements DBMain {
 
             try {
                 this.databaseFile.seek(getOffsetForRecord(recNoToWrite));
-                // TODO Write record in one go otherwise we could mark this
-                // record as valid and then have junk afterwards
-                this.databaseFile
-                        .writeByte(DatabaseConstants.VALID_RECORD_FLAG);
-                writeRecord(recNoToWrite, data);
+                writeRecord(data);
             } catch (IOException e) {
                 throw new DataAccessException(e);
             }
@@ -411,6 +440,18 @@ public final class Data implements DBMain {
         return recNoToWrite;
     }
 
+    private void writeRecord(String[] data) throws IOException {
+        this.databaseFile.writeByte(DatabaseConstants.VALID_RECORD_FLAG);
+
+        StringBuilder recordBuilder = new StringBuilder();
+        for (int i = 0; i < data.length; i++) {
+            recordBuilder.append(padOrTruncateData(data[i], this.databaseSchema
+                    .getFieldDescriptions()[i].getLength()));
+        }
+        this.databaseFile.write(recordBuilder.toString().getBytes(
+                DatabaseConstants.CHARACTER_SET));
+    }
+
     /**
      * {@inheritDoc}
      * <p>
@@ -418,22 +459,38 @@ public final class Data implements DBMain {
      */
     public void lock(int recNo) throws RecordNotFoundException {
         validateRecordNumber(recNo);
-        synchronized (this.lockMap) {
-            while (this.lockMap.containsKey(recNo)) {
-                try {
-                    this.lockMap.wait();
-                } catch (InterruptedException e) {
-                    // TODO Find out how to handle this
-                    Thread.currentThread().interrupt();
+        if (isRecordDeleted(recNo)) {
+            throw new RecordNotFoundException("Record " + recNo
+                    + " has been deleted");
+        }
+
+        this.lock.lock();
+        try {
+            Condition condition = this.conditionsMap.get(recNo);
+            if (condition == null) {
+                condition = this.lock.newCondition();
+                this.conditionsMap.put(recNo, condition);
+            }
+
+            try {
+                while (this.lockedRecords.containsKey(recNo)) {
+                    condition.await();
                 }
+            } catch (InterruptedException e) {
+                throw new IllegalThreadStateException(
+                        "Thread has been interrupted while waiting for the lock on record "
+                                + recNo);
             }
 
             if (isRecordDeleted(recNo)) {
+                condition.signal();
                 throw new RecordNotFoundException("Record " + recNo
                         + " has been deleted");
             }
 
-            this.lockMap.put(recNo, Thread.currentThread().getId());
+            this.lockedRecords.put(recNo, Thread.currentThread().getId());
+        } finally {
+            this.lock.unlock();
         }
     }
 
@@ -441,14 +498,41 @@ public final class Data implements DBMain {
      * {@inheritDoc}
      */
     public void unlock(int recNo) throws RecordNotFoundException {
-        // TODO Auto-generated method stub
+        validateRecordNumber(recNo);
+        if (isRecordDeleted(recNo)) {
+            throw new RecordNotFoundException("Record " + recNo
+                    + " has been deleted");
+        }
+
+        if (isCurrentThreadHoldingLock(recNo)) {
+            unlockRecord(recNo);
+        } else {
+            throw new IllegalThreadStateException(
+                    "Calling thread does not hold the lock on record " + recNo);
+        }
+    }
+
+    private void unlockRecord(int recNo) {
+        this.lock.lock();
+        try {
+            this.lockedRecords.remove(recNo);
+            // TODO Could use signalAll here and still meet the spec
+            // requirements
+            this.conditionsMap.get(recNo).signal();
+        } finally {
+            this.lock.unlock();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     public boolean isLocked(int recNo) throws RecordNotFoundException {
-        // TODO Auto-generated method stub
-        return false;
+        validateRecordNumber(recNo);
+        if (isRecordDeleted(recNo)) {
+            throw new RecordNotFoundException("Record " + recNo
+                    + " has been deleted");
+        }
+        return this.lockedRecords.containsKey(recNo);
     }
 }

@@ -28,4 +28,7 @@ public final class BrokerServiceImpl implements BrokerService {
     // TODO Check fields passed in match what is currently in the database
     // before doing the booking
     // public void book()
+
+    // TODO Make search method scalable for future enhancements, i.e. don't
+    // restrict to name and location only?
 }

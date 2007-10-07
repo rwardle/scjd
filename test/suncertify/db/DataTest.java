@@ -5,12 +5,13 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.fail;
 import static suncertify.db.DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS;
 import static suncertify.db.DataTestConstants.RECORD_VALUES;
 import static suncertify.db.DataTestConstants.RECORD_VALUES_NULL_PADDED;
 import static suncertify.db.DataTestConstants.RECORD_VALUES_SPACE_PADDED;
-import static suncertify.db.DataTestConstants.buildRecord;
 import static suncertify.db.DataTestConstants.padField;
+import static suncertify.db.DataTestConstants.padRecord;
 import static suncertify.db.DatabaseConstants.CHARACTER_SET;
 import static suncertify.db.DatabaseConstants.DELETED_RECORD_FLAG;
 import static suncertify.db.DatabaseConstants.FIELD_COUNT;
@@ -19,8 +20,11 @@ import static suncertify.db.DatabaseConstants.RECORD_LENGTH;
 import static suncertify.db.DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH;
 import static suncertify.db.DatabaseConstants.VALID_RECORD_FLAG;
 
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import junit.framework.AssertionFailedError;
 
 import org.hamcrest.Description;
 import org.jmock.Expectations;
@@ -37,6 +41,7 @@ import suncertify.db.DatabaseSchema.FieldDescription;
 @SuppressWarnings("boxing")
 public class DataTest {
 
+    private ExceptionHandler exceptionHandler;
     private Mockery context;
     private DatabaseFile mockDatabaseFile;
     private Data data;
@@ -46,6 +51,10 @@ public class DataTest {
 
     @Before
     public void setUp() throws Exception {
+        // Set a default exception handler to pick failures in addtional threads
+        this.exceptionHandler = new ExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler(this.exceptionHandler);
+
         this.context = new Mockery();
         this.mockDatabaseFile = this.context.mock(DatabaseFile.class);
         this.dataSectionOffset = 999; // Value is irrelevant
@@ -57,6 +66,10 @@ public class DataTest {
     @After
     public void tearDown() {
         this.context.assertIsSatisfied();
+        Throwable exception = this.exceptionHandler.getException();
+        if (exception != null) {
+            fail(exception.getMessage());
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -319,14 +332,18 @@ public class DataTest {
         final Sequence sequence = this.context.sequence("read");
         checkingSeek(getOffsetForRecord(recordNumber)
                 + DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH, sequence);
+
+        final StringBuilder recordBuilder = new StringBuilder();
+        for (String element : recordValuesToRead) {
+            recordBuilder.append(element);
+        }
+
         this.context.checking(new Expectations() {
             {
-                for (String element : recordValuesToRead) {
-                    one(DataTest.this.mockDatabaseFile).readFully(
-                            with(any(byte[].class)));
-                    will(readBytes(element.getBytes()));
-                    inSequence(sequence);
-                }
+                one(DataTest.this.mockDatabaseFile).readFully(
+                        with(any(byte[].class)));
+                will(readBytes(recordBuilder.toString().getBytes()));
+                inSequence(sequence);
             }
         });
 
@@ -370,25 +387,30 @@ public class DataTest {
     @Test(expected = IllegalArgumentException.class)
     public void updateWithNullDataArrayThrowsException() throws Exception {
         standardSetup();
-        this.data.update(0, null);
+        int recNo = 0;
+        this.data.lock(recNo);
+        this.data.update(recNo, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void updateWithInvalidDataArrayLengthThrowsException()
             throws Exception {
         standardSetup();
+        int recNo = 0;
+        this.data.lock(recNo);
         String[] recordValues = new String[FIELD_COUNT + 1];
-        System.arraycopy(RECORD_VALUES, 0, recordValues, 0,
+        System.arraycopy(RECORD_VALUES, recNo, recordValues, recNo,
                 RECORD_VALUES.length);
-        this.data.update(0, recordValues);
+        this.data.update(recNo, recordValues);
     }
 
     @Test
     public void updateWithNullRecordValueDoesNotWriteCorrespondingField()
             throws Exception {
         standardSetup();
-        final Sequence sequence = this.context.sequence("update");
         int recNo = 1;
+        this.data.lock(recNo);
+        final Sequence sequence = this.context.sequence("update");
         String[] recordValues = RECORD_VALUES_SPACE_PADDED.clone();
         recordValues[1] = null;
         checkingUpdateRecord(recNo, recordValues, sequence);
@@ -398,8 +420,9 @@ public class DataTest {
     @Test
     public void updateWithTooLongRecordValueTruncatesData() throws Exception {
         standardSetup();
-        final Sequence sequence = this.context.sequence("update");
         int recNo = 1;
+        this.data.lock(recNo);
+        final Sequence sequence = this.context.sequence("update");
         String[] recordValues = RECORD_VALUES.clone();
         recordValues[1] = RECORD_VALUES_SPACE_PADDED[1] + " too long";
         checkingUpdateRecord(recNo, RECORD_VALUES_SPACE_PADDED, sequence);
@@ -409,8 +432,9 @@ public class DataTest {
     @Test
     public void updateWithEmptyStringRecordValueBlanksField() throws Exception {
         standardSetup();
-        final Sequence sequence = this.context.sequence("update");
         int recNo = 1;
+        this.data.lock(recNo);
+        final Sequence sequence = this.context.sequence("update");
         String[] recordValues = RECORD_VALUES_SPACE_PADDED.clone();
         recordValues[1] = "";
         String[] paddedRecordValues = recordValues.clone();
@@ -423,26 +447,43 @@ public class DataTest {
     @Test(expected = RecordNotFoundException.class)
     public void updateDeletedRecordThrowsException() throws Exception {
         standardSetup();
-        this.data.update(this.deletedRecNos.first(), RECORD_VALUES);
+        Integer recNo = this.deletedRecNos.first();
+        this.data.update(recNo, RECORD_VALUES);
+    }
+
+    @Test(expected = IllegalThreadStateException.class)
+    public void updateRecordWhenNotHoldingLockThrowsException()
+            throws Exception {
+        standardSetup();
+        final int recNo = 1;
+        Thread lockThread = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    DataTest.this.data.lock(recNo);
+                } catch (RecordNotFoundException e) {
+                    throw new AssertionFailedError(Thread.currentThread()
+                            .getName()
+                            + ": " + e.getMessage());
+                }
+            }
+        });
+        lockThread.start();
+        lockThread.join();
+        this.data.update(recNo, RECORD_VALUES);
     }
 
     @Test
     public void update() throws Exception {
         standardSetup();
-        final Sequence sequence = this.context.sequence("update");
         int recNo = 1;
+        this.data.lock(recNo);
+        final Sequence sequence = this.context.sequence("update");
         checkingUpdateRecord(recNo, RECORD_VALUES_SPACE_PADDED, sequence);
         this.data.update(recNo, RECORD_VALUES);
     }
 
     private void checkingUpdateRecord(int recNo, final String[] recordValues,
             final Sequence sequence) throws Exception {
-        checkingWriteRecordValues(recNo, recordValues, sequence);
-    }
-
-    private void checkingWriteRecordValues(int recNo,
-            final String[] recordValues, final Sequence sequence)
-            throws Exception {
         final long recordValuesStartPos = getOffsetForRecord(recNo)
                 + DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH;
         this.context.checking(new Expectations() {
@@ -482,13 +523,15 @@ public class DataTest {
     @Test(expected = RecordNotFoundException.class)
     public void deleteDeletedRecordThrowsException() throws Exception {
         standardSetup();
-        this.data.delete(this.deletedRecNos.first());
+        Integer recNo = this.deletedRecNos.first();
+        this.data.delete(recNo);
     }
 
     @Test
     public void delete() throws Exception {
         standardSetup();
         int recNo = 1;
+        this.data.lock(recNo);
         Sequence sequence = this.context.sequence("delete");
         checkingDeleteRecord(recNo, sequence);
         this.data.delete(recNo);
@@ -505,6 +548,69 @@ public class DataTest {
                 inSequence(sequence);
             }
         });
+    }
+
+    @Test(expected = IllegalThreadStateException.class)
+    public void deleteRecordWhenNotHoldingLockThrowsException()
+            throws Exception {
+        standardSetup();
+        final int recNo = 1;
+        Thread lockThread = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    DataTest.this.data.lock(recNo);
+                } catch (RecordNotFoundException e) {
+                    throw new AssertionFailedError(Thread.currentThread()
+                            .getName()
+                            + ": " + e.getMessage());
+                }
+            }
+        });
+        lockThread.start();
+        lockThread.join();
+        this.data.delete(recNo);
+    }
+
+    @Test
+    public void deleteRecordSignalsWaitingRecord() throws Exception {
+        standardSetup();
+        final Integer recNo = 1;
+        this.data.lock(recNo);
+        assertThat(this.data.isLocked(recNo), is(true));
+
+        // Attempt to lock the same record on another thread - will block
+        Thread lockingThread = createThreadThatLocksRecordAndExpectsException(recNo);
+        lockingThread.start();
+
+        // Wait for the lockingThread to become blocked before continuing
+        Thread.sleep(1000);
+
+        checkingDeleteRecord(recNo, this.context.sequence("delete"));
+        this.data.delete(recNo);
+
+        joinThread(lockingThread);
+    }
+
+    private Thread createThreadThatLocksRecordAndExpectsException(
+            final int recNo) {
+        return new Thread(new Runnable() {
+            public void run() {
+                try {
+                    DataTest.this.data.lock(recNo);
+                    throw new AssertionFailedError(
+                            "Expected RecordNotFoundException in thread: "
+                                    + Thread.currentThread().getName());
+                } catch (RecordNotFoundException e) {
+                    // Expected since by the time this thread is unblocked the
+                    // record will be deleted
+                }
+            }
+        });
+    }
+
+    private void joinThread(Thread thread) throws InterruptedException {
+        thread.join(1000);
+        assertThat(thread.isAlive(), is(false));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -556,14 +662,24 @@ public class DataTest {
             final String[] recordValues, final Sequence sequence)
             throws Exception {
         checkingSeek(getOffsetForRecord(firstAvailableRecNo), sequence);
+
+        final StringBuilder recordBuilder = new StringBuilder();
+        for (String recordValue : recordValues) {
+            recordBuilder.append(recordValue);
+        }
+
         this.context.checking(new Expectations() {
             {
-                one(DataTest.this.mockDatabaseFile)
-                        .writeByte(VALID_RECORD_FLAG);
+                one(DataTest.this.mockDatabaseFile).writeByte(
+                        with(equal((int) DatabaseConstants.VALID_RECORD_FLAG)));
+                inSequence(sequence);
+
+                one(DataTest.this.mockDatabaseFile).write(
+                        with(equal(recordBuilder.toString().getBytes(
+                                CHARACTER_SET))));
                 inSequence(sequence);
             }
         });
-        checkingWriteRecordValues(firstAvailableRecNo, recordValues, sequence);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -586,66 +702,84 @@ public class DataTest {
         int[] matchingRecNos = { 1, 2 };
         String[] criteria = { "Buonarotti", null, "", null, null, "12345678" };
         String[][] allRecordValues = {
-                buildRecord(
-                        new String[] { "nm", "m", "", "m", "m", "12345678" },
+                padRecord(new String[] { "nm", "m", "", "m", "m", "12345678" },
                         ' '),
-                buildRecord(new String[] { "Buonarotti", "m", "", "m", "m",
+                padRecord(new String[] { "Buonarotti", "m", "", "m", "m",
                         "12345678" }, ' '),
-                buildRecord(new String[] { "Buonarotti & Family", "m", "", "m",
+                padRecord(new String[] { "Buonarotti & Family", "m", "", "m",
                         "m", "12345678" }, ' '),
-                buildRecord(new String[] { "Family of Buonarotti", "m", "",
-                        "m", "m", "12345678" }, ' '),
-                buildRecord(new String[] { "Buonarotti", "m", "", "m", "m",
-                        "nm" }, ' ') };
+                padRecord(new String[] { "Family of Buonarotti", "m", "", "m",
+                        "m", "12345678" }, ' '),
+                padRecord(
+                        new String[] { "Buonarotti", "m", "", "m", "m", "nm" },
+                        ' ') };
         Sequence sequence = this.context.sequence("find");
-        checkingFindRecords(criteria, allRecordValues, sequence);
+        checkingFindRecords(allRecordValues, sequence);
         int[] recNos = this.data.find(criteria);
         assertArrayEquals(matchingRecNos, recNos);
     }
 
-    private void checkingFindRecords(final String[] criteria,
-            final String[][] allRecordValues, final Sequence sequence)
-            throws Exception {
+    private void checkingFindRecords(final String[][] allRecordValues,
+            final Sequence sequence) throws Exception {
         for (int recNo = 0; recNo < this.recordCount; recNo++) {
             if (!this.deletedRecNos.contains(recNo)) {
-                final int currentRecNo = recNo;
-                final long recValuesStartPos = getOffsetForRecord(currentRecNo)
+                final long recValuesStartPos = getOffsetForRecord(recNo)
                         + DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH;
-                for (int i = 0; i < EXPECTED_FIELD_DESCRIPTIONS.length; i++) {
-                    if (criteria[i] != null) {
-                        final int currentIndex = i;
-                        this.context.checking(new Expectations() {
-                            {
-                                one(DataTest.this.mockDatabaseFile)
-                                        .seek(
-                                                recValuesStartPos
-                                                        + EXPECTED_FIELD_DESCRIPTIONS[currentIndex]
-                                                                .getRecordOffset());
-                                inSequence(sequence);
 
-                                one(DataTest.this.mockDatabaseFile).readFully(
-                                        with(any(byte[].class)));
-                                will(readBytes(allRecordValues[currentRecNo][currentIndex]
-                                        .getBytes()));
-                                inSequence(sequence);
-                            }
-                        });
-
-                        if (!allRecordValues[currentRecNo][i]
-                                .startsWith(criteria[i])) {
-                            break;
-                        }
-                    }
+                final StringBuilder recordBuilder = new StringBuilder();
+                for (String element : allRecordValues[recNo]) {
+                    recordBuilder.append(element);
                 }
+
+                this.context.checking(new Expectations() {
+                    {
+                        one(DataTest.this.mockDatabaseFile).seek(
+                                recValuesStartPos);
+                        inSequence(sequence);
+
+                        one(DataTest.this.mockDatabaseFile).readFully(
+                                with(any(byte[].class)));
+                        will(readBytes(recordBuilder.toString().getBytes()));
+                        inSequence(sequence);
+                    }
+                });
             }
         }
     }
 
-    @Test
-    public void findIgnoresDeletedRecords() throws Exception {
+    @Test(expected = RecordNotFoundException.class)
+    public void isLockedWithNegativeRecordNumberThrowsException()
+            throws Exception {
         standardSetup();
-        int[] recNos = this.data.find(new String[6]);
-        assertArrayEquals(new int[0], recNos);
+        this.data.isLocked(-1);
+    }
+
+    @Test(expected = RecordNotFoundException.class)
+    public void isLockedWithRecordNumberGreaterThanNumberOfRecordsThrowsException()
+            throws Exception {
+        standardSetup();
+        this.data.isLocked(this.recordCount);
+    }
+
+    @Test(expected = RecordNotFoundException.class)
+    public void isLockedOnDeletedRecordThrowsException() throws Exception {
+        standardSetup();
+        this.data.isLocked(this.deletedRecNos.first());
+    }
+
+    @Test
+    public void isLockedOnLockedRecordReturnsTrue() throws Exception {
+        standardSetup();
+        int recNo = 1;
+        this.data.lock(recNo);
+        assertThat(this.data.isLocked(recNo), is(true));
+    }
+
+    @Test
+    public void isLockedOnUnlockedRecordReturnsFalse() throws Exception {
+        standardSetup();
+        int recNo = 1;
+        assertThat(this.data.isLocked(recNo), is(false));
     }
 
     @Test(expected = RecordNotFoundException.class)
@@ -665,6 +799,139 @@ public class DataTest {
     public void lockDeletedRecordThrowsException() throws Exception {
         standardSetup();
         this.data.lock(this.deletedRecNos.first());
+    }
+
+    @Test
+    public void lock() throws Exception {
+        standardSetup();
+        int recNo = 1;
+        this.data.lock(recNo);
+        assertThat(this.data.isLocked(recNo), is(true));
+    }
+
+    @Test
+    public void canLockDifferentRecordsConcurrently() throws Exception {
+        standardSetup();
+        int firstRecNo = 1;
+        this.data.lock(firstRecNo);
+        assertThat(this.data.isLocked(firstRecNo), is(true));
+        int secondRecNo = 2;
+        this.data.lock(secondRecNo);
+        assertThat(this.data.isLocked(secondRecNo), is(true));
+    }
+
+    @Test
+    public void lockSignalsWaitingThreadAndThrowsExceptionIfRecordDeletedWhileAwaitingCondition()
+            throws Exception {
+        standardSetup();
+        final Integer recNo = 1;
+        this.data.lock(recNo);
+        assertThat(this.data.isLocked(recNo), is(true));
+
+        Thread thread1 = createThreadThatLocksRecordAndExpectsException(recNo);
+        thread1.start();
+        Thread thread2 = createThreadThatLocksRecordAndExpectsException(recNo);
+        thread2.start();
+
+        // Wait for the threads 1&2 to become blocked before continuing
+        Thread.sleep(1000);
+
+        checkingDeleteRecord(recNo, this.context.sequence("delete"));
+        this.data.delete(recNo);
+
+        joinThread(thread1);
+        joinThread(thread2);
+    }
+
+    @Test
+    public void lockThrowsExceptionIfInterruptedWhileAwaitingCondition()
+            throws Exception {
+        standardSetup();
+        final Integer recNo = 1;
+        this.data.lock(recNo);
+        assertThat(this.data.isLocked(recNo), is(true));
+
+        Thread lockingThread = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    DataTest.this.data.lock(recNo);
+                    throwError();
+                } catch (RecordNotFoundException e) {
+                    throwError();
+                } catch (IllegalThreadStateException e) {
+                    // Expected
+                }
+            }
+
+            private void throwError() throws AssertionFailedError {
+                throw new AssertionFailedError(
+                        "Expected IllegalThreadStateException in thread: "
+                                + Thread.currentThread().getName());
+            }
+        });
+        lockingThread.start();
+        Thread.sleep(1000);
+
+        lockingThread.interrupt();
+        joinThread(lockingThread);
+    }
+
+    @Test(expected = RecordNotFoundException.class)
+    public void unlockWithNegativeRecordNumberThrowsException()
+            throws Exception {
+        standardSetup();
+        this.data.unlock(-1);
+    }
+
+    @Test(expected = RecordNotFoundException.class)
+    public void unlockWithRecordNumberGreaterThanNumberOfRecordsThrowsException()
+            throws Exception {
+        standardSetup();
+        this.data.unlock(this.recordCount);
+    }
+
+    @Test(expected = RecordNotFoundException.class)
+    public void unlockDeletedRecordThrowsException() throws Exception {
+        standardSetup();
+        this.data.unlock(this.deletedRecNos.first());
+    }
+
+    @Test
+    public void unlock() throws Exception {
+        standardSetup();
+        int recNo = 1;
+        this.data.lock(recNo);
+        assertThat(this.data.isLocked(recNo), is(true));
+        this.data.unlock(recNo);
+        assertThat(this.data.isLocked(recNo), is(false));
+    }
+
+    @Test(expected = IllegalThreadStateException.class)
+    public void unlockThrowsExceptionIfRecordNotLocked() throws Exception {
+        standardSetup();
+        int recNo = 0;
+        assertThat(this.data.isLocked(recNo), is(false));
+        this.data.unlock(recNo);
+    }
+
+    @Test(expected = IllegalThreadStateException.class)
+    public void unlockThrowsExceptionIfThreadDoesNotHoldLock() throws Exception {
+        standardSetup();
+        final int recNo = 1;
+        Thread lockThread = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    DataTest.this.data.lock(recNo);
+                } catch (RecordNotFoundException e) {
+                    throw new AssertionFailedError(Thread.currentThread()
+                            .getName()
+                            + ": " + e.getMessage());
+                }
+            }
+        });
+        lockThread.start();
+        lockThread.join();
+        this.data.unlock(recNo);
     }
 
     private ReadBytesAction readBytes(byte[] bytes) {
@@ -691,6 +958,20 @@ public class DataTest {
                 target[i] = this.bytes[i];
             }
             return null;
+        }
+    }
+
+    private static final class ExceptionHandler implements
+            UncaughtExceptionHandler {
+
+        private Throwable exception;
+
+        public void uncaughtException(Thread t, Throwable e) {
+            this.exception = e;
+        }
+
+        public Throwable getException() {
+            return this.exception;
         }
     }
 }

@@ -12,6 +12,7 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.util.logging.Logger;
+
 import suncertify.db.Data;
 import suncertify.db.DataAccessException;
 import suncertify.db.DataValidationException;
@@ -63,7 +64,7 @@ public final class ServerApplication extends AbstractApplication {
      */
     public void startup() throws ApplicationException {
         // TODO We're on the EDT here - is that OK?
-        
+
         // TODO Remove hardcoded strings
         String url = "//127.0.0.1:" + getConfigurationManager().getServerPort()
                 + "/" + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME;
