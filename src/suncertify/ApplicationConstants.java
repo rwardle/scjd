@@ -35,6 +35,9 @@ public class ApplicationConstants {
     /** Default server port. */
     public static final Integer DEFAULT_SERVER_PORT = Integer.valueOf("1099");
 
+    /** Localhost IP address. */
+    public static final String LOCALHOST_ADDRESS = "127.0.0.1";
+
     /** Name under which the remote service object is registered with RMI. */
     public static final String REMOTE_BROKER_SERVICE_NAME = "BrokerService";
 

@@ -7,13 +7,13 @@
 package suncertify;
 
 import java.net.MalformedURLException;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 import suncertify.presentation.ClientConfigurationDialog;
 import suncertify.presentation.ConfigurationView;
 import suncertify.service.BrokerService;
+import suncertify.service.RmiService;
 
 /**
  * The client mode application.
@@ -21,6 +21,8 @@ import suncertify.service.BrokerService;
  * @author Richard Wardle
  */
 public final class ClientApplication extends AbstractGuiApplication {
+
+    private final RmiService rmiService;
 
     /**
      * Creates a new instance of <code>ClientApplication</code>.
@@ -31,6 +33,7 @@ public final class ClientApplication extends AbstractGuiApplication {
      *                The application exception handler.
      * @param shutdownHandler
      *                The application shutdown handler.
+     * @param rmiService
      * @throws IllegalArgumentException
      *                 If the any of the <code>configuration</code>,
      *                 <code>exceptionHandler</code> or
@@ -38,8 +41,10 @@ public final class ClientApplication extends AbstractGuiApplication {
      *                 <code>null</code>.
      */
     public ClientApplication(Configuration configuration,
-            ExceptionHandler exceptionHandler, ShutdownHandler shutdownHandler) {
+            ExceptionHandler exceptionHandler, ShutdownHandler shutdownHandler,
+            RmiService rmiService) {
         super(configuration, exceptionHandler, shutdownHandler);
+        this.rmiService = rmiService;
     }
 
     /** {@inheritDoc} */
@@ -51,13 +56,13 @@ public final class ClientApplication extends AbstractGuiApplication {
     /** {@inheritDoc} */
     @Override
     protected BrokerService createBrokerService() throws ApplicationException {
-        // TODO Remove hardcoded strings
+        // TODO Improve exception handling
         String url = "//" + getConfigurationManager().getServerAddress() + ":"
                 + getConfigurationManager().getServerPort() + "/"
                 + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME;
 
         try {
-            return (BrokerService) Naming.lookup(url);
+            return (BrokerService) this.rmiService.lookup(url);
         } catch (MalformedURLException e) {
             throw new ApplicationException(
                     "The URL used to lookup the remote broker service object "

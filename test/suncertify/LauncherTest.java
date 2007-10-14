@@ -1,9 +1,8 @@
 package suncertify;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
-import org.hamcrest.Matchers;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
@@ -76,7 +75,7 @@ public class LauncherTest {
 
                 never(LauncherTest.this.mockApplication).startup();
                 one(LauncherTest.this.mockApplication).handleException(
-                        with(Matchers.is(applicationException)));
+                        with(is(applicationException)));
                 one(LauncherTest.this.mockApplication).shutdown();
             }
         });
@@ -95,7 +94,7 @@ public class LauncherTest {
                 will(throwException(applicationException));
 
                 one(LauncherTest.this.mockApplication).handleException(
-                        with(Matchers.is(applicationException)));
+                        with(is(applicationException)));
                 one(LauncherTest.this.mockApplication).shutdown();
             }
         });

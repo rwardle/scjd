@@ -1,13 +1,13 @@
 package suncertify.presentation;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import java.awt.Component;
 import java.io.File;
 
 import javax.swing.JFileChooser;
 
-import org.hamcrest.Matchers;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -86,8 +86,7 @@ public class ConfigurationPresenterTest {
 
     @Test
     public void defaultReturnStatus() {
-        assertThat(this.presenter.getReturnStatus(), Matchers
-                .is(ReturnStatus.CANCEL));
+        assertThat(this.presenter.getReturnStatus(), is(ReturnStatus.CANCEL));
     }
 
     @Test
@@ -146,8 +145,7 @@ public class ConfigurationPresenterTest {
         });
 
         this.presenter.okButtonActionPerformed();
-        assertThat(this.presenter.getReturnStatus(), Matchers
-                .is(ReturnStatus.OK));
+        assertThat(this.presenter.getReturnStatus(), is(ReturnStatus.OK));
     }
 
     @Test
@@ -158,8 +156,7 @@ public class ConfigurationPresenterTest {
             }
         });
         this.presenter.cancelButtonActionPerformed();
-        assertThat(this.presenter.getReturnStatus(), Matchers
-                .is(ReturnStatus.CANCEL));
+        assertThat(this.presenter.getReturnStatus(), is(ReturnStatus.CANCEL));
     }
 
     @Test

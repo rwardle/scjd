@@ -5,6 +5,9 @@
  */
 package suncertify;
 
+import suncertify.db.DatabaseFactoryImpl;
+import suncertify.service.RmiServiceImpl;
+
 /**
  * @author Richard Wardle
  */
@@ -16,6 +19,7 @@ public final class ServerApplicationFactory extends AbstractApplicationFactory {
     @Override
     public Application createApplication(Configuration configuration) {
         return new ServerApplication(configuration,
-                new SysErrExceptionHandler(), new SysExitShudownHandler());
+                new SysErrExceptionHandler(), new SysExitShudownHandler(),
+                new RmiServiceImpl(), new DatabaseFactoryImpl());
     }
 }

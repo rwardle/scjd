@@ -5,6 +5,8 @@
  */
 package suncertify;
 
+import suncertify.db.DatabaseFactoryImpl;
+
 /**
  * @author Richard Wardle
  */
@@ -17,6 +19,7 @@ public final class StandaloneApplicationFactory extends
     @Override
     public Application createApplication(Configuration configuration) {
         return new StandaloneApplication(configuration,
-                new SysErrExceptionHandler(), new SysExitShudownHandler());
+                new SysErrExceptionHandler(), new SysExitShudownHandler(),
+                new DatabaseFactoryImpl());
     }
 }

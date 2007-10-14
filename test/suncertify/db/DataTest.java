@@ -1,10 +1,11 @@
 package suncertify.db;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static suncertify.db.DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS;
 import static suncertify.db.DataTestConstants.RECORD_VALUES;
@@ -24,8 +25,6 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import junit.framework.AssertionFailedError;
-
 import org.hamcrest.Description;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -33,6 +32,7 @@ import org.jmock.Sequence;
 import org.jmock.api.Action;
 import org.jmock.api.Invocation;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -451,7 +451,7 @@ public class DataTest {
         this.data.update(recNo, RECORD_VALUES);
     }
 
-    @Test(expected = IllegalThreadStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void updateRecordWhenNotHoldingLockThrowsException()
             throws Exception {
         standardSetup();
@@ -461,9 +461,8 @@ public class DataTest {
                 try {
                     DataTest.this.data.lock(recNo);
                 } catch (RecordNotFoundException e) {
-                    throw new AssertionFailedError(Thread.currentThread()
-                            .getName()
-                            + ": " + e.getMessage());
+                    fail(Thread.currentThread().getName() + ": "
+                            + e.getMessage());
                 }
             }
         });
@@ -550,7 +549,7 @@ public class DataTest {
         });
     }
 
-    @Test(expected = IllegalThreadStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void deleteRecordWhenNotHoldingLockThrowsException()
             throws Exception {
         standardSetup();
@@ -560,9 +559,8 @@ public class DataTest {
                 try {
                     DataTest.this.data.lock(recNo);
                 } catch (RecordNotFoundException e) {
-                    throw new AssertionFailedError(Thread.currentThread()
-                            .getName()
-                            + ": " + e.getMessage());
+                    fail(Thread.currentThread().getName() + ": "
+                            + e.getMessage());
                 }
             }
         });
@@ -597,9 +595,8 @@ public class DataTest {
             public void run() {
                 try {
                     DataTest.this.data.lock(recNo);
-                    throw new AssertionFailedError(
-                            "Expected RecordNotFoundException in thread: "
-                                    + Thread.currentThread().getName());
+                    fail("Expected RecordNotFoundException in thread: "
+                            + Thread.currentThread().getName());
                 } catch (RecordNotFoundException e) {
                     // Expected since by the time this thread is unblocked the
                     // record will be deleted
@@ -855,18 +852,19 @@ public class DataTest {
             public void run() {
                 try {
                     DataTest.this.data.lock(recNo);
-                    throwError();
+                    fail();
                 } catch (RecordNotFoundException e) {
-                    throwError();
+                    fail();
                 } catch (IllegalThreadStateException e) {
-                    // Expected
+                    assertTrue(
+                            "Exception cause was not an InterruptedException",
+                            e.getCause() instanceof InterruptedException);
                 }
             }
 
-            private void throwError() throws AssertionFailedError {
-                throw new AssertionFailedError(
-                        "Expected IllegalThreadStateException in thread: "
-                                + Thread.currentThread().getName());
+            private void fail() {
+                Assert.fail("Expected IllegalThreadStateException in thread: "
+                        + Thread.currentThread().getName());
             }
         });
         lockingThread.start();
@@ -906,7 +904,7 @@ public class DataTest {
         assertThat(this.data.isLocked(recNo), is(false));
     }
 
-    @Test(expected = IllegalThreadStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void unlockThrowsExceptionIfRecordNotLocked() throws Exception {
         standardSetup();
         int recNo = 0;
@@ -914,7 +912,7 @@ public class DataTest {
         this.data.unlock(recNo);
     }
 
-    @Test(expected = IllegalThreadStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void unlockThrowsExceptionIfThreadDoesNotHoldLock() throws Exception {
         standardSetup();
         final int recNo = 1;
@@ -923,9 +921,8 @@ public class DataTest {
                 try {
                     DataTest.this.data.lock(recNo);
                 } catch (RecordNotFoundException e) {
-                    throw new AssertionFailedError(Thread.currentThread()
-                            .getName()
-                            + ": " + e.getMessage());
+                    fail(Thread.currentThread().getName() + ": "
+                            + e.getMessage());
                 }
             }
         });

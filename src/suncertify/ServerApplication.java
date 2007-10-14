@@ -7,20 +7,18 @@
 package suncertify;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
-import java.rmi.Naming;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
 import java.util.logging.Logger;
 
-import suncertify.db.Data;
-import suncertify.db.DataAccessException;
 import suncertify.db.DataValidationException;
-import suncertify.db.DatabaseFileImpl;
+import suncertify.db.DatabaseFactory;
 import suncertify.presentation.ConfigurationView;
 import suncertify.presentation.ServerConfigurationDialog;
 import suncertify.service.RemoteBrokerService;
 import suncertify.service.RemoteBrokerServiceImpl;
+import suncertify.service.RmiService;
 
 /**
  * The server mode application.
@@ -31,6 +29,8 @@ public final class ServerApplication extends AbstractApplication {
 
     private static Logger LOGGER = Logger.getLogger(ServerApplication.class
             .getName());
+    private final RmiService rmiService;
+    private final DatabaseFactory databaseFactory;
 
     /**
      * Creates a new instance of <code>ServerApplication</code>.
@@ -41,6 +41,8 @@ public final class ServerApplication extends AbstractApplication {
      *                The application exception handler.
      * @param shutdownHandler
      *                The application shutdown handler.
+     * @param rmiService
+     * @param databaseFactory
      * @throws IllegalArgumentException
      *                 If the any of the <code>configuration</code>,
      *                 <code>exceptionHandler</code> or
@@ -48,8 +50,11 @@ public final class ServerApplication extends AbstractApplication {
      *                 <code>null</code>.
      */
     public ServerApplication(Configuration configuration,
-            ExceptionHandler exceptionHandler, ShutdownHandler shutdownHandler) {
+            ExceptionHandler exceptionHandler, ShutdownHandler shutdownHandler,
+            RmiService rmiService, DatabaseFactory databaseFactory) {
         super(configuration, exceptionHandler, shutdownHandler);
+        this.rmiService = rmiService;
+        this.databaseFactory = databaseFactory;
     }
 
     /** {@inheritDoc} */
@@ -63,45 +68,37 @@ public final class ServerApplication extends AbstractApplication {
      * <code>BrokerService</code> object into it.
      */
     public void startup() throws ApplicationException {
-        // TODO We're on the EDT here - is that OK?
-
-        // TODO Remove hardcoded strings
-        String url = "//127.0.0.1:" + getConfigurationManager().getServerPort()
-                + "/" + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME;
-
-        // TODO Should broker service and data class be created with factory
-        // methods or passed in to facilitate testing? Or should the Data
-        // implementation of DBMain be package access to hide it and have a
-        // factory method in the db package to return on unknown implementation
-        // of the DBMain interface?
+        // TODO Improve exception handling
+        String url = getRemoteBrokerServiceUrl();
         try {
-            LocateRegistry.createRegistry(getConfigurationManager()
+            this.rmiService.createRegistry(getConfigurationManager()
                     .getServerPort());
-            RemoteBrokerService service = new RemoteBrokerServiceImpl(new Data(
-                    new DatabaseFileImpl(getConfigurationManager()
-                            .getDatabaseFilePath())));
-            Naming.rebind(url, service);
-        } catch (FileNotFoundException e) {
-            throw new ApplicationException("Database file not found", e);
-        } catch (DataAccessException e) {
-            throw new ApplicationException("Error reading database file", e);
-        } catch (DataValidationException e) {
-            throw new ApplicationException("Invalid database file", e);
+            RemoteBrokerService service = new RemoteBrokerServiceImpl(
+                    this.databaseFactory
+                            .createDatabase(getConfigurationManager()
+                                    .getDatabaseFilePath()));
+            this.rmiService.rebind(url, service);
         } catch (RemoteException e) {
             throw new ApplicationException("Failed to export remote object", e);
         } catch (MalformedURLException e) {
             throw new ApplicationException(
                     "The URL used to bind the remote broker service object "
                             + "is malformed: '" + url + "'", e);
+        } catch (FileNotFoundException e) {
+            throw new ApplicationException("Database file not found", e);
+        } catch (DataValidationException e) {
+            throw new ApplicationException("Invalid database file", e);
+        } catch (IOException e) {
+            throw new ApplicationException("Error reading database file", e);
         }
 
         ServerApplication.LOGGER.info("Server running on port "
                 + getConfigurationManager().getServerPort());
     }
 
-    @Override
-    public void shutdown() {
-        // TODO Shutdown RMI????
-        super.shutdown();
+    private String getRemoteBrokerServiceUrl() {
+        return "//" + ApplicationConstants.LOCALHOST_ADDRESS + ":"
+                + getConfigurationManager().getServerPort() + "/"
+                + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME;
     }
 }

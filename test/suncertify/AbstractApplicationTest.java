@@ -61,10 +61,10 @@ public class AbstractApplicationTest {
                 ignoring(AbstractApplicationTest.this.mockConfiguration)
                         .exists();
                 ignoring(AbstractApplicationTest.this.mockConfiguration)
-                        .getProperty(with(a(String.class)));
+                        .getProperty(with(any(String.class)));
                 ignoring(AbstractApplicationTest.this.mockConfiguration)
-                        .setProperty(with(a(String.class)),
-                                with(a(String.class)));
+                        .setProperty(with(any(String.class)),
+                                with(any(String.class)));
                 one(AbstractApplicationTest.this.mockPresenter).realiseView();
 
                 allowing(AbstractApplicationTest.this.mockPresenter)
@@ -108,10 +108,10 @@ public class AbstractApplicationTest {
                 ignoring(AbstractApplicationTest.this.mockConfiguration)
                         .exists();
                 ignoring(AbstractApplicationTest.this.mockConfiguration)
-                        .getProperty(with(a(String.class)));
+                        .getProperty(with(any(String.class)));
                 ignoring(AbstractApplicationTest.this.mockConfiguration)
-                        .setProperty(with(a(String.class)),
-                                with(a(String.class)));
+                        .setProperty(with(any(String.class)),
+                                with(any(String.class)));
                 one(AbstractApplicationTest.this.mockPresenter).realiseView();
 
                 allowing(AbstractApplicationTest.this.mockPresenter)
@@ -122,7 +122,7 @@ public class AbstractApplicationTest {
                 will(throwException(new ConfigurationException()));
 
                 one(AbstractApplicationTest.this.mockExceptionHandler)
-                        .handleException(with(a(ApplicationException.class)));
+                        .handleException(with(any(ApplicationException.class)));
             }
         });
         new StubAbstractApplication(this.mockConfiguration,

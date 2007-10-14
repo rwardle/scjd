@@ -70,8 +70,8 @@ public class ConfigurationManagerTest {
                 ignoring(ConfigurationManagerTest.this.mockConfiguration)
                         .getProperty(with(any(String.class)));
                 ignoring(ConfigurationManagerTest.this.mockConfiguration)
-                        .setProperty(with(a(String.class)),
-                                with(a(String.class)));
+                        .setProperty(with(any(String.class)),
+                                with(any(String.class)));
 
                 allowing(ConfigurationManagerTest.this.mockConfiguration)
                         .exists();
@@ -90,8 +90,8 @@ public class ConfigurationManagerTest {
                 ignoring(ConfigurationManagerTest.this.mockConfiguration)
                         .getProperty(with(any(String.class)));
                 ignoring(ConfigurationManagerTest.this.mockConfiguration)
-                        .setProperty(with(a(String.class)),
-                                with(a(String.class)));
+                        .setProperty(with(any(String.class)),
+                                with(any(String.class)));
 
                 allowing(ConfigurationManagerTest.this.mockConfiguration)
                         .exists();
@@ -110,7 +110,7 @@ public class ConfigurationManagerTest {
                 ignoring(ConfigurationManagerTest.this.mockConfiguration)
                         .exists();
                 allowing(ConfigurationManagerTest.this.mockConfiguration)
-                        .getProperty(with(an(String.class)));
+                        .getProperty(with(any(String.class)));
                 will(returnValue(null));
                 one(ConfigurationManagerTest.this.mockConfiguration)
                         .setProperty(
@@ -176,8 +176,8 @@ public class ConfigurationManagerTest {
                 ignoring(ConfigurationManagerTest.this.mockConfiguration)
                         .getProperty(with(any(String.class)));
                 ignoring(ConfigurationManagerTest.this.mockConfiguration)
-                        .setProperty(with(a(String.class)),
-                                with(a(String.class)));
+                        .setProperty(with(any(String.class)),
+                                with(any(String.class)));
                 one(ConfigurationManagerTest.this.mockConfiguration).save();
             }
         });

@@ -7,11 +7,10 @@
 package suncertify;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
-import suncertify.db.Data;
-import suncertify.db.DataAccessException;
 import suncertify.db.DataValidationException;
-import suncertify.db.DatabaseFileImpl;
+import suncertify.db.DatabaseFactory;
 import suncertify.presentation.ConfigurationView;
 import suncertify.presentation.StandaloneConfigurationDialog;
 import suncertify.service.BrokerService;
@@ -24,6 +23,8 @@ import suncertify.service.BrokerServiceImpl;
  */
 public final class StandaloneApplication extends AbstractGuiApplication {
 
+    private final DatabaseFactory databaseFactory;
+
     /**
      * Creates a new instance of <code>StandaloneApplication</code>.
      * 
@@ -33,6 +34,7 @@ public final class StandaloneApplication extends AbstractGuiApplication {
      *                The application exception handler.
      * @param shutdownHandler
      *                The application shutdown handler.
+     * @param databaseFactory
      * @throws IllegalArgumentException
      *                 If the any of the <code>configuration</code>,
      *                 <code>exceptionHandler</code> or
@@ -40,8 +42,10 @@ public final class StandaloneApplication extends AbstractGuiApplication {
      *                 <code>null</code>.
      */
     public StandaloneApplication(Configuration configuration,
-            ExceptionHandler exceptionHandler, ShutdownHandler shutdownHandler) {
+            ExceptionHandler exceptionHandler, ShutdownHandler shutdownHandler,
+            DatabaseFactory databaseFactory) {
         super(configuration, exceptionHandler, shutdownHandler);
+        this.databaseFactory = databaseFactory;
     }
 
     /** {@inheritDoc} */
@@ -53,12 +57,14 @@ public final class StandaloneApplication extends AbstractGuiApplication {
     /** {@inheritDoc} */
     @Override
     protected BrokerService createBrokerService() throws ApplicationException {
+        // TODO Improve exception handling
         try {
-            return new BrokerServiceImpl(new Data(new DatabaseFileImpl(
-                    getConfigurationManager().getDatabaseFilePath())));
+            return new BrokerServiceImpl(this.databaseFactory
+                    .createDatabase(getConfigurationManager()
+                            .getDatabaseFilePath()));
         } catch (FileNotFoundException e) {
             throw new ApplicationException("Database file not found", e);
-        } catch (DataAccessException e) {
+        } catch (IOException e) {
             throw new ApplicationException("Error reading database file", e);
         } catch (DataValidationException e) {
             throw new ApplicationException("Invalid database file", e);

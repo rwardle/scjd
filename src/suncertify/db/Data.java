@@ -21,10 +21,10 @@ import java.util.logging.Logger;
 import suncertify.db.DatabaseSchema.FieldDescription;
 
 /**
- * 
- * @author Richard Wardle
+ * @author Richard Wardle TODO Javadoc that any DataAccessExceptions will have
+ *         an IOException as their root cause.
  */
-public final class Data implements DBMain {
+class Data implements DBMain {
 
     // TODO Hide this behind an adapter that has proper method signatures?
     // TODO Maker this package private and use a factor to create it?
@@ -50,10 +50,16 @@ public final class Data implements DBMain {
     /**
      * Creates a new instance of <code>Data</code>.
      * 
-     * @param databaseFilePath
+     * @param databaseFile
+     * @throws IllegalArgumentException
+     *                 If the <code>databaseFile</code> is <code>null</code>.
      * @throws DataValidationException
+     *                 If the database is invalid.
+     * @throws IOException
+     *                 If there is an error accessing the database.
      */
-    public Data(DatabaseFile databaseFile) throws DataValidationException {
+    public Data(DatabaseFile databaseFile) throws DataValidationException,
+            IOException {
         if (databaseFile == null) {
             throw new IllegalArgumentException("databaseFile cannot be null");
         }
@@ -61,16 +67,12 @@ public final class Data implements DBMain {
         this.databaseFile = databaseFile;
         this.databaseSchema = new DatabaseSchema();
 
-        try {
-            // TODO Move validation to a separate class?
-            validateMagicCookie();
-            validateSchema();
-            this.dataSectionOffset = this.databaseFile.getFilePointer();
-            this.recordCount = validateRecordCount();
-            cacheDeletedRecordNumbers();
-        } catch (IOException e) {
-            throw new DataAccessException(e);
-        }
+        // TODO Move validation to a separate class?
+        validateMagicCookie();
+        validateSchema();
+        this.dataSectionOffset = this.databaseFile.getFilePointer();
+        this.recordCount = validateRecordCount();
+        cacheDeletedRecordNumbers();
     }
 
     private void validateMagicCookie() throws IOException,
@@ -179,7 +181,10 @@ public final class Data implements DBMain {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} <p/>
+     * 
+     * @throws DataAccessException
+     *                 If there is an error accessing the database.
      */
     public String[] read(int recNo) throws RecordNotFoundException {
         validateRecordNumber(recNo);
@@ -232,7 +237,16 @@ public final class Data implements DBMain {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} <p/>
+     * 
+     * @throws IllegalArgumentException
+     *                 If <code>data</code> is <code>null</code> or is of
+     *                 length not equal to the database schema field count.
+     * @throws IllegalStateException
+     *                 If the calling thread does not hold the lock on the
+     *                 record to be updated.
+     * @throws DataAccessException
+     *                 If there is an error accessing the database.
      */
     public void update(int recNo, String[] data) throws RecordNotFoundException {
         validateRecordNumber(recNo);
@@ -240,17 +254,16 @@ public final class Data implements DBMain {
             throw new RecordNotFoundException("Record " + recNo
                     + " has been deleted");
         }
-        if (!isCurrentThreadHoldingLock(recNo)) {
-            throw new IllegalThreadStateException(
-                    "Calling thread does not hold the lock on record " + recNo);
-        }
-
         if (data == null) {
             throw new IllegalArgumentException("data cannot be null");
         }
         if (data.length != this.databaseSchema.getFieldCount()) {
             throw new IllegalArgumentException("data array must be of length: "
                     + this.databaseSchema.getFieldCount());
+        }
+        if (!isCurrentThreadHoldingLock(recNo)) {
+            throw new IllegalStateException(
+                    "Calling thread does not hold the lock on record " + recNo);
         }
 
         synchronized (this.databaseFile) {
@@ -304,7 +317,13 @@ public final class Data implements DBMain {
 
     /**
      * {@inheritDoc} TODO Mention that there is no need for clients to call
-     * unlock after delete.
+     * unlock after delete. <p/>
+     * 
+     * @throws IllegalStateException
+     *                 If the calling thread does not hold the lock on the
+     *                 record to be updated.
+     * @throws DataAccessException
+     *                 If there is an error accessing the database.
      */
     public void delete(int recNo) throws RecordNotFoundException {
         validateRecordNumber(recNo);
@@ -313,7 +332,7 @@ public final class Data implements DBMain {
                     + " has been deleted");
         }
         if (!isCurrentThreadHoldingLock(recNo)) {
-            throw new IllegalThreadStateException(
+            throw new IllegalStateException(
                     "Calling thread does not hold the lock on record " + recNo);
         }
 
@@ -327,16 +346,20 @@ public final class Data implements DBMain {
                 throw new DataAccessException(e);
             }
         }
-
         unlockRecord(recNo);
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
-     * This implementation does not throw <code>RecordNotFoundException</code>.
+     * {@inheritDoc} <p/> This implementation does not throw
+     * <code>RecordNotFoundException</code>.
+     * 
+     * @throws IllegalArgumentException
+     *                 If <code>criteria</code> is <code>null</code> or is
+     *                 of length not equal to the database schema field count.
+     * @throws DataAccessException
+     *                 If there is an error accessing the database.
      */
-    public int[] find(String[] criteria) throws RecordNotFoundException {
+    public int[] find(String[] criteria) {
         if (criteria == null) {
             throw new IllegalArgumentException("criteria cannot be null");
         }
@@ -396,9 +419,15 @@ public final class Data implements DBMain {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
-     * This implementation does not throw <code>DuplicateKeyException</code>.
+     * {@inheritDoc} <p/> This implementation does not throw
+     * <code>DuplicateKeyException</code>.
+     * 
+     * @throws IllegalArgumentException
+     *                 If <code>data</code> is <code>null</code> or is of
+     *                 length not equal to the database schema field count or
+     *                 contains a <code>null</code> value.
+     * @throws DataAccessException
+     *                 If there is an error accessing the database.
      */
     public int create(String[] data) {
         if (data == null) {
@@ -456,6 +485,13 @@ public final class Data implements DBMain {
      * {@inheritDoc}
      * <p>
      * TODO Mention lock/operation/unlock on single thread contract.
+     * 
+     * @throws IllegalThreadStateException
+     *                 If the calling thread is interrupted while waiting to
+     *                 acquire the lock. The cause of this exception will be the
+     *                 will be the original <code>InterruptedException</code>
+     *                 which can be accessed via the <code>getCause</code>
+     *                 method.
      */
     public void lock(int recNo) throws RecordNotFoundException {
         validateRecordNumber(recNo);
@@ -477,9 +513,11 @@ public final class Data implements DBMain {
                     condition.await();
                 }
             } catch (InterruptedException e) {
-                throw new IllegalThreadStateException(
+                IllegalThreadStateException exception = new IllegalThreadStateException(
                         "Thread has been interrupted while waiting for the lock on record "
                                 + recNo);
+                exception.initCause(e);
+                throw exception;
             }
 
             if (isRecordDeleted(recNo)) {
@@ -496,6 +534,10 @@ public final class Data implements DBMain {
 
     /**
      * {@inheritDoc}
+     * 
+     * @throws IllegalStateException
+     *                 If the calling thread does not hold the lock on the
+     *                 record to be unlocked.
      */
     public void unlock(int recNo) throws RecordNotFoundException {
         validateRecordNumber(recNo);
@@ -507,7 +549,7 @@ public final class Data implements DBMain {
         if (isCurrentThreadHoldingLock(recNo)) {
             unlockRecord(recNo);
         } else {
-            throw new IllegalThreadStateException(
+            throw new IllegalStateException(
                     "Calling thread does not hold the lock on record " + recNo);
         }
     }

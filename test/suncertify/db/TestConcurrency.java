@@ -1,6 +1,5 @@
 package suncertify.db;
 
-
 public class TestConcurrency {
 
     private static final int THREAD_COUNT = 1000;
@@ -83,7 +82,11 @@ public class TestConcurrency {
             } catch (RecordNotFoundException ex) {
                 LOG("<I>    Record Index not Valid :" + this.action.getIndex()
                         + "</I>");
+            } catch (IllegalStateException ex) {
+                LOG("<I>    Thread does not hold lock on record :"
+                        + this.action.getIndex() + "</I>");
             }
+
             TestConcurrency.this.counter.hit();
         }
 

@@ -1,7 +1,7 @@
 /*
  * RemoteBrokerServiceImpl.java
  *
- * 11 June 2007
+ * 11 Jun 2007
  */
 
 package suncertify.service;
@@ -9,7 +9,7 @@ package suncertify.service;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-import suncertify.db.DBMain;
+import suncertify.db.Database;
 
 /**
  * 
@@ -25,9 +25,8 @@ public final class RemoteBrokerServiceImpl extends UnicastRemoteObject
     /**
      * Creates a new instance of RemoteBrokerServiceImpl.
      */
-    public RemoteBrokerServiceImpl(DBMain data) throws RemoteException {
-        // TODO: Check for null
-        this.service = new BrokerServiceImpl(data);
+    public RemoteBrokerServiceImpl(Database database) throws RemoteException {
+        this.service = new BrokerServiceImpl(database);
     }
 
     public String getHelloWorld() {

@@ -6,7 +6,7 @@
 
 package suncertify.service;
 
-import suncertify.db.DBMain;
+import suncertify.db.Database;
 
 /**
  * 
@@ -14,7 +14,10 @@ import suncertify.db.DBMain;
  */
 public final class BrokerServiceImpl implements BrokerService {
 
-    public BrokerServiceImpl(DBMain data) {
+    public BrokerServiceImpl(Database database) {
+        if (database == null) {
+            throw new IllegalArgumentException("database cannot be null");
+        }
     }
 
     /**
