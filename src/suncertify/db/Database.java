@@ -57,10 +57,9 @@ public interface Database {
      * 
      * @param criteria
      * @return
-     * @throws RecordNotFoundException
      * @throws IOException
      */
-    int[] find(String[] criteria) throws RecordNotFoundException, IOException;
+    int[] find(String[] criteria) throws IOException;
 
     /**
      * Creates a new record in the database (possibly reusing a deleted entry).

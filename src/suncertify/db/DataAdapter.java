@@ -41,8 +41,7 @@ public class DataAdapter implements Database {
         }
     }
 
-    public int[] find(String[] criteria) throws RecordNotFoundException,
-            IOException {
+    public int[] find(String[] criteria) throws IOException {
         try {
             return this.data.find(criteria);
         } catch (DataAccessException e) {

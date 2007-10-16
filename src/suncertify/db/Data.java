@@ -369,7 +369,6 @@ class Data implements DBMain {
                             + this.databaseSchema.getFieldCount());
         }
 
-        // TODO Should this be case insensitive?
         List<Integer> matchingRecNos = new ArrayList<Integer>();
         for (int recNo = 0; recNo < this.recordCount; recNo++) {
             try {

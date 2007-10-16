@@ -51,7 +51,8 @@ public class DataTest {
 
     @Before
     public void setUp() throws Exception {
-        // Set a default exception handler to pick failures in addtional threads
+        // Set a default exception handler to pickup failures in addtional
+        // threads
         this.exceptionHandler = new ExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this.exceptionHandler);
 
