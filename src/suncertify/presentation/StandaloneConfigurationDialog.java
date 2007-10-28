@@ -85,8 +85,8 @@ public final class StandaloneConfigurationDialog extends
         constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.BOTH;
         constraints.gridx = 1;
-        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
         constraints.gridy = 0;
+        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
         constraints.weightx = 1;
         this.databaseFilePathField = new JTextField();
         this.databaseFilePathField.setEditable(false);

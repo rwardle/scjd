@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import suncertify.db.Database;
 import suncertify.presentation.ClientConfigurationDialog;
-import suncertify.service.RemoteBrokerServiceImpl;
+import suncertify.service.RemoteBrokerService;
 import suncertify.service.RmiService;
 
 public class ClientApplicationTest {
@@ -21,6 +21,7 @@ public class ClientApplicationTest {
     private ShutdownHandler mockShutdownHandler;
     private RmiService mockRmiService;
     private Database mockDatabase;
+    private RemoteBrokerService mockRemoteBrokerService;
 
     @Before
     public void setUp() {
@@ -29,6 +30,8 @@ public class ClientApplicationTest {
         this.mockShutdownHandler = this.context.mock(ShutdownHandler.class);
         this.mockRmiService = this.context.mock(RmiService.class);
         this.mockDatabase = this.context.mock(Database.class);
+        this.mockRemoteBrokerService = this.context
+                .mock(RemoteBrokerService.class);
     }
 
     @After
@@ -74,14 +77,13 @@ public class ClientApplicationTest {
 
                 one(ClientApplicationTest.this.mockRmiService).lookup(
                         with(equal(url)));
-                will(returnValue(new RemoteBrokerServiceImpl(
-                        ClientApplicationTest.this.mockDatabase)));
+                will(returnValue(ClientApplicationTest.this.mockRemoteBrokerService));
             }
         });
 
         ClientApplication application = new ClientApplication(
                 this.mockConfiguration, this.mockExceptionHandler,
                 this.mockShutdownHandler, this.mockRmiService);
-        assertTrue(application.createBrokerService() instanceof RemoteBrokerServiceImpl);
+        assertTrue(application.createBrokerService() instanceof RemoteBrokerService);
     }
 }

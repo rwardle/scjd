@@ -22,6 +22,15 @@ public final class BrokerServiceImpl implements BrokerService {
 
     private static final Logger LOGGER = Logger
             .getLogger(BrokerServiceImpl.class.getName());
+    private static final int CUSTOMER_ID_MAXIMUM_LENGTH = 8;
+    private static final int DATABASE_FIELD_COUNT = 6;
+    private static final int NAME_INDEX = 0;
+    private static final int LOCATION_INDEX = 1;
+    private static final int SPECIALTIES_INDEX = 2;
+    private static final int SIZE_INDEX = 3;
+    private static final int RATE_INDEX = 4;
+    private static final int OWNER_INDEX = 5;
+
     private final Database database;
 
     public BrokerServiceImpl(Database database) {
@@ -31,26 +40,13 @@ public final class BrokerServiceImpl implements BrokerService {
         this.database = database;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String getHelloWorld() {
-        return "Hello world!";
-    }
-
-    // TODO Have a method to return all records or imply it from null criteria
-    // (if so - document it)?
-
     public List<Contractor> search(SearchCriteria searchCriteria)
             throws IOException {
         if (searchCriteria == null) {
             throw new IllegalArgumentException("searchCriteria cannot be null");
         }
 
-        String[] findCriteria = new String[] { searchCriteria.getName(),
-                searchCriteria.getLocation(), searchCriteria.getSpecialties(),
-                searchCriteria.getSize(), searchCriteria.getRate(),
-                searchCriteria.getOwner() };
+        String[] findCriteria = searchCriteria.toArray();
         int[] recNos = this.database.find(findCriteria);
 
         List<Contractor> contractors = new ArrayList<Contractor>();
@@ -58,7 +54,7 @@ public final class BrokerServiceImpl implements BrokerService {
             try {
                 String[] data = this.database.read(recNo);
                 if (isExactMatch(findCriteria, data)) {
-                    contractors.add(new Contractor(data));
+                    contractors.add(new Contractor(recNo, data));
                 }
             } catch (RecordNotFoundException e) {
                 LOGGER.warning("Record " + recNo
@@ -79,8 +75,99 @@ public final class BrokerServiceImpl implements BrokerService {
         return matching;
     }
 
-    public void book(Contractor contractor) {
-        // TODO Check fields passed in match what is currently in the database
-        // before doing the booking
+    public void book(String customerId, Contractor contractor)
+            throws IOException, ContractorDeletedException,
+            ContractorModifiedException {
+        if (customerId == null) {
+            throw new IllegalArgumentException("customeId cannot be null");
+        }
+        if (customerId.length() > CUSTOMER_ID_MAXIMUM_LENGTH) {
+            throw new IllegalArgumentException(
+                    "customerId cannot be longer than "
+                            + CUSTOMER_ID_MAXIMUM_LENGTH + " characters");
+        }
+        if (contractor == null) {
+            throw new IllegalArgumentException("contractor cannot be null");
+        }
+        if (hasNullField(contractor)) {
+            throw new IllegalArgumentException(
+                    "contractor cannot have a null field");
+        }
+
+        int recNo = contractor.getRecordNumber();
+        lockRecord(recNo);
+        try {
+            validateRecord(recNo, contractor);
+            updateRecord(recNo, customerId);
+        } catch (RecordNotFoundException e) {
+            // TODO This shouldn't be possible since we've got the lock on the
+            // record??
+            throw new ContractorDeletedException(e);
+        } finally {
+            unlockRecord(recNo);
+        }
+    }
+
+    private boolean hasNullField(Contractor contractor) {
+        return contractor.getName() == null || contractor.getLocation() == null
+                || contractor.getSpecialties() == null
+                || contractor.getSize() == null || contractor.getRate() == null
+                || contractor.getOwner() == null;
+    }
+
+    private void lockRecord(int recNo) throws ContractorDeletedException,
+            IOException {
+        try {
+            this.database.lock(recNo);
+        } catch (RecordNotFoundException e) {
+            throw new ContractorDeletedException(e);
+        } catch (InterruptedException e) {
+            // TODO Set cause?
+            throw new IOException(
+                    "Thread was interrupted while waiting for the lock");
+        }
+    }
+
+    private void validateRecord(int recNo, Contractor contractor)
+            throws ContractorModifiedException, RecordNotFoundException,
+            IOException {
+        String[] data = this.database.read(recNo);
+        if (isModified(contractor, data)) {
+            throw new ContractorModifiedException("Contractor has been modifed");
+        }
+    }
+
+    private boolean isModified(Contractor contractor, String[] data) {
+        boolean modified = !data[NAME_INDEX].equals(contractor.getName())
+                || !data[LOCATION_INDEX].equals(contractor.getLocation())
+                || !data[SPECIALTIES_INDEX].equals(contractor.getSpecialties())
+                || !data[SIZE_INDEX].equals(contractor.getSize())
+                || !data[RATE_INDEX].equals(contractor.getRate());
+
+        /*
+         * If the only field that does not match is the owner and the owner is
+         * an empty string then that implies that the record has been unbooked.
+         * Allow the booking to continue in this case.
+         */
+        return modified || !data[OWNER_INDEX].equals("")
+                && !data[OWNER_INDEX].equals(contractor.getOwner());
+    }
+
+    private void updateRecord(int recNo, String customerId)
+            throws RecordNotFoundException, IOException {
+        // Only need to update the owner
+        String[] updateData = new String[DATABASE_FIELD_COUNT];
+        updateData[OWNER_INDEX] = customerId;
+        this.database.update(recNo, updateData);
+    }
+
+    private void unlockRecord(int recNo) {
+        try {
+            this.database.unlock(recNo);
+        } catch (RecordNotFoundException e) {
+            // TODO This shouldn't be possible since we've got the lock on
+            // the record??
+            LOGGER.warning(e.getMessage());
+        }
     }
 }

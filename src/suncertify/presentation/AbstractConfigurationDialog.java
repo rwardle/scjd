@@ -6,12 +6,12 @@
 
 package suncertify.presentation;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -221,7 +221,9 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.gridx = 1;
         constraints.gridy = 3;
-        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        // TODO Stops window resize icon overlaying button on Mac
+        constraints.insets = new Insets(4, 4, 15, 4);
+        // TODO Fix this
         constraints.weightx = 0.15;
         add(initialiseButtonPanel(), constraints);
     }
@@ -235,9 +237,9 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
     }
 
     private JPanel initialiseMessagePanel() {
-        JPanel panel = new JPanel();
+        JGradientPanel panel = new JGradientPanel(
+                ApplicationConstants.DARK_BLUE, ApplicationConstants.LIGHT_BLUE);
         panel.setLayout(new GridBagLayout());
-        panel.setBackground(Color.WHITE);
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.FIRST_LINE_START;

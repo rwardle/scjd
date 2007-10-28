@@ -31,16 +31,14 @@ public final class RemoteBrokerServiceImpl extends UnicastRemoteObject
         this.service = new BrokerServiceImpl(database);
     }
 
-    public String getHelloWorld() {
-        return "Remote " + this.service.getHelloWorld();
-    }
-
     public List<Contractor> search(SearchCriteria searchCriteria)
             throws IOException {
         return this.service.search(searchCriteria);
     }
 
-    public void book(Contractor contractor) {
-        this.service.book(contractor);
+    public void book(String customerId, Contractor contractor)
+            throws IOException, ContractorDeletedException,
+            ContractorModifiedException {
+        this.service.book(customerId, contractor);
     }
 }

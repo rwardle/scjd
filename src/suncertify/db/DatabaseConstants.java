@@ -10,7 +10,7 @@ package suncertify.db;
  */
 public class DatabaseConstants {
 
-    static final String CHARACTER_SET = "US-ASCII";
+    static final String CHARACTER_SET = "ISO-8859-1";
     static final char PAD_CHARACTER = ' ';
 
     static final int MAGIC_COOKIE = 513;

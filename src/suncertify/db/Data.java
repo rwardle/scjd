@@ -26,22 +26,23 @@ import suncertify.db.DatabaseSchema.FieldDescription;
  */
 class Data implements DBMain {
 
-    // TODO Hide this behind an adapter that has proper method signatures?
-    // TODO Maker this package private and use a factor to create it?
-    // TODO Make this a singleton?
     // TODO Use a lock manager class?
-    // TODO Add runtime exceptions to method signatures (or just javadoc)
 
     private static final Logger LOGGER = Logger.getLogger(Data.class.getName());
     private final DatabaseFile databaseFile;
     private final DatabaseSchema databaseSchema;
     private final long dataSectionOffset;
+
+    // TODO Make these collections volatile and update them using this technique
+    // http://www.ibm.com/developerworks/java/library/j-hashmap.html?ca=drs-
     private final SortedSet<Integer> deletedRecNos = Collections
             .synchronizedSortedSet(new TreeSet<Integer>());
     private final Map<Integer, Long> lockedRecords = Collections
             .synchronizedMap(new HashMap<Integer, Long>());
+
     // TODO This is the count of all records including deleted ones - consider
-    // renaming this to make it clearer. Should this be volatile?
+    // renaming this to make it clearer. Hard for a junior programmer to
+    // understand volatile?
     private volatile int recordCount;
 
     private final ReentrantLock lock = new ReentrantLock();
@@ -237,6 +238,7 @@ class Data implements DBMain {
     }
 
     /**
+     * TODO Mention that if a data element is null, the field is not udpated
      * {@inheritDoc} <p/>
      * 
      * @throws IllegalArgumentException
@@ -396,10 +398,10 @@ class Data implements DBMain {
                             if (!recordValue.startsWith(criteria[i])) {
                                 break;
                             }
+                        }
 
-                            if (i == fieldDescriptions.length - 1) {
-                                matchingRecNos.add(recNo);
-                            }
+                        if (i == fieldDescriptions.length - 1) {
+                            matchingRecNos.add(recNo);
                         }
                     }
                 }

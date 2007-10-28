@@ -6,6 +6,7 @@
 
 package suncertify.presentation;
 
+
 /**
  * 
  * @author Richard Wardle
@@ -23,5 +24,15 @@ public interface MainView {
     /** Realises the view and its components. */
     void realise();
 
-    void setLabelText(String text);
+    String getNameCriteria();
+
+    void setNameCriteria(String nameCriteria);
+
+    String getLocationCriteria();
+
+    void setLocationCriteria(String locationCriteria);
+
+    void setTableModel(ContractorTableModel tableModel);
+
+    void setStatusLabelText(String text);
 }

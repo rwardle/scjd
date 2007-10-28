@@ -717,6 +717,29 @@ public class DataTest {
         assertArrayEquals(matchingRecNos, recNos);
     }
 
+    @Test
+    public void findWithAllCriteriaNullReturnsAllRecords() throws Exception {
+        standardSetup();
+        int[] matchingRecNos = { 0, 1, 2, 3, 4 };
+        String[] criteria = { null, null, null, null, null, null };
+        String[][] allRecordValues = {
+                padRecord(new String[] { "nm", "m", "", "m", "m", "12345678" },
+                        ' '),
+                padRecord(new String[] { "Buonarotti", "m", "", "m", "m",
+                        "12345678" }, ' '),
+                padRecord(new String[] { "Buonarotti & Family", "m", "", "m",
+                        "m", "12345678" }, ' '),
+                padRecord(new String[] { "Family of Buonarotti", "m", "", "m",
+                        "m", "12345678" }, ' '),
+                padRecord(
+                        new String[] { "Buonarotti", "m", "", "m", "m", "nm" },
+                        ' ') };
+        Sequence sequence = this.context.sequence("find");
+        checkingFindRecords(allRecordValues, sequence);
+        int[] recNos = this.data.find(criteria);
+        assertArrayEquals(matchingRecNos, recNos);
+    }
+
     private void checkingFindRecords(final String[][] allRecordValues,
             final Sequence sequence) throws Exception {
         for (int recNo = 0; recNo < this.recordCount; recNo++) {

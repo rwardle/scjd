@@ -16,9 +16,8 @@ import java.util.List;
  */
 public interface BrokerService {
 
-    String getHelloWorld() throws IOException;
-
     List<Contractor> search(SearchCriteria searchCriteria) throws IOException;
 
-    void book(Contractor contractor) throws IOException;
+    void book(String customerId, Contractor contractor) throws IOException,
+            ContractorDeletedException, ContractorModifiedException;
 }

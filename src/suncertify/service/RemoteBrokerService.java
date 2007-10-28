@@ -18,9 +18,9 @@ import java.util.List;
  */
 public interface RemoteBrokerService extends Remote, BrokerService {
 
-    String getHelloWorld() throws RemoteException;
-
     List<Contractor> search(SearchCriteria searchCriteria) throws IOException;
 
-    void book(Contractor contractor) throws RemoteException;
+    void book(String customerId, Contractor contractor) throws RemoteException,
+            IOException, ContractorDeletedException,
+            ContractorModifiedException;
 }
