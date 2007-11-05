@@ -6,6 +6,7 @@
 
 package suncertify.presentation;
 
+import javax.swing.JFrame;
 
 /**
  * 
@@ -35,4 +36,10 @@ public interface MainView {
     void setTableModel(ContractorTableModel tableModel);
 
     void setStatusLabelText(String text);
+
+    JFrame getFrame();
+
+    void showGlassPane();
+
+    void hideGlassPane();
 }

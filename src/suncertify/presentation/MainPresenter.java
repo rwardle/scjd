@@ -6,11 +6,15 @@
 
 package suncertify.presentation;
 
-import java.io.IOException;
 import java.text.ChoiceFormat;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
+
+import javax.swing.JOptionPane;
+
+import org.jdesktop.swingworker.SwingWorker;
 
 import suncertify.service.BrokerService;
 import suncertify.service.Contractor;
@@ -22,6 +26,7 @@ import suncertify.service.SearchCriteria;
  * @author Richard Wardle
  */
 public class MainPresenter {
+
     private final BrokerService service;
     private final MainView view;
     private final ResourceBundle resourceBundle;
@@ -33,6 +38,7 @@ public class MainPresenter {
      *                The broker service.
      * @param view
      *                The main view.
+     * @param executor
      */
     public MainPresenter(BrokerService service, MainView view) {
         if (service == null) {
@@ -53,25 +59,49 @@ public class MainPresenter {
     }
 
     public final void searchButtonActionPerformed() {
-        // TODO Use SwingWorker
-        try {
-            String nameCriteria = substituteNullForEmptyString(this.view
-                    .getNameCriteria());
-            String locationCriteria = substituteNullForEmptyString(this.view
-                    .getLocationCriteria());
-            SearchCriteria searchCriteria = new SearchCriteria().setName(
-                    nameCriteria).setLocation(locationCriteria);
-            List<Contractor> contractors = this.service.search(searchCriteria);
+        // TODO Disable search fields and button
 
-            ContractorTableModel tableModel = new ContractorTableModel(
-                    contractors);
-            this.view.setTableModel(tableModel);
-            this.view.setStatusLabelText(buildStatusLabelText(searchCriteria,
-                    contractors.size()));
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        this.view.showGlassPane();
+
+        String nameCriteria = substituteNullForEmptyString(this.view
+                .getNameCriteria().trim());
+        String locationCriteria = substituteNullForEmptyString(this.view
+                .getLocationCriteria().trim());
+        final SearchCriteria searchCriteria = new SearchCriteria().setName(
+                nameCriteria).setLocation(locationCriteria);
+
+        createSearchWorker(searchCriteria).execute();
+    }
+
+    SwingWorker<List<Contractor>, Void> createSearchWorker(
+            final SearchCriteria searchCriteria) {
+        SwingWorker<List<Contractor>, Void> worker = new SwingWorker<List<Contractor>, Void>() {
+            @Override
+            protected List<Contractor> doInBackground() throws Exception {
+                return MainPresenter.this.service.search(searchCriteria);
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    List<Contractor> contractors = get();
+                    ContractorTableModel tableModel = new ContractorTableModel(
+                            contractors);
+                    MainPresenter.this.view.setTableModel(tableModel);
+                    MainPresenter.this.view
+                            .setStatusLabelText(buildStatusLabelText(
+                                    searchCriteria, contractors.size()));
+                    MainPresenter.this.view.hideGlassPane();
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        };
+        return worker;
     }
 
     private String substituteNullForEmptyString(String str) {
@@ -115,5 +145,10 @@ public class MainPresenter {
                     .getString("MainFrame.statusLabel.noCriteria.text");
         }
         return pattern;
+    }
+
+    public void bookButtonActionPerformed(int rowNo) {
+        // TODO Display summary of contractor to be booked in dialog
+        String value = JOptionPane.showInputDialog("fskdfjsldk");
     }
 }

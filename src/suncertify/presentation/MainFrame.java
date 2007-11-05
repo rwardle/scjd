@@ -6,18 +6,29 @@
 
 package suncertify.presentation;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -40,14 +51,10 @@ public final class MainFrame extends JFrame implements MainView {
 
     // TODO
     // Add button to "Retreive All" - this could also be a menu option?
-    // Colour-code table rows based on contractor status
-    // Add toolbar? What to put in it?
     // About box could show current configuration details
     // Add help question marks (like in Eclipse).
-    // Use Glasspane and busy cursor when making search calls
     // Check on small screen resultions 640x480
     // Make escape key clear text fields?
-    // Mac scrolling bug - just in java 6 beta?
     // Focus goes to text field when clicking on button in table
 
     private static final long serialVersionUID = 1L;
@@ -57,13 +64,16 @@ public final class MainFrame extends JFrame implements MainView {
     private static final Dimension MINIMUM_SIZE = new Dimension(320, 240);
     private static final Dimension TEXT_FIELD_PREFERRED_SIZE = new Dimension(
             100, 25);
+    private static final int TABLE_ROW_HEIGHT = 18;
 
     private final ResourceBundle resourceBundle;
     private final JLabel statusLabel;
+    private final ContractorTableColumnModel contractorTableColumnModel;
     private final JTable resultsTable;
     private final JTextField nameTextField;
     private final JTextField locationTextField;
     private final JButton searchButton;
+    private final Component glassPane;
     private MainPresenter presenter;
 
     public MainFrame() {
@@ -72,9 +82,12 @@ public final class MainFrame extends JFrame implements MainView {
         this.statusLabel = new JLabel();
 
         // Display an empty table initially
+        this.contractorTableColumnModel = new ContractorTableColumnModel();
         this.resultsTable = new JTable(new ContractorTableModel(
-                new ArrayList<Contractor>()), new ContractorTableColumnModel());
+                new ArrayList<Contractor>()), this.contractorTableColumnModel);
+        this.resultsTable.setRowHeight(TABLE_ROW_HEIGHT);
         this.resultsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.resultsTable.setSurrendersFocusOnKeystroke(true);
 
         this.nameTextField = new JTextField();
         this.nameTextField.addActionListener(new ActionListener() {
@@ -98,6 +111,9 @@ public final class MainFrame extends JFrame implements MainView {
             }
         });
 
+        this.glassPane = new GlassPane();
+        setGlassPane(this.glassPane);
+
         // TODO Hook this into shutdown handler
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setJMenuBar(initialiseMenuBar());
@@ -109,6 +125,7 @@ public final class MainFrame extends JFrame implements MainView {
 
     public void setPresenter(MainPresenter presenter) {
         this.presenter = presenter;
+        this.contractorTableColumnModel.setPresenter(presenter);
     }
 
     public void realise() {
@@ -142,6 +159,18 @@ public final class MainFrame extends JFrame implements MainView {
 
     public void setStatusLabelText(String text) {
         this.statusLabel.setText(text);
+    }
+
+    public JFrame getFrame() {
+        return this;
+    }
+
+    public void showGlassPane() {
+        this.glassPane.setVisible(true);
+    }
+
+    public void hideGlassPane() {
+        this.glassPane.setVisible(false);
     }
 
     private JMenuBar initialiseMenuBar() {
@@ -204,6 +233,7 @@ public final class MainFrame extends JFrame implements MainView {
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.LINE_START;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.gridx = 0;
         constraints.gridy = 0;
@@ -296,5 +326,59 @@ public final class MainFrame extends JFrame implements MainView {
         panel.add(this.statusLabel, constraints);
 
         return panel;
+    }
+
+    private static final class GlassPane extends JComponent {
+
+        private static final long serialVersionUID = 1L;
+
+        public GlassPane() {
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            addMouseListener(new MouseAdapter() {
+                // Blocking all mouse events
+            });
+            addMouseMotionListener(new MouseMotionAdapter() {
+                // Blocking all mouse motion events
+            });
+            addKeyListener(new KeyAdapter() {
+                // Blocking all key events
+            });
+
+            // Don't let the focus leave the glasspane if it's visible
+            addFocusListener(new FocusListener() {
+                public void focusGained(FocusEvent e) {
+                    // no-op
+                }
+
+                public void focusLost(FocusEvent e) {
+                    if (isVisible()) {
+                        requestFocus();
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void setVisible(boolean visible) {
+            super.setVisible(visible);
+
+            // Get the focus if we're showing the glasspane
+            if (visible) {
+                requestFocus();
+            }
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+
+            // TODO Make glasspane completely transparent - action completes so
+            // quickly that it creates a flashing effect
+            Graphics2D g2D = (Graphics2D) g;
+            g2D.setColor(Color.BLACK);
+            g2D.setComposite(AlphaComposite.getInstance(
+                    AlphaComposite.SRC_OVER, 0.1f));
+            g2D.fill(g2D.getClip());
+        }
     }
 }

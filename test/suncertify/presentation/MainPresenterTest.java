@@ -1,13 +1,22 @@
 package suncertify.presentation;
 
+import static org.junit.Assert.fail;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JDialog;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.jdesktop.swingworker.SwingWorker;
+import org.jdesktop.swingworker.SwingWorker.StateValue;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,21 +26,33 @@ import suncertify.service.Contractor;
 import suncertify.service.SearchCriteria;
 
 public class MainPresenterTest {
-    private final Mockery context = new Mockery();
+
+    private final Mockery context = new Mockery() {
+        {
+            setImposteriser(ClassImposteriser.INSTANCE);
+        }
+    };
+    private boolean workerRunning;
     private BrokerService mockBrokerService;
     private MainView mockView;
     private MainPresenter presenter;
+    private JDialog mockCustomerIdDialog;
 
     @Before
     public void setUp() {
+        this.workerRunning = false;
         this.mockBrokerService = this.context.mock(BrokerService.class);
         this.mockView = this.context.mock(MainView.class);
-        this.presenter = new MainPresenter(this.mockBrokerService,
+        this.presenter = new StubMainPresenter(this.mockBrokerService,
                 this.mockView);
+        this.mockCustomerIdDialog = this.context.mock(JDialog.class);
     }
 
     @After
     public void verify() {
+        while (this.workerRunning) {
+            // Wait for any swing workers to complete
+        }
         this.context.assertIsSatisfied();
     }
 
@@ -69,6 +90,8 @@ public class MainPresenterTest {
                 + "</b> and Location is <b>" + locationCriteria + "</b></html>";
         this.context.checking(new Expectations() {
             {
+                one(MainPresenterTest.this.mockView).showGlassPane();
+
                 one(MainPresenterTest.this.mockView).getNameCriteria();
                 will(returnValue(nameCriteria));
 
@@ -85,6 +108,8 @@ public class MainPresenterTest {
 
                 one(MainPresenterTest.this.mockView).setStatusLabelText(
                         with(equal(statusLabelText)));
+
+                one(MainPresenterTest.this.mockView).hideGlassPane();
             }
         });
         this.presenter.searchButtonActionPerformed();
@@ -100,6 +125,8 @@ public class MainPresenterTest {
                 + "</b></html>";
         this.context.checking(new Expectations() {
             {
+                one(MainPresenterTest.this.mockView).showGlassPane();
+
                 one(MainPresenterTest.this.mockView).getNameCriteria();
                 will(returnValue(nameCriteria));
 
@@ -117,6 +144,8 @@ public class MainPresenterTest {
 
                 one(MainPresenterTest.this.mockView).setStatusLabelText(
                         with(equal(statusLabelText)));
+
+                one(MainPresenterTest.this.mockView).hideGlassPane();
             }
         });
         this.presenter.searchButtonActionPerformed();
@@ -133,6 +162,8 @@ public class MainPresenterTest {
                 + "</b></html>";
         this.context.checking(new Expectations() {
             {
+                one(MainPresenterTest.this.mockView).showGlassPane();
+
                 one(MainPresenterTest.this.mockView).getNameCriteria();
                 will(returnValue(nameCriteria));
 
@@ -149,6 +180,8 @@ public class MainPresenterTest {
 
                 one(MainPresenterTest.this.mockView).setStatusLabelText(
                         with(equal(statusLabelText)));
+
+                one(MainPresenterTest.this.mockView).hideGlassPane();
             }
         });
         this.presenter.searchButtonActionPerformed();
@@ -165,6 +198,8 @@ public class MainPresenterTest {
                 + contractors.size() + " contractor</b></html>";
         this.context.checking(new Expectations() {
             {
+                one(MainPresenterTest.this.mockView).showGlassPane();
+
                 one(MainPresenterTest.this.mockView).getNameCriteria();
                 will(returnValue(nameCriteria));
 
@@ -180,9 +215,50 @@ public class MainPresenterTest {
 
                 one(MainPresenterTest.this.mockView).setStatusLabelText(
                         with(equal(statusLabelText)));
+
+                one(MainPresenterTest.this.mockView).hideGlassPane();
             }
         });
         this.presenter.searchButtonActionPerformed();
+    }
+
+    @Test
+    public void shouldTrimSearchCriteria() throws Exception {
+        final String nameCriteria = " ";
+        final String locationCriteria = " ";
+        final List<Contractor> contractors = new ArrayList<Contractor>();
+        final String statusLabelText = "<html>Viewing all <b>"
+                + contractors.size() + " contractors</b></html>";
+        this.context.checking(new Expectations() {
+            {
+                one(MainPresenterTest.this.mockView).showGlassPane();
+
+                one(MainPresenterTest.this.mockView).getNameCriteria();
+                will(returnValue(nameCriteria));
+
+                one(MainPresenterTest.this.mockView).getLocationCriteria();
+                will(returnValue(locationCriteria));
+
+                one(MainPresenterTest.this.mockBrokerService).search(
+                        with(equal(new SearchCriteria())));
+                will(returnValue(contractors));
+
+                one(MainPresenterTest.this.mockView).setTableModel(
+                        with(aContractorTableModelContaining(contractors)));
+
+                one(MainPresenterTest.this.mockView).setStatusLabelText(
+                        with(equal(statusLabelText)));
+
+                one(MainPresenterTest.this.mockView).hideGlassPane();
+            }
+        });
+        this.presenter.searchButtonActionPerformed();
+    }
+
+    @Test
+    public void bookButtonActionPerformed() throws Exception {
+        // TODO
+        fail();
     }
 
     private Matcher<ContractorTableModel> aContractorTableModelContaining(
@@ -222,6 +298,30 @@ public class MainPresenterTest {
         public void describeTo(Description description) {
             description.appendValueList("a table model containing: ", " & ",
                     "", this.contractors);
+        }
+    }
+
+    private class StubMainPresenter extends MainPresenter {
+
+        public StubMainPresenter(BrokerService brokerService, MainView view) {
+            super(brokerService, view);
+        }
+
+        @Override
+        SwingWorker<List<Contractor>, Void> createSearchWorker(
+                SearchCriteria searchCriteria) {
+            SwingWorker<List<Contractor>, Void> worker = super
+                    .createSearchWorker(searchCriteria);
+            MainPresenterTest.this.workerRunning = true;
+            worker.addPropertyChangeListener(new PropertyChangeListener() {
+                public void propertyChange(PropertyChangeEvent evt) {
+                    if ("state".equals(evt.getPropertyName())
+                            && evt.getNewValue() == StateValue.DONE) {
+                        MainPresenterTest.this.workerRunning = false;
+                    }
+                }
+            });
+            return worker;
         }
     }
 }

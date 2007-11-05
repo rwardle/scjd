@@ -27,3 +27,4 @@ But this gives us 2 possibilites: a) concurrent requests are routed to separate 
 25. Instructions state that for the UI search must be exact - DB searches user startsWith so business layer will do filtering. BL only offer exact searches - no requirement for flexible search at UI level, just at DB level.
 26. Not having paging of search results in client because DB is unlikely to grow massively in size.
 27. BrokerServiceImpl book method swallows RNF expection from unlock method - shouldn't happen.
+28. Long-running calls from the GUI are put on SwingWorker and show a busy cursor and a semi-transparent glasspane to block user input and visiually indicate that the app is busy. There is no way for a user to cancel the operation - considered beyond scope. If the server goes down - presuming that RemoteException will be thrown - is this correct?

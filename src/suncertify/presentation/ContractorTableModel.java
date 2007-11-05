@@ -65,12 +65,13 @@ public class ContractorTableModel extends AbstractTableModel {
         return value;
     }
 
-    public int getRecordNumberAt(int rowIndex) {
-        return this.contractors.get(rowIndex).getRecordNumber();
-    }
-
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == ApplicationConstants.TABLE_OWNER_COLUMN_INDEX;
+        return columnIndex == ApplicationConstants.TABLE_OWNER_COLUMN_INDEX
+                && "".equals(this.contractors.get(rowIndex).getOwner());
+    }
+
+    int getRecordNumberAt(int rowIndex) {
+        return this.contractors.get(rowIndex).getRecordNumber();
     }
 }
