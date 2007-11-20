@@ -18,7 +18,7 @@ public class ConfigurationManagerTest {
     }
 
     @After
-    public void verify() {
+    public void tearDown() {
         this.context.assertIsSatisfied();
     }
 

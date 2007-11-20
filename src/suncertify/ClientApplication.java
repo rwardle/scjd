@@ -29,21 +29,14 @@ public final class ClientApplication extends AbstractGuiApplication {
      * 
      * @param configuration
      *                The application configuration.
-     * @param exceptionHandler
-     *                The application exception handler.
-     * @param shutdownHandler
-     *                The application shutdown handler.
      * @param rmiService
+     *                The RMI service.
      * @throws IllegalArgumentException
-     *                 If the any of the <code>configuration</code>,
-     *                 <code>exceptionHandler</code> or
-     *                 <code>shutdownHandler</code> parameters are
-     *                 <code>null</code>.
+     *                 If <code>configuration</code> or
+     *                 <code>rmiService</code> is <code>null</code>.
      */
-    public ClientApplication(Configuration configuration,
-            ExceptionHandler exceptionHandler, ShutdownHandler shutdownHandler,
-            RmiService rmiService) {
-        super(configuration, exceptionHandler, shutdownHandler);
+    public ClientApplication(Configuration configuration, RmiService rmiService) {
+        super(configuration);
         this.rmiService = rmiService;
     }
 
@@ -55,8 +48,7 @@ public final class ClientApplication extends AbstractGuiApplication {
 
     /** {@inheritDoc} */
     @Override
-    protected BrokerService createBrokerService() throws ApplicationException {
-        // TODO Improve exception handling
+    protected BrokerService createBrokerService() throws FatalException {
         String url = "//" + getConfigurationManager().getServerAddress() + ":"
                 + getConfigurationManager().getServerPort() + "/"
                 + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME;
@@ -64,18 +56,20 @@ public final class ClientApplication extends AbstractGuiApplication {
         try {
             return (BrokerService) this.rmiService.lookup(url);
         } catch (MalformedURLException e) {
-            throw new ApplicationException(
+            throw new FatalException(
                     "The URL used to lookup the remote broker service object "
-                            + "is malformed: '" + url + "'", e);
+                            + "is malformed: '" + url + "'",
+                    "FatalException.rmiClientError", e);
         } catch (RemoteException e) {
-            throw new ApplicationException(
-                    "Error communicating with the remote server", e);
+            throw new FatalException(
+                    "Error communicating with the remote server",
+                    "FatalException.rmiClientError", e);
         } catch (NotBoundException e) {
-            throw new ApplicationException(
+            throw new FatalException(
                     "Attempted to lookup a name that has not been bound in the "
                             + "RMI registry: '"
                             + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME
-                            + "'", e);
+                            + "'", "FatalException.rmiClientError", e);
         }
     }
 }

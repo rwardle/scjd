@@ -1,5 +1,8 @@
 package suncertify;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -10,6 +13,7 @@ import org.junit.Test;
 import suncertify.presentation.ConfigurationPresenter;
 import suncertify.presentation.ConfigurationView;
 
+@SuppressWarnings("boxing")
 public class AbstractApplicationTest {
 
     private final Mockery context = new Mockery() {
@@ -18,39 +22,22 @@ public class AbstractApplicationTest {
         }
     };
     private Configuration mockConfiguration;
-    private ExceptionHandler mockExceptionHandler;
-    private ShutdownHandler mockShutdownHandler;
     private ConfigurationPresenter mockPresenter;
 
     @Before
     public void setUp() {
         this.mockConfiguration = this.context.mock(Configuration.class);
-        this.mockExceptionHandler = this.context.mock(ExceptionHandler.class);
-        this.mockShutdownHandler = this.context.mock(ShutdownHandler.class);
         this.mockPresenter = this.context.mock(ConfigurationPresenter.class);
     }
 
     @After
-    public void verify() {
+    public void tearDown() {
         this.context.assertIsSatisfied();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void throwsExceptionIfConfigurationIsNull() {
-        new StubAbstractApplication(null, this.mockExceptionHandler,
-                this.mockShutdownHandler);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void throwsExceptionIfShutdownHandlerIsNull() {
-        new StubAbstractApplication(this.mockConfiguration,
-                this.mockExceptionHandler, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void throwsExceptionIfExceptionHandlerIsNull() {
-        new StubAbstractApplication(this.mockConfiguration, null,
-                this.mockShutdownHandler);
+        new StubAbstractApplication(null);
     }
 
     @Test
@@ -74,13 +61,13 @@ public class AbstractApplicationTest {
                 one(AbstractApplicationTest.this.mockConfiguration).save();
             }
         });
-        new StubAbstractApplication(this.mockConfiguration,
-                this.mockExceptionHandler, this.mockShutdownHandler)
-                .initialise();
+        StubAbstractApplication application = new StubAbstractApplication(
+                this.mockConfiguration);
+        assertThat(application.initialise(), is(true));
     }
 
     @Test
-    public void initialiseShutsDownApplicationWhenConfigurationIsCancelled()
+    public void shouldReturnFalseFromInitialiseWhenConfigurationIsCancelled()
             throws Exception {
         this.context.checking(new Expectations() {
             {
@@ -90,18 +77,16 @@ public class AbstractApplicationTest {
                 allowing(AbstractApplicationTest.this.mockPresenter)
                         .getReturnStatus();
                 will(returnValue(ReturnStatus.CANCEL));
-
-                one(AbstractApplicationTest.this.mockShutdownHandler)
-                        .handleShutdown();
             }
         });
-        new StubAbstractApplication(this.mockConfiguration,
-                this.mockExceptionHandler, this.mockShutdownHandler)
-                .initialise();
+
+        StubAbstractApplication application = new StubAbstractApplication(
+                this.mockConfiguration);
+        assertThat(application.initialise(), is(false));
     }
 
     @Test
-    public void initialiseHandlesExceptionWhenConfigurationCannotBeSaved()
+    public void shouldReturnTrueFromInitialiseWhenConfigurationCannotBeSaved()
             throws Exception {
         this.context.checking(new Expectations() {
             {
@@ -120,21 +105,17 @@ public class AbstractApplicationTest {
 
                 one(AbstractApplicationTest.this.mockConfiguration).save();
                 will(throwException(new ConfigurationException()));
-
-                one(AbstractApplicationTest.this.mockExceptionHandler)
-                        .handleException(with(any(ApplicationException.class)));
             }
         });
-        new StubAbstractApplication(this.mockConfiguration,
-                this.mockExceptionHandler, this.mockShutdownHandler)
-                .initialise();
+
+        StubAbstractApplication application = new StubAbstractApplication(
+                this.mockConfiguration);
+        assertThat(application.initialise(), is(true));
     }
 
     private class StubAbstractApplication extends AbstractApplication {
-        StubAbstractApplication(Configuration configuration,
-                ExceptionHandler exceptionHandler,
-                ShutdownHandler shutdownHandler) {
-            super(configuration, exceptionHandler, shutdownHandler);
+        StubAbstractApplication(Configuration configuration) {
+            super(configuration);
         }
 
         @Override
@@ -150,6 +131,11 @@ public class AbstractApplicationTest {
 
         public void startup() {
             throw new UnsupportedOperationException("startup() not implemented");
+        }
+
+        @Override
+        void showSaveWarningDialog() {
+            // Prevent dialog being shown in tests
         }
     }
 }

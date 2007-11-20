@@ -15,6 +15,7 @@ import org.junit.Test;
 import suncertify.db.Database;
 import suncertify.db.RecordNotFoundException;
 
+@SuppressWarnings("boxing")
 public class BrokerServiceImplTest {
 
     private static final int DATABASE_FIELD_COUNT = 6;

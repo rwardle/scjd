@@ -34,14 +34,6 @@ public class RmiServiceImpl implements RmiService {
     /**
      * {@inheritDoc}
      */
-    public void unbind(String name) throws MalformedURLException,
-            RemoteException, NotBoundException {
-        Naming.unbind(name);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public Remote lookup(String name) throws MalformedURLException,
             RemoteException, NotBoundException {
         return Naming.lookup(name);

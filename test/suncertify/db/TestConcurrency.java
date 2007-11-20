@@ -212,15 +212,15 @@ public class TestConcurrency {
          * <code>Counter</code> was hit for a specified number of times) it
          * runs the <code>toRun</code> command.
          * 
-         * @param hits
+         * @param must
          *                the specified number of hits.
          * @param toRun
          *                this command runs after the
          *                <code>Counter</code> <code>isDone</code> method
          *                returns true.
          */
-        public synchronized void check(int hits, Runnable toRun) {
-            final Thread checkThread = new Thread(new CheckTarget(hits, toRun),
+        public synchronized void check(int must, Runnable toRun) {
+            final Thread checkThread = new Thread(new CheckTarget(must, toRun),
                     "checkThread");
             checkThread.start();
         }

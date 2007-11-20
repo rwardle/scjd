@@ -17,29 +17,24 @@ public interface Application {
     /**
      * Initialises the application, e.g. obtaining and applying configuration.
      * 
-     * @throws ApplicationException
-     *                 If the application cannot be initialised.
+     * @return <code>true</code> if the intialisation completed successfully,
+     *         <code>false</code> otherwise.
      */
-    void initialise() throws ApplicationException;
+    boolean initialise();
 
     /**
      * Starts-up the application.
      * 
-     * @throws ApplicationException
+     * @throws FatalException
      *                 If the application cannot be started.
      */
-    void startup() throws ApplicationException;
+    void startup() throws FatalException;
 
     /**
-     * Handles the supplied application exception.
+     * Handles the supplied fatal exception.
      * 
      * @param exception
      *                The exception to handle.
      */
-    void handleException(ApplicationException exception);
-
-    /**
-     * Shuts-down the application.
-     */
-    void shutdown();
+    void handleFatalException(FatalException exception);
 }

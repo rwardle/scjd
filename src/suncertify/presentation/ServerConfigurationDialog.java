@@ -113,6 +113,10 @@ public final class ServerConfigurationDialog extends
         constraints.weightx = 1;
         this.databaseFilePathField = new JTextField();
         this.databaseFilePathField.setEditable(false);
+        this.databaseFilePathField
+                .setToolTipText(getResourceBundle()
+                        .getString(
+                                "ServerConfigurationDialog.databaseFilePathField.tooltip"));
         panel.add(this.databaseFilePathField, constraints);
 
         constraints = new GridBagConstraints();
@@ -121,6 +125,9 @@ public final class ServerConfigurationDialog extends
         constraints.insets = ApplicationConstants.DEFAULT_INSETS;
         this.browseButton = new JButton(getResourceBundle().getString(
                 "ServerConfigurationDialog.browseButton.text"));
+        this.browseButton.setMnemonic(new Integer(getResourceBundle()
+                .getString("ServerConfigurationDialog.browseButton.mnemonic")
+                .charAt(0)).intValue());
         panel.add(this.browseButton, constraints);
 
         constraints = new GridBagConstraints();
@@ -144,6 +151,8 @@ public final class ServerConfigurationDialog extends
                 SERVER_PORT_SPINNER_MAXIMUM_VALUE,
                 SERVER_PORT_SPINNER_STEP_SIZE));
         this.serverPortSpinner.setFont(this.databaseFilePathField.getFont());
+        this.serverPortSpinner.setToolTipText(getResourceBundle().getString(
+                "ServerConfigurationDialog.serverPortSpinner.tooltip"));
         JSpinner.DefaultEditor spinnerEditor = new JSpinner.NumberEditor(
                 this.serverPortSpinner, SERVER_PORT_SPINNER_FORMAT_PATTERN);
         spinnerEditor.getTextField().setColumns(SERVER_PORT_SPINNER_COLUMNS);

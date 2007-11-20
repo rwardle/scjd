@@ -37,13 +37,15 @@ import suncertify.ApplicationConstants;
  */
 public class ContractorTableColumnModel extends DefaultTableColumnModel {
 
-    // TODO Panel does not get selection background if click on button directly
     private static final long serialVersionUID = 1L;
     private static final int[] COLUMN_WIDTHS = { 90, 70, 90, 45, 45, 60 };
     private static final int BOOK_BUTTON_FONT_SIZE = 10;
-    private static final Dimension BOOK_BUTTON_DIMENSIONS = new Dimension(60,
+    private static final Dimension BOOK_BUTTON_DIMENSIONS = new Dimension(65,
             15);
+
     private final String bookButtonText;
+    private final String[] columnHeaderToolTips;
+    private final JButton rendererBookButton;
     private MainPresenter presenter;
 
     public ContractorTableColumnModel() {
@@ -58,17 +60,44 @@ public class ContractorTableColumnModel extends DefaultTableColumnModel {
         this.bookButtonText = resourceBundle
                 .getString("MainFrame.bookButton.text");
 
+        this.columnHeaderToolTips = new String[] {
+                resourceBundle.getString("MainFrame.nameColumnHeader.tooltip"),
+                resourceBundle
+                        .getString("MainFrame.locationColumnHeader.tooltip"),
+                resourceBundle
+                        .getString("MainFrame.specialtiesColumnHeader.tooltip"),
+                resourceBundle.getString("MainFrame.sizeColumnHeader.tooltip"),
+                resourceBundle.getString("MainFrame.rateColumnHeader.tooltip"),
+                resourceBundle.getString("MainFrame.ownerColumnHeader.tooltip") };
+
         TableColumn ownerColumn = getColumn(ApplicationConstants.TABLE_OWNER_COLUMN_INDEX);
-        ownerColumn.setCellRenderer(new OwnerTableCellRenderer(this));
-        ownerColumn.setCellEditor(new OwnerTableCellEditor(this));
+        this.rendererBookButton = createBookButton();
+        String bookButtonTooltip = resourceBundle
+                .getString("MainFrame.bookButton.tooltip");
+        ownerColumn.setCellRenderer(new OwnerTableCellRenderer(this,
+                bookButtonTooltip));
+        ownerColumn.setCellEditor(new OwnerTableCellEditor(this,
+                bookButtonTooltip));
+    }
+
+    String getColumnHeaderToolTipText(int columnIndex) {
+        return this.columnHeaderToolTips[columnIndex];
+    }
+
+    void disableRendererBookButton() {
+        this.rendererBookButton.setEnabled(false);
+    }
+
+    void enableRendererBookButton() {
+        this.rendererBookButton.setEnabled(true);
     }
 
     void setPresenter(MainPresenter presenter) {
         this.presenter = presenter;
     }
 
-    private JButton createBookButton(String bookButtonText) {
-        JButton button = new JButton(bookButtonText);
+    private JButton createBookButton() {
+        JButton button = new JButton(this.bookButtonText);
         button.setOpaque(false);
         button.setFocusPainted(false);
         Font defaultButtonFont = button.getFont();
@@ -98,14 +127,15 @@ public class ContractorTableColumnModel extends DefaultTableColumnModel {
         private static final EmptyBorder EMPTY_BORDER = new EmptyBorder(1, 1,
                 1, 1);
         private final JPanel bookButtonPanel;
+        private final String bookButtonTooltip;
         private Border focusBorder;
 
         public OwnerTableCellRenderer(
-                ContractorTableColumnModel contractorTableColumnModel) {
-            JButton bookButton = contractorTableColumnModel
-                    .createBookButton(contractorTableColumnModel.bookButtonText);
+                ContractorTableColumnModel contractorTableColumnModel,
+                String bookButtonTooltip) {
+            this.bookButtonTooltip = bookButtonTooltip;
             this.bookButtonPanel = contractorTableColumnModel
-                    .createBookButtonPanel(bookButton);
+                    .createBookButtonPanel(contractorTableColumnModel.rendererBookButton);
         }
 
         public Component getTableCellRendererComponent(JTable table,
@@ -133,6 +163,7 @@ public class ContractorTableColumnModel extends DefaultTableColumnModel {
                         .getSelectionBackground() : table.getBackground());
 
                 component = this.bookButtonPanel;
+                component.setToolTipText(this.bookButtonTooltip);
             } else {
                 component = (JComponent) table.getDefaultRenderer(String.class)
                         .getTableCellRendererComponent(table, value,
@@ -141,6 +172,7 @@ public class ContractorTableColumnModel extends DefaultTableColumnModel {
                     // Store the default focus border for future use
                     this.focusBorder = component.getBorder();
                 }
+                component.setToolTipText(null);
             }
             return component;
         }
@@ -152,14 +184,18 @@ public class ContractorTableColumnModel extends DefaultTableColumnModel {
         private static final long serialVersionUID = 1L;
         private final JPanel bookButtonPanel;
         private final ContractorTableColumnModel contractorTableColumnModel;
+        private final String bookButtonTooltip;
         private int currentRow;
 
         public OwnerTableCellEditor(
-                ContractorTableColumnModel contractorTableColumnModel) {
+                ContractorTableColumnModel contractorTableColumnModel,
+                String bookButtonTooltip) {
             this.contractorTableColumnModel = contractorTableColumnModel;
+            this.bookButtonTooltip = bookButtonTooltip;
 
             final JButton bookButton = contractorTableColumnModel
-                    .createBookButton(contractorTableColumnModel.bookButtonText);
+                    .createBookButton();
+            bookButton.setToolTipText(this.bookButtonTooltip);
             bookButton.addActionListener(this);
 
             this.bookButtonPanel = contractorTableColumnModel
@@ -179,7 +215,7 @@ public class ContractorTableColumnModel extends DefaultTableColumnModel {
 
         public void actionPerformed(ActionEvent e) {
             this.contractorTableColumnModel.presenter
-                    .bookButtonActionPerformed(this.currentRow);
+                    .bookActionPerformed(this.currentRow);
             fireEditingStopped();
         }
 

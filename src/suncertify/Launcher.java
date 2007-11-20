@@ -7,11 +7,11 @@
 package suncertify;
 
 import java.io.File;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  * Launches the application.
@@ -46,35 +46,28 @@ public final class Launcher {
      *                The application to launch.
      */
     public void launch() {
+        File propertiesFile = new File(CONFIG_FILE_NAME);
+        LOGGER.info("Using configuration file: "
+                + propertiesFile.getAbsolutePath());
         final Application application = this.applicationFactory
-                .createApplication(new PropertiesConfiguration(new File(
-                        CONFIG_FILE_NAME)));
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    setLookAndFeel();
-                    application.initialise();
-                    application.startup();
-                } catch (ApplicationException e) {
-                    application.handleException(e);
-                    application.shutdown();
-                }
+                .createApplication(new PropertiesConfiguration(propertiesFile));
+        setLookAndFeel();
+        if (application.initialise()) {
+            try {
+                application.startup();
+            } catch (FatalException e) {
+                // TODO Rename to FatalException and
+                // handleFatalException?
+                application.handleFatalException(e);
             }
-        });
+        }
     }
 
-    private void setLookAndFeel() throws ApplicationException {
-        // TODO Catch Exception here for brevity?
+    private void setLookAndFeel() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException e) {
-            throw new ApplicationException(e);
-        } catch (InstantiationException e) {
-            throw new ApplicationException(e);
-        } catch (IllegalAccessException e) {
-            throw new ApplicationException(e);
-        } catch (UnsupportedLookAndFeelException e) {
-            throw new ApplicationException(e);
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Couldn't set system look and feel", e);
         }
     }
 
@@ -87,16 +80,19 @@ public final class Launcher {
      *                 If the command-line arguments are invalid.
      */
     public static void main(String[] args) {
-        // TODO Set correct handler here
-        Thread.setDefaultUncaughtExceptionHandler(new SysErrExceptionHandler());
+        Thread.setDefaultUncaughtExceptionHandler(new FatalExceptionHandler());
 
         ApplicationMode applicationMode = Launcher.getApplicationMode(args);
         LOGGER.info("Running in application mode: " + applicationMode);
 
         AbstractApplicationFactory applicationFactory = AbstractApplicationFactory
                 .getApplicationFactory(applicationMode);
-        Launcher launcher = new Launcher(applicationFactory);
-        launcher.launch();
+        final Launcher launcher = new Launcher(applicationFactory);
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                launcher.launch();
+            }
+        });
     }
 
     /**
@@ -123,8 +119,8 @@ public final class Launcher {
             mode = ApplicationMode.STANDALONE;
         } else {
             throw new IllegalArgumentException("Invalid mode flag: " + args[0]
-                    + ". If specified, the mode flag must be either 'server' "
-                    + "or 'alone'.");
+                    + ". If specified, the mode flag must be either server "
+                    + "or alone.");
         }
         return mode;
     }

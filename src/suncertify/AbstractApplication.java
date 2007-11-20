@@ -6,7 +6,11 @@
 
 package suncertify;
 
+import java.util.ResourceBundle;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.JOptionPane;
 
 import suncertify.presentation.ConfigurationPresenter;
 import suncertify.presentation.ConfigurationView;
@@ -21,41 +25,25 @@ public abstract class AbstractApplication implements Application {
     private static final Logger LOGGER = Logger
             .getLogger(AbstractApplication.class.getName());
     private final ConfigurationManager configurationManager;
-    private final ExceptionHandler exceptionHandler;
-    private final ShutdownHandler shutdownHandler;
+    private final FatalExceptionHandler exceptionHandler;
+    private final ResourceBundle resourceBundle;
 
     /**
      * Creates a new instance of <code>AbstractApplication</code>.
      * 
      * @param configuration
      *                The application configuration.
-     * @param exceptionHandler
-     *                The application exception handler.
-     * @param shutdownHandler
-     *                The application shutdown handler.
      * @throws IllegalArgumentException
-     *                 If the any of the <code>configuration</code>,
-     *                 <code>exceptionHandler</code> or
-     *                 <code>shutdownHandler</code> parameters are
-     *                 <code>null</code>.
+     *                 If <code>configuration</code> is <code>null</code>.
      */
-    public AbstractApplication(Configuration configuration,
-            ExceptionHandler exceptionHandler, ShutdownHandler shutdownHandler) {
+    public AbstractApplication(Configuration configuration) {
         if (configuration == null) {
             throw new IllegalArgumentException("configuration must be non-null");
         }
-        if (exceptionHandler == null) {
-            throw new IllegalArgumentException(
-                    "exceptionHandler must be non-null");
-        }
-        if (shutdownHandler == null) {
-            throw new IllegalArgumentException(
-                    "shutdownHandler must be non-null");
-        }
 
         this.configurationManager = new ConfigurationManager(configuration);
-        this.exceptionHandler = exceptionHandler;
-        this.shutdownHandler = shutdownHandler;
+        this.exceptionHandler = new FatalExceptionHandler();
+        this.resourceBundle = ResourceBundle.getBundle("suncertify/Bundle");
     }
 
     /**
@@ -68,34 +56,46 @@ public abstract class AbstractApplication implements Application {
     }
 
     /** {@inheritDoc} */
-    public final void initialise() throws ApplicationException {
+    public final boolean initialise() {
         ReturnStatus returnStatus = showConfigurationDialog();
-        switch (returnStatus) {
-        case CANCEL:
-            AbstractApplication.LOGGER
-                    .info("User cancelled configuration, exiting application");
-            shutdown();
-            break;
-        case OK:
+
+        boolean initialised;
+        if (returnStatus == ReturnStatus.OK) {
+            initialised = true;
+
             try {
+                AbstractApplication.LOGGER.info("Saving configuration to disk");
                 getConfigurationManager().save();
             } catch (ConfigurationException e) {
-                handleException(new ApplicationException(
-                        "Error saving configuration", e));
+                AbstractApplication.LOGGER.log(Level.WARNING,
+                        "Could not save configuration to disk", e);
+                showSaveWarningDialog();
             }
-            break;
-        default:
-            assert false : returnStatus;
-            break;
+        } else {
+            initialised = false;
+            AbstractApplication.LOGGER
+                    .info("Configuration cancelled by user, exiting application");
         }
+
+        return initialised;
+    }
+
+    void showSaveWarningDialog() {
+        String message = this.resourceBundle
+                .getString("AbstractApplication.saveConfigurationWarningDialog.message");
+        String title = this.resourceBundle
+                .getString("AbstractApplication.saveConfigurationWarningDialog.title");
+        JOptionPane.showMessageDialog(null, message, title,
+                JOptionPane.WARNING_MESSAGE);
     }
 
     private ReturnStatus showConfigurationDialog() {
         ConfigurationPresenter presenter = createConfigurationPresenter();
         presenter.realiseView();
         ReturnStatus returnStatus = presenter.getReturnStatus();
-        AbstractApplication.LOGGER.info("Status '" + returnStatus
-                + "' returned from dialog");
+        AbstractApplication.LOGGER
+                .info("Returned from configuration dialog with status: "
+                        + returnStatus);
         return returnStatus;
     }
 
@@ -116,12 +116,7 @@ public abstract class AbstractApplication implements Application {
     protected abstract ConfigurationView createConfigurationView();
 
     /** {@inheritDoc} */
-    public final void handleException(ApplicationException exception) {
+    public final void handleFatalException(FatalException exception) {
         this.exceptionHandler.handleException(exception);
-    }
-
-    /** {@inheritDoc} */
-    public void shutdown() {
-        this.shutdownHandler.handleShutdown();
     }
 }

@@ -19,27 +19,22 @@ public class AbstractGuiApplicationTest {
         }
     };
     private Configuration mockConfiguration;
-    private ExceptionHandler mockExceptionHandler;
-    private ShutdownHandler mockShutdownHandler;
     private MainPresenter mockPresenter;
     private AbstractGuiApplication application;
 
     @Before
     public void setUp() {
         this.mockConfiguration = this.context.mock(Configuration.class);
-        this.mockExceptionHandler = this.context.mock(ExceptionHandler.class);
-        this.mockShutdownHandler = this.context.mock(ShutdownHandler.class);
         this.mockPresenter = this.context.mock(MainPresenter.class);
     }
 
     @After
-    public void verify() {
+    public void tearDown() {
         this.context.assertIsSatisfied();
     }
 
     @Test
-    public void startupApplicationRealisesMainView()
-            throws ApplicationException {
+    public void startupApplicationRealisesMainView() throws FatalException {
         this.context.checking(new Expectations() {
             {
                 ignoring(AbstractGuiApplicationTest.this.mockConfiguration);
@@ -48,8 +43,7 @@ public class AbstractGuiApplicationTest {
             }
         });
         this.application = new StubAbstractGuiApplication(
-                this.mockConfiguration, this.mockExceptionHandler,
-                this.mockShutdownHandler);
+                this.mockConfiguration);
         this.application.startup();
     }
 
@@ -57,10 +51,8 @@ public class AbstractGuiApplicationTest {
 
     private class StubAbstractGuiApplication extends AbstractGuiApplication {
 
-        StubAbstractGuiApplication(Configuration configuration,
-                ExceptionHandler exceptionHandler,
-                ShutdownHandler shutdownHandler) {
-            super(configuration, exceptionHandler, shutdownHandler);
+        StubAbstractGuiApplication(Configuration configuration) {
+            super(configuration);
         }
 
         @Override

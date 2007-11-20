@@ -21,7 +21,6 @@ import static suncertify.db.DatabaseConstants.RECORD_LENGTH;
 import static suncertify.db.DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH;
 import static suncertify.db.DatabaseConstants.VALID_RECORD_FLAG;
 
-import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -37,6 +36,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import suncertify.db.DatabaseSchema.FieldDescription;
+import suncertify.util.ExceptionHandler;
 
 @SuppressWarnings("boxing")
 public class DataTest {
@@ -51,7 +51,7 @@ public class DataTest {
 
     @Before
     public void setUp() throws Exception {
-        // Set a default exception handler to pickup failures in addtional
+        // Set a default exception handler to pickup failures in additional
         // threads
         this.exceptionHandler = new ExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this.exceptionHandler);
@@ -979,20 +979,6 @@ public class DataTest {
                 target[i] = this.bytes[i];
             }
             return null;
-        }
-    }
-
-    private static final class ExceptionHandler implements
-            UncaughtExceptionHandler {
-
-        private Throwable exception;
-
-        public void uncaughtException(Thread t, Throwable e) {
-            this.exception = e;
-        }
-
-        public Throwable getException() {
-            return this.exception;
         }
     }
 }

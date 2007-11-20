@@ -18,8 +18,7 @@ public final class ServerApplicationFactory extends AbstractApplicationFactory {
      */
     @Override
     public Application createApplication(Configuration configuration) {
-        return new ServerApplication(configuration,
-                new SysErrExceptionHandler(), new SysExitShudownHandler(),
-                new RmiServiceImpl(), new DatabaseFactoryImpl());
+        return new ServerApplication(configuration, new RmiServiceImpl(),
+                new DatabaseFactoryImpl());
     }
 }

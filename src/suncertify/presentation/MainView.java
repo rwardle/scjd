@@ -8,6 +8,8 @@ package suncertify.presentation;
 
 import javax.swing.JFrame;
 
+import suncertify.service.Contractor;
+
 /**
  * 
  * @author Richard Wardle
@@ -39,7 +41,11 @@ public interface MainView {
 
     JFrame getFrame();
 
-    void showGlassPane();
+    void disableControls();
 
-    void hideGlassPane();
+    void enableControls();
+
+    Contractor getContractorAtRow(int rowNo);
+
+    void updateContractorAtRow(int rowNo, Contractor contractor);
 }

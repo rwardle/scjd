@@ -41,7 +41,7 @@ public final class ConfigurationManager {
                 this.configuration.load();
             } catch (ConfigurationException e) {
                 ConfigurationManager.LOGGER.log(Level.WARNING,
-                        "Error loading configuration", e);
+                        "Error loading configuration, using default values", e);
             }
         }
         verifyConfiguration();
@@ -60,7 +60,11 @@ public final class ConfigurationManager {
                 setServerPort(ApplicationConstants.DEFAULT_SERVER_PORT);
             }
         } catch (NumberFormatException e) {
-            // Server port is not a number - reset to the default
+            ConfigurationManager.LOGGER
+                    .log(
+                            Level.WARNING,
+                            "Saved server port is not a number, using default value",
+                            e);
             setServerPort(ApplicationConstants.DEFAULT_SERVER_PORT);
         }
     }

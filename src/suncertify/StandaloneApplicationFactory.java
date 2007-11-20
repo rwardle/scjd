@@ -19,7 +19,6 @@ public final class StandaloneApplicationFactory extends
     @Override
     public Application createApplication(Configuration configuration) {
         return new StandaloneApplication(configuration,
-                new SysErrExceptionHandler(), new SysExitShudownHandler(),
                 new DatabaseFactoryImpl());
     }
 }

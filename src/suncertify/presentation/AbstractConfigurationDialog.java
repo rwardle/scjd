@@ -33,8 +33,6 @@ import suncertify.ApplicationConstants;
 public abstract class AbstractConfigurationDialog extends JDialog implements
         ConfigurationView {
 
-    // TODO Change this to a JFrame?
-
     protected static final int SERVER_PORT_SPINNER_INITIAL_VALUE = 1;
     protected static final int SERVER_PORT_SPINNER_MINIMUM_VALUE = 1;
     protected static final int SERVER_PORT_SPINNER_MAXIMUM_VALUE = Integer.MAX_VALUE;
@@ -74,6 +72,7 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
         });
 
         setModal(true);
+        setResizable(false);
         setLayout(new GridBagLayout());
         initialiseComponents();
     }
@@ -103,6 +102,7 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
         Dimension dialogSize = getSize();
         setLocation((screenSize.width - dialogSize.width) / 2,
                 (screenSize.height - dialogSize.height) / 2);
+        this.okButton.requestFocus();
         setVisible(true);
     }
 
@@ -161,27 +161,6 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
         this.serverPort = serverPort;
     }
 
-    /**
-     * Gets the state of the OK button.
-     * 
-     * @return <code>true</code> if the button is enabled, <code>false</code>
-     *         if the button is disabled.
-     */
-    protected final boolean isOkButtonEnabled() {
-        return this.okButton.isEnabled();
-    }
-
-    /**
-     * Sets the state of the OK button.
-     * 
-     * @param enabled
-     *                <code>true</code> if it should be enabled,
-     *                <code>false</code> if it should be disabled.
-     */
-    protected final void setOkButtonEnabled(boolean enabled) {
-        this.okButton.setEnabled(enabled);
-    }
-
     private void initialiseComponents() {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.BOTH;
@@ -202,10 +181,10 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
         constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.LINE_START;
         constraints.fill = GridBagConstraints.BOTH;
-        constraints.ipady = ApplicationConstants.DEFAULT_INSETS.top * 10;
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.gridx = 0;
         constraints.gridy = 2;
+        constraints.insets = new Insets(15, 0, 10, 0);
         constraints.weightx = 1;
         constraints.weighty = 1;
         add(initialiseInputPanel(), constraints);
@@ -221,10 +200,9 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.gridx = 1;
         constraints.gridy = 3;
+        constraints.ipadx = 25;
         // TODO Stops window resize icon overlaying button on Mac
         constraints.insets = new Insets(4, 4, 15, 4);
-        // TODO Fix this
-        constraints.weightx = 0.15;
         add(initialiseButtonPanel(), constraints);
     }
 

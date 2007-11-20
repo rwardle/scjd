@@ -90,6 +90,10 @@ public final class StandaloneConfigurationDialog extends
         constraints.weightx = 1;
         this.databaseFilePathField = new JTextField();
         this.databaseFilePathField.setEditable(false);
+        this.databaseFilePathField
+                .setToolTipText(getResourceBundle()
+                        .getString(
+                                "StandaloneConfigurationDialog.databaseFilePathField.tooltip"));
         panel.add(this.databaseFilePathField, constraints);
 
         constraints = new GridBagConstraints();
@@ -98,6 +102,10 @@ public final class StandaloneConfigurationDialog extends
         constraints.insets = ApplicationConstants.DEFAULT_INSETS;
         this.browseButton = new JButton(getResourceBundle().getString(
                 "StandaloneConfigurationDialog.browseButton.text"));
+        this.browseButton.setMnemonic(new Integer(getResourceBundle()
+                .getString(
+                        "StandaloneConfigurationDialog.browseButton.mnemonic")
+                .charAt(0)).intValue());
         panel.add(this.browseButton, constraints);
 
         return panel;

@@ -56,25 +56,6 @@ public interface RmiService {
             MalformedURLException;
 
     /**
-     * Destroys the binding for the specified name that is associated with a
-     * remote object.
-     * 
-     * @param name
-     *                a name in URL format (without the scheme component)
-     * @throws NotBoundException
-     *                 if name is not currently bound
-     * @throws MalformedURLException
-     *                 if the name is not an appropriately formatted URL
-     * @throws RemoteException
-     *                 if registry could not be contacted
-     * @throws AccessException
-     *                 if this operation is not permitted (if originating from a
-     *                 non-local host, for example)
-     */
-    void unbind(String name) throws MalformedURLException, RemoteException,
-            NotBoundException;
-
-    /**
      * Returns a reference, a stub, for the remote object associated with the
      * specified <code>name</code>.
      * 

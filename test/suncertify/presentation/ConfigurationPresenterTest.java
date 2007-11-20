@@ -69,7 +69,7 @@ public class ConfigurationPresenterTest {
     }
 
     @After
-    public void verify() {
+    public void tearDown() {
         this.context.assertIsSatisfied();
     }
 

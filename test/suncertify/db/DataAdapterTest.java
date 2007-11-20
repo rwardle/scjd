@@ -12,6 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+@SuppressWarnings("boxing")
 public class DataAdapterTest {
 
     private final Mockery context = new Mockery() {
@@ -30,7 +31,7 @@ public class DataAdapterTest {
     }
 
     @After
-    public void verify() {
+    public void tearDown() {
         this.context.assertIsSatisfied();
     }
 

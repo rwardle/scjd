@@ -24,10 +24,10 @@ public class DataAdapter implements Database {
         }
     }
 
-    public void update(int recNo, String[] data)
+    public void update(int recNo, String[] recordData)
             throws RecordNotFoundException, IOException {
         try {
-            this.data.update(recNo, data);
+            this.data.update(recNo, recordData);
         } catch (DataAccessException e) {
             throw (IOException) e.getCause();
         }
@@ -49,9 +49,9 @@ public class DataAdapter implements Database {
         }
     }
 
-    public int create(String[] data) throws IOException {
+    public int create(String[] recordData) throws IOException {
         try {
-            return this.data.create(data);
+            return this.data.create(recordData);
         } catch (DataAccessException e) {
             throw (IOException) e.getCause();
         }

@@ -17,8 +17,6 @@ public final class ClientApplicationFactory extends AbstractApplicationFactory {
      */
     @Override
     public Application createApplication(Configuration configuration) {
-        return new ClientApplication(configuration,
-                new SysErrExceptionHandler(), new SysExitShudownHandler(),
-                new RmiServiceImpl());
+        return new ClientApplication(configuration, new RmiServiceImpl());
     }
 }

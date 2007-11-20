@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import suncertify.db.Database;
 
@@ -22,6 +24,9 @@ public final class RemoteBrokerServiceImpl extends UnicastRemoteObject
         implements RemoteBrokerService {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger LOGGER = Logger
+            .getLogger(RemoteBrokerServiceImpl.class.getName());
+
     private final BrokerServiceImpl service;
 
     /**
@@ -33,12 +38,34 @@ public final class RemoteBrokerServiceImpl extends UnicastRemoteObject
 
     public List<Contractor> search(SearchCriteria searchCriteria)
             throws IOException {
-        return this.service.search(searchCriteria);
+        try {
+            return this.service.search(searchCriteria);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE,
+                    "IO error while searching for contractors with criteria: "
+                            + searchCriteria, e);
+            throw e;
+        }
     }
 
     public void book(String customerId, Contractor contractor)
             throws IOException, ContractorDeletedException,
             ContractorModifiedException {
-        this.service.book(customerId, contractor);
+        try {
+            this.service.book(customerId, contractor);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "IO error while booking contractor", e);
+            throw e;
+        } catch (ContractorDeletedException e) {
+            LOGGER.log(Level.SEVERE,
+                    "Contractor to be booked has been deleted, recordNo: "
+                            + contractor.getRecordNumber(), e);
+            throw e;
+        } catch (ContractorModifiedException e) {
+            LOGGER.log(Level.SEVERE,
+                    "Contractor to be booked has been modified, recordNo: "
+                            + contractor.getRecordNumber(), e);
+            throw e;
+        }
     }
 }

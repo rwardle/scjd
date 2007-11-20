@@ -30,21 +30,15 @@ public final class StandaloneApplication extends AbstractGuiApplication {
      * 
      * @param configuration
      *                The application configuration.
-     * @param exceptionHandler
-     *                The application exception handler.
-     * @param shutdownHandler
-     *                The application shutdown handler.
      * @param databaseFactory
+     *                The database factory.
      * @throws IllegalArgumentException
-     *                 If the any of the <code>configuration</code>,
-     *                 <code>exceptionHandler</code> or
-     *                 <code>shutdownHandler</code> parameters are
-     *                 <code>null</code>.
+     *                 If <code>configuration</code> or
+     *                 <code>databaseFactory</code> is <code>null</code>.
      */
     public StandaloneApplication(Configuration configuration,
-            ExceptionHandler exceptionHandler, ShutdownHandler shutdownHandler,
             DatabaseFactory databaseFactory) {
-        super(configuration, exceptionHandler, shutdownHandler);
+        super(configuration);
         this.databaseFactory = databaseFactory;
     }
 
@@ -56,18 +50,23 @@ public final class StandaloneApplication extends AbstractGuiApplication {
 
     /** {@inheritDoc} */
     @Override
-    protected BrokerService createBrokerService() throws ApplicationException {
-        // TODO Improve exception handling
+    protected BrokerService createBrokerService() throws FatalException {
         try {
             return new BrokerServiceImpl(this.databaseFactory
                     .createDatabase(getConfigurationManager()
                             .getDatabaseFilePath()));
         } catch (FileNotFoundException e) {
-            throw new ApplicationException("Database file not found", e);
-        } catch (IOException e) {
-            throw new ApplicationException("Error reading database file", e);
+            throw new FatalException(
+                    "Could not create database: file not found",
+                    "FatalException.databaseFileNotFound", e);
         } catch (DataValidationException e) {
-            throw new ApplicationException("Invalid database file", e);
+            throw new FatalException(
+                    "Could not create database: invalid database file",
+                    "FatalException.databaseInvalid", e);
+        } catch (IOException e) {
+            throw new FatalException(
+                    "Could not create database: error reading database file",
+                    "FatalException.databaseReadError", e);
         }
     }
 }

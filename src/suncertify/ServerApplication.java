@@ -37,22 +37,18 @@ public final class ServerApplication extends AbstractApplication {
      * 
      * @param configuration
      *                The application configuration.
-     * @param exceptionHandler
-     *                The application exception handler.
-     * @param shutdownHandler
-     *                The application shutdown handler.
      * @param rmiService
+     *                The RMI service.
      * @param databaseFactory
+     *                The database factory.
      * @throws IllegalArgumentException
-     *                 If the any of the <code>configuration</code>,
-     *                 <code>exceptionHandler</code> or
-     *                 <code>shutdownHandler</code> parameters are
-     *                 <code>null</code>.
+     *                 If any of the <code>configuration</code>,
+     *                 <code>rmiService</code> or <code>databaseFactory</code>
+     *                 parameters are <code>null</code>.
      */
     public ServerApplication(Configuration configuration,
-            ExceptionHandler exceptionHandler, ShutdownHandler shutdownHandler,
             RmiService rmiService, DatabaseFactory databaseFactory) {
-        super(configuration, exceptionHandler, shutdownHandler);
+        super(configuration);
         this.rmiService = rmiService;
         this.databaseFactory = databaseFactory;
     }
@@ -67,33 +63,38 @@ public final class ServerApplication extends AbstractApplication {
      * {@inheritDoc} <p/> Starts the RMI registry and binds the
      * <code>BrokerService</code> object into it.
      */
-    public void startup() throws ApplicationException {
-        // TODO Improve exception handling
+    public void startup() throws FatalException {
+        Integer serverPort = getConfigurationManager().getServerPort();
+        String databaseFilePath = getConfigurationManager()
+                .getDatabaseFilePath();
         String url = getRemoteBrokerServiceUrl();
+
         try {
-            this.rmiService.createRegistry(getConfigurationManager()
-                    .getServerPort());
+            this.rmiService.createRegistry(serverPort);
             RemoteBrokerService service = new RemoteBrokerServiceImpl(
-                    this.databaseFactory
-                            .createDatabase(getConfigurationManager()
-                                    .getDatabaseFilePath()));
+                    this.databaseFactory.createDatabase(databaseFilePath));
             this.rmiService.rebind(url, service);
         } catch (RemoteException e) {
-            throw new ApplicationException("Failed to export remote object", e);
+            throw new FatalException("Error starting RMI on port: "
+                    + serverPort, "FatalException.rmiServerError", e);
         } catch (MalformedURLException e) {
-            throw new ApplicationException(
-                    "The URL used to bind the remote broker service object "
-                            + "is malformed: '" + url + "'", e);
+            throw new FatalException("Broker service URL is malformed: " + url,
+                    "FatalException.rmiServerError", e);
         } catch (FileNotFoundException e) {
-            throw new ApplicationException("Database file not found", e);
+            throw new FatalException(
+                    "Could not create database: file not found",
+                    "FatalException.databaseFileNotFound", e);
         } catch (DataValidationException e) {
-            throw new ApplicationException("Invalid database file", e);
+            throw new FatalException(
+                    "Could not create database: invalid database file",
+                    "FatalException.databaseInvalid", e);
         } catch (IOException e) {
-            throw new ApplicationException("Error reading database file", e);
+            throw new FatalException(
+                    "Could not create database: error reading database file",
+                    "FatalException.databaseReadError", e);
         }
 
-        ServerApplication.LOGGER.info("Server running on port "
-                + getConfigurationManager().getServerPort());
+        ServerApplication.LOGGER.info("Server running on port " + serverPort);
     }
 
     private String getRemoteBrokerServiceUrl() {

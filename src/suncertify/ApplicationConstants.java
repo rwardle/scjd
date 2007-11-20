@@ -61,6 +61,7 @@ public class ApplicationConstants {
     /** Table column header names. */
     public static final String[] TABLE_COLUMN_NAMES = new String[6];
     static {
+        // TODO Move these to the bundle in this package
         ResourceBundle resourceBundle = ResourceBundle
                 .getBundle("suncertify/presentation/Bundle");
         TABLE_COLUMN_NAMES[0] = resourceBundle

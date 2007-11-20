@@ -74,4 +74,14 @@ public class ContractorTableModel extends AbstractTableModel {
     int getRecordNumberAt(int rowIndex) {
         return this.contractors.get(rowIndex).getRecordNumber();
     }
+
+    public Contractor getContractorAtRow(int rowNo) {
+        return this.contractors.get(rowNo);
+    }
+
+    public void updateContractorAtRow(int rowNo, Contractor contractor) {
+        this.contractors.remove(rowNo);
+        this.contractors.add(rowNo, contractor);
+        fireTableDataChanged();
+    }
 }

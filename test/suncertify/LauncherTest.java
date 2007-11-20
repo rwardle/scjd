@@ -5,9 +5,11 @@ import static org.junit.Assert.assertThat;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+@SuppressWarnings("boxing")
 public class LauncherTest {
 
     private final Mockery context = new Mockery();
@@ -18,6 +20,11 @@ public class LauncherTest {
     public void setUp() {
         this.mockApplication = this.context.mock(Application.class);
         this.launcher = new Launcher(new StubApplicationFactory());
+    }
+
+    @After
+    public void tearDown() {
+        this.context.assertIsSatisfied();
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -58,6 +65,8 @@ public class LauncherTest {
         this.context.checking(new Expectations() {
             {
                 one(LauncherTest.this.mockApplication).initialise();
+                will(returnValue(true));
+
                 one(LauncherTest.this.mockApplication).startup();
             }
         });
@@ -65,37 +74,32 @@ public class LauncherTest {
     }
 
     @Test
-    public void applicationIsShutdownWhenInitialiseThrowsException()
-            throws Exception {
-        final ApplicationException applicationException = new ApplicationException();
+    public void shouldNotStartupIfInitialiseIsCancelled() throws Exception {
         this.context.checking(new Expectations() {
             {
                 one(LauncherTest.this.mockApplication).initialise();
-                will(throwException(applicationException));
+                will(returnValue(false));
 
                 never(LauncherTest.this.mockApplication).startup();
-                one(LauncherTest.this.mockApplication).handleException(
-                        with(is(applicationException)));
-                one(LauncherTest.this.mockApplication).shutdown();
             }
         });
         this.launcher.launch();
     }
 
     @Test
-    public void applicationIsShutdownWhenStartupThrowsException()
+    public void shouldHandleExceptionWhenStartupThrowsException()
             throws Exception {
-        final ApplicationException applicationException = new ApplicationException();
+        final FatalException applicationException = new FatalException();
         this.context.checking(new Expectations() {
             {
                 one(LauncherTest.this.mockApplication).initialise();
+                will(returnValue(true));
 
                 one(LauncherTest.this.mockApplication).startup();
                 will(throwException(applicationException));
 
-                one(LauncherTest.this.mockApplication).handleException(
+                one(LauncherTest.this.mockApplication).handleFatalException(
                         with(is(applicationException)));
-                one(LauncherTest.this.mockApplication).shutdown();
             }
         });
         this.launcher.launch();

@@ -23,6 +23,10 @@ public class DatabaseFileImpl implements DatabaseFile {
             throw new IllegalArgumentException(
                     "databaseFilePath cannot be null");
         }
+        if (!new File(databaseFilePath).exists()) {
+            throw new FileNotFoundException("Database file does not exist at: "
+                    + databaseFilePath);
+        }
 
         // TODO Consider rws and rwd modes
         this.file = new RandomAccessFile(new File(databaseFilePath), "rw");

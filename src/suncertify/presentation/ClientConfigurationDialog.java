@@ -97,12 +97,20 @@ public final class ClientConfigurationDialog extends
 
         constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.LINE_START;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.gridx = 1;
         constraints.gridy = 0;
         constraints.insets = ApplicationConstants.DEFAULT_INSETS;
-        constraints.weightx = 1;
         this.serverAddressField = new JTextField();
+        this.serverAddressField.setToolTipText(getResourceBundle().getString(
+                "ClientConfigurationDialog.serverAddressField.tooltip"));
         panel.add(this.serverAddressField, constraints);
+
+        constraints = new GridBagConstraints();
+        constraints.gridx = 2;
+        constraints.gridy = 0;
+        constraints.weightx = 1;
+        panel.add(new JPanel(), constraints);
 
         constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.LINE_END;
@@ -116,10 +124,10 @@ public final class ClientConfigurationDialog extends
 
         constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.LINE_START;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.gridx = 1;
         constraints.gridy = 1;
         constraints.insets = ApplicationConstants.DEFAULT_INSETS;
-        constraints.weightx = 1;
 
         this.serverPortSpinner = new JSpinner(new SpinnerNumberModel(
                 SERVER_PORT_SPINNER_INITIAL_VALUE,
@@ -127,11 +135,19 @@ public final class ClientConfigurationDialog extends
                 SERVER_PORT_SPINNER_MAXIMUM_VALUE,
                 SERVER_PORT_SPINNER_STEP_SIZE));
         this.serverPortSpinner.setFont(this.serverAddressField.getFont());
+        this.serverPortSpinner.setToolTipText(getResourceBundle().getString(
+                "ClientConfigurationDialog.serverPortSpinner.tooltip"));
         JSpinner.DefaultEditor spinnerEditor = new JSpinner.NumberEditor(
                 this.serverPortSpinner, SERVER_PORT_SPINNER_FORMAT_PATTERN);
         spinnerEditor.getTextField().setColumns(SERVER_PORT_SPINNER_COLUMNS);
         this.serverPortSpinner.setEditor(spinnerEditor);
         panel.add(this.serverPortSpinner, constraints);
+
+        constraints = new GridBagConstraints();
+        constraints.gridx = 2;
+        constraints.gridy = 1;
+        constraints.weightx = 1;
+        panel.add(new JPanel(), constraints);
 
         return panel;
     }

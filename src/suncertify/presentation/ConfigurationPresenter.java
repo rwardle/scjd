@@ -7,6 +7,7 @@
 package suncertify.presentation;
 
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 
@@ -19,6 +20,9 @@ import suncertify.ReturnStatus;
  * @author Richard Wardle
  */
 public class ConfigurationPresenter {
+
+    private static final Logger LOGGER = Logger
+            .getLogger(ConfigurationPresenter.class.getName());
 
     private final ConfigurationManager configurationManager;
     private final ConfigurationView view;
@@ -71,18 +75,23 @@ public class ConfigurationPresenter {
 
     /** Performs the OK button action. */
     public void okButtonActionPerformed() {
-        // TODO Validation of URL/file here?
         this.returnStatus = ReturnStatus.OK;
         saveViewToModel();
         this.view.close();
     }
 
     private void saveViewToModel() {
-        this.configurationManager.setDatabaseFilePath(this.view
-                .getDatabaseFilePath());
-        this.configurationManager
-                .setServerAddress(this.view.getServerAddress());
-        this.configurationManager.setServerPort(this.view.getServerPort());
+        String databaseFilePath = this.view.getDatabaseFilePath();
+        String serverAddress = this.view.getServerAddress();
+        Integer serverPort = this.view.getServerPort();
+
+        LOGGER.info("Application configured with: databaseFilePath="
+                + databaseFilePath + ", serverAddress=" + serverAddress
+                + ", serverPort=" + serverPort);
+
+        this.configurationManager.setDatabaseFilePath(databaseFilePath);
+        this.configurationManager.setServerAddress(serverAddress);
+        this.configurationManager.setServerPort(serverPort);
     }
 
     /** Performs the Cancel button action. */

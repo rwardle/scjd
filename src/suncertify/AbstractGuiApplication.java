@@ -23,19 +23,11 @@ public abstract class AbstractGuiApplication extends AbstractApplication {
      * 
      * @param configuration
      *                The application configuration.
-     * @param exceptionHandler
-     *                The application exception handler.
-     * @param shutdownHandler
-     *                The application shutdown handler.
      * @throws IllegalArgumentException
-     *                 If the any of the <code>configuration</code>,
-     *                 <code>exceptionHandler</code> or
-     *                 <code>shutdownHandler</code> parameters are
-     *                 <code>null</code>.
+     *                 If <code>configuration</code> is <code>null</code>.
      */
-    public AbstractGuiApplication(Configuration configuration,
-            ExceptionHandler exceptionHandler, ShutdownHandler shutdownHandler) {
-        super(configuration, exceptionHandler, shutdownHandler);
+    public AbstractGuiApplication(Configuration configuration) {
+        super(configuration);
     }
 
     /**
@@ -43,7 +35,7 @@ public abstract class AbstractGuiApplication extends AbstractApplication {
      * implementation calls the <code>createMainPresenter</code> method to
      * obtain the main application presenter.
      */
-    public final void startup() throws ApplicationException {
+    public final void startup() throws FatalException {
         createMainPresenter().realiseView();
     }
 
@@ -53,10 +45,10 @@ public abstract class AbstractGuiApplication extends AbstractApplication {
      * <code>getBrokerService</code> method to get the broker service.
      * 
      * @return The presenter.
-     * @throws ApplicationException
+     * @throws FatalException
      *                 If the presenter cannot be created.
      */
-    protected MainPresenter createMainPresenter() throws ApplicationException {
+    protected MainPresenter createMainPresenter() throws FatalException {
         MainView mainView = createMainView();
         MainPresenter mainPresenter = new MainPresenter(createBrokerService(),
                 mainView);
@@ -69,19 +61,13 @@ public abstract class AbstractGuiApplication extends AbstractApplication {
      * <code>createMainPresenter</code> method.
      * 
      * @return The broker service object.
-     * @throws ApplicationException
+     * @throws FatalException
      *                 If there is an error getting the broker service.
      */
     protected abstract BrokerService createBrokerService()
-            throws ApplicationException;
+            throws FatalException;
 
     private MainView createMainView() {
         return new MainFrame();
-    }
-
-    @Override
-    public void shutdown() {
-        // TODO Cleanup UI
-        super.shutdown();
     }
 }
