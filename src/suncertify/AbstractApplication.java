@@ -16,7 +16,7 @@ import suncertify.presentation.ConfigurationPresenter;
 import suncertify.presentation.ConfigurationView;
 
 /**
- * The abstract base class for the application.
+ * An abstract base class for applications.
  * 
  * @author Richard Wardle
  */
@@ -24,6 +24,7 @@ public abstract class AbstractApplication implements Application {
 
     private static final Logger LOGGER = Logger
             .getLogger(AbstractApplication.class.getName());
+
     private final ConfigurationManager configurationManager;
     private final FatalExceptionHandler exceptionHandler;
     private final ResourceBundle resourceBundle;
@@ -32,7 +33,7 @@ public abstract class AbstractApplication implements Application {
      * Creates a new instance of <code>AbstractApplication</code>.
      * 
      * @param configuration
-     *                The application configuration.
+     *                Application configuration.
      * @throws IllegalArgumentException
      *                 If <code>configuration</code> is <code>null</code>.
      */
@@ -47,7 +48,7 @@ public abstract class AbstractApplication implements Application {
     }
 
     /**
-     * Gets the configuration manager.
+     * Returns the configuration manager.
      * 
      * @return The configuration manager.
      */
@@ -55,7 +56,14 @@ public abstract class AbstractApplication implements Application {
         return this.configurationManager;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Displays a configuration dialog.
+     * <p>
+     * This implementation calls the <code>createConfigurationView</code>
+     * method.
+     */
     public final boolean initialise() {
         ReturnStatus returnStatus = showConfigurationDialog();
 
@@ -80,15 +88,6 @@ public abstract class AbstractApplication implements Application {
         return initialised;
     }
 
-    void showSaveWarningDialog() {
-        String message = this.resourceBundle
-                .getString("AbstractApplication.saveConfigurationWarningDialog.message");
-        String title = this.resourceBundle
-                .getString("AbstractApplication.saveConfigurationWarningDialog.title");
-        JOptionPane.showMessageDialog(null, message, title,
-                JOptionPane.WARNING_MESSAGE);
-    }
-
     private ReturnStatus showConfigurationDialog() {
         ConfigurationPresenter presenter = createConfigurationPresenter();
         presenter.realiseView();
@@ -108,12 +107,24 @@ public abstract class AbstractApplication implements Application {
     }
 
     /**
-     * Creates the configuration view. <p/> This method is called by the
-     * <code>createConfigurationPresenter</code> method.
+     * Returns a new configuration view.
+     * <p>
+     * This method is called by the <code>initialise</code> method. Subclasses
+     * should implement this method to return a configuration view that is
+     * application-specific.
      * 
-     * @return The view.
+     * @return The configuration view.
      */
     protected abstract ConfigurationView createConfigurationView();
+
+    void showSaveWarningDialog() {
+        String message = this.resourceBundle
+                .getString("AbstractApplication.saveConfigurationWarningDialog.message");
+        String title = this.resourceBundle
+                .getString("AbstractApplication.saveConfigurationWarningDialog.title");
+        JOptionPane.showMessageDialog(null, message, title,
+                JOptionPane.WARNING_MESSAGE);
+    }
 
     /** {@inheritDoc} */
     public final void handleFatalException(FatalException exception) {

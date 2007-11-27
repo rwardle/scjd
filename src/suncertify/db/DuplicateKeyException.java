@@ -7,13 +7,10 @@
 package suncertify.db;
 
 /**
- * TODO
  * 
  * @author Richard Wardle
  */
 public final class DuplicateKeyException extends Exception {
-
-    private static final long serialVersionUID = 1L;
 
     /**
      * Creates a new <code>DuplicateKeyException</code>.

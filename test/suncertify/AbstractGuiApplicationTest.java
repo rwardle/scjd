@@ -47,8 +47,6 @@ public class AbstractGuiApplicationTest {
         this.application.startup();
     }
 
-    // TODO Add shutdown test
-
     private class StubAbstractGuiApplication extends AbstractGuiApplication {
 
         StubAbstractGuiApplication(Configuration configuration) {

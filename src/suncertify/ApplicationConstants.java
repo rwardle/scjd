@@ -8,7 +8,6 @@ package suncertify;
 
 import java.awt.Color;
 import java.awt.Insets;
-import java.util.ResourceBundle;
 
 /**
  * Application constants.
@@ -40,7 +39,10 @@ public class ApplicationConstants {
     /** Localhost IP address. */
     public static final String LOCALHOST_ADDRESS = "127.0.0.1";
 
-    /** Name under which the remote service object is registered with RMI. */
+    /**
+     * Name under which the remote broker service object is bound in the RMI
+     * registry.
+     */
     public static final String REMOTE_BROKER_SERVICE_NAME = "BrokerService";
 
     /** Default insets for the user interface. */
@@ -54,36 +56,6 @@ public class ApplicationConstants {
 
     /** Dark grey colour for gradient panels. */
     public static final Color DARK_GREY = new Color(204, 205, 219);
-
-    /** Light grey colour for gradient panels. */
-    public static final Color LIGHT_GREY = new Color(221, 221, 221);
-
-    /** Table column header names. */
-    public static final String[] TABLE_COLUMN_NAMES = new String[6];
-    static {
-        // TODO Move these to the bundle in this package
-        ResourceBundle resourceBundle = ResourceBundle
-                .getBundle("suncertify/presentation/Bundle");
-        TABLE_COLUMN_NAMES[0] = resourceBundle
-                .getString("MainFrame.resultsTable.nameColumn.text");
-        TABLE_COLUMN_NAMES[1] = resourceBundle
-                .getString("MainFrame.resultsTable.locationColumn.text");
-        TABLE_COLUMN_NAMES[2] = resourceBundle
-                .getString("MainFrame.resultsTable.specialtiesColumn.text");
-        TABLE_COLUMN_NAMES[3] = resourceBundle
-                .getString("MainFrame.resultsTable.sizeColumn.text");
-        TABLE_COLUMN_NAMES[4] = resourceBundle
-                .getString("MainFrame.resultsTable.rateColumn.text");
-        TABLE_COLUMN_NAMES[5] = resourceBundle
-                .getString("MainFrame.resultsTable.ownerColumn.text");
-    }
-
-    public static final int TABLE_NAME_COLUMN_INDEX = 0;
-    public static final int TABLE_LOCATION_COLUMN_INDEX = 1;
-    public static final int TABLE_SPECIALTIES_COLUMN_INDEX = 2;
-    public static final int TABLE_SIZE_COLUMN_INDEX = 3;
-    public static final int TABLE_RATE_COLUMN_INDEX = 4;
-    public static final int TABLE_OWNER_COLUMN_INDEX = 5;
 
     private ApplicationConstants() {
         // Disallow instantiation.

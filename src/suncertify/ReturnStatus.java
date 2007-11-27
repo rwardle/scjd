@@ -7,10 +7,15 @@
 package suncertify;
 
 /**
- * Enumeration of dialog return statuses.
+ * A dialog return status.
  * 
  * @author Richard Wardle
  */
 public enum ReturnStatus {
-    CANCEL, OK
+
+    /** Dialog was cancelled. */
+    CANCEL,
+
+    /** Dialog was okayed. */
+    OK
 }

@@ -3,21 +3,35 @@
  *
  * 20 Aug 2007 
  */
+
 package suncertify;
 
 /**
+ * Abstract base class for application factories which provides a mechanism for
+ * choosing the correct factory to use based on the application mode.
  * 
  * @author Richard Wardle
  */
 public abstract class AbstractApplicationFactory {
 
     /**
-     * Gets the application factory for the supplied application mode.
+     * Creates an application using the specified configuration.
+     * 
+     * @param configuration
+     *                Application configuration.
+     * @return The application that is created.
+     */
+    public abstract Application createApplication(Configuration configuration);
+
+    /**
+     * Returns the application factory that will create an application
+     * corresponding to the specified application mode.
      * 
      * @param applicationMode
-     *                The application mode.
+     *                Application mode.
+     * @return The application factory.
      * @throws IllegalArgumentException
-     *                 If the application mode is <code>null</code>.
+     *                 If <code>applicationMode</code> is <code>null</code>.
      */
     public static AbstractApplicationFactory getApplicationFactory(
             ApplicationMode applicationMode) {
@@ -42,13 +56,4 @@ public abstract class AbstractApplicationFactory {
         }
         return applicationFactory;
     }
-
-    /**
-     * Creates the application using the supplied configuration.
-     * 
-     * @param configuration
-     *                The application configuration.
-     * @return The application.
-     */
-    public abstract Application createApplication(Configuration configuration);
 }

@@ -1,19 +1,17 @@
 package suncertify;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
+import org.hamcrest.CoreMatchers;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import suncertify.presentation.ConfigurationPresenter;
 import suncertify.presentation.ConfigurationView;
 
-@SuppressWarnings("boxing")
 public class AbstractApplicationTest {
 
     private final Mockery context = new Mockery() {
@@ -36,34 +34,34 @@ public class AbstractApplicationTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void throwsExceptionIfConfigurationIsNull() {
+    public void shouldThrowExceptionIfConfigurationIsNull() {
         new StubAbstractApplication(null);
     }
 
     @Test
-    public void initialiseSavesConfigurationWhenConfigurationIsOkayed()
+    public void shouldReturnTrueFromInitialiseWhenConfigurationIsOkayed()
             throws Exception {
         this.context.checking(new Expectations() {
             {
                 ignoring(AbstractApplicationTest.this.mockConfiguration)
                         .exists();
                 ignoring(AbstractApplicationTest.this.mockConfiguration)
-                        .getProperty(with(any(String.class)));
+                        .getProperty(with(Expectations.any(String.class)));
                 ignoring(AbstractApplicationTest.this.mockConfiguration)
-                        .setProperty(with(any(String.class)),
-                                with(any(String.class)));
+                        .setProperty(with(Expectations.any(String.class)),
+                                with(Expectations.any(String.class)));
                 one(AbstractApplicationTest.this.mockPresenter).realiseView();
 
                 allowing(AbstractApplicationTest.this.mockPresenter)
                         .getReturnStatus();
-                will(returnValue(ReturnStatus.OK));
+                will(Expectations.returnValue(ReturnStatus.OK));
 
                 one(AbstractApplicationTest.this.mockConfiguration).save();
             }
         });
         StubAbstractApplication application = new StubAbstractApplication(
                 this.mockConfiguration);
-        assertThat(application.initialise(), is(true));
+        Assert.assertThat(application.initialise(), CoreMatchers.is(true));
     }
 
     @Test
@@ -76,13 +74,13 @@ public class AbstractApplicationTest {
 
                 allowing(AbstractApplicationTest.this.mockPresenter)
                         .getReturnStatus();
-                will(returnValue(ReturnStatus.CANCEL));
+                will(Expectations.returnValue(ReturnStatus.CANCEL));
             }
         });
 
         StubAbstractApplication application = new StubAbstractApplication(
                 this.mockConfiguration);
-        assertThat(application.initialise(), is(false));
+        Assert.assertThat(application.initialise(), CoreMatchers.is(false));
     }
 
     @Test
@@ -93,24 +91,24 @@ public class AbstractApplicationTest {
                 ignoring(AbstractApplicationTest.this.mockConfiguration)
                         .exists();
                 ignoring(AbstractApplicationTest.this.mockConfiguration)
-                        .getProperty(with(any(String.class)));
+                        .getProperty(with(Expectations.any(String.class)));
                 ignoring(AbstractApplicationTest.this.mockConfiguration)
-                        .setProperty(with(any(String.class)),
-                                with(any(String.class)));
+                        .setProperty(with(Expectations.any(String.class)),
+                                with(Expectations.any(String.class)));
                 one(AbstractApplicationTest.this.mockPresenter).realiseView();
 
                 allowing(AbstractApplicationTest.this.mockPresenter)
                         .getReturnStatus();
-                will(returnValue(ReturnStatus.OK));
+                will(Expectations.returnValue(ReturnStatus.OK));
 
                 one(AbstractApplicationTest.this.mockConfiguration).save();
-                will(throwException(new ConfigurationException()));
+                will(Expectations.throwException(new ConfigurationException()));
             }
         });
 
         StubAbstractApplication application = new StubAbstractApplication(
                 this.mockConfiguration);
-        assertThat(application.initialise(), is(true));
+        Assert.assertThat(application.initialise(), CoreMatchers.is(true));
     }
 
     private class StubAbstractApplication extends AbstractApplication {

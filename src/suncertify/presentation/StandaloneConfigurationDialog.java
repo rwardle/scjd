@@ -26,7 +26,6 @@ import suncertify.ApplicationConstants;
 public final class StandaloneConfigurationDialog extends
         AbstractConfigurationDialog {
 
-    private static final long serialVersionUID = 1L;
     private JTextField databaseFilePathField;
     private JButton browseButton;
 
@@ -102,10 +101,9 @@ public final class StandaloneConfigurationDialog extends
         constraints.insets = ApplicationConstants.DEFAULT_INSETS;
         this.browseButton = new JButton(getResourceBundle().getString(
                 "StandaloneConfigurationDialog.browseButton.text"));
-        this.browseButton.setMnemonic(new Integer(getResourceBundle()
-                .getString(
-                        "StandaloneConfigurationDialog.browseButton.mnemonic")
-                .charAt(0)).intValue());
+        this.browseButton.setMnemonic(getResourceBundle().getString(
+                "StandaloneConfigurationDialog.browseButton.mnemonic")
+                .charAt(0));
         panel.add(this.browseButton, constraints);
 
         return panel;

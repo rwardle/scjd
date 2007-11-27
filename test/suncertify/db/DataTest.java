@@ -1,29 +1,9 @@
 package suncertify.db;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static suncertify.db.DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS;
-import static suncertify.db.DataTestConstants.RECORD_VALUES;
-import static suncertify.db.DataTestConstants.RECORD_VALUES_NULL_PADDED;
-import static suncertify.db.DataTestConstants.RECORD_VALUES_SPACE_PADDED;
-import static suncertify.db.DataTestConstants.padField;
-import static suncertify.db.DataTestConstants.padRecord;
-import static suncertify.db.DatabaseConstants.CHARACTER_SET;
-import static suncertify.db.DatabaseConstants.DELETED_RECORD_FLAG;
-import static suncertify.db.DatabaseConstants.FIELD_COUNT;
-import static suncertify.db.DatabaseConstants.MAGIC_COOKIE;
-import static suncertify.db.DatabaseConstants.RECORD_LENGTH;
-import static suncertify.db.DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH;
-import static suncertify.db.DatabaseConstants.VALID_RECORD_FLAG;
-
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -38,7 +18,6 @@ import org.junit.Test;
 import suncertify.db.DatabaseSchema.FieldDescription;
 import suncertify.util.ExceptionHandler;
 
-@SuppressWarnings("boxing")
 public class DataTest {
 
     private ExceptionHandler exceptionHandler;
@@ -69,7 +48,7 @@ public class DataTest {
         this.context.assertIsSatisfied();
         Throwable exception = this.exceptionHandler.getException();
         if (exception != null) {
-            fail(exception.getMessage());
+            Assert.fail(exception.getMessage());
         }
     }
 
@@ -83,7 +62,8 @@ public class DataTest {
     public void constructionWithInvalidMagicCookieThrowsException()
             throws Exception {
         int invalidMagicCookie = -1;
-        assertThat(invalidMagicCookie, is(not(MAGIC_COOKIE)));
+        Assert.assertThat(invalidMagicCookie, CoreMatchers.is(CoreMatchers
+                .not(DatabaseConstants.MAGIC_COOKIE)));
         checkingMagicCookieRead(invalidMagicCookie, this.context
                 .sequence("construction"));
         new Data(this.mockDatabaseFile);
@@ -94,7 +74,7 @@ public class DataTest {
         this.context.checking(new Expectations() {
             {
                 one(DataTest.this.mockDatabaseFile).readInt();
-                will(returnValue(magicCookie));
+                will(Expectations.returnValue(magicCookie));
                 inSequence(sequence);
             }
         });
@@ -104,9 +84,10 @@ public class DataTest {
     public void constructionWithInvalidRecordLengthThrowsException()
             throws Exception {
         Sequence sequence = this.context.sequence("construction");
-        checkingMagicCookieRead(MAGIC_COOKIE, sequence);
+        checkingMagicCookieRead(DatabaseConstants.MAGIC_COOKIE, sequence);
         int invalidRecordLength = -1;
-        assertThat(invalidRecordLength, is(not(RECORD_LENGTH)));
+        Assert.assertThat(invalidRecordLength, CoreMatchers.is(CoreMatchers
+                .not(DatabaseConstants.RECORD_LENGTH)));
         checkingRecordLengthRead(invalidRecordLength, sequence);
         this.data = new Data(this.mockDatabaseFile);
     }
@@ -116,7 +97,7 @@ public class DataTest {
         this.context.checking(new Expectations() {
             {
                 one(DataTest.this.mockDatabaseFile).readInt();
-                will(returnValue(recordLength));
+                will(Expectations.returnValue(recordLength));
                 inSequence(sequence);
             }
         });
@@ -126,10 +107,11 @@ public class DataTest {
     public void constructionWithInvalidFieldCountThrowsException()
             throws Exception {
         Sequence sequence = this.context.sequence("construction");
-        checkingMagicCookieRead(MAGIC_COOKIE, sequence);
-        checkingRecordLengthRead(RECORD_LENGTH, sequence);
+        checkingMagicCookieRead(DatabaseConstants.MAGIC_COOKIE, sequence);
+        checkingRecordLengthRead(DatabaseConstants.RECORD_LENGTH, sequence);
         short invalidFieldCount = -1;
-        assertThat(invalidFieldCount, is(not(FIELD_COUNT)));
+        Assert.assertThat(invalidFieldCount, CoreMatchers.is(CoreMatchers
+                .not(DatabaseConstants.FIELD_COUNT)));
         checkingFieldCount(invalidFieldCount, sequence);
         this.data = new Data(this.mockDatabaseFile);
     }
@@ -139,7 +121,7 @@ public class DataTest {
         this.context.checking(new Expectations() {
             {
                 one(DataTest.this.mockDatabaseFile).readShort();
-                will(returnValue(fieldCount));
+                will(Expectations.returnValue(fieldCount));
                 inSequence(sequence);
             }
         });
@@ -149,16 +131,17 @@ public class DataTest {
     public void constructionWithInvalidFieldDescriptionThrowsException()
             throws Exception {
         Sequence sequence = this.context.sequence("construction");
-        checkingMagicCookieRead(MAGIC_COOKIE, sequence);
-        checkingRecordLengthRead(RECORD_LENGTH, sequence);
-        checkingFieldCount(FIELD_COUNT, sequence);
+        checkingMagicCookieRead(DatabaseConstants.MAGIC_COOKIE, sequence);
+        checkingRecordLengthRead(DatabaseConstants.RECORD_LENGTH, sequence);
+        checkingFieldCount(DatabaseConstants.FIELD_COUNT, sequence);
 
         short invalidFieldLength = -1;
-        assertThat(invalidFieldLength,
-                is(not((short) EXPECTED_FIELD_DESCRIPTIONS[0].getName()
-                        .length())));
+        Assert.assertThat(invalidFieldLength, CoreMatchers.is(CoreMatchers
+                .not((short) DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[0]
+                        .getName().length())));
         FieldDescription invalidFieldDescription = new FieldDescription(
-                EXPECTED_FIELD_DESCRIPTIONS[0].getName(), invalidFieldLength, 0);
+                DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[0].getName(),
+                invalidFieldLength, 0);
         checkingFieldDescriptions(
                 new FieldDescription[] { invalidFieldDescription }, sequence);
 
@@ -172,16 +155,17 @@ public class DataTest {
             {
                 for (FieldDescription element : fieldDescriptions) {
                     one(DataTest.this.mockDatabaseFile).readShort();
-                    will(returnValue((short) element.getName().length()));
+                    will(Expectations.returnValue((short) element.getName()
+                            .length()));
                     inSequence(sequence);
 
                     one(DataTest.this.mockDatabaseFile).readFully(
-                            with(any(byte[].class)));
+                            with(Expectations.any(byte[].class)));
                     will(readBytes(element.getName().getBytes()));
                     inSequence(sequence);
 
                     one(DataTest.this.mockDatabaseFile).readShort();
-                    will(returnValue(element.getLength()));
+                    will(Expectations.returnValue(element.getLength()));
                     inSequence(sequence);
                 }
             }
@@ -192,16 +176,17 @@ public class DataTest {
     public void constructionWithInvalidDataSectionLengthThrowsException()
             throws Exception {
         final Sequence sequence = this.context.sequence("construction");
-        checkingMagicCookieRead(MAGIC_COOKIE, sequence);
-        checkingRecordLengthRead(RECORD_LENGTH, sequence);
-        checkingFieldCount(FIELD_COUNT, sequence);
-        checkingFieldDescriptions(EXPECTED_FIELD_DESCRIPTIONS, sequence);
+        checkingMagicCookieRead(DatabaseConstants.MAGIC_COOKIE, sequence);
+        checkingRecordLengthRead(DatabaseConstants.RECORD_LENGTH, sequence);
+        checkingFieldCount(DatabaseConstants.FIELD_COUNT, sequence);
+        checkingFieldDescriptions(
+                DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS, sequence);
         checkingDataSectionOffset(sequence);
         this.context.checking(new Expectations() {
             {
                 one(DataTest.this.mockDatabaseFile).length();
                 long validLength = getOffsetForRecord(DataTest.this.recordCount);
-                will(returnValue(validLength - 1));
+                will(Expectations.returnValue(validLength - 1));
                 inSequence(sequence);
             }
         });
@@ -209,8 +194,9 @@ public class DataTest {
     }
 
     private long getOffsetForRecord(int recNo) {
-        return this.dataSectionOffset + recNo
-                * (RECORD_VALIDITY_FLAG_LENGTH + RECORD_LENGTH);
+        return this.dataSectionOffset
+                + recNo
+                * (DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH + DatabaseConstants.RECORD_LENGTH);
     }
 
     @Test
@@ -220,17 +206,20 @@ public class DataTest {
 
     private void standardSetup() throws Exception {
         Sequence sequence = this.context.sequence("construction");
-        checkingMagicCookieRead(MAGIC_COOKIE, sequence);
-        checkingRecordLengthRead(RECORD_LENGTH, sequence);
-        checkingFieldCount(FIELD_COUNT, sequence);
-        checkingFieldDescriptions(EXPECTED_FIELD_DESCRIPTIONS, sequence);
+        checkingMagicCookieRead(DatabaseConstants.MAGIC_COOKIE, sequence);
+        checkingRecordLengthRead(DatabaseConstants.RECORD_LENGTH, sequence);
+        checkingFieldCount(DatabaseConstants.FIELD_COUNT, sequence);
+        checkingFieldDescriptions(
+                DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS, sequence);
         checkingDataSectionOffset(sequence);
         checkingRecordCount(sequence);
         checkingCacheDeletedRecordNumbers(sequence);
         this.data = new Data(this.mockDatabaseFile);
         assertSchema();
-        assertThat(this.data.getDataSectionOffset(), is(this.dataSectionOffset));
-        assertThat(this.data.getRecordCount(), is(this.recordCount));
+        Assert.assertThat(this.data.getDataSectionOffset(), CoreMatchers
+                .is(this.dataSectionOffset));
+        Assert.assertThat(this.data.getRecordCount(), CoreMatchers
+                .is(this.recordCount));
         assertDeletedRecords();
     }
 
@@ -239,7 +228,7 @@ public class DataTest {
         this.context.checking(new Expectations() {
             {
                 one(DataTest.this.mockDatabaseFile).getFilePointer();
-                will(returnValue(DataTest.this.dataSectionOffset));
+                will(Expectations.returnValue(DataTest.this.dataSectionOffset));
                 inSequence(sequence);
             }
         });
@@ -249,9 +238,10 @@ public class DataTest {
         this.context.checking(new Expectations() {
             {
                 one(DataTest.this.mockDatabaseFile).length();
-                will(returnValue(DataTest.this.dataSectionOffset
-                        + DataTest.this.recordCount
-                        * (RECORD_VALIDITY_FLAG_LENGTH + RECORD_LENGTH)));
+                will(Expectations
+                        .returnValue(DataTest.this.dataSectionOffset
+                                + DataTest.this.recordCount
+                                * (DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH + DatabaseConstants.RECORD_LENGTH)));
                 inSequence(sequence);
             }
         });
@@ -262,14 +252,17 @@ public class DataTest {
         this.context.checking(new Expectations() {
             {
                 for (int recNo = 0; recNo < DataTest.this.recordCount; recNo++) {
-                    one(DataTest.this.mockDatabaseFile).seek(
-                            with(equal(getOffsetForRecord(recNo))));
+                    one(DataTest.this.mockDatabaseFile)
+                            .seek(
+                                    with(Expectations
+                                            .equal(getOffsetForRecord(recNo))));
                     inSequence(sequence);
 
                     one(DataTest.this.mockDatabaseFile).readByte();
-                    will(returnValue(DataTest.this.deletedRecNos
-                            .contains(recNo) ? DELETED_RECORD_FLAG
-                            : VALID_RECORD_FLAG));
+                    will(Expectations
+                            .returnValue(DataTest.this.deletedRecNos
+                                    .contains(recNo) ? DatabaseConstants.DELETED_RECORD_FLAG
+                                    : DatabaseConstants.VALID_RECORD_FLAG));
                     inSequence(sequence);
                 }
             }
@@ -278,27 +271,36 @@ public class DataTest {
 
     private void assertSchema() {
         DatabaseSchema schema = this.data.getDatabaseSchema();
-        assertThat(schema.getRecordLength(), is(RECORD_LENGTH));
-        assertThat(schema.getFieldCount(), is(FIELD_COUNT));
+        Assert.assertThat(schema.getRecordLength(), CoreMatchers
+                .is(DatabaseConstants.RECORD_LENGTH));
+        Assert.assertThat(schema.getFieldCount(), CoreMatchers
+                .is(DatabaseConstants.FIELD_COUNT));
 
         FieldDescription[] fieldDescriptions = schema.getFieldDescriptions();
-        assertThat(fieldDescriptions, is(notNullValue()));
-        assertThat(fieldDescriptions.length,
-                is(EXPECTED_FIELD_DESCRIPTIONS.length));
+        Assert.assertThat(fieldDescriptions, CoreMatchers.is(CoreMatchers
+                .notNullValue()));
+        Assert.assertThat(fieldDescriptions.length, CoreMatchers
+                .is(DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS.length));
         for (int i = 0; i < fieldDescriptions.length; i++) {
-            assertThat(fieldDescriptions[i].getName(),
-                    is(EXPECTED_FIELD_DESCRIPTIONS[i].getName()));
-            assertThat(fieldDescriptions[i].getLength(),
-                    is(EXPECTED_FIELD_DESCRIPTIONS[i].getLength()));
-            assertThat(fieldDescriptions[i].getRecordOffset(),
-                    is(EXPECTED_FIELD_DESCRIPTIONS[i].getRecordOffset()));
+            Assert.assertThat(fieldDescriptions[i].getName(), CoreMatchers
+                    .is(DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[i]
+                            .getName()));
+            Assert.assertThat(fieldDescriptions[i].getLength(), CoreMatchers
+                    .is(DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[i]
+                            .getLength()));
+            Assert
+                    .assertThat(
+                            fieldDescriptions[i].getRecordOffset(),
+                            CoreMatchers
+                                    .is(DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[i]
+                                            .getRecordOffset()));
         }
     }
 
     private void assertDeletedRecords() {
         for (int recNo = 0; recNo < this.recordCount; recNo++) {
-            assertThat(this.data.isRecordDeleted(recNo), is(this.deletedRecNos
-                    .contains(recNo)));
+            Assert.assertThat(this.data.isRecordDeleted(recNo), CoreMatchers
+                    .is(this.deletedRecNos.contains(recNo)));
         }
     }
 
@@ -324,7 +326,8 @@ public class DataTest {
     @Test
     public void readSpacePadded() throws Exception {
         standardSetup();
-        read(1, RECORD_VALUES_SPACE_PADDED, RECORD_VALUES);
+        read(1, DataTestConstants.RECORD_VALUES_SPACE_PADDED,
+                DataTestConstants.RECORD_VALUES);
     }
 
     private void read(final int recordNumber,
@@ -342,16 +345,18 @@ public class DataTest {
         this.context.checking(new Expectations() {
             {
                 one(DataTest.this.mockDatabaseFile).readFully(
-                        with(any(byte[].class)));
+                        with(Expectations.any(byte[].class)));
                 will(readBytes(recordBuilder.toString().getBytes()));
                 inSequence(sequence);
             }
         });
 
         String[] actualRecordValues = this.data.read(recordNumber);
-        assertThat(actualRecordValues.length, is(expectedRecordValues.length));
+        Assert.assertThat(actualRecordValues.length, CoreMatchers
+                .is(expectedRecordValues.length));
         for (int i = 0; i < actualRecordValues.length; i++) {
-            assertThat(actualRecordValues[i], is(expectedRecordValues[i]));
+            Assert.assertThat(actualRecordValues[i], CoreMatchers
+                    .is(expectedRecordValues[i]));
         }
     }
 
@@ -368,21 +373,22 @@ public class DataTest {
     @Test
     public void readNullPadded() throws Exception {
         standardSetup();
-        read(1, RECORD_VALUES_NULL_PADDED, RECORD_VALUES);
+        read(1, DataTestConstants.RECORD_VALUES_NULL_PADDED,
+                DataTestConstants.RECORD_VALUES);
     }
 
     @Test(expected = RecordNotFoundException.class)
     public void updateWithNegativeRecordNumberThrowsException()
             throws Exception {
         standardSetup();
-        this.data.update(-1, RECORD_VALUES);
+        this.data.update(-1, DataTestConstants.RECORD_VALUES);
     }
 
     @Test(expected = RecordNotFoundException.class)
     public void updateWithRecordNumberGreaterThanNumberOfRecordsThrowsException()
             throws Exception {
         standardSetup();
-        this.data.update(this.recordCount, RECORD_VALUES);
+        this.data.update(this.recordCount, DataTestConstants.RECORD_VALUES);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -399,9 +405,9 @@ public class DataTest {
         standardSetup();
         int recNo = 0;
         this.data.lock(recNo);
-        String[] recordValues = new String[FIELD_COUNT + 1];
-        System.arraycopy(RECORD_VALUES, recNo, recordValues, recNo,
-                RECORD_VALUES.length);
+        String[] recordValues = new String[DatabaseConstants.FIELD_COUNT + 1];
+        System.arraycopy(DataTestConstants.RECORD_VALUES, recNo, recordValues,
+                recNo, DataTestConstants.RECORD_VALUES.length);
         this.data.update(recNo, recordValues);
     }
 
@@ -412,7 +418,8 @@ public class DataTest {
         int recNo = 1;
         this.data.lock(recNo);
         final Sequence sequence = this.context.sequence("update");
-        String[] recordValues = RECORD_VALUES_SPACE_PADDED.clone();
+        String[] recordValues = DataTestConstants.RECORD_VALUES_SPACE_PADDED
+                .clone();
         recordValues[1] = null;
         checkingUpdateRecord(recNo, recordValues, sequence);
         this.data.update(recNo, recordValues);
@@ -424,9 +431,11 @@ public class DataTest {
         int recNo = 1;
         this.data.lock(recNo);
         final Sequence sequence = this.context.sequence("update");
-        String[] recordValues = RECORD_VALUES.clone();
-        recordValues[1] = RECORD_VALUES_SPACE_PADDED[1] + " too long";
-        checkingUpdateRecord(recNo, RECORD_VALUES_SPACE_PADDED, sequence);
+        String[] recordValues = DataTestConstants.RECORD_VALUES.clone();
+        recordValues[1] = DataTestConstants.RECORD_VALUES_SPACE_PADDED[1]
+                + " too long";
+        checkingUpdateRecord(recNo,
+                DataTestConstants.RECORD_VALUES_SPACE_PADDED, sequence);
         this.data.update(recNo, recordValues);
     }
 
@@ -436,11 +445,14 @@ public class DataTest {
         int recNo = 1;
         this.data.lock(recNo);
         final Sequence sequence = this.context.sequence("update");
-        String[] recordValues = RECORD_VALUES_SPACE_PADDED.clone();
+        String[] recordValues = DataTestConstants.RECORD_VALUES_SPACE_PADDED
+                .clone();
         recordValues[1] = "";
         String[] paddedRecordValues = recordValues.clone();
-        paddedRecordValues[1] = padField(paddedRecordValues[1],
-                EXPECTED_FIELD_DESCRIPTIONS[1].getLength(), ' ');
+        paddedRecordValues[1] = DataTestConstants.padField(
+                paddedRecordValues[1],
+                DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[1].getLength(),
+                ' ');
         checkingUpdateRecord(recNo, paddedRecordValues, sequence);
         this.data.update(recNo, recordValues);
     }
@@ -449,7 +461,7 @@ public class DataTest {
     public void updateDeletedRecordThrowsException() throws Exception {
         standardSetup();
         Integer recNo = this.deletedRecNos.first();
-        this.data.update(recNo, RECORD_VALUES);
+        this.data.update(recNo, DataTestConstants.RECORD_VALUES);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -462,14 +474,14 @@ public class DataTest {
                 try {
                     DataTest.this.data.lock(recNo);
                 } catch (RecordNotFoundException e) {
-                    fail(Thread.currentThread().getName() + ": "
+                    Assert.fail(Thread.currentThread().getName() + ": "
                             + e.getMessage());
                 }
             }
         });
         lockThread.start();
         lockThread.join();
-        this.data.update(recNo, RECORD_VALUES);
+        this.data.update(recNo, DataTestConstants.RECORD_VALUES);
     }
 
     @Test
@@ -478,8 +490,9 @@ public class DataTest {
         int recNo = 1;
         this.data.lock(recNo);
         final Sequence sequence = this.context.sequence("update");
-        checkingUpdateRecord(recNo, RECORD_VALUES_SPACE_PADDED, sequence);
-        this.data.update(recNo, RECORD_VALUES);
+        checkingUpdateRecord(recNo,
+                DataTestConstants.RECORD_VALUES_SPACE_PADDED, sequence);
+        this.data.update(recNo, DataTestConstants.RECORD_VALUES);
     }
 
     private void checkingUpdateRecord(int recNo, final String[] recordValues,
@@ -488,17 +501,21 @@ public class DataTest {
                 + DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH;
         this.context.checking(new Expectations() {
             {
-                for (int i = 0; i < EXPECTED_FIELD_DESCRIPTIONS.length; i++) {
+                for (int i = 0; i < DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS.length; i++) {
                     if (recordValues[i] != null) {
-                        one(DataTest.this.mockDatabaseFile).seek(
-                                with(equal(recordValuesStartPos
-                                        + EXPECTED_FIELD_DESCRIPTIONS[i]
-                                                .getRecordOffset())));
+                        one(DataTest.this.mockDatabaseFile)
+                                .seek(
+                                        with(Expectations
+                                                .equal(recordValuesStartPos
+                                                        + DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[i]
+                                                                .getRecordOffset())));
                         inSequence(sequence);
 
-                        one(DataTest.this.mockDatabaseFile).write(
-                                with(equal(recordValues[i]
-                                        .getBytes(CHARACTER_SET))));
+                        one(DataTest.this.mockDatabaseFile)
+                                .write(
+                                        with(Expectations
+                                                .equal(recordValues[i]
+                                                        .getBytes(DatabaseConstants.CHARACTER_SET))));
                         inSequence(sequence);
                     }
                 }
@@ -544,7 +561,7 @@ public class DataTest {
         this.context.checking(new Expectations() {
             {
                 one(DataTest.this.mockDatabaseFile).writeByte(
-                        DELETED_RECORD_FLAG);
+                        DatabaseConstants.DELETED_RECORD_FLAG);
                 inSequence(sequence);
             }
         });
@@ -560,7 +577,7 @@ public class DataTest {
                 try {
                     DataTest.this.data.lock(recNo);
                 } catch (RecordNotFoundException e) {
-                    fail(Thread.currentThread().getName() + ": "
+                    Assert.fail(Thread.currentThread().getName() + ": "
                             + e.getMessage());
                 }
             }
@@ -575,7 +592,7 @@ public class DataTest {
         standardSetup();
         final Integer recNo = 1;
         this.data.lock(recNo);
-        assertThat(this.data.isLocked(recNo), is(true));
+        Assert.assertThat(this.data.isLocked(recNo), CoreMatchers.is(true));
 
         // Attempt to lock the same record on another thread - will block
         Thread lockingThread = createThreadThatLocksRecordAndExpectsException(recNo);
@@ -596,7 +613,7 @@ public class DataTest {
             public void run() {
                 try {
                     DataTest.this.data.lock(recNo);
-                    fail("Expected RecordNotFoundException in thread: "
+                    Assert.fail("Expected RecordNotFoundException in thread: "
                             + Thread.currentThread().getName());
                 } catch (RecordNotFoundException e) {
                     // Expected since by the time this thread is unblocked the
@@ -608,7 +625,7 @@ public class DataTest {
 
     private void joinThread(Thread thread) throws InterruptedException {
         thread.join(1000);
-        assertThat(thread.isAlive(), is(false));
+        Assert.assertThat(thread.isAlive(), CoreMatchers.is(false));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -621,16 +638,17 @@ public class DataTest {
     public void createWithInvalidDataArrayLengthThrowsException()
             throws Exception {
         standardSetup();
-        String[] recordValues = new String[FIELD_COUNT + 1];
-        System.arraycopy(RECORD_VALUES, 0, recordValues, 0,
-                RECORD_VALUES.length);
+        String[] recordValues = new String[DatabaseConstants.FIELD_COUNT + 1];
+        System.arraycopy(DataTestConstants.RECORD_VALUES, 0, recordValues, 0,
+                DataTestConstants.RECORD_VALUES.length);
         this.data.create(recordValues);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void createWithNullRecordValueThrowsException() throws Exception {
         standardSetup();
-        String[] recordValues = RECORD_VALUES_SPACE_PADDED.clone();
+        String[] recordValues = DataTestConstants.RECORD_VALUES_SPACE_PADDED
+                .clone();
         recordValues[1] = null;
         this.data.create(recordValues);
     }
@@ -641,9 +659,12 @@ public class DataTest {
         standardSetup();
         int recNoToWrite = this.recordCount;
         Sequence sequence = this.context.sequence("create");
-        checkingCreateRecord(recNoToWrite, RECORD_VALUES_SPACE_PADDED, sequence);
-        assertThat(this.data.create(RECORD_VALUES), is(recNoToWrite));
-        assertThat(this.data.getRecordCount(), is(this.recordCount + 1));
+        checkingCreateRecord(recNoToWrite,
+                DataTestConstants.RECORD_VALUES_SPACE_PADDED, sequence);
+        Assert.assertThat(this.data.create(DataTestConstants.RECORD_VALUES),
+                CoreMatchers.is(recNoToWrite));
+        Assert.assertThat(this.data.getRecordCount(), CoreMatchers
+                .is(this.recordCount + 1));
     }
 
     @Test
@@ -651,9 +672,12 @@ public class DataTest {
         standardSetup();
         int recNoToWrite = this.deletedRecNos.first();
         Sequence sequence = this.context.sequence("create");
-        checkingCreateRecord(recNoToWrite, RECORD_VALUES_SPACE_PADDED, sequence);
-        assertThat(this.data.create(RECORD_VALUES), is(recNoToWrite));
-        assertThat(this.data.getRecordCount(), is(this.recordCount));
+        checkingCreateRecord(recNoToWrite,
+                DataTestConstants.RECORD_VALUES_SPACE_PADDED, sequence);
+        Assert.assertThat(this.data.create(DataTestConstants.RECORD_VALUES),
+                CoreMatchers.is(recNoToWrite));
+        Assert.assertThat(this.data.getRecordCount(), CoreMatchers
+                .is(this.recordCount));
     }
 
     private void checkingCreateRecord(final int firstAvailableRecNo,
@@ -668,13 +692,15 @@ public class DataTest {
 
         this.context.checking(new Expectations() {
             {
-                one(DataTest.this.mockDatabaseFile).writeByte(
-                        with(equal((int) DatabaseConstants.VALID_RECORD_FLAG)));
+                one(DataTest.this.mockDatabaseFile)
+                        .writeByte(
+                                with(Expectations
+                                        .equal((int) DatabaseConstants.VALID_RECORD_FLAG)));
                 inSequence(sequence);
 
                 one(DataTest.this.mockDatabaseFile).write(
-                        with(equal(recordBuilder.toString().getBytes(
-                                CHARACTER_SET))));
+                        with(Expectations.equal(recordBuilder.toString()
+                                .getBytes(DatabaseConstants.CHARACTER_SET))));
                 inSequence(sequence);
             }
         });
@@ -690,7 +716,7 @@ public class DataTest {
     public void findWithInvalidCriteriaArrayLengthThrowsException()
             throws Exception {
         standardSetup();
-        String[] criteria = new String[EXPECTED_FIELD_DESCRIPTIONS.length - 1];
+        String[] criteria = new String[DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS.length - 1];
         this.data.find(criteria);
     }
 
@@ -700,21 +726,22 @@ public class DataTest {
         int[] matchingRecNos = { 1, 2 };
         String[] criteria = { "Buonarotti", null, "", null, null, "12345678" };
         String[][] allRecordValues = {
-                padRecord(new String[] { "nm", "m", "", "m", "m", "12345678" },
+                DataTestConstants.padRecord(new String[] { "nm", "m", "", "m",
+                        "m", "12345678" }, ' '),
+                DataTestConstants.padRecord(new String[] { "Buonarotti", "m",
+                        "", "m", "m", "12345678" }, ' '),
+                DataTestConstants.padRecord(new String[] {
+                        "Buonarotti & Family", "m", "", "m", "m", "12345678" },
                         ' '),
-                padRecord(new String[] { "Buonarotti", "m", "", "m", "m",
-                        "12345678" }, ' '),
-                padRecord(new String[] { "Buonarotti & Family", "m", "", "m",
-                        "m", "12345678" }, ' '),
-                padRecord(new String[] { "Family of Buonarotti", "m", "", "m",
-                        "m", "12345678" }, ' '),
-                padRecord(
-                        new String[] { "Buonarotti", "m", "", "m", "m", "nm" },
-                        ' ') };
+                DataTestConstants.padRecord(
+                        new String[] { "Family of Buonarotti", "m", "", "m",
+                                "m", "12345678" }, ' '),
+                DataTestConstants.padRecord(new String[] { "Buonarotti", "m",
+                        "", "m", "m", "nm" }, ' ') };
         Sequence sequence = this.context.sequence("find");
         checkingFindRecords(allRecordValues, sequence);
         int[] recNos = this.data.find(criteria);
-        assertArrayEquals(matchingRecNos, recNos);
+        Assert.assertArrayEquals(matchingRecNos, recNos);
     }
 
     @Test
@@ -723,21 +750,22 @@ public class DataTest {
         int[] matchingRecNos = { 0, 1, 2, 3, 4 };
         String[] criteria = { null, null, null, null, null, null };
         String[][] allRecordValues = {
-                padRecord(new String[] { "nm", "m", "", "m", "m", "12345678" },
+                DataTestConstants.padRecord(new String[] { "nm", "m", "", "m",
+                        "m", "12345678" }, ' '),
+                DataTestConstants.padRecord(new String[] { "Buonarotti", "m",
+                        "", "m", "m", "12345678" }, ' '),
+                DataTestConstants.padRecord(new String[] {
+                        "Buonarotti & Family", "m", "", "m", "m", "12345678" },
                         ' '),
-                padRecord(new String[] { "Buonarotti", "m", "", "m", "m",
-                        "12345678" }, ' '),
-                padRecord(new String[] { "Buonarotti & Family", "m", "", "m",
-                        "m", "12345678" }, ' '),
-                padRecord(new String[] { "Family of Buonarotti", "m", "", "m",
-                        "m", "12345678" }, ' '),
-                padRecord(
-                        new String[] { "Buonarotti", "m", "", "m", "m", "nm" },
-                        ' ') };
+                DataTestConstants.padRecord(
+                        new String[] { "Family of Buonarotti", "m", "", "m",
+                                "m", "12345678" }, ' '),
+                DataTestConstants.padRecord(new String[] { "Buonarotti", "m",
+                        "", "m", "m", "nm" }, ' ') };
         Sequence sequence = this.context.sequence("find");
         checkingFindRecords(allRecordValues, sequence);
         int[] recNos = this.data.find(criteria);
-        assertArrayEquals(matchingRecNos, recNos);
+        Assert.assertArrayEquals(matchingRecNos, recNos);
     }
 
     private void checkingFindRecords(final String[][] allRecordValues,
@@ -759,7 +787,7 @@ public class DataTest {
                         inSequence(sequence);
 
                         one(DataTest.this.mockDatabaseFile).readFully(
-                                with(any(byte[].class)));
+                                with(Expectations.any(byte[].class)));
                         will(readBytes(recordBuilder.toString().getBytes()));
                         inSequence(sequence);
                     }
@@ -793,14 +821,14 @@ public class DataTest {
         standardSetup();
         int recNo = 1;
         this.data.lock(recNo);
-        assertThat(this.data.isLocked(recNo), is(true));
+        Assert.assertThat(this.data.isLocked(recNo), CoreMatchers.is(true));
     }
 
     @Test
     public void isLockedOnUnlockedRecordReturnsFalse() throws Exception {
         standardSetup();
         int recNo = 1;
-        assertThat(this.data.isLocked(recNo), is(false));
+        Assert.assertThat(this.data.isLocked(recNo), CoreMatchers.is(false));
     }
 
     @Test(expected = RecordNotFoundException.class)
@@ -827,7 +855,7 @@ public class DataTest {
         standardSetup();
         int recNo = 1;
         this.data.lock(recNo);
-        assertThat(this.data.isLocked(recNo), is(true));
+        Assert.assertThat(this.data.isLocked(recNo), CoreMatchers.is(true));
     }
 
     @Test
@@ -835,10 +863,13 @@ public class DataTest {
         standardSetup();
         int firstRecNo = 1;
         this.data.lock(firstRecNo);
-        assertThat(this.data.isLocked(firstRecNo), is(true));
+        Assert
+                .assertThat(this.data.isLocked(firstRecNo), CoreMatchers
+                        .is(true));
         int secondRecNo = 2;
         this.data.lock(secondRecNo);
-        assertThat(this.data.isLocked(secondRecNo), is(true));
+        Assert.assertThat(this.data.isLocked(secondRecNo), CoreMatchers
+                .is(true));
     }
 
     @Test
@@ -847,7 +878,7 @@ public class DataTest {
         standardSetup();
         final Integer recNo = 1;
         this.data.lock(recNo);
-        assertThat(this.data.isLocked(recNo), is(true));
+        Assert.assertThat(this.data.isLocked(recNo), CoreMatchers.is(true));
 
         Thread thread1 = createThreadThatLocksRecordAndExpectsException(recNo);
         thread1.start();
@@ -870,7 +901,7 @@ public class DataTest {
         standardSetup();
         final Integer recNo = 1;
         this.data.lock(recNo);
-        assertThat(this.data.isLocked(recNo), is(true));
+        Assert.assertThat(this.data.isLocked(recNo), CoreMatchers.is(true));
 
         Thread lockingThread = new Thread(new Runnable() {
             public void run() {
@@ -880,7 +911,7 @@ public class DataTest {
                 } catch (RecordNotFoundException e) {
                     fail();
                 } catch (IllegalThreadStateException e) {
-                    assertTrue(
+                    Assert.assertTrue(
                             "Exception cause was not an InterruptedException",
                             e.getCause() instanceof InterruptedException);
                 }
@@ -923,16 +954,16 @@ public class DataTest {
         standardSetup();
         int recNo = 1;
         this.data.lock(recNo);
-        assertThat(this.data.isLocked(recNo), is(true));
+        Assert.assertThat(this.data.isLocked(recNo), CoreMatchers.is(true));
         this.data.unlock(recNo);
-        assertThat(this.data.isLocked(recNo), is(false));
+        Assert.assertThat(this.data.isLocked(recNo), CoreMatchers.is(false));
     }
 
     @Test(expected = IllegalStateException.class)
     public void unlockThrowsExceptionIfRecordNotLocked() throws Exception {
         standardSetup();
         int recNo = 0;
-        assertThat(this.data.isLocked(recNo), is(false));
+        Assert.assertThat(this.data.isLocked(recNo), CoreMatchers.is(false));
         this.data.unlock(recNo);
     }
 
@@ -945,7 +976,7 @@ public class DataTest {
                 try {
                     DataTest.this.data.lock(recNo);
                 } catch (RecordNotFoundException e) {
-                    fail(Thread.currentThread().getName() + ": "
+                    Assert.fail(Thread.currentThread().getName() + ": "
                             + e.getMessage());
                 }
             }

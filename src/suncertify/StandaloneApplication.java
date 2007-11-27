@@ -17,7 +17,7 @@ import suncertify.service.BrokerService;
 import suncertify.service.BrokerServiceImpl;
 
 /**
- * The standalone mode application.
+ * An application that runs in {@link ApplicationMode#STANDALONE} mode.
  * 
  * @author Richard Wardle
  */
@@ -29,12 +29,12 @@ public final class StandaloneApplication extends AbstractGuiApplication {
      * Creates a new instance of <code>StandaloneApplication</code>.
      * 
      * @param configuration
-     *                The application configuration.
+     *                Application configuration.
      * @param databaseFactory
-     *                The database factory.
+     *                Database factory.
      * @throws IllegalArgumentException
      *                 If <code>configuration</code> or
-     *                 <code>databaseFactory</code> is <code>null</code>.
+     *                 <code>databaseFactory</code> are <code>null</code>.
      */
     public StandaloneApplication(Configuration configuration,
             DatabaseFactory databaseFactory) {
@@ -42,13 +42,24 @@ public final class StandaloneApplication extends AbstractGuiApplication {
         this.databaseFactory = databaseFactory;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns a new configuration view for a standalone application.
+     * 
+     * @return The configuration view.
+     */
     @Override
     protected ConfigurationView createConfigurationView() {
         return new StandaloneConfigurationDialog();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Creates a database and returns a new broker service that uses the
+     * database.
+     * 
+     * @return The broker service.
+     * @throws FatalException
+     *                 If there is an error creating the broker service.
+     */
     @Override
     protected BrokerService createBrokerService() throws FatalException {
         try {

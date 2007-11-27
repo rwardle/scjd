@@ -16,7 +16,7 @@ import suncertify.service.BrokerService;
 import suncertify.service.RmiService;
 
 /**
- * The client mode application.
+ * An application that runs in {@link ApplicationMode#CLIENT} mode.
  * 
  * @author Richard Wardle
  */
@@ -28,25 +28,35 @@ public final class ClientApplication extends AbstractGuiApplication {
      * Creates a new instance of <code>ClientApplication</code>.
      * 
      * @param configuration
-     *                The application configuration.
+     *                Application configuration.
      * @param rmiService
-     *                The RMI service.
+     *                RMI service.
      * @throws IllegalArgumentException
      *                 If <code>configuration</code> or
-     *                 <code>rmiService</code> is <code>null</code>.
+     *                 <code>rmiService</code> are <code>null</code>.
      */
     public ClientApplication(Configuration configuration, RmiService rmiService) {
         super(configuration);
         this.rmiService = rmiService;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns a new configuration view for a client application.
+     * 
+     * @return The configuration view.
+     */
     @Override
     protected ConfigurationView createConfigurationView() {
         return new ClientConfigurationDialog();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns a new broker service for a client application.
+     * 
+     * @return The broker service.
+     * @throws FatalException
+     *                 If there is an error creating the broker service.
+     */
     @Override
     protected BrokerService createBrokerService() throws FatalException {
         String url = "//" + getConfigurationManager().getServerAddress() + ":"

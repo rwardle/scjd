@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+    "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+
+<module name="Checker">
+    <module name="PackageHtml"/>
+    <module name="Translation"/>
+    <module name="TreeWalker">
+        <!-- Javadoc Comments -->
+        <module name="JavadocType">
+            <property name="scope" value="public"/>
+        </module>
+        <module name="JavadocMethod">
+            <property name="scope" value="protected"/>
+            <property name="allowUndeclaredRTE" value="true"/>
+        </module>
+        <module name="JavadocVariable">
+            <property name="scope" value="protected"/>
+        </module>
+        <module name="JavadocStyle">
+            <property name="scope" value="protected"/>
+            <property name="checkEmptyJavadoc" value="true"/>
+        </module>
+
+        <!-- Naming Conventions -->
+        <module name="AbstractClassName"/>
+        <module name="ConstantName"/>
+        <module name="LocalFinalVariableName"/>
+        <module name="LocalVariableName"/>
+        <module name="MemberName"/>
+        <module name="MethodName"/>
+        <module name="PackageName"/>
+        <module name="ParameterName"/>
+        <module name="StaticVariableName"/>
+        <module name="TypeName"/>
+
+        <!-- Imports -->
+        <module name="AvoidStarImport"/>
+        <module name="IllegalImport"/>
+        <module name="RedundantImport"/>
+        <module name="UnusedImports"/>
+        <module name="ImportOrder">
+            <property name="groups" value="java,javax,org,com"/>
+        </module>
+
+        <!-- Size Violations -->
+        <module name="ExecutableStatementCount"/>
+        <module name="FileLength"/>
+        <module name="MethodLength"/>
+        <module name="AnonInnerLength"/>
+        <module name="ParameterNumber"/>
+
+        <!-- Whitespace -->
+        <module name="EmptyForInitializerPad"/>
+        <module name="EmptyForIteratorPad"/>
+        <module name="MethodParamPad"/>
+        <module name="NoWhitespaceAfter"/>
+        <module name="NoWhitespaceBefore"/>
+        <module name="OperatorWrap"/>
+        <module name="ParenPad"/>
+        <module name="TypecastParenPad"/>
+        <module name="TabCharacter"/>
+        <module name="WhitespaceAfter"/>
+
+        <!-- Modifiers -->
+        <module name="ModifierOrder"/>
+        <module name="RedundantModifier"/>
+
+        <!-- Blocks Checks -->
+        <module name="EmptyBlock"/>
+        <module name="LeftCurly"/>
+        <module name="NeedBraces"/>
+        <module name="RightCurly"/>
+        <module name="AvoidNestedBlocks"/>
+
+        <!-- Coding -->
+        <module name="AvoidInlineConditionals"/>
+        <module name="CovariantEquals"/>
+        <module name="DoubleCheckedLocking"/>
+        <module name="EmptyStatement"/>
+        <module name="EqualsHashCode"/>
+        <module name="HiddenField">
+            <property name="ignoreConstructorParameter" value="true"/>
+            <property name="ignoreSetter" value="true"/>
+        </module>
+        <module name="IllegalInstantiation"/>
+        <module name="InnerAssignment"/>
+        <module name="MagicNumber"/>
+        <module name="MissingSwitchDefault"/>
+        <module name="ModifiedControlVariable"/>
+        <module name="RedundantThrows">
+            <property name="allowUnchecked" value="true"/>
+        </module>
+        <module name="SimplifyBooleanExpression"/>
+        <module name="SimplifyBooleanReturn"/>
+        <module name="StringLiteralEquality"/>
+        <module name="NestedIfDepth"/>
+        <module name="NestedTryDepth"/>
+        <module name="SuperClone"/>
+        <module name="SuperFinalize"/>
+        <module name="IllegalCatch"/>
+        <module name="IllegalThrows"/>
+        <module name="PackageDeclaration"/>
+        <module name="ReturnCount"/>
+        <module name="IllegalType"/>
+        <module name="DeclarationOrder"/>
+        <module name="ParameterAssignment"/>
+        <module name="ExplicitInitialization"/>
+        <module name="DefaultComesLast"/>
+        <module name="MissingCtor"/>
+        <module name="FallThrough"/>
+        <module name="MultipleVariableDeclarations"/>
+        <module name="RequireThis">
+            <property name="checkMethods" value="false"/>
+        </module>
+        <module name="UnnecessaryParentheses"/>
+
+        <!-- Class design -->
+        <module name="VisibilityModifier"/>
+        <module name="InterfaceIsType"/>
+        <module name="HideUtilityClassConstructor"/>
+        <module name="DesignForExtension"/>
+        <module name="MutableException"/>
+        <module name="ThrowsCount"/>
+
+        <!-- Metrics -->
+        <module name="BooleanExpressionComplexity"/>
+        <module name="ClassDataAbstractionCoupling"/>
+        <module name="ClassFanOutComplexity"/>
+        <module name="CyclomaticComplexity"/>
+        <module name="NPathComplexity"/>
+        <module name="JavaNCSS"/>
+
+        <!-- Miscellaneous -->
+        <module name="GenericIllegalRegexp">
+            <property name="format" value="System\.out\.println"/>
+            <property name="format" value="e\.printStackTrace"/>
+        </module>
+        <module name="TodoComment">
+            <property name="format" value="TODO"/>
+        </module>
+        <module name="UpperEll"/>
+        <module name="ArrayTypeStyle"/>
+        <module name="TrailingComment"/>
+    </module>
+</module>
+

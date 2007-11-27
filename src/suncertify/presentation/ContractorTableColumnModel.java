@@ -3,6 +3,7 @@
  *
  * 26 Oct 2007 
  */
+
 package suncertify.presentation;
 
 import java.awt.Component;
@@ -30,15 +31,11 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import suncertify.ApplicationConstants;
-
 /**
  * @author Richard Wardle
  */
 public class ContractorTableColumnModel extends DefaultTableColumnModel {
 
-    private static final long serialVersionUID = 1L;
-    private static final int[] COLUMN_WIDTHS = { 90, 70, 90, 45, 45, 60 };
     private static final int BOOK_BUTTON_FONT_SIZE = 10;
     private static final Dimension BOOK_BUTTON_DIMENSIONS = new Dimension(65,
             15);
@@ -49,28 +46,32 @@ public class ContractorTableColumnModel extends DefaultTableColumnModel {
     private MainPresenter presenter;
 
     public ContractorTableColumnModel() {
-        for (int i = 0; i < ApplicationConstants.TABLE_COLUMN_NAMES.length; i++) {
-            TableColumn column = new TableColumn(i, COLUMN_WIDTHS[i]);
-            column.setHeaderValue(ApplicationConstants.TABLE_COLUMN_NAMES[i]);
+        ResourceBundle resourceBundle = ResourceBundle
+                .getBundle("suncertify/presentation/Bundle");
+
+        String[] tableColumnNames = new String[PresentationConstants.TABLE_COLUMN_COUNT];
+        for (int i = 0; i < tableColumnNames.length; i++) {
+            tableColumnNames[i] = resourceBundle
+                    .getString("MainFrame.resultsTable.column" + i + ".text");
+        }
+
+        for (int i = 0; i < PresentationConstants.TABLE_COLUMN_COUNT; i++) {
+            TableColumn column = new TableColumn(i,
+                    PresentationConstants.TABLE_COLUMN_WIDTHS.get(i));
+            column.setHeaderValue(tableColumnNames[i]);
             addColumn(column);
         }
 
-        ResourceBundle resourceBundle = ResourceBundle
-                .getBundle("suncertify/presentation/Bundle");
         this.bookButtonText = resourceBundle
                 .getString("MainFrame.bookButton.text");
 
-        this.columnHeaderToolTips = new String[] {
-                resourceBundle.getString("MainFrame.nameColumnHeader.tooltip"),
-                resourceBundle
-                        .getString("MainFrame.locationColumnHeader.tooltip"),
-                resourceBundle
-                        .getString("MainFrame.specialtiesColumnHeader.tooltip"),
-                resourceBundle.getString("MainFrame.sizeColumnHeader.tooltip"),
-                resourceBundle.getString("MainFrame.rateColumnHeader.tooltip"),
-                resourceBundle.getString("MainFrame.ownerColumnHeader.tooltip") };
+        this.columnHeaderToolTips = new String[PresentationConstants.TABLE_COLUMN_COUNT];
+        for (int i = 0; i < tableColumnNames.length; i++) {
+            this.columnHeaderToolTips[i] = resourceBundle
+                    .getString("MainFrame.resultsTable.column" + i + ".tooltip");
+        }
 
-        TableColumn ownerColumn = getColumn(ApplicationConstants.TABLE_OWNER_COLUMN_INDEX);
+        TableColumn ownerColumn = getColumn(PresentationConstants.TABLE_OWNER_COLUMN_INDEX);
         this.rendererBookButton = createBookButton();
         String bookButtonTooltip = resourceBundle
                 .getString("MainFrame.bookButton.tooltip");
@@ -102,8 +103,9 @@ public class ContractorTableColumnModel extends DefaultTableColumnModel {
         button.setFocusPainted(false);
         Font defaultButtonFont = button.getFont();
         button.setFont(new Font(defaultButtonFont.getName(), defaultButtonFont
-                .getStyle(), BOOK_BUTTON_FONT_SIZE));
-        button.setPreferredSize(BOOK_BUTTON_DIMENSIONS);
+                .getStyle(), ContractorTableColumnModel.BOOK_BUTTON_FONT_SIZE));
+        button
+                .setPreferredSize(ContractorTableColumnModel.BOOK_BUTTON_DIMENSIONS);
         return button;
     }
 
@@ -155,7 +157,7 @@ public class ContractorTableColumnModel extends DefaultTableColumnModel {
                     }
                     border = this.focusBorder;
                 } else {
-                    border = EMPTY_BORDER;
+                    border = OwnerTableCellRenderer.EMPTY_BORDER;
                 }
                 this.bookButtonPanel.setBorder(border);
 
@@ -181,10 +183,10 @@ public class ContractorTableColumnModel extends DefaultTableColumnModel {
     private static final class OwnerTableCellEditor extends AbstractCellEditor
             implements TableCellEditor, ActionListener {
 
-        private static final long serialVersionUID = 1L;
         private final JPanel bookButtonPanel;
         private final ContractorTableColumnModel contractorTableColumnModel;
         private final String bookButtonTooltip;
+        private JTable resultsTable;
         private int currentRow;
 
         public OwnerTableCellEditor(
@@ -214,13 +216,14 @@ public class ContractorTableColumnModel extends DefaultTableColumnModel {
         }
 
         public void actionPerformed(ActionEvent e) {
-            this.contractorTableColumnModel.presenter
-                    .bookActionPerformed(this.currentRow);
+            this.contractorTableColumnModel.presenter.bookActionPerformed(
+                    this.currentRow, this.resultsTable);
             fireEditingStopped();
         }
 
         public Component getTableCellEditorComponent(JTable table,
                 Object value, boolean isSelected, int row, int column) {
+            this.resultsTable = table;
             this.currentRow = row;
             this.bookButtonPanel.setBackground(table.getSelectionBackground());
             this.bookButtonPanel.setBorder(UIManager

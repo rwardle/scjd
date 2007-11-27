@@ -25,7 +25,6 @@ import suncertify.ApplicationConstants;
 public final class ClientConfigurationDialog extends
         AbstractConfigurationDialog {
 
-    private static final long serialVersionUID = 1L;
     private JTextField serverAddressField;
     private JSpinner serverPortSpinner;
 
@@ -130,16 +129,18 @@ public final class ClientConfigurationDialog extends
         constraints.insets = ApplicationConstants.DEFAULT_INSETS;
 
         this.serverPortSpinner = new JSpinner(new SpinnerNumberModel(
-                SERVER_PORT_SPINNER_INITIAL_VALUE,
-                SERVER_PORT_SPINNER_MINIMUM_VALUE,
-                SERVER_PORT_SPINNER_MAXIMUM_VALUE,
-                SERVER_PORT_SPINNER_STEP_SIZE));
+                AbstractConfigurationDialog.SERVER_PORT_SPINNER_INITIAL_VALUE,
+                AbstractConfigurationDialog.SERVER_PORT_SPINNER_MINIMUM_VALUE,
+                AbstractConfigurationDialog.SERVER_PORT_SPINNER_MAXIMUM_VALUE,
+                AbstractConfigurationDialog.SERVER_PORT_SPINNER_STEP_SIZE));
         this.serverPortSpinner.setFont(this.serverAddressField.getFont());
         this.serverPortSpinner.setToolTipText(getResourceBundle().getString(
                 "ClientConfigurationDialog.serverPortSpinner.tooltip"));
         JSpinner.DefaultEditor spinnerEditor = new JSpinner.NumberEditor(
-                this.serverPortSpinner, SERVER_PORT_SPINNER_FORMAT_PATTERN);
-        spinnerEditor.getTextField().setColumns(SERVER_PORT_SPINNER_COLUMNS);
+                this.serverPortSpinner,
+                AbstractConfigurationDialog.SERVER_PORT_SPINNER_FORMAT_PATTERN);
+        spinnerEditor.getTextField().setColumns(
+                AbstractConfigurationDialog.SERVER_PORT_SPINNER_COLUMNS);
         this.serverPortSpinner.setEditor(spinnerEditor);
         panel.add(this.serverPortSpinner, constraints);
 

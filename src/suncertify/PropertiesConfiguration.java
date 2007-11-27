@@ -19,26 +19,27 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Adapts <code>Properties</code> to the <code>Configuration</code>
- * interface.
+ * Implementation of <code>Configuration</code> that uses a properties file to
+ * store application configuraiton.
  * 
  * @author Richard Wardle
  */
-public class PropertiesConfiguration implements Configuration {
+public final class PropertiesConfiguration implements Configuration {
 
     private static final Logger LOGGER = Logger
             .getLogger(PropertiesConfiguration.class.getName());
+
     private final File propertiesFile;
     private final Properties properties;
 
     /**
      * Creates a new instance of <code>PropertiesConfiguration</code> using
-     * the supplied properties file.
+     * the specified properties file.
      * 
      * @param propertiesFile
-     *                The properties file.
+     *                Properties file.
      * @throws IllegalArgumentException
-     *                 If the properties file is <code>null</code>.
+     *                 If the <code>propertiesFile</code> is <code>null</code>.
      */
     public PropertiesConfiguration(File propertiesFile) {
         if (propertiesFile == null) {

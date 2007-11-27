@@ -1,13 +1,12 @@
 package suncertify;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,11 +35,12 @@ public class StandaloneApplicationTest {
     }
 
     @Test
-    public void createConfigurationView() throws Exception {
+    public void shouldCreateStandaloneConfigurationDialog() throws Exception {
         checkingConfiguration();
         StandaloneApplication application = new StandaloneApplication(
                 this.mockConfiguration, this.mockDatabaseFactory);
-        assertTrue(application.createConfigurationView() instanceof StandaloneConfigurationDialog);
+        Assert
+                .assertTrue(application.createConfigurationView() instanceof StandaloneConfigurationDialog);
     }
 
     private void checkingConfiguration() throws Exception {
@@ -50,35 +50,41 @@ public class StandaloneApplicationTest {
                         .exists();
                 ignoring(StandaloneApplicationTest.this.mockConfiguration)
                         .getProperty(
-                                with(equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)));
+                                with(Expectations
+                                        .equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)));
 
                 allowing(StandaloneApplicationTest.this.mockConfiguration)
                         .getProperty(
-                                with(equal(ApplicationConstants.SERVER_PORT_PROPERTY)));
-                will(returnValue("1199"));
+                                with(Expectations
+                                        .equal(ApplicationConstants.SERVER_PORT_PROPERTY)));
+                will(Expectations.returnValue("1199"));
 
                 allowing(StandaloneApplicationTest.this.mockConfiguration)
                         .getProperty(
-                                with(equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)));
-                will(returnValue(StandaloneApplicationTest.this.databaseFilePath));
+                                with(Expectations
+                                        .equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)));
+                will(Expectations
+                        .returnValue(StandaloneApplicationTest.this.databaseFilePath));
             }
         });
     }
 
     @Test
-    public void createBrokerService() throws Exception {
+    public void shouldCreateLocalBrokerService() throws Exception {
         checkingConfiguration();
         this.context.checking(new Expectations() {
             {
                 one(StandaloneApplicationTest.this.mockDatabaseFactory)
                         .createDatabase(
-                                with(equal(StandaloneApplicationTest.this.databaseFilePath)));
+                                with(Expectations
+                                        .equal(StandaloneApplicationTest.this.databaseFilePath)));
             }
         });
 
         StandaloneApplication application = new StandaloneApplication(
                 this.mockConfiguration, this.mockDatabaseFactory);
-        assertTrue(application.createBrokerService() instanceof BrokerServiceImpl);
+        Assert
+                .assertTrue(application.createBrokerService() instanceof BrokerServiceImpl);
     }
 
     @Test(expected = FatalException.class)
@@ -89,8 +95,9 @@ public class StandaloneApplicationTest {
             {
                 one(StandaloneApplicationTest.this.mockDatabaseFactory)
                         .createDatabase(
-                                with(equal(StandaloneApplicationTest.this.databaseFilePath)));
-                will(throwException(new FileNotFoundException()));
+                                with(Expectations
+                                        .equal(StandaloneApplicationTest.this.databaseFilePath)));
+                will(Expectations.throwException(new FileNotFoundException()));
             }
         });
         new StandaloneApplication(this.mockConfiguration,
@@ -105,8 +112,9 @@ public class StandaloneApplicationTest {
             {
                 one(StandaloneApplicationTest.this.mockDatabaseFactory)
                         .createDatabase(
-                                with(equal(StandaloneApplicationTest.this.databaseFilePath)));
-                will(throwException(new IOException()));
+                                with(Expectations
+                                        .equal(StandaloneApplicationTest.this.databaseFilePath)));
+                will(Expectations.throwException(new IOException()));
             }
         });
         new StandaloneApplication(this.mockConfiguration,
@@ -121,8 +129,10 @@ public class StandaloneApplicationTest {
             {
                 one(StandaloneApplicationTest.this.mockDatabaseFactory)
                         .createDatabase(
-                                with(equal(StandaloneApplicationTest.this.databaseFilePath)));
-                will(throwException(new DataValidationException("")));
+                                with(Expectations
+                                        .equal(StandaloneApplicationTest.this.databaseFilePath)));
+                will(Expectations
+                        .throwException(new DataValidationException("")));
             }
         });
         new StandaloneApplication(this.mockConfiguration,

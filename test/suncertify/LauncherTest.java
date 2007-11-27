@@ -1,15 +1,13 @@
 package suncertify;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
+import org.hamcrest.CoreMatchers;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-@SuppressWarnings("boxing")
 public class LauncherTest {
 
     private final Mockery context = new Mockery();
@@ -28,44 +26,47 @@ public class LauncherTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void throwsExceptionIfCommandLineArgumentIsNull() {
+    public void shouldThrowExceptionIfCommandLineArgumentIsNull() {
         Launcher.getApplicationMode(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void throwsExceptionIfCommandLineArgumentIsInvalid() {
+    public void shouldThrowExceptionIfCommandLineArgumentIsInvalid() {
         Launcher.getApplicationMode(new String[] { "invalid-mode" });
     }
 
     @Test
-    public void getsClientApplicationModeIfNotSpecifiedOnCommandLine() {
-        assertThat(Launcher.getApplicationMode(new String[0]),
-                is(ApplicationMode.CLIENT));
+    public void shouldUseClientApplicationModeIfNotSpecifiedOnCommandLine() {
+        Assert.assertThat(Launcher.getApplicationMode(new String[0]),
+                CoreMatchers.is(ApplicationMode.CLIENT));
     }
 
     @Test
-    public void getsServerApplicationModeIfCommandLineArgumentIsServer() {
-        assertThat(Launcher.getApplicationMode(new String[] { "server" }),
-                is(ApplicationMode.SERVER));
+    public void shouldUseServerApplicationModeIfCommandLineArgumentIsServer() {
+        Assert.assertThat(Launcher
+                .getApplicationMode(new String[] { "server" }), CoreMatchers
+                .is(ApplicationMode.SERVER));
     }
 
     @Test
-    public void getsStandaloneApplicationModeIfCommandLineArgumentIsAlone() {
-        assertThat(Launcher.getApplicationMode(new String[] { "alone" }),
-                is(ApplicationMode.STANDALONE));
+    public void shouldUseStandaloneApplicationModeIfCommandLineArgumentIsAlone() {
+        Assert.assertThat(
+                Launcher.getApplicationMode(new String[] { "alone" }),
+                CoreMatchers.is(ApplicationMode.STANDALONE));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void throwsExceptionIfApplicationFactoryIsNull() {
+    public void shouldThrowExceptionIfApplicationFactoryIsNull() {
         new Launcher(null);
     }
 
     @Test
-    public void launchHappyPath() throws Exception {
+    public void shouldIntialiseAndStartupApplicationWhenLaunched()
+            throws Exception {
         this.context.checking(new Expectations() {
             {
                 one(LauncherTest.this.mockApplication).initialise();
-                will(returnValue(true));
+                will(Expectations.returnValue(true));
 
                 one(LauncherTest.this.mockApplication).startup();
             }
@@ -74,11 +75,12 @@ public class LauncherTest {
     }
 
     @Test
-    public void shouldNotStartupIfInitialiseIsCancelled() throws Exception {
+    public void shouldNotStartupApplicationIfInitialiseIsCancelled()
+            throws Exception {
         this.context.checking(new Expectations() {
             {
                 one(LauncherTest.this.mockApplication).initialise();
-                will(returnValue(false));
+                will(Expectations.returnValue(false));
 
                 never(LauncherTest.this.mockApplication).startup();
             }
@@ -93,13 +95,13 @@ public class LauncherTest {
         this.context.checking(new Expectations() {
             {
                 one(LauncherTest.this.mockApplication).initialise();
-                will(returnValue(true));
+                will(Expectations.returnValue(true));
 
                 one(LauncherTest.this.mockApplication).startup();
-                will(throwException(applicationException));
+                will(Expectations.throwException(applicationException));
 
                 one(LauncherTest.this.mockApplication).handleFatalException(
-                        with(is(applicationException)));
+                        with(CoreMatchers.is(applicationException)));
             }
         });
         this.launcher.launch();

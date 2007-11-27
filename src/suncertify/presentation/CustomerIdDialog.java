@@ -32,7 +32,6 @@ import suncertify.ApplicationConstants;
  */
 public class CustomerIdDialog extends JDialog {
 
-    private static final long serialVersionUID = 1L;
     private static final String CUSTOMER_ID_MASK = "########";
     private static final int CUSTOMER_ID_LENGTH = 8;
 
@@ -49,7 +48,7 @@ public class CustomerIdDialog extends JDialog {
 
         MaskFormatter formatter = null;
         try {
-            formatter = new MaskFormatter(CUSTOMER_ID_MASK);
+            formatter = new MaskFormatter(CustomerIdDialog.CUSTOMER_ID_MASK);
         } catch (ParseException e) {
             // TODO
             throw new RuntimeException(e);
@@ -149,7 +148,7 @@ public class CustomerIdDialog extends JDialog {
         return panel;
     }
 
-    protected JPanel initialiseInputPanel() {
+    private JPanel initialiseInputPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
 
@@ -182,7 +181,7 @@ public class CustomerIdDialog extends JDialog {
 
     private void okButtonActionPerformed() {
         String text = this.customerIdTextField.getText().trim();
-        if (text.length() == CUSTOMER_ID_LENGTH) {
+        if (text.length() == CustomerIdDialog.CUSTOMER_ID_LENGTH) {
             this.customerId = text;
             setVisible(false);
         } else {

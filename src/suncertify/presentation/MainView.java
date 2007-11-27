@@ -6,6 +6,8 @@
 
 package suncertify.presentation;
 
+import java.awt.Component;
+
 import javax.swing.JFrame;
 
 import suncertify.service.Contractor;
@@ -43,7 +45,11 @@ public interface MainView {
 
     void disableControls();
 
-    void enableControls();
+    /**
+     * @param focussedComponent
+     *                May be null.
+     */
+    void enableControls(Component componentToFocus);
 
     Contractor getContractorAtRow(int rowNo);
 

@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
@@ -58,7 +59,6 @@ public final class MainFrame extends JFrame implements MainView {
 
     // TODO Check on small screen resultions 640x480
 
-    private static final long serialVersionUID = 1L;
     private static final String INITIAL_STATUS_LABEL = " ";
     // TODO Adjust these sizes
     private static final Dimension PREFERRED_SIZE = new Dimension(640, 480);
@@ -84,13 +84,13 @@ public final class MainFrame extends JFrame implements MainView {
     public MainFrame() {
         this.resourceBundle = ResourceBundle
                 .getBundle("suncertify/presentation/Bundle");
-        this.statusLabel = new JLabel(INITIAL_STATUS_LABEL);
+        this.statusLabel = new JLabel(MainFrame.INITIAL_STATUS_LABEL);
 
         // Display an empty table initially
         this.tableModel = new ContractorTableModel(new ArrayList<Contractor>());
         this.contractorTableColumnModel = new ContractorTableColumnModel();
         this.resultsTable = createResultsTable();
-        this.resultsTable.setRowHeight(TABLE_ROW_HEIGHT);
+        this.resultsTable.setRowHeight(MainFrame.TABLE_ROW_HEIGHT);
         this.resultsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.resultsTable.setSurrendersFocusOnKeystroke(true);
 
@@ -99,7 +99,7 @@ public final class MainFrame extends JFrame implements MainView {
                 .getString("MainFrame.nameField.tooltip"));
         this.nameTextField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                MainFrame.this.presenter.searchActionPerformed();
+                MainFrame.this.searchActionPerformed(e);
             }
         });
 
@@ -108,7 +108,7 @@ public final class MainFrame extends JFrame implements MainView {
                 .getString("MainFrame.locationField.tooltip"));
         this.locationTextField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                MainFrame.this.presenter.searchActionPerformed();
+                MainFrame.this.searchActionPerformed(e);
             }
         });
 
@@ -120,8 +120,8 @@ public final class MainFrame extends JFrame implements MainView {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setJMenuBar(initialiseMenuBar());
-        setMinimumSize(MINIMUM_SIZE);
-        setPreferredSize(PREFERRED_SIZE);
+        setMinimumSize(MainFrame.MINIMUM_SIZE);
+        setPreferredSize(MainFrame.PREFERRED_SIZE);
         setTitle(this.resourceBundle.getString("MainFrame.title.text"));
         setLayout(new GridBagLayout());
         initialiseComponents();
@@ -129,12 +129,10 @@ public final class MainFrame extends JFrame implements MainView {
 
     private JTable createResultsTable() {
         return new JTable(this.tableModel, this.contractorTableColumnModel) {
-            private static final long serialVersionUID = 1L;
 
             @Override
             protected JTableHeader createDefaultTableHeader() {
                 return new JTableHeader(this.columnModel) {
-                    private static final long serialVersionUID = 1L;
 
                     @Override
                     public String getToolTipText(MouseEvent e) {
@@ -149,6 +147,14 @@ public final class MainFrame extends JFrame implements MainView {
                 };
             }
         };
+    }
+
+    private void searchActionPerformed(ActionEvent e) {
+        Component componentToFocus = null;
+        if (e.getSource() instanceof Component) {
+            componentToFocus = (Component) e.getSource();
+        }
+        this.presenter.searchActionPerformed(componentToFocus);
     }
 
     public void setPresenter(MainPresenter presenter) {
@@ -205,10 +211,14 @@ public final class MainFrame extends JFrame implements MainView {
         this.contractorTableColumnModel.disableRendererBookButton();
     }
 
-    public void enableControls() {
+    public void enableControls(Component componentToFocus) {
         this.glassPane.setVisible(false);
         this.searchAction.setEnabled(true);
         this.contractorTableColumnModel.enableRendererBookButton();
+        this.resultsTable.requestFocus();
+        if (componentToFocus != null) {
+            componentToFocus.requestFocus();
+        }
     }
 
     public Contractor getContractorAtRow(int rowNo) {
@@ -226,8 +236,8 @@ public final class MainFrame extends JFrame implements MainView {
         JMenu fileMenu = new JMenu();
         fileMenu.setText(this.resourceBundle
                 .getString("MainFrame.fileMenu.text"));
-        fileMenu.setMnemonic(new Integer(this.resourceBundle.getString(
-                "MainFrame.fileMenu.mnemonic").charAt(0)).intValue());
+        fileMenu.setMnemonic(this.resourceBundle.getString(
+                "MainFrame.fileMenu.mnemonic").charAt(0));
         fileMenu.add(exitMenuItem);
 
         JMenuItem searchMenuItem = new JMenuItem(this.searchAction);
@@ -242,8 +252,8 @@ public final class MainFrame extends JFrame implements MainView {
         JMenu editMenu = new JMenu();
         editMenu.setText(this.resourceBundle
                 .getString("MainFrame.editMenu.text"));
-        editMenu.setMnemonic(new Integer(this.resourceBundle.getString(
-                "MainFrame.editMenu.mnemonic").charAt(0)).intValue());
+        editMenu.setMnemonic(this.resourceBundle.getString(
+                "MainFrame.editMenu.mnemonic").charAt(0));
         editMenu.add(searchMenuItem);
         editMenu.add(clearCriteriaMenuItem);
 
@@ -255,8 +265,8 @@ public final class MainFrame extends JFrame implements MainView {
         JMenu helpMenu = new JMenu();
         helpMenu.setText(this.resourceBundle
                 .getString("MainFrame.helpMenu.text"));
-        helpMenu.setMnemonic(new Integer(this.resourceBundle.getString(
-                "MainFrame.helpMenu.mnemonic").charAt(0)).intValue());
+        helpMenu.setMnemonic(this.resourceBundle.getString(
+                "MainFrame.helpMenu.mnemonic").charAt(0));
         helpMenu.add(helpContentsMenuItem);
 
         JMenuBar menuBar = new JMenuBar();
@@ -330,7 +340,8 @@ public final class MainFrame extends JFrame implements MainView {
         constraints.gridy = 2;
         constraints.insets = insetsZeroTop;
         constraints.weightx = 1;
-        this.nameTextField.setPreferredSize(TEXT_FIELD_PREFERRED_SIZE);
+        this.nameTextField
+                .setPreferredSize(MainFrame.TEXT_FIELD_PREFERRED_SIZE);
         panel.add(this.nameTextField, constraints);
 
         constraints = new GridBagConstraints();
@@ -339,7 +350,8 @@ public final class MainFrame extends JFrame implements MainView {
         constraints.gridy = 2;
         constraints.insets = insetsZeroTop;
         constraints.weightx = 1;
-        this.locationTextField.setPreferredSize(TEXT_FIELD_PREFERRED_SIZE);
+        this.locationTextField
+                .setPreferredSize(MainFrame.TEXT_FIELD_PREFERRED_SIZE);
         panel.add(this.locationTextField, constraints);
 
         constraints = new GridBagConstraints();
@@ -401,34 +413,34 @@ public final class MainFrame extends JFrame implements MainView {
 
     private static final class SearchAction extends AbstractAction {
 
-        private static final long serialVersionUID = 1L;
         private final MainFrame mainFrame;
 
         public SearchAction(MainFrame mainFrame) {
             super(mainFrame.resourceBundle
                     .getString("MainFrame.searchAction.text"));
             this.mainFrame = mainFrame;
-            putValue(MNEMONIC_KEY, new Integer(this.mainFrame.resourceBundle
-                    .getString("MainFrame.searchAction.mnemonic").charAt(0)));
+            putValue(Action.MNEMONIC_KEY, new Integer(
+                    this.mainFrame.resourceBundle.getString(
+                            "MainFrame.searchAction.mnemonic").charAt(0)));
         }
 
         public void actionPerformed(ActionEvent e) {
-            this.mainFrame.presenter.searchActionPerformed();
+            this.mainFrame.searchActionPerformed(e);
         }
     }
 
     private static final class ClearCriteriaAction extends AbstractAction {
 
-        private static final long serialVersionUID = 1L;
         private final MainFrame mainFrame;
 
         public ClearCriteriaAction(MainFrame mainFrame) {
             super(mainFrame.resourceBundle
                     .getString("MainFrame.clearCriteriaAction.text"));
             this.mainFrame = mainFrame;
-            putValue(MNEMONIC_KEY, new Integer(this.mainFrame.resourceBundle
-                    .getString("MainFrame.clearCriteriaAction.mnemonic")
-                    .charAt(0)));
+            putValue(
+                    Action.MNEMONIC_KEY,
+                    new Integer(this.mainFrame.resourceBundle.getString(
+                            "MainFrame.clearCriteriaAction.mnemonic").charAt(0)));
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -438,21 +450,20 @@ public final class MainFrame extends JFrame implements MainView {
 
     private static final class HelpContentsAction extends AbstractAction {
 
-        private static final long serialVersionUID = 1L;
         private final MainFrame mainFrame;
 
         public HelpContentsAction(MainFrame mainFrame) {
             super(mainFrame.resourceBundle
                     .getString("MainFrame.helpContentsAction.text"));
             this.mainFrame = mainFrame;
-            putValue(MNEMONIC_KEY, new Integer(this.mainFrame.resourceBundle
-                    .getString("MainFrame.helpContentsAction.mnemonic").charAt(
-                            0)));
+            putValue(Action.MNEMONIC_KEY, new Integer(
+                    this.mainFrame.resourceBundle.getString(
+                            "MainFrame.helpContentsAction.mnemonic").charAt(0)));
         }
 
         public void actionPerformed(ActionEvent evt) {
             URL helpContentsUrl = ClassLoader
-                    .getSystemResource(USER_GUIDE_PATH);
+                    .getSystemResource(MainFrame.USER_GUIDE_PATH);
             if (helpContentsUrl == null) {
                 showErrorDialog();
             } else {
@@ -482,16 +493,15 @@ public final class MainFrame extends JFrame implements MainView {
 
     private static final class ExitAction extends AbstractAction {
 
-        private static final long serialVersionUID = 1L;
-
         private final MainFrame mainFrame;
 
         public ExitAction(MainFrame mainFrame) {
             super(mainFrame.resourceBundle
                     .getString("MainFrame.exitMenuItem.text"));
             this.mainFrame = mainFrame;
-            putValue(MNEMONIC_KEY, new Integer(this.mainFrame.resourceBundle
-                    .getString("MainFrame.exitMenuItem.mnemonic").charAt(0)));
+            putValue(Action.MNEMONIC_KEY, new Integer(
+                    this.mainFrame.resourceBundle.getString(
+                            "MainFrame.exitMenuItem.mnemonic").charAt(0)));
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -500,8 +510,6 @@ public final class MainFrame extends JFrame implements MainView {
     }
 
     private static final class GlassPane extends JComponent {
-
-        private static final long serialVersionUID = 1L;
 
         public GlassPane() {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));

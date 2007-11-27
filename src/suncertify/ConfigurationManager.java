@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Provides a simplified interface to the <code>Configuration</code> (facade
+ * Provides a simplified interface for <code>Configuration</code> (façade
  * pattern).
  * 
  * @author Richard Wardle
@@ -19,16 +19,17 @@ public final class ConfigurationManager {
 
     private static final Logger LOGGER = Logger
             .getLogger(ConfigurationManager.class.getName());
+
     private final Configuration configuration;
 
     /**
      * Creates a new instance of <code>ConfigurationManager</code> using the
-     * supplied configuration.
+     * specified configuration.
      * 
      * @param configuration
-     *                The configuration.
+     *                Configuration.
      * @throws IllegalArgumentException
-     *                 If the configuration is <code>null</code>.
+     *                 If the <code>configuration</code> is <code>null</code>.
      */
     public ConfigurationManager(Configuration configuration) {
         if (configuration == null) {
@@ -56,15 +57,8 @@ public final class ConfigurationManager {
         }
 
         try {
-            if (getServerPort() == null) {
-                setServerPort(ApplicationConstants.DEFAULT_SERVER_PORT);
-            }
+            getServerPort();
         } catch (NumberFormatException e) {
-            ConfigurationManager.LOGGER
-                    .log(
-                            Level.WARNING,
-                            "Saved server port is not a number, using default value",
-                            e);
             setServerPort(ApplicationConstants.DEFAULT_SERVER_PORT);
         }
     }
@@ -93,9 +87,9 @@ public final class ConfigurationManager {
      * Sets the database file path.
      * 
      * @param databaseFilePath
-     *                The database file path to set.
+     *                Database file path to set.
      * @throws IllegalArgumentException
-     *                 If the supplied path is <code>null</code>.
+     *                 If <code>databaseFilePath</code> is <code>null</code>.
      */
     public void setDatabaseFilePath(String databaseFilePath) {
         if (databaseFilePath == null) {
@@ -121,9 +115,9 @@ public final class ConfigurationManager {
      * Sets the server address.
      * 
      * @param serverAddress
-     *                The server address to set.
+     *                Server address to set.
      * @throws IllegalArgumentException
-     *                 If the supplied address is <code>null</code>.
+     *                 If <code>serverAddress</code> is <code>null</code>.
      */
     public void setServerAddress(String serverAddress) {
         if (serverAddress == null) {
@@ -149,9 +143,9 @@ public final class ConfigurationManager {
      * Sets the server port.
      * 
      * @param serverPort
-     *                The server port to set.
+     *                Server port to set.
      * @throws IllegalArgumentException
-     *                 If the supplied port is <code>null</code>.
+     *                 If <code>serverPort</code> is <code>null</code>.
      */
     public void setServerPort(Integer serverPort) {
         if (serverPort == null) {

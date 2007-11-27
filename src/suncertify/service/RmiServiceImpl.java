@@ -15,7 +15,6 @@ import java.rmi.registry.LocateRegistry;
 
 public class RmiServiceImpl implements RmiService {
 
-    // TODO Hide the RMI exceptions?
     /**
      * {@inheritDoc}
      */

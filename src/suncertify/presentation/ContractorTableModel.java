@@ -11,7 +11,6 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import suncertify.ApplicationConstants;
 import suncertify.service.Contractor;
 
 /**
@@ -19,8 +18,6 @@ import suncertify.service.Contractor;
  * @author Richard Wardle
  */
 public class ContractorTableModel extends AbstractTableModel {
-
-    private static final long serialVersionUID = 1L;
 
     private final List<Contractor> contractors;
 
@@ -33,29 +30,29 @@ public class ContractorTableModel extends AbstractTableModel {
     }
 
     public int getColumnCount() {
-        return ApplicationConstants.TABLE_COLUMN_NAMES.length;
+        return PresentationConstants.TABLE_COLUMN_COUNT;
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
         Contractor contractor = this.contractors.get(rowIndex);
         String value;
         switch (columnIndex) {
-        case ApplicationConstants.TABLE_NAME_COLUMN_INDEX:
+        case PresentationConstants.TABLE_NAME_COLUMN_INDEX:
             value = contractor.getName();
             break;
-        case ApplicationConstants.TABLE_LOCATION_COLUMN_INDEX:
+        case PresentationConstants.TABLE_LOCATION_COLUMN_INDEX:
             value = contractor.getLocation();
             break;
-        case ApplicationConstants.TABLE_SPECIALTIES_COLUMN_INDEX:
+        case PresentationConstants.TABLE_SPECIALTIES_COLUMN_INDEX:
             value = contractor.getSpecialties();
             break;
-        case ApplicationConstants.TABLE_SIZE_COLUMN_INDEX:
+        case PresentationConstants.TABLE_SIZE_COLUMN_INDEX:
             value = contractor.getSize();
             break;
-        case ApplicationConstants.TABLE_RATE_COLUMN_INDEX:
+        case PresentationConstants.TABLE_RATE_COLUMN_INDEX:
             value = contractor.getRate();
             break;
-        case ApplicationConstants.TABLE_OWNER_COLUMN_INDEX:
+        case PresentationConstants.TABLE_OWNER_COLUMN_INDEX:
             value = contractor.getOwner();
             break;
         default:
@@ -67,7 +64,7 @@ public class ContractorTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == ApplicationConstants.TABLE_OWNER_COLUMN_INDEX
+        return columnIndex == PresentationConstants.TABLE_OWNER_COLUMN_INDEX
                 && "".equals(this.contractors.get(rowIndex).getOwner());
     }
 
@@ -82,6 +79,6 @@ public class ContractorTableModel extends AbstractTableModel {
     public void updateContractorAtRow(int rowNo, Contractor contractor) {
         this.contractors.remove(rowNo);
         this.contractors.add(rowNo, contractor);
-        fireTableDataChanged();
+        fireTableRowsUpdated(rowNo, rowNo);
     }
 }

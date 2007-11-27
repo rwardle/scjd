@@ -1,7 +1,5 @@
 package suncertify;
 
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +8,7 @@ import java.util.Iterator;
 import jdepend.framework.JDepend;
 import jdepend.framework.JavaPackage;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -59,7 +58,7 @@ public class ArchitecturalRulesTest {
     private void assertLayering(String layer, Collection<String> rules) {
         StringBuilder failureMessage = new StringBuilder();
         if (!isLayeringValid(layer, rules, failureMessage)) {
-            fail(failureMessage.toString());
+            Assert.fail(failureMessage.toString());
         }
     }
 

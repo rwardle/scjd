@@ -28,7 +28,6 @@ import suncertify.ApplicationConstants;
 public final class ServerConfigurationDialog extends
         AbstractConfigurationDialog {
 
-    private static final long serialVersionUID = 1L;
     private JTextField databaseFilePathField;
     private JSpinner serverPortSpinner;
     private JButton browseButton;
@@ -125,9 +124,8 @@ public final class ServerConfigurationDialog extends
         constraints.insets = ApplicationConstants.DEFAULT_INSETS;
         this.browseButton = new JButton(getResourceBundle().getString(
                 "ServerConfigurationDialog.browseButton.text"));
-        this.browseButton.setMnemonic(new Integer(getResourceBundle()
-                .getString("ServerConfigurationDialog.browseButton.mnemonic")
-                .charAt(0)).intValue());
+        this.browseButton.setMnemonic(getResourceBundle().getString(
+                "ServerConfigurationDialog.browseButton.mnemonic").charAt(0));
         panel.add(this.browseButton, constraints);
 
         constraints = new GridBagConstraints();
@@ -146,16 +144,18 @@ public final class ServerConfigurationDialog extends
         constraints.insets = ApplicationConstants.DEFAULT_INSETS;
 
         this.serverPortSpinner = new JSpinner(new SpinnerNumberModel(
-                SERVER_PORT_SPINNER_INITIAL_VALUE,
-                SERVER_PORT_SPINNER_MINIMUM_VALUE,
-                SERVER_PORT_SPINNER_MAXIMUM_VALUE,
-                SERVER_PORT_SPINNER_STEP_SIZE));
+                AbstractConfigurationDialog.SERVER_PORT_SPINNER_INITIAL_VALUE,
+                AbstractConfigurationDialog.SERVER_PORT_SPINNER_MINIMUM_VALUE,
+                AbstractConfigurationDialog.SERVER_PORT_SPINNER_MAXIMUM_VALUE,
+                AbstractConfigurationDialog.SERVER_PORT_SPINNER_STEP_SIZE));
         this.serverPortSpinner.setFont(this.databaseFilePathField.getFont());
         this.serverPortSpinner.setToolTipText(getResourceBundle().getString(
                 "ServerConfigurationDialog.serverPortSpinner.tooltip"));
         JSpinner.DefaultEditor spinnerEditor = new JSpinner.NumberEditor(
-                this.serverPortSpinner, SERVER_PORT_SPINNER_FORMAT_PATTERN);
-        spinnerEditor.getTextField().setColumns(SERVER_PORT_SPINNER_COLUMNS);
+                this.serverPortSpinner,
+                AbstractConfigurationDialog.SERVER_PORT_SPINNER_FORMAT_PATTERN);
+        spinnerEditor.getTextField().setColumns(
+                AbstractConfigurationDialog.SERVER_PORT_SPINNER_COLUMNS);
         this.serverPortSpinner.setEditor(spinnerEditor);
         panel.add(this.serverPortSpinner, constraints);
 

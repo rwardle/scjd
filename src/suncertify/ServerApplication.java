@@ -21,14 +21,15 @@ import suncertify.service.RemoteBrokerServiceImpl;
 import suncertify.service.RmiService;
 
 /**
- * The server mode application.
+ * An application that runs in {@link ApplicationMode#SERVER} mode.
  * 
  * @author Richard Wardle
  */
 public final class ServerApplication extends AbstractApplication {
 
-    private static Logger LOGGER = Logger.getLogger(ServerApplication.class
-            .getName());
+    private static final Logger LOGGER = Logger
+            .getLogger(ServerApplication.class.getName());
+
     private final RmiService rmiService;
     private final DatabaseFactory databaseFactory;
 
@@ -36,15 +37,14 @@ public final class ServerApplication extends AbstractApplication {
      * Creates a new instance of <code>ServerApplication</code>.
      * 
      * @param configuration
-     *                The application configuration.
+     *                Application configuration.
      * @param rmiService
-     *                The RMI service.
+     *                RMI service.
      * @param databaseFactory
-     *                The database factory.
+     *                Database factory.
      * @throws IllegalArgumentException
-     *                 If any of the <code>configuration</code>,
-     *                 <code>rmiService</code> or <code>databaseFactory</code>
-     *                 parameters are <code>null</code>.
+     *                 If <code>configuration</code>, <code>rmiService</code>
+     *                 or <code>databaseFactory</code> are <code>null</code>.
      */
     public ServerApplication(Configuration configuration,
             RmiService rmiService, DatabaseFactory databaseFactory) {
@@ -53,15 +53,21 @@ public final class ServerApplication extends AbstractApplication {
         this.databaseFactory = databaseFactory;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns a new configuration view for a server application.
+     * 
+     * @return The configuration view.
+     */
     @Override
     protected ConfigurationView createConfigurationView() {
         return new ServerConfigurationDialog();
     }
 
     /**
-     * {@inheritDoc} <p/> Starts the RMI registry and binds the
-     * <code>BrokerService</code> object into it.
+     * {@inheritDoc}
+     * <p>
+     * Creates a database and a new remote broker service object that uses the
+     * database. This remote object is bound into an RMI registry.
      */
     public void startup() throws FatalException {
         Integer serverPort = getConfigurationManager().getServerPort();

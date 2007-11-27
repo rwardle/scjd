@@ -14,8 +14,6 @@ package suncertify.db;
  */
 public final class RecordNotFoundException extends Exception {
 
-    private static final long serialVersionUID = 1L;
-
     /**
      * Creates a new <code>RecordNotFoundException</code>.
      */

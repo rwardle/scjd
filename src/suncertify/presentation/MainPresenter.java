@@ -6,6 +6,7 @@
 
 package suncertify.presentation;
 
+import java.awt.Component;
 import java.text.ChoiceFormat;
 import java.text.MessageFormat;
 import java.util.List;
@@ -64,8 +65,7 @@ public class MainPresenter {
         this.view.realise();
     }
 
-    public final void searchActionPerformed() {
-        // TODO Currently edited text field loses focus
+    public final void searchActionPerformed(Component componentToFocus) {
         String nameCriteria = substituteNullForEmptyString(this.view
                 .getNameCriteria().trim());
         String locationCriteria = substituteNullForEmptyString(this.view
@@ -73,28 +73,32 @@ public class MainPresenter {
         final SearchCriteria searchCriteria = new SearchCriteria().setName(
                 nameCriteria).setLocation(locationCriteria);
 
-        SwingWorker<List<Contractor>, Void> searchWorker = createSearchWorker(searchCriteria);
+        SwingWorker<List<Contractor>, Void> searchWorker = createSearchWorker(
+                searchCriteria, componentToFocus);
         this.view.disableControls();
         searchWorker.execute();
     }
 
     SwingWorker<List<Contractor>, Void> createSearchWorker(
-            final SearchCriteria searchCriteria) {
-        return new SearchWorker(this, searchCriteria);
+            final SearchCriteria searchCriteria, Component componentToFocus) {
+        return new SearchWorker(this, searchCriteria, componentToFocus);
     }
 
     private String substituteNullForEmptyString(String str) {
         return "".equals(str) ? null : str;
     }
 
-    public void bookActionPerformed(int rowNo) {
+    public void bookActionPerformed(int rowNo, Component componentToFocus) {
         String customerId = showCustomerIdDialog();
         if (customerId != null) {
             Contractor contractor = this.view.getContractorAtRow(rowNo);
             SwingWorker<Void, Void> bookWorker = createBookWorker(customerId,
-                    contractor, rowNo);
+                    contractor, rowNo, componentToFocus);
             this.view.disableControls();
             bookWorker.execute();
+        } else {
+            // Dialog cancelled - return the focus to where it was previously
+            componentToFocus.requestFocus();
         }
     }
 
@@ -105,8 +109,9 @@ public class MainPresenter {
     }
 
     SwingWorker<Void, Void> createBookWorker(String customerId,
-            Contractor contractor, int rowNo) {
-        return new BookWorker(this, customerId, contractor, rowNo);
+            Contractor contractor, int rowNo, Component componentToFocus) {
+        return new BookWorker(this, customerId, contractor, rowNo,
+                componentToFocus);
     }
 
     void showOptionPane(String message, String title, int messageType) {
@@ -119,11 +124,13 @@ public class MainPresenter {
 
         private final MainPresenter presenter;
         private final SearchCriteria searchCriteria;
+        private final Component componentToFocus;
 
         public SearchWorker(MainPresenter mainPresenter,
-                SearchCriteria searchCriteria) {
+                SearchCriteria searchCriteria, Component componentToFocus) {
             this.presenter = mainPresenter;
             this.searchCriteria = searchCriteria;
+            this.componentToFocus = componentToFocus;
         }
 
         @Override
@@ -154,7 +161,7 @@ public class MainPresenter {
                                 + this.searchCriteria, e);
                 showSearchErrorDialog();
             } finally {
-                this.presenter.view.enableControls();
+                this.presenter.view.enableControls(this.componentToFocus);
             }
         }
 
@@ -212,13 +219,15 @@ public class MainPresenter {
         private final String customerId;
         private final Contractor contractor;
         private final int rowNo;
+        private final Component componentToFocus;
 
         public BookWorker(MainPresenter mainPresenter, String customerId,
-                Contractor contractor, int rowNo) {
+                Contractor contractor, int rowNo, Component componentToFocus) {
             this.presenter = mainPresenter;
             this.customerId = customerId;
             this.contractor = contractor;
             this.rowNo = rowNo;
+            this.componentToFocus = componentToFocus;
         }
 
         @Override
@@ -243,7 +252,7 @@ public class MainPresenter {
                 this.presenter.view.updateContractorAtRow(this.rowNo,
                         updatedContractor);
             } catch (InterruptedException e) {
-                LOGGER
+                MainPresenter.LOGGER
                         .log(
                                 Level.WARNING,
                                 "Thread was interruped while waiting for result of book SwingWorker",
@@ -252,7 +261,7 @@ public class MainPresenter {
             } catch (ExecutionException e) {
                 handleBookException(e);
             } finally {
-                this.presenter.view.enableControls();
+                this.presenter.view.enableControls(this.componentToFocus);
             }
         }
 

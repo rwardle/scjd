@@ -1,10 +1,9 @@
 package suncertify;
 
-import static org.junit.Assert.assertTrue;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,47 +24,53 @@ public class ApplicationFactoryTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void throwsExceptionIfApplicationModeIsNull() {
+    public void shouldThrowExceptionIfModeIsNull() {
         AbstractApplicationFactory.getApplicationFactory(null);
     }
 
     @Test
-    public void getsClientApplicationFactoryIfApplicationModeIsClient() {
-        assertTrue(AbstractApplicationFactory
-                .getApplicationFactory(ApplicationMode.CLIENT) instanceof ClientApplicationFactory);
+    public void shouldReturnClientFactoryIfModeIsClient() {
+        Assert
+                .assertTrue(AbstractApplicationFactory
+                        .getApplicationFactory(ApplicationMode.CLIENT) instanceof ClientApplicationFactory);
     }
 
     @Test
-    public void getsServerApplicationFactoryIfApplicationModeIsServer() {
-        assertTrue(AbstractApplicationFactory
-                .getApplicationFactory(ApplicationMode.SERVER) instanceof ServerApplicationFactory);
+    public void shouldReturnServerFactoryIfModeIsServer() {
+        Assert
+                .assertTrue(AbstractApplicationFactory
+                        .getApplicationFactory(ApplicationMode.SERVER) instanceof ServerApplicationFactory);
     }
 
     @Test
-    public void getsStandaloneApplicationFactoryIfApplicationModeIsStandalone() {
-        assertTrue(AbstractApplicationFactory
-                .getApplicationFactory(ApplicationMode.STANDALONE) instanceof StandaloneApplicationFactory);
+    public void shouldReturnStandaloneFactoryIfModeIsStandalone() {
+        Assert
+                .assertTrue(AbstractApplicationFactory
+                        .getApplicationFactory(ApplicationMode.STANDALONE) instanceof StandaloneApplicationFactory);
     }
 
     @Test
-    public void createsClientApplication() {
+    public void shouldCreateClientApplicationUsingClientFactory() {
         ignoringConfiguration();
-        assertTrue(new ClientApplicationFactory()
-                .createApplication(this.mockConfiguration) instanceof ClientApplication);
+        Assert
+                .assertTrue(new ClientApplicationFactory()
+                        .createApplication(this.mockConfiguration) instanceof ClientApplication);
     }
 
     @Test
-    public void createsServerApplication() {
+    public void shouldCreateServerApplicationUsingServerFactory() {
         ignoringConfiguration();
-        assertTrue(new ServerApplicationFactory()
-                .createApplication(this.mockConfiguration) instanceof ServerApplication);
+        Assert
+                .assertTrue(new ServerApplicationFactory()
+                        .createApplication(this.mockConfiguration) instanceof ServerApplication);
     }
 
     @Test
-    public void createsStandaloneApplication() {
+    public void shouldCreateStandaloneApplicationUsingStandaloneFactory() {
         ignoringConfiguration();
-        assertTrue(new StandaloneApplicationFactory()
-                .createApplication(this.mockConfiguration) instanceof StandaloneApplication);
+        Assert
+                .assertTrue(new StandaloneApplicationFactory()
+                        .createApplication(this.mockConfiguration) instanceof StandaloneApplication);
     }
 
     private void ignoringConfiguration() {

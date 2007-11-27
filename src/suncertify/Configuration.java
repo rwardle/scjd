@@ -7,7 +7,7 @@
 package suncertify;
 
 /**
- * Encapsulates application configuration information.
+ * Application configuration information.
  * 
  * @author Richard Wardle
  */
@@ -38,21 +38,21 @@ public interface Configuration {
     void save() throws ConfigurationException;
 
     /**
-     * Gets the property with the supplied name.
+     * Returns the property with the specified name.
      * 
      * @param name
-     *                The property name.
+     *                Property name.
      * @return The property.
      */
     String getProperty(String name);
 
     /**
-     * Sets the property with the suppplied name to the supplied value.
+     * Sets the property with the specified name to the specified value.
      * 
      * @param name
-     *                The property name.
+     *                Property name.
      * @param value
-     *                The property value.
+     *                Property value.
      */
     void setProperty(String name, String value);
 }

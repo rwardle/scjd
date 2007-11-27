@@ -10,8 +10,6 @@ import javax.swing.JPanel;
 
 public class JGradientPanel extends JPanel {
 
-    private static final long serialVersionUID = 1L;
-
     private final Color topColor;
     private final Color bottomColor;
 

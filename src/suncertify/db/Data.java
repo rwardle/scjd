@@ -29,6 +29,7 @@ class Data implements DBMain {
     // TODO Use a lock manager class?
 
     private static final Logger LOGGER = Logger.getLogger(Data.class.getName());
+
     private final DatabaseFile databaseFile;
     private final DatabaseSchema databaseSchema;
     private final long dataSectionOffset;

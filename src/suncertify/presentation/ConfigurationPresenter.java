@@ -85,9 +85,10 @@ public class ConfigurationPresenter {
         String serverAddress = this.view.getServerAddress();
         Integer serverPort = this.view.getServerPort();
 
-        LOGGER.info("Application configured with: databaseFilePath="
-                + databaseFilePath + ", serverAddress=" + serverAddress
-                + ", serverPort=" + serverPort);
+        ConfigurationPresenter.LOGGER
+                .info("Application configured with: databaseFilePath="
+                        + databaseFilePath + ", serverAddress=" + serverAddress
+                        + ", serverPort=" + serverPort);
 
         this.configurationManager.setDatabaseFilePath(databaseFilePath);
         this.configurationManager.setServerAddress(serverAddress);

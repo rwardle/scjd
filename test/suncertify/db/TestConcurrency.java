@@ -14,7 +14,7 @@ public class TestConcurrency {
     }
 
     public void start() {
-        this.threads = new Thread[THREAD_COUNT];
+        this.threads = new Thread[TestConcurrency.THREAD_COUNT];
         for (int i = 0; i < this.threads.length; i++) {
             this.threads[i] = new Thread(new RunTest());
             this.threads[i].start();
@@ -24,7 +24,8 @@ public class TestConcurrency {
             thread.interrupt();
         }
 
-        this.counter.check(THREAD_COUNT * TXN_COUNT, null);
+        this.counter.check(TestConcurrency.THREAD_COUNT
+                * TestConcurrency.TXN_COUNT, null);
     }
 
     public static void main(String[] args) throws Exception {
@@ -41,15 +42,16 @@ public class TestConcurrency {
         private RandomAction action;
 
         public void run() {
-            for (int i = 0; i < TXN_COUNT; i++) {
+            for (int i = 0; i < TestConcurrency.TXN_COUNT; i++) {
                 try {
-                    LOG("Performing action:" + i);
+                    TestConcurrency.LOG("Performing action:" + i);
                     runSingle();
-                    LOG("Completed action:" + i + " on recNo:"
+                    TestConcurrency.LOG("Completed action:" + i + " on recNo:"
                             + this.action.index);
 
                 } catch (IllegalThreadStateException e) {
-                    LOG("Interrupted action:" + i + ", will go again");
+                    TestConcurrency.LOG("Interrupted action:" + i
+                            + ", will go again");
                     i--;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -59,7 +61,8 @@ public class TestConcurrency {
 
         private void runSingle() throws Exception {
             this.action = new RandomAction();
-            LOG("    <I>Index:" + this.action.getIndex() + "</I>");
+            TestConcurrency.LOG("    <I>Index:" + this.action.getIndex()
+                    + "</I>");
 
             try {
                 switch (this.action.getMethodIndex()) {
@@ -80,18 +83,19 @@ public class TestConcurrency {
                     break;
                 }
             } catch (RecordNotFoundException ex) {
-                LOG("<I>    Record Index not Valid :" + this.action.getIndex()
-                        + "</I>");
-            } catch (IllegalStateException ex) {
-                LOG("<I>    Thread does not hold lock on record :"
+                TestConcurrency.LOG("<I>    Record Index not Valid :"
                         + this.action.getIndex() + "</I>");
+            } catch (IllegalStateException ex) {
+                TestConcurrency
+                        .LOG("<I>    Thread does not hold lock on record :"
+                                + this.action.getIndex() + "</I>");
             }
 
             TestConcurrency.this.counter.hit();
         }
 
         private void doCreate() throws Exception {
-            LOG("    <I>Method: Create</I>");
+            TestConcurrency.LOG("    <I>Method: Create</I>");
             String[] record = TestConcurrency.this.data.read(this.action
                     .getIndex());
             for (int i = 0; i < record.length; i++) {
@@ -102,12 +106,12 @@ public class TestConcurrency {
         }
 
         public void doRead() throws Exception {
-            LOG("    <I>Method: Read</I>");
+            TestConcurrency.LOG("    <I>Method: Read</I>");
             TestConcurrency.this.data.read(this.action.getIndex());
         }
 
         public void doUpdate() throws Exception {
-            LOG("    <I>Method: Update</I>");
+            TestConcurrency.LOG("    <I>Method: Update</I>");
             try {
                 Thread.sleep(this.action.getExecutionTime());
             } catch (InterruptedException e) {
@@ -127,7 +131,7 @@ public class TestConcurrency {
         }
 
         public void doDelete() throws Exception {
-            LOG("    <I>Method: Delete</I>");
+            TestConcurrency.LOG("    <I>Method: Delete</I>");
             TestConcurrency.this.data.lock(this.action.getIndex());
             try {
                 try {
@@ -153,7 +157,7 @@ public class TestConcurrency {
 
         public RandomAction() {
             this.index = (int) (Math.random() * 100);
-            this.methodIndex = (int) (Math.random() * TEST_METHODS);
+            this.methodIndex = (int) (Math.random() * RandomAction.TEST_METHODS);
             this.executionTime = (int) (Math.random() * 500);
         }
 

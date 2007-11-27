@@ -1,17 +1,16 @@
 package suncertify.presentation;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
 import java.awt.Component;
 import java.io.File;
 
 import javax.swing.JFileChooser;
 
+import org.hamcrest.CoreMatchers;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,7 +19,6 @@ import suncertify.Configuration;
 import suncertify.ConfigurationManager;
 import suncertify.ReturnStatus;
 
-@SuppressWarnings("boxing")
 public class ConfigurationPresenterTest {
 
     private final Mockery context = new Mockery() {
@@ -52,16 +50,19 @@ public class ConfigurationPresenterTest {
                 ignoring(ConfigurationPresenterTest.this.mockConfiguration)
                         .getProperty(
                                 ApplicationConstants.DATABASE_FILE_PATH_PROPERTY);
-                will(returnValue(ConfigurationPresenterTest.this.databaseFilePath));
+                will(Expectations
+                        .returnValue(ConfigurationPresenterTest.this.databaseFilePath));
 
                 ignoring(ConfigurationPresenterTest.this.mockConfiguration)
                         .getProperty(
                                 ApplicationConstants.SERVER_ADDRESS_PROPERTY);
-                will(returnValue(ConfigurationPresenterTest.this.serverAddress));
+                will(Expectations
+                        .returnValue(ConfigurationPresenterTest.this.serverAddress));
 
                 ignoring(ConfigurationPresenterTest.this.mockConfiguration)
                         .getProperty(ApplicationConstants.SERVER_PORT_PROPERTY);
-                will(returnValue(ConfigurationPresenterTest.this.serverPort));
+                will(Expectations
+                        .returnValue(ConfigurationPresenterTest.this.serverPort));
             }
         });
         this.presenter = new StubConfigurationPresenter(
@@ -86,7 +87,8 @@ public class ConfigurationPresenterTest {
 
     @Test
     public void defaultReturnStatus() {
-        assertThat(this.presenter.getReturnStatus(), is(ReturnStatus.CANCEL));
+        Assert.assertThat(this.presenter.getReturnStatus(), CoreMatchers
+                .is(ReturnStatus.CANCEL));
     }
 
     @Test
@@ -95,14 +97,17 @@ public class ConfigurationPresenterTest {
             {
                 one(ConfigurationPresenterTest.this.mockView)
                         .setDatabaseFilePath(
-                                with(equal(ConfigurationPresenterTest.this.databaseFilePath)));
+                                with(Expectations
+                                        .equal(ConfigurationPresenterTest.this.databaseFilePath)));
                 one(ConfigurationPresenterTest.this.mockView)
                         .setServerAddress(
-                                with(equal(ConfigurationPresenterTest.this.serverAddress)));
+                                with(Expectations
+                                        .equal(ConfigurationPresenterTest.this.serverAddress)));
                 one(ConfigurationPresenterTest.this.mockView)
                         .setServerPort(
-                                with(equal(Integer
-                                        .valueOf(ConfigurationPresenterTest.this.serverPort))));
+                                with(Expectations
+                                        .equal(Integer
+                                                .valueOf(ConfigurationPresenterTest.this.serverPort))));
                 one(ConfigurationPresenterTest.this.mockView).realise();
             }
         });
@@ -119,33 +124,38 @@ public class ConfigurationPresenterTest {
             {
                 one(ConfigurationPresenterTest.this.mockView)
                         .getDatabaseFilePath();
-                will(returnValue(newDatabaseFilePath));
+                will(Expectations.returnValue(newDatabaseFilePath));
 
                 one(ConfigurationPresenterTest.this.mockView)
                         .getServerAddress();
-                will(returnValue(newServerAddress));
+                will(Expectations.returnValue(newServerAddress));
 
                 one(ConfigurationPresenterTest.this.mockView).getServerPort();
-                will(returnValue(newServerPort));
+                will(Expectations.returnValue(newServerPort));
 
                 one(ConfigurationPresenterTest.this.mockView).close();
                 one(ConfigurationPresenterTest.this.mockConfiguration)
                         .setProperty(
-                                with(equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)),
-                                with(equal(newDatabaseFilePath)));
+                                with(Expectations
+                                        .equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)),
+                                with(Expectations.equal(newDatabaseFilePath)));
                 one(ConfigurationPresenterTest.this.mockConfiguration)
                         .setProperty(
-                                with(equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)),
-                                with(equal(newServerAddress)));
+                                with(Expectations
+                                        .equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)),
+                                with(Expectations.equal(newServerAddress)));
                 one(ConfigurationPresenterTest.this.mockConfiguration)
                         .setProperty(
-                                with(equal(ApplicationConstants.SERVER_PORT_PROPERTY)),
-                                with(equal(newServerPort.toString())));
+                                with(Expectations
+                                        .equal(ApplicationConstants.SERVER_PORT_PROPERTY)),
+                                with(Expectations.equal(newServerPort
+                                        .toString())));
             }
         });
 
         this.presenter.okButtonActionPerformed();
-        assertThat(this.presenter.getReturnStatus(), is(ReturnStatus.OK));
+        Assert.assertThat(this.presenter.getReturnStatus(), CoreMatchers
+                .is(ReturnStatus.OK));
     }
 
     @Test
@@ -156,7 +166,8 @@ public class ConfigurationPresenterTest {
             }
         });
         this.presenter.cancelButtonActionPerformed();
-        assertThat(this.presenter.getReturnStatus(), is(ReturnStatus.CANCEL));
+        Assert.assertThat(this.presenter.getReturnStatus(), CoreMatchers
+                .is(ReturnStatus.CANCEL));
     }
 
     @Test
@@ -165,21 +176,23 @@ public class ConfigurationPresenterTest {
             {
                 allowing(ConfigurationPresenterTest.this.mockView)
                         .getDatabaseFilePath();
-                will(returnValue(ConfigurationPresenterTest.this.databaseFilePath));
+                will(Expectations
+                        .returnValue(ConfigurationPresenterTest.this.databaseFilePath));
 
                 allowing(ConfigurationPresenterTest.this.mockView)
                         .getComponent();
-                will(returnValue(null));
+                will(Expectations.returnValue(null));
 
                 one(ConfigurationPresenterTest.this.mockFileChooser)
-                        .showDialog(with(any(Component.class)),
-                                with(any(String.class)));
-                will(returnValue(JFileChooser.ERROR_OPTION));
+                        .showDialog(with(Expectations.any(Component.class)),
+                                with(Expectations.any(String.class)));
+                will(Expectations.returnValue(JFileChooser.ERROR_OPTION));
 
                 never(ConfigurationPresenterTest.this.mockFileChooser)
                         .getSelectedFile();
                 never(ConfigurationPresenterTest.this.mockView)
-                        .setDatabaseFilePath(with(any(String.class)));
+                        .setDatabaseFilePath(
+                                with(Expectations.any(String.class)));
             }
         });
         this.presenter.browseButtonActionPerformed();
@@ -191,21 +204,23 @@ public class ConfigurationPresenterTest {
             {
                 allowing(ConfigurationPresenterTest.this.mockView)
                         .getDatabaseFilePath();
-                will(returnValue(ConfigurationPresenterTest.this.databaseFilePath));
+                will(Expectations
+                        .returnValue(ConfigurationPresenterTest.this.databaseFilePath));
 
                 allowing(ConfigurationPresenterTest.this.mockView)
                         .getComponent();
-                will(returnValue(null));
+                will(Expectations.returnValue(null));
 
                 one(ConfigurationPresenterTest.this.mockFileChooser)
-                        .showDialog(with(any(Component.class)),
-                                with(any(String.class)));
-                will(returnValue(JFileChooser.CANCEL_OPTION));
+                        .showDialog(with(Expectations.any(Component.class)),
+                                with(Expectations.any(String.class)));
+                will(Expectations.returnValue(JFileChooser.CANCEL_OPTION));
 
                 never(ConfigurationPresenterTest.this.mockFileChooser)
                         .getSelectedFile();
                 never(ConfigurationPresenterTest.this.mockView)
-                        .setDatabaseFilePath(with(any(String.class)));
+                        .setDatabaseFilePath(
+                                with(Expectations.any(String.class)));
             }
         });
         this.presenter.browseButtonActionPerformed();
@@ -218,24 +233,26 @@ public class ConfigurationPresenterTest {
             {
                 allowing(ConfigurationPresenterTest.this.mockView)
                         .getDatabaseFilePath();
-                will(returnValue(ConfigurationPresenterTest.this.databaseFilePath));
+                will(Expectations
+                        .returnValue(ConfigurationPresenterTest.this.databaseFilePath));
 
                 allowing(ConfigurationPresenterTest.this.mockView)
                         .getComponent();
-                will(returnValue(null));
+                will(Expectations.returnValue(null));
 
                 one(ConfigurationPresenterTest.this.mockFileChooser)
-                        .showDialog(with(any(Component.class)),
-                                with(any(String.class)));
-                will(returnValue(JFileChooser.APPROVE_OPTION));
+                        .showDialog(with(Expectations.any(Component.class)),
+                                with(Expectations.any(String.class)));
+                will(Expectations.returnValue(JFileChooser.APPROVE_OPTION));
 
                 one(ConfigurationPresenterTest.this.mockFileChooser)
                         .getSelectedFile();
-                will(returnValue(newDatabaseFile));
+                will(Expectations.returnValue(newDatabaseFile));
 
                 one(ConfigurationPresenterTest.this.mockView)
                         .setDatabaseFilePath(
-                                with(equal(newDatabaseFile.getAbsolutePath())));
+                                with(Expectations.equal(newDatabaseFile
+                                        .getAbsolutePath())));
             }
         });
         this.presenter.browseButtonActionPerformed();

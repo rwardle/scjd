@@ -41,7 +41,7 @@ public final class RemoteBrokerServiceImpl extends UnicastRemoteObject
         try {
             return this.service.search(searchCriteria);
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE,
+            RemoteBrokerServiceImpl.LOGGER.log(Level.SEVERE,
                     "IO error while searching for contractors with criteria: "
                             + searchCriteria, e);
             throw e;
@@ -54,15 +54,16 @@ public final class RemoteBrokerServiceImpl extends UnicastRemoteObject
         try {
             this.service.book(customerId, contractor);
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "IO error while booking contractor", e);
+            RemoteBrokerServiceImpl.LOGGER.log(Level.SEVERE,
+                    "IO error while booking contractor", e);
             throw e;
         } catch (ContractorDeletedException e) {
-            LOGGER.log(Level.SEVERE,
+            RemoteBrokerServiceImpl.LOGGER.log(Level.SEVERE,
                     "Contractor to be booked has been deleted, recordNo: "
                             + contractor.getRecordNumber(), e);
             throw e;
         } catch (ContractorModifiedException e) {
-            LOGGER.log(Level.SEVERE,
+            RemoteBrokerServiceImpl.LOGGER.log(Level.SEVERE,
                     "Contractor to be booked has been modified, recordNo: "
                             + contractor.getRecordNumber(), e);
             throw e;

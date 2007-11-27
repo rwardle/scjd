@@ -7,23 +7,26 @@
 package suncertify;
 
 /**
- * Defines application lifecycle methods. NOTE: All methods must be called on
- * the AWT event dispatching thread.
+ * An application interface defining lifecycle methods. NOTE: All methods must
+ * be called on the AWT event dispatching thread.
  * 
  * @author Richard Wardle
  */
 public interface Application {
 
     /**
-     * Initialises the application, e.g. obtaining and applying configuration.
+     * Initialises the application (e.g. obtaining and applying configuration)
+     * and returns a <code>boolean</code> flag indicating if the intialisation
+     * completed successfully or not.
      * 
-     * @return <code>true</code> if the intialisation completed successfully,
+     * @return <code>true</code> if the initialisation completed successfully,
      *         <code>false</code> otherwise.
      */
     boolean initialise();
 
     /**
-     * Starts-up the application.
+     * Starts the application. If this method completes successfully then the
+     * application can be assumed to be up and running.
      * 
      * @throws FatalException
      *                 If the application cannot be started.
@@ -31,10 +34,11 @@ public interface Application {
     void startup() throws FatalException;
 
     /**
-     * Handles the supplied fatal exception.
+     * Handles the specified fatal exception. This could include informing the
+     * user of the exception, logging the exception to a file, etc.
      * 
      * @param exception
-     *                The exception to handle.
+     *                Fatal exception to handle.
      */
     void handleFatalException(FatalException exception);
 }

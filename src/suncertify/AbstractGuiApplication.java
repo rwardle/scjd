@@ -12,7 +12,7 @@ import suncertify.presentation.MainView;
 import suncertify.service.BrokerService;
 
 /**
- * Abstract base class for application modes that display a main GUI window.
+ * An abstract base class for applications that display a main GUI window.
  * 
  * @author Richard Wardle
  */
@@ -22,7 +22,7 @@ public abstract class AbstractGuiApplication extends AbstractApplication {
      * Creates a new instance of <code>AbstractGuiApplication</code>.
      * 
      * @param configuration
-     *                The application configuration.
+     *                Application configuration.
      * @throws IllegalArgumentException
      *                 If <code>configuration</code> is <code>null</code>.
      */
@@ -31,24 +31,17 @@ public abstract class AbstractGuiApplication extends AbstractApplication {
     }
 
     /**
-     * {@inheritDoc} <p/> Displays the main application window. <p/> This
-     * implementation calls the <code>createMainPresenter</code> method to
-     * obtain the main application presenter.
+     * {@inheritDoc}
+     * <p>
+     * Displays a main application window.
+     * <p>
+     * This implementation calls the <code>createBrokerService</code> method.
      */
     public final void startup() throws FatalException {
         createMainPresenter().realiseView();
     }
 
-    /**
-     * Creates the main application presenter. <p/> This method is called from
-     * the <code>startup</code> method. <p/> This implementation calls the
-     * <code>getBrokerService</code> method to get the broker service.
-     * 
-     * @return The presenter.
-     * @throws FatalException
-     *                 If the presenter cannot be created.
-     */
-    protected MainPresenter createMainPresenter() throws FatalException {
+    MainPresenter createMainPresenter() throws FatalException {
         MainView mainView = createMainView();
         MainPresenter mainPresenter = new MainPresenter(createBrokerService(),
                 mainView);
@@ -57,12 +50,15 @@ public abstract class AbstractGuiApplication extends AbstractApplication {
     }
 
     /**
-     * Creates the broker service. <p/> This method is called from the
-     * <code>createMainPresenter</code> method.
+     * Returns a new broker service.
+     * <p>
+     * This method is called from the <code>startup</code> method. Subclasses
+     * should implement this method to return a broker service that is
+     * application-specific.
      * 
-     * @return The broker service object.
+     * @return The broker service.
      * @throws FatalException
-     *                 If there is an error getting the broker service.
+     *                 If there is an error creating the broker service.
      */
     protected abstract BrokerService createBrokerService()
             throws FatalException;

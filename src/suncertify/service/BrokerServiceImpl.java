@@ -57,7 +57,7 @@ public final class BrokerServiceImpl implements BrokerService {
                     contractors.add(new Contractor(recNo, data));
                 }
             } catch (RecordNotFoundException e) {
-                LOGGER.warning("Record " + recNo
+                BrokerServiceImpl.LOGGER.warning("Record " + recNo
                         + " not found, excluding from search results.");
             }
         }
@@ -81,10 +81,11 @@ public final class BrokerServiceImpl implements BrokerService {
         if (customerId == null) {
             throw new IllegalArgumentException("customeId cannot be null");
         }
-        if (customerId.length() > CUSTOMER_ID_MAXIMUM_LENGTH) {
+        if (customerId.length() > BrokerServiceImpl.CUSTOMER_ID_MAXIMUM_LENGTH) {
             throw new IllegalArgumentException(
                     "customerId cannot be longer than "
-                            + CUSTOMER_ID_MAXIMUM_LENGTH + " characters");
+                            + BrokerServiceImpl.CUSTOMER_ID_MAXIMUM_LENGTH
+                            + " characters");
         }
         if (contractor == null) {
             throw new IllegalArgumentException("contractor cannot be null");
@@ -138,26 +139,33 @@ public final class BrokerServiceImpl implements BrokerService {
     }
 
     private boolean isModified(Contractor contractor, String[] data) {
-        boolean modified = !data[NAME_INDEX].equals(contractor.getName())
-                || !data[LOCATION_INDEX].equals(contractor.getLocation())
-                || !data[SPECIALTIES_INDEX].equals(contractor.getSpecialties())
-                || !data[SIZE_INDEX].equals(contractor.getSize())
-                || !data[RATE_INDEX].equals(contractor.getRate());
+        boolean modified = !data[BrokerServiceImpl.NAME_INDEX]
+                .equals(contractor.getName())
+                || !data[BrokerServiceImpl.LOCATION_INDEX].equals(contractor
+                        .getLocation())
+                || !data[BrokerServiceImpl.SPECIALTIES_INDEX].equals(contractor
+                        .getSpecialties())
+                || !data[BrokerServiceImpl.SIZE_INDEX].equals(contractor
+                        .getSize())
+                || !data[BrokerServiceImpl.RATE_INDEX].equals(contractor
+                        .getRate());
 
         /*
          * If the only field that does not match is the owner and the owner is
          * an empty string then that implies that the record has been unbooked.
          * Allow the booking to continue in this case.
          */
-        return modified || !data[OWNER_INDEX].equals("")
-                && !data[OWNER_INDEX].equals(contractor.getOwner());
+        return modified
+                || !data[BrokerServiceImpl.OWNER_INDEX].equals("")
+                && !data[BrokerServiceImpl.OWNER_INDEX].equals(contractor
+                        .getOwner());
     }
 
     private void updateRecord(int recNo, String customerId)
             throws RecordNotFoundException, IOException {
         // Only need to update the owner
-        String[] updateData = new String[DATABASE_FIELD_COUNT];
-        updateData[OWNER_INDEX] = customerId;
+        String[] updateData = new String[BrokerServiceImpl.DATABASE_FIELD_COUNT];
+        updateData[BrokerServiceImpl.OWNER_INDEX] = customerId;
         this.database.update(recNo, updateData);
     }
 
@@ -167,7 +175,7 @@ public final class BrokerServiceImpl implements BrokerService {
         } catch (RecordNotFoundException e) {
             // TODO This shouldn't be possible since we've got the lock on
             // the record??
-            LOGGER.warning(e.getMessage());
+            BrokerServiceImpl.LOGGER.warning(e.getMessage());
         }
     }
 }
