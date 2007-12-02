@@ -58,13 +58,13 @@ public class DataTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void constructionWithNullDatabaseFileThrowsException()
+    public void shouldThrowExceptionWhenConstructedWithNullDatabaseFile()
             throws Exception {
         data = new Data(null);
     }
 
     @Test(expected = DataValidationException.class)
-    public void constructionWithInvalidMagicCookieThrowsException()
+    public void shouldThrowExceptionWhenConstructedWithInvalidMagicCookie()
             throws Exception {
         int invalidMagicCookie = -1;
         assertThat(invalidMagicCookie, is(not(DatabaseConstants.MAGIC_COOKIE)));
@@ -85,7 +85,7 @@ public class DataTest {
     }
 
     @Test(expected = DataValidationException.class)
-    public void constructionWithInvalidRecordLengthThrowsException()
+    public void shouldThrowExceptionWhenConstructedWithInvalidRecordLength()
             throws Exception {
         Sequence sequence = context.sequence("construction");
         checkingMagicCookieRead(DatabaseConstants.MAGIC_COOKIE, sequence);
@@ -108,7 +108,7 @@ public class DataTest {
     }
 
     @Test(expected = DataValidationException.class)
-    public void constructionWithInvalidFieldCountThrowsException()
+    public void shouldThrowExceptionWhenConstructedWithInvalidFieldCount()
             throws Exception {
         Sequence sequence = context.sequence("construction");
         checkingMagicCookieRead(DatabaseConstants.MAGIC_COOKIE, sequence);
@@ -131,7 +131,7 @@ public class DataTest {
     }
 
     @Test(expected = DataValidationException.class)
-    public void constructionWithInvalidFieldDescriptionThrowsException()
+    public void shouldThrowExceptionWhenConstructedWithInvalidFieldDescription()
             throws Exception {
         Sequence sequence = context.sequence("construction");
         checkingMagicCookieRead(DatabaseConstants.MAGIC_COOKIE, sequence);
@@ -174,7 +174,7 @@ public class DataTest {
     }
 
     @Test(expected = DataValidationException.class)
-    public void constructionWithInvalidDataSectionLengthThrowsException()
+    public void shouldThrowExceptionWhenConstructedWithInvalidDataSectionLength()
             throws Exception {
         final Sequence sequence = context.sequence("construction");
         checkingMagicCookieRead(DatabaseConstants.MAGIC_COOKIE, sequence);
@@ -201,7 +201,7 @@ public class DataTest {
     }
 
     @Test
-    public void construction() throws Exception {
+    public void shouldConstructDatabaseSchema() throws Exception {
         standardSetup();
     }
 
@@ -299,26 +299,27 @@ public class DataTest {
     }
 
     @Test(expected = RecordNotFoundException.class)
-    public void readWithNegativeRecordNumberThrowsException() throws Exception {
+    public void shouldThrowExceptionWhenReadWithNegativeRecordNumber()
+            throws Exception {
         standardSetup();
         data.read(-1);
     }
 
     @Test(expected = RecordNotFoundException.class)
-    public void readWithRecordNumberGreaterThanNumberOfRecordsThrowsException()
+    public void shouldThrowExceptionWhenReadWithRecordNumberGreaterThanNumberOfRecords()
             throws Exception {
         standardSetup();
         data.read(recordCount);
     }
 
     @Test(expected = RecordNotFoundException.class)
-    public void readingDeletedRecordThrowsException() throws Exception {
+    public void shouldThrowExceptionWhenReadingDeletedRecord() throws Exception {
         standardSetup();
         data.read(deletedRecNos.first());
     }
 
     @Test
-    public void readSpacePadded() throws Exception {
+    public void shouldTrimRecordWhenReadWithSpacePadding() throws Exception {
         standardSetup();
         read(1, DataTestConstants.RECORD_VALUES_SPACE_PADDED,
                 DataTestConstants.RECORD_VALUES);
@@ -362,28 +363,29 @@ public class DataTest {
     }
 
     @Test
-    public void readNullPadded() throws Exception {
+    public void shouldTrimRecordWhenReadWithNullPadding() throws Exception {
         standardSetup();
         read(1, DataTestConstants.RECORD_VALUES_NULL_PADDED,
                 DataTestConstants.RECORD_VALUES);
     }
 
     @Test(expected = RecordNotFoundException.class)
-    public void updateWithNegativeRecordNumberThrowsException()
+    public void shouldThrowExceptionWhenUpdatedWithNegativeRecordNumber()
             throws Exception {
         standardSetup();
         data.update(-1, DataTestConstants.RECORD_VALUES);
     }
 
     @Test(expected = RecordNotFoundException.class)
-    public void updateWithRecordNumberGreaterThanNumberOfRecordsThrowsException()
+    public void shouldThrowExceptionWhenUpdatedWithRecordNumberGreaterThanNumberOfRecords()
             throws Exception {
         standardSetup();
         data.update(recordCount, DataTestConstants.RECORD_VALUES);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void updateWithNullDataArrayThrowsException() throws Exception {
+    public void shouldThrowExceptionWhenUpdatedWithNullDataArray()
+            throws Exception {
         standardSetup();
         int recNo = 0;
         data.lock(recNo);
@@ -391,7 +393,7 @@ public class DataTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void updateWithInvalidDataArrayLengthThrowsException()
+    public void shouldThrowExceptionWhenUpdatedWithInvalidDataArrayLength()
             throws Exception {
         standardSetup();
         int recNo = 0;
@@ -403,7 +405,7 @@ public class DataTest {
     }
 
     @Test
-    public void updateWithNullRecordValueDoesNotWriteCorrespondingField()
+    public void shouldNotWriteCorrespondingFieldWhenUpdatedWithNullRecordValue()
             throws Exception {
         standardSetup();
         int recNo = 1;
@@ -417,7 +419,8 @@ public class DataTest {
     }
 
     @Test
-    public void updateWithTooLongRecordValueTruncatesData() throws Exception {
+    public void shouldTruncateDataWhenUpdatedWithTooLongRecordValue()
+            throws Exception {
         standardSetup();
         int recNo = 1;
         data.lock(recNo);
@@ -431,7 +434,8 @@ public class DataTest {
     }
 
     @Test
-    public void updateWithEmptyStringRecordValueBlanksField() throws Exception {
+    public void shouldBlankFieldWhenUpdatedWithEmptyStringRecordValue()
+            throws Exception {
         standardSetup();
         int recNo = 1;
         data.lock(recNo);
@@ -449,14 +453,15 @@ public class DataTest {
     }
 
     @Test(expected = RecordNotFoundException.class)
-    public void updateDeletedRecordThrowsException() throws Exception {
+    public void shouldThrowExceptionWhenUpdatingDeletedRecord()
+            throws Exception {
         standardSetup();
         Integer recNo = deletedRecNos.first();
         data.update(recNo, DataTestConstants.RECORD_VALUES);
     }
 
     @Test(expected = IllegalStateException.class)
-    public void updateRecordWhenNotHoldingLockThrowsException()
+    public void shouldThrowExceptionWhenNotHoldingLockOnRecordToBeUpdated()
             throws Exception {
         standardSetup();
         final int recNo = 1;
@@ -476,7 +481,7 @@ public class DataTest {
     }
 
     @Test
-    public void update() throws Exception {
+    public void shouldUpdateRecord() throws Exception {
         standardSetup();
         int recNo = 1;
         data.lock(recNo);
@@ -515,28 +520,29 @@ public class DataTest {
     }
 
     @Test(expected = RecordNotFoundException.class)
-    public void deleteWithNegativeRecordNumberThrowsException()
+    public void shouldThrowExceptionWhenDeleteCalledWithNegativeRecordNumber()
             throws Exception {
         standardSetup();
         data.delete(-1);
     }
 
     @Test(expected = RecordNotFoundException.class)
-    public void deleteWithRecordNumberGreaterThanNumberOfRecordsThrowsException()
+    public void shouldThrowExceptionWhenDeleteCalledWithRecordNumberGreaterThanNumberOfRecords()
             throws Exception {
         standardSetup();
         data.delete(recordCount);
     }
 
     @Test(expected = RecordNotFoundException.class)
-    public void deleteDeletedRecordThrowsException() throws Exception {
+    public void shouldThrowExceptionWhenDeletingDeletedRecord()
+            throws Exception {
         standardSetup();
         Integer recNo = deletedRecNos.first();
         data.delete(recNo);
     }
 
     @Test
-    public void delete() throws Exception {
+    public void shouldDeleteRecord() throws Exception {
         standardSetup();
         int recNo = 1;
         data.lock(recNo);
@@ -559,7 +565,7 @@ public class DataTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void deleteRecordWhenNotHoldingLockThrowsException()
+    public void shouldThrowExceptionWhenNotHoldingLockOnRecordToBeDeleted()
             throws Exception {
         standardSetup();
         final int recNo = 1;
@@ -579,7 +585,7 @@ public class DataTest {
     }
 
     @Test
-    public void deleteRecordSignalsWaitingRecord() throws Exception {
+    public void shouldSignalWaitingRecordWhenDeletingRecord() throws Exception {
         standardSetup();
         final Integer recNo = 1;
         data.lock(recNo);
@@ -620,13 +626,14 @@ public class DataTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void createWithNullDataArrayThrowsException() throws Exception {
+    public void shouldThrowExceptionWhenCreateCalledWithNullDataArray()
+            throws Exception {
         standardSetup();
         data.create(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void createWithInvalidDataArrayLengthThrowsException()
+    public void shouldThrowExceptionWhenCreateCalledWithInvalidDataArrayLength()
             throws Exception {
         standardSetup();
         String[] recordValues = new String[DatabaseConstants.FIELD_COUNT + 1];
@@ -636,7 +643,8 @@ public class DataTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void createWithNullRecordValueThrowsException() throws Exception {
+    public void shouldThrowExceptionWhenCreateCalledWithNullRecordValue()
+            throws Exception {
         standardSetup();
         String[] recordValues = DataTestConstants.RECORD_VALUES_SPACE_PADDED
                 .clone();
@@ -645,7 +653,8 @@ public class DataTest {
     }
 
     @Test
-    public void createWritesToEndOfFileWhenNoDeletedRecords() throws Exception {
+    public void shouldWriteToEndOfFileWhenCreateCalledAndNoDeletedRecordsExist()
+            throws Exception {
         deletedRecNos.clear();
         standardSetup();
         int recNoToWrite = recordCount;
@@ -658,7 +667,8 @@ public class DataTest {
     }
 
     @Test
-    public void createWritesDeletedRecordWhenAvailable() throws Exception {
+    public void shouldWriteToDeletedRecordWhenCreateCalledAndDeletedRecordAvailable()
+            throws Exception {
         standardSetup();
         int recNoToWrite = deletedRecNos.first();
         Sequence sequence = context.sequence("create");
@@ -696,13 +706,14 @@ public class DataTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void findWithNullCriteriaArrayThrowsException() throws Exception {
+    public void shouldThrowExceptionWhenFindCalledWithNullCriteriaArray()
+            throws Exception {
         standardSetup();
         data.find(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void findWithInvalidCriteriaArrayLengthThrowsException()
+    public void shouldThrowExceptionWhenFindCalledWithInvalidCriteriaArrayLength()
             throws Exception {
         standardSetup();
         String[] criteria = new String[DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS.length - 1];
@@ -710,7 +721,7 @@ public class DataTest {
     }
 
     @Test
-    public void find() throws Exception {
+    public void shouldFindContractors() throws Exception {
         standardSetup();
         int[] matchingRecNos = { 1, 2 };
         String[] criteria = { "Buonarotti", null, "", null, null, "12345678" };
@@ -734,7 +745,8 @@ public class DataTest {
     }
 
     @Test
-    public void findWithAllCriteriaNullReturnsAllRecords() throws Exception {
+    public void shouldReturnAllRecordsWhenFindCalledWithAllCriteriaNull()
+            throws Exception {
         standardSetup();
         int[] matchingRecNos = { 0, 1, 2, 3, 4 };
         String[] criteria = { null, null, null, null, null, null };
@@ -785,27 +797,29 @@ public class DataTest {
     }
 
     @Test(expected = RecordNotFoundException.class)
-    public void isLockedWithNegativeRecordNumberThrowsException()
+    public void shouldThrowExceptionWhenIsLockedCalledWithNegativeRecordNumber()
             throws Exception {
         standardSetup();
         data.isLocked(-1);
     }
 
     @Test(expected = RecordNotFoundException.class)
-    public void isLockedWithRecordNumberGreaterThanNumberOfRecordsThrowsException()
+    public void shouldThrowExceptionWhenIsLockedCalledWithRecordNumberGreaterThanNumberOfRecords()
             throws Exception {
         standardSetup();
         data.isLocked(recordCount);
     }
 
     @Test(expected = RecordNotFoundException.class)
-    public void isLockedOnDeletedRecordThrowsException() throws Exception {
+    public void shouldThrowExceptionWhenIsLockedCalledOnDeletedRecord()
+            throws Exception {
         standardSetup();
         data.isLocked(deletedRecNos.first());
     }
 
     @Test
-    public void isLockedOnLockedRecordReturnsTrue() throws Exception {
+    public void shouldReturnTrueWhenIsLockedCalledOnLockedRecord()
+            throws Exception {
         standardSetup();
         int recNo = 1;
         data.lock(recNo);
@@ -813,33 +827,36 @@ public class DataTest {
     }
 
     @Test
-    public void isLockedOnUnlockedRecordReturnsFalse() throws Exception {
+    public void shouldReturnFalseWhenIsLockedCalledOnUnlockedRecord()
+            throws Exception {
         standardSetup();
         int recNo = 1;
         assertThat(data.isLocked(recNo), is(false));
     }
 
     @Test(expected = RecordNotFoundException.class)
-    public void lockWithNegativeRecordNumberThrowsException() throws Exception {
+    public void shouldThrowExceptionWhenLockCalledWithNegativeRecordNumber()
+            throws Exception {
         standardSetup();
         data.lock(-1);
     }
 
     @Test(expected = RecordNotFoundException.class)
-    public void lockWithRecordNumberGreaterThanNumberOfRecordsThrowsException()
+    public void shouldThrowExceptionWhenLockCalledWithRecordNumberGreaterThanNumberOfRecords()
             throws Exception {
         standardSetup();
         data.lock(recordCount);
     }
 
     @Test(expected = RecordNotFoundException.class)
-    public void lockDeletedRecordThrowsException() throws Exception {
+    public void shouldThrowExceptionWhenLockCalledForDeletedRecord()
+            throws Exception {
         standardSetup();
         data.lock(deletedRecNos.first());
     }
 
     @Test
-    public void lock() throws Exception {
+    public void shouldLockRecord() throws Exception {
         standardSetup();
         int recNo = 1;
         data.lock(recNo);
@@ -847,7 +864,8 @@ public class DataTest {
     }
 
     @Test
-    public void canLockDifferentRecordsConcurrently() throws Exception {
+    public void shouldBeAbleToLockDifferentRecordsConcurrently()
+            throws Exception {
         standardSetup();
         int firstRecNo = 1;
         data.lock(firstRecNo);
@@ -858,7 +876,7 @@ public class DataTest {
     }
 
     @Test
-    public void lockSignalsWaitingThreadAndThrowsExceptionIfRecordDeletedWhileAwaitingCondition()
+    public void shouldSignalWaitingThreadAndThrowExceptionFromCallToLockIfRecordDeletedWhileAwaitingCondition()
             throws Exception {
         standardSetup();
         final Integer recNo = 1;
@@ -881,7 +899,7 @@ public class DataTest {
     }
 
     @Test
-    public void lockThrowsExceptionIfInterruptedWhileAwaitingCondition()
+    public void shouldThrowExceptionFromCallToLockIfInterruptedWhileAwaitingCondition()
             throws Exception {
         standardSetup();
         final Integer recNo = 1;
@@ -915,27 +933,28 @@ public class DataTest {
     }
 
     @Test(expected = RecordNotFoundException.class)
-    public void unlockWithNegativeRecordNumberThrowsException()
+    public void shouldThrowExceptionWhenUnlockCalledWithNegativeRecordNumber()
             throws Exception {
         standardSetup();
         data.unlock(-1);
     }
 
     @Test(expected = RecordNotFoundException.class)
-    public void unlockWithRecordNumberGreaterThanNumberOfRecordsThrowsException()
+    public void shouldThrowExceptionWhenUnlockCalledWithRecordNumberGreaterThanNumberOfRecords()
             throws Exception {
         standardSetup();
         data.unlock(recordCount);
     }
 
     @Test(expected = RecordNotFoundException.class)
-    public void unlockDeletedRecordThrowsException() throws Exception {
+    public void shouldThrowExceptionWhenUnlockCalledOnDeletedRecord()
+            throws Exception {
         standardSetup();
         data.unlock(deletedRecNos.first());
     }
 
     @Test
-    public void unlock() throws Exception {
+    public void shouldUnlockRecord() throws Exception {
         standardSetup();
         int recNo = 1;
         data.lock(recNo);
@@ -945,7 +964,8 @@ public class DataTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void unlockThrowsExceptionIfRecordNotLocked() throws Exception {
+    public void shouldThrowExceptionFromCallToUnlockIfRecordNotLocked()
+            throws Exception {
         standardSetup();
         int recNo = 0;
         assertThat(data.isLocked(recNo), is(false));
@@ -953,7 +973,8 @@ public class DataTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void unlockThrowsExceptionIfThreadDoesNotHoldLock() throws Exception {
+    public void shouldThrowExceptionFromCalledToUnlockIfThreadDoesNotHoldLock()
+            throws Exception {
         standardSetup();
         final int recNo = 1;
         Thread lockThread = new Thread(new Runnable() {

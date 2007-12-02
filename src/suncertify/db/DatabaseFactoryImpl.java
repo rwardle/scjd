@@ -9,15 +9,21 @@ package suncertify.db;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class DatabaseFactoryImpl implements DatabaseFactory {
+/**
+ * Implementation of {@link DatabaseFactory}.
+ * 
+ * @author Richard Wardle
+ */
+public final class DatabaseFactoryImpl implements DatabaseFactory {
 
+    /**
+     * Creates a new instance of <code>DatabaseFactoryImpl</code>.
+     */
     public DatabaseFactoryImpl() {
         super();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Database createDatabase(String databaseFilePath)
             throws FileNotFoundException, DataValidationException, IOException {
         return new DataAdapter(new Data(new DatabaseFileImpl(databaseFilePath)));

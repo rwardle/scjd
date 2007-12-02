@@ -10,10 +10,25 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
+ * Creates databases.
+ * 
  * @author Richard Wardle
  */
 public interface DatabaseFactory {
 
+    /**
+     * Creates a database.
+     * 
+     * @param databaseFilePath
+     *                Path to the database file.
+     * @return The database.
+     * @throws FileNotFoundException
+     *                 If there is no file at <code>databaseFilePath</code>.
+     * @throws DataValidationException
+     *                 If the database file is invalid.
+     * @throws IOException
+     *                 If there is an error accessing the database file.
+     */
     Database createDatabase(String databaseFilePath)
             throws FileNotFoundException, DataValidationException, IOException;
 }

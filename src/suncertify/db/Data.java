@@ -21,10 +21,14 @@ import java.util.logging.Logger;
 import suncertify.db.DatabaseSchema.FieldDescription;
 
 /**
- * @author Richard Wardle TODO Javadoc that any DataAccessExceptions will have
- *         an IOException as their root cause.
+ * Implementation of {@link DBMain} that obtains contractor data using an
+ * implementation of {@link DatabaseFile}. Any <code>DataAccessException</code>s
+ * thrown by the methods of this class will have an <code>IOException</code>
+ * as their root cause.
+ * 
+ * @author Richard Wardle
  */
-class Data implements DBMain {
+public class Data implements DBMain {
 
     // TODO Use a lock manager class?
 
@@ -41,18 +45,20 @@ class Data implements DBMain {
     private final Map<Integer, Long> lockedRecords = Collections
             .synchronizedMap(new HashMap<Integer, Long>());
 
+    private final ReentrantLock lock = new ReentrantLock();
+    private final Map<Integer, Condition> conditionsMap = new HashMap<Integer, Condition>();
+
     // TODO This is the count of all records including deleted ones - consider
     // renaming this to make it clearer. Hard for a junior programmer to
     // understand volatile?
     private volatile int recordCount;
 
-    private final ReentrantLock lock = new ReentrantLock();
-    private final Map<Integer, Condition> conditionsMap = new HashMap<Integer, Condition>();
-
     /**
-     * Creates a new instance of <code>Data</code>.
+     * Creates a new instance of <code>Data</code> using the specified
+     * database file.
      * 
      * @param databaseFile
+     *                Database file.
      * @throws IllegalArgumentException
      *                 If the <code>databaseFile</code> is <code>null</code>.
      * @throws DataValidationException
@@ -165,24 +171,32 @@ class Data implements DBMain {
         }
     }
 
-    DatabaseSchema getDatabaseSchema() {
-        return databaseSchema;
-    }
-
-    long getDataSectionOffset() {
-        return dataSectionOffset;
-    }
-
-    int getRecordCount() {
-        return recordCount;
-    }
-
-    boolean isRecordDeleted(int recNo) {
+    /**
+     * Reports whether the specified record has been deleted.
+     * 
+     * @param recNo
+     *                Database record number.
+     * @return <code>true</code> if the record has been deleted,
+     *         <code>false</code> otherwise.
+     */
+    public final boolean isRecordDeleted(int recNo) {
         return deletedRecNos.contains(recNo);
     }
 
+    final DatabaseSchema getDatabaseSchema() {
+        return databaseSchema;
+    }
+
+    final long getDataSectionOffset() {
+        return dataSectionOffset;
+    }
+
+    final int getRecordCount() {
+        return recordCount;
+    }
+
     /**
-     * {@inheritDoc} <p/>
+     * {@inheritDoc}
      * 
      * @throws DataAccessException
      *                 If there is an error accessing the database.
@@ -237,8 +251,10 @@ class Data implements DBMain {
     }
 
     /**
-     * TODO Mention that if a data element is null, the field is not udpated
-     * {@inheritDoc} <p/>
+     * {@inheritDoc}
+     * <p>
+     * If <code>data[n]</code> is <code>null</code> field <code>n</code>
+     * will not be updated.
      * 
      * @throws IllegalArgumentException
      *                 If <code>data</code> is <code>null</code> or is of
@@ -317,8 +333,10 @@ class Data implements DBMain {
     }
 
     /**
-     * {@inheritDoc} TODO Mention that there is no need for clients to call
-     * unlock after delete. <p/>
+     * {@inheritDoc}
+     * <p>
+     * It is not necessary for clients to call <code>unlock</code> after
+     * calling this method.
      * 
      * @throws IllegalStateException
      *                 If the calling thread does not hold the lock on the
@@ -350,8 +368,9 @@ class Data implements DBMain {
     }
 
     /**
-     * {@inheritDoc} <p/> This implementation does not throw
-     * <code>RecordNotFoundException</code>.
+     * {@inheritDoc}
+     * <p>
+     * This implementation does not throw <code>RecordNotFoundException</code>.
      * 
      * @throws IllegalArgumentException
      *                 If <code>criteria</code> is <code>null</code> or is
@@ -418,8 +437,9 @@ class Data implements DBMain {
     }
 
     /**
-     * {@inheritDoc} <p/> This implementation does not throw
-     * <code>DuplicateKeyException</code>.
+     * {@inheritDoc}
+     * <p>
+     * This implementation does not throw <code>DuplicateKeyException</code>.
      * 
      * @throws IllegalArgumentException
      *                 If <code>data</code> is <code>null</code> or is of
@@ -482,8 +502,6 @@ class Data implements DBMain {
 
     /**
      * {@inheritDoc}
-     * <p>
-     * TODO Mention lock/operation/unlock on single thread contract.
      * 
      * @throws IllegalThreadStateException
      *                 If the calling thread is interrupted while waiting to
@@ -565,9 +583,7 @@ class Data implements DBMain {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean isLocked(int recNo) throws RecordNotFoundException {
         validateRecordNumber(recNo);
         if (isRecordDeleted(recNo)) {

@@ -35,7 +35,7 @@ public class DataAdapterTest {
     }
 
     @Test(expected = IOException.class)
-    public void readMapsDataAccessException() throws Exception {
+    public void shouldMapDataAccessExceptionInReadMethod() throws Exception {
         context.checking(new Expectations() {
             {
                 one(mockData).read(with(any(int.class)));
@@ -46,7 +46,7 @@ public class DataAdapterTest {
     }
 
     @Test(expected = IOException.class)
-    public void updateMapsDataAccessException() throws Exception {
+    public void shouldMapDataAccessExceptionInUpdateMethod() throws Exception {
         context.checking(new Expectations() {
             {
                 one(mockData).update(with(any(int.class)),
@@ -58,7 +58,7 @@ public class DataAdapterTest {
     }
 
     @Test(expected = IOException.class)
-    public void deleteMapsDataAccessException() throws Exception {
+    public void shouldMapDataAccessExceptionInDeleteMethod() throws Exception {
         context.checking(new Expectations() {
             {
                 one(mockData).delete(with(any(int.class)));
@@ -69,7 +69,7 @@ public class DataAdapterTest {
     }
 
     @Test(expected = IOException.class)
-    public void findMapsDataAccessException() throws Exception {
+    public void shouldMapDataAccessExceptionInFindMethod() throws Exception {
         context.checking(new Expectations() {
             {
                 one(mockData).find(with(any(String[].class)));
@@ -80,7 +80,7 @@ public class DataAdapterTest {
     }
 
     @Test(expected = IOException.class)
-    public void createMapsDataAccessException() throws Exception {
+    public void shouldMapDataAccessExceptionInCreateMethod() throws Exception {
         context.checking(new Expectations() {
             {
                 one(mockData).create(with(any(String[].class)));
@@ -91,7 +91,8 @@ public class DataAdapterTest {
     }
 
     @Test(expected = InterruptedException.class)
-    public void lockMapsIllegalThreadStateException() throws Exception {
+    public void shouldMapIllegalThreadStateExceptionInLockMethod()
+            throws Exception {
         final IllegalThreadStateException exception = new IllegalThreadStateException();
         exception.initCause(new InterruptedException());
 
@@ -105,7 +106,7 @@ public class DataAdapterTest {
     }
 
     @Test
-    public void unlockCallDelegates() throws Exception {
+    public void shouldDelegateUnlockMethodCall() throws Exception {
         context.checking(new Expectations() {
             {
                 one(mockData).unlock(with(any(int.class)));
@@ -115,7 +116,7 @@ public class DataAdapterTest {
     }
 
     @Test
-    public void isLockedCallDelegates() throws Exception {
+    public void shouldDelegateIsLockedMethodCall() throws Exception {
         context.checking(new Expectations() {
             {
                 one(mockData).isLocked(with(any(int.class)));

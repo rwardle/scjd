@@ -7,51 +7,30 @@
 package suncertify.db;
 
 /**
+ * Exception thrown if there is a duplicate key.
  * 
  * @author Richard Wardle
  */
 public final class DuplicateKeyException extends Exception {
 
     /**
-     * Creates a new <code>DuplicateKeyException</code>.
+     * Creates a new <code>DuplicateKeyException</code> with
+     * <code>message</code> and <code>cause</code> initialised to
+     * <code>null</code>.
      */
     public DuplicateKeyException() {
         super();
     }
 
     /**
-     * Creates a new <code>DuplicateKeyException</code> with the specified
-     * detail message.
+     * Creates a new instance of <code>DuplicateKeyException</code> with the
+     * specified <code>message</code>, and with <code>cause</code>
+     * initialised to <code>null</code>.
      * 
      * @param message
-     *                The detail message.
+     *                Error message.
      */
     public DuplicateKeyException(String message) {
         super(message);
     }
-
-    // TODO Only add other constructors if needed - semi-specified in SCJD
-    // instructions
-    /**
-     * Creates a new <code>DuplicateKeyException</code> with the specified
-     * cause.
-     * 
-     * @param cause
-     *                The cause.
-     */
-    // public DuplicateKeyException(Throwable cause) {
-    // super(cause);
-    // }
-    /**
-     * Creates a new <code>DuplicateKeyException</code> with the specified
-     * message and cause.
-     * 
-     * @param message
-     *                The message.
-     * @param cause
-     *                The cause.
-     */
-    // public DuplicateKeyException(String message, Throwable cause) {
-    // super(message, cause);
-    // }
 }

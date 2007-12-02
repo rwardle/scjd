@@ -7,6 +7,7 @@
 package suncertify.db;
 
 /**
+ * Interface defining methods for interacting with the contractor database.
  * 
  * @author Richard Wardle
  */
@@ -17,8 +18,11 @@ public interface DBMain {
      * record value.
      * 
      * @param recNo
-     * @return
+     *                Database record number.
+     * @return A <code>String</code> array containing the record values.
      * @throws RecordNotFoundException
+     *                 If the specified record does not exist or is marked as
+     *                 deleted in the database.
      */
     String[] read(int recNo) throws RecordNotFoundException;
 
@@ -27,8 +31,12 @@ public interface DBMain {
      * data[n].
      * 
      * @param recNo
+     *                Database record number.
      * @param data
+     *                <code>String</code> array containing new record values.
      * @throws RecordNotFoundException
+     *                 If the specified record does not exist or is marked as
+     *                 deleted in the database.
      */
     void update(int recNo, String[] data) throws RecordNotFoundException;
 
@@ -37,7 +45,10 @@ public interface DBMain {
      * available for reuse.
      * 
      * @param recNo
+     *                Database record number.
      * @throws RecordNotFoundException
+     *                 If the specified record does not exist or is marked as
+     *                 deleted in the database.
      */
     void delete(int recNo) throws RecordNotFoundException;
 
@@ -49,8 +60,11 @@ public interface DBMain {
      * "Fred" matches "Fred" or "Freddy".)
      * 
      * @param criteria
-     * @return
+     *                <code>String</code> array containing search criteria.
+     * @return An array of record numbers matching the specified criteria.
      * @throws RecordNotFoundException
+     *                 If the specified record does not exist or is marked as
+     *                 deleted in the database.
      */
     int[] find(String[] criteria) throws RecordNotFoundException;
 
@@ -59,8 +73,10 @@ public interface DBMain {
      * Inserts the given data, and returns the record number of the new record.
      * 
      * @param data
-     * @return
+     *                <code>String</code> array containing new record values.
+     * @return The record number of the new record.
      * @throws DuplicateKeyException
+     *                 If there is a duplicate key.
      */
     int create(String[] data) throws DuplicateKeyException;
 
@@ -70,7 +86,10 @@ public interface DBMain {
      * the CPU and consumes no CPU cycles until the record is unlocked.
      * 
      * @param recNo
+     *                Database record number.
      * @throws RecordNotFoundException
+     *                 If the specified record does not exist or is marked as
+     *                 deleted in the database.
      */
     void lock(int recNo) throws RecordNotFoundException;
 
@@ -78,7 +97,10 @@ public interface DBMain {
      * Releases the lock on a record.
      * 
      * @param recNo
+     *                Database record number.
      * @throws RecordNotFoundException
+     *                 If the specified record does not exist or is marked as
+     *                 deleted in the database.
      */
     void unlock(int recNo) throws RecordNotFoundException;
 
@@ -87,8 +109,12 @@ public interface DBMain {
      * locked, false otherwise.
      * 
      * @param recNo
-     * @return
+     *                Database record number.
+     * @return <code>true</code> if the record is locked, <code>false</code>
+     *         otherwise.
      * @throws RecordNotFoundException
+     *                 If the specified record does not exist or is marked as
+     *                 deleted in the database.
      */
     boolean isLocked(int recNo) throws RecordNotFoundException;
 }

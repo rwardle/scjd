@@ -357,7 +357,8 @@ public final class MainFrame extends JFrame implements MainView {
         constraints.gridy = 2;
         constraints.insets = insetsZeroTop;
         JButton searchButton = new JButton(searchAction);
-        searchButton.setOpaque(false); // TODO Mac VM bug?
+        // TODO Mac VM bug?
+        searchButton.setOpaque(false);
         searchButton.setToolTipText(resourceBundle
                 .getString("MainFrame.searchButton.tooltip"));
         panel.add(searchButton, constraints);

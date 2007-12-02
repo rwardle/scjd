@@ -36,3 +36,4 @@ But this gives us 2 possibilites: a) concurrent requests are routed to separate 
 34. Only defining serialVersionUID in classes that will be going over the network. Not defined it in classes that extend Swing components since they will not go over the network and are not designed to be saved to disk using serialization. Using a serialverisonUID of 1 to make verisoning explicit and obvious.
 35. Explain choice of service package structure, i.e. RemoteBrokerService extends BrokerService and delegating.
 36. RmiService groups together all RMI operations into a single interface to allow mocking in tests.
+37. Database interface throws IOExceptions - clients encouraged to use it in preference to DBMain.
