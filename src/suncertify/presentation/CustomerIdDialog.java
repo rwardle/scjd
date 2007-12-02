@@ -1,8 +1,9 @@
 /*
  * CustomerIdDialog.java
  *
- * 7 Nov 2007 
+ * 07 Nov 2007 
  */
+
 package suncertify.presentation;
 
 import java.awt.Component;
@@ -26,6 +27,8 @@ import javax.swing.SwingConstants;
 import javax.swing.text.MaskFormatter;
 
 /**
+ * A dialog for entering the customer ID when making a booking.
+ * 
  * @author Richard Wardle
  */
 public final class CustomerIdDialog extends JDialog {
@@ -39,6 +42,13 @@ public final class CustomerIdDialog extends JDialog {
     private final JButton cancelButton;
     private String customerId;
 
+    /**
+     * Creates a new <code>CustomerIdDialog</code> with the specified parent
+     * frame.
+     * 
+     * @param parentFrame
+     *                Parent frame.
+     */
     public CustomerIdDialog(JFrame parentFrame) {
         super(parentFrame);
         resourceBundle = ResourceBundle
@@ -193,6 +203,12 @@ public final class CustomerIdDialog extends JDialog {
         setVisible(false);
     }
 
+    /**
+     * Returns the customer ID.
+     * 
+     * @return The customer ID entered in the dialog, or <code>null</code> if
+     *         the dialog was cancelled.
+     */
     public String getCustomerId() {
         return customerId;
     }

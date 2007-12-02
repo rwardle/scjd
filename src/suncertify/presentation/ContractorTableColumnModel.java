@@ -33,6 +33,8 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 /**
+ * Column model for the contractor table.
+ * 
  * @author Richard Wardle
  */
 public final class ContractorTableColumnModel extends DefaultTableColumnModel {
@@ -46,6 +48,9 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
     private final JButton rendererBookButton;
     private MainPresenter presenter;
 
+    /**
+     * Creates a new instance of <code>ContractorTableColumnModel</code>.
+     */
     public ContractorTableColumnModel() {
         ResourceBundle resourceBundle = ResourceBundle
                 .getBundle("suncertify/presentation/Bundle");
@@ -81,19 +86,38 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
                 bookButtonTooltip));
     }
 
-    String getColumnHeaderToolTipText(int columnIndex) {
+    /**
+     * Returns the tooltip text for the column at the specified index.
+     * 
+     * @param columnIndex
+     *                Column index
+     * @return The tooltip text.
+     */
+    public String getColumnHeaderToolTipText(int columnIndex) {
         return columnHeaderToolTips[columnIndex];
     }
 
-    void disableRendererBookButton() {
+    /**
+     * Disables the book button in the owner cell renderer.
+     */
+    public void disableRendererBookButton() {
         rendererBookButton.setEnabled(false);
     }
 
-    void enableRendererBookButton() {
+    /**
+     * Enables the book button in the owner cell renderer.
+     */
+    public void enableRendererBookButton() {
         rendererBookButton.setEnabled(true);
     }
 
-    void setPresenter(MainPresenter presenter) {
+    /**
+     * Sets the main presenter.
+     * 
+     * @param presenter
+     *                Presenter to set.
+     */
+    public void setPresenter(MainPresenter presenter) {
         this.presenter = presenter;
     }
 

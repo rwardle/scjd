@@ -1,7 +1,7 @@
 /*
  * PresentationConstants.java
  *
- * Nov 27 2007 
+ * 27 Nov 2007 
  */
 
 package suncertify.presentation;

@@ -13,10 +13,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
+
+import suncertify.ApplicationMode;
 
 /**
- * Client mode configuration dialog.
+ * Configuration dialog for applications running in
+ * {@link ApplicationMode#CLIENT} mode.
  * 
  * @author Richard Wardle
  */
@@ -34,50 +36,38 @@ public final class ClientConfigurationDialog extends
                 "ClientConfigurationDialog.title"));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected String getMessageText() {
         return getResourceBundle().getString(
                 "ClientConfigurationDialog.message");
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String getServerAddress() {
         return serverAddressField.getText();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setServerAddress(String serverAddress) {
         serverAddressField.setText(serverAddress);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Integer getServerPort() {
         return (Integer) serverPortSpinner.getValue();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void setServerPort(Integer serverPort) {
         serverPortSpinner.setValue(serverPort);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected JPanel initialiseInputPanel() {
         JPanel panel = new JPanel();
@@ -126,20 +116,8 @@ public final class ClientConfigurationDialog extends
         constraints.gridy = 1;
         constraints.insets = PresentationConstants.DEFAULT_INSETS;
 
-        serverPortSpinner = new JSpinner(new SpinnerNumberModel(
-                AbstractConfigurationDialog.SERVER_PORT_SPINNER_INITIAL_VALUE,
-                AbstractConfigurationDialog.SERVER_PORT_SPINNER_MINIMUM_VALUE,
-                AbstractConfigurationDialog.SERVER_PORT_SPINNER_MAXIMUM_VALUE,
-                AbstractConfigurationDialog.SERVER_PORT_SPINNER_STEP_SIZE));
-        serverPortSpinner.setFont(serverAddressField.getFont());
-        serverPortSpinner.setToolTipText(getResourceBundle().getString(
-                "ClientConfigurationDialog.serverPortSpinner.tooltip"));
-        JSpinner.DefaultEditor spinnerEditor = new JSpinner.NumberEditor(
-                serverPortSpinner,
-                AbstractConfigurationDialog.SERVER_PORT_SPINNER_FORMAT_PATTERN);
-        spinnerEditor.getTextField().setColumns(
-                AbstractConfigurationDialog.SERVER_PORT_SPINNER_COLUMNS);
-        serverPortSpinner.setEditor(spinnerEditor);
+        serverPortSpinner = createServerPortSpinner(serverAddressField
+                .getFont());
         panel.add(serverPortSpinner, constraints);
 
         constraints = new GridBagConstraints();

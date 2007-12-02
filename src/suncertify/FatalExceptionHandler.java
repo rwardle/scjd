@@ -1,7 +1,7 @@
 /*
  * FatalExceptionHandler.java
  *
- * 8 Nov 2007 
+ * 08 Nov 2007 
  */
 
 package suncertify;

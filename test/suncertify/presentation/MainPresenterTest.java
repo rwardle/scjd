@@ -64,17 +64,17 @@ public class MainPresenterTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void constructionWithNullServiceThrowsException() {
+    public void shouldThrowExceptionWhenNullServicePassedToConstructor() {
         new MainPresenter(null, mockView);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void constructionWithNullViewThrowsException() {
+    public void shouldThrowExceptionWhenNullViewPassedToConstructor() {
         new MainPresenter(mockBrokerService, null);
     }
 
     @Test
-    public void realiseView() {
+    public void shouldRealiseView() {
         context.checking(new Expectations() {
             {
                 one(mockView).realise();
@@ -84,7 +84,7 @@ public class MainPresenterTest {
     }
 
     @Test
-    public void searchButtonActionPerformed() throws Exception {
+    public void shouldPerformSearchAction() throws Exception {
         final String nameCriteria = "name";
         final String locationCriteria = "location";
         final List<Contractor> contractors = new ArrayList<Contractor>();
@@ -122,7 +122,8 @@ public class MainPresenterTest {
     }
 
     @Test
-    public void searchButtonActionPerformedNameCriteriaOnly() throws Exception {
+    public void shouldPerformSearchActionWhenOnlyNameCriteriaIsSpecified()
+            throws Exception {
         final String nameCriteria = "name";
         final String locationCriteria = "";
         final List<Contractor> contractors = new ArrayList<Contractor>();
@@ -155,7 +156,7 @@ public class MainPresenterTest {
     }
 
     @Test
-    public void searchButtonActionPerformedLocationCriteriaOnly()
+    public void shouldPerformSearchActionWhenOnlyLocationCriteriaIsSpecified()
             throws Exception {
         final String nameCriteria = "";
         final String locationCriteria = "location";
@@ -189,7 +190,8 @@ public class MainPresenterTest {
     }
 
     @Test
-    public void searchButtonActionPerformedNoCriteria() throws Exception {
+    public void shouldPerformSearchActionWhenNoCriteriaAreSpecified()
+            throws Exception {
         final String nameCriteria = "";
         final String locationCriteria = "";
         final List<Contractor> contractors = new ArrayList<Contractor>();
@@ -280,7 +282,7 @@ public class MainPresenterTest {
     }
 
     @Test
-    public void bookButtonActionPerformed() throws Exception {
+    public void shouldPerformBookAction() throws Exception {
         final int rowNo = 1;
         String[] preBookingContractorData = new String[] { "name", "location",
                 "spec", "size", "rate", "owner" };
@@ -401,15 +403,8 @@ public class MainPresenterTest {
 
             boolean match = true;
             for (int i = 0; i < contractors.size(); i++) {
-                String[] contractorData = new String[6];
-                for (int j = 0; j < contractorData.length; j++) {
-                    contractorData[j] = (String) tableModel.getValueAt(i, j);
-                }
-
-                Contractor actualContractor = new Contractor(tableModel
-                        .getRecordNumberAt(i), contractorData);
                 match = new ContractorMatching(contractors.get(i))
-                        .matches(actualContractor);
+                        .matches(tableModel.getContractorAtRow(i));
             }
             return match;
         }

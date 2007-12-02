@@ -8,16 +8,32 @@ import java.awt.Rectangle;
 
 import javax.swing.JPanel;
 
+/**
+ * Extends {@link JPanel} to use a gradient paint from top-to-bottom using the
+ * colours specified in the constructor.
+ * 
+ * @author Richard Wardle
+ */
 public final class JGradientPanel extends JPanel {
 
     private final Color topColor;
     private final Color bottomColor;
 
+    /**
+     * Creates a new instance of <code>JGradientPanel</code> with the
+     * specified colours.
+     * 
+     * @param topColor
+     *                Colour to use for the top of the gradient paint.
+     * @param bottomColor
+     *                Colour to use for the bottom of the gradient paint.
+     */
     public JGradientPanel(Color topColor, Color bottomColor) {
         this.topColor = topColor;
         this.bottomColor = bottomColor;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;

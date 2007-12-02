@@ -15,7 +15,9 @@ import suncertify.ConfigurationManager;
 import suncertify.ReturnStatus;
 
 /**
- * Encapsulates the presentation behaviour of the configuration dialog.
+ * A controller that is responsible for handling user events delegated to it
+ * from the {@link ConfigurationView} and for updating the view based on the
+ * data in the {@link ConfigurationManager}.
  * 
  * @author Richard Wardle
  */
@@ -32,11 +34,12 @@ public class ConfigurationPresenter {
      * Creates a new instance of <code>ConfigurationPresenter</code>.
      * 
      * @param configurationManager
-     *                The configuration model.
+     *                Configuration manager.
      * @param view
-     *                The configuration view.
+     *                Configuration view.
      * @throws IllegalArgumentException
-     *                 If the configuration or view is <code>null</code>.
+     *                 If <code>configurationManager</code> or
+     *                 <code>view</code> is <code>null</code>.
      */
     public ConfigurationPresenter(ConfigurationManager configurationManager,
             ConfigurationView view) {
@@ -51,15 +54,17 @@ public class ConfigurationPresenter {
     }
 
     /**
-     * Gets the returnStatus.
+     * Returns the return status of the configuration view.
      * 
-     * @return The returnStatus.
+     * @return The return status.
      */
     public ReturnStatus getReturnStatus() {
         return returnStatus;
     }
 
-    /** Realises the view. */
+    /**
+     * Realises the view.
+     */
     public void realiseView() {
         loadViewFromModel();
         view.realise();
@@ -71,7 +76,9 @@ public class ConfigurationPresenter {
         view.setServerPort(configurationManager.getServerPort());
     }
 
-    /** Performs the OK button action. */
+    /**
+     * Performs the OK button action.
+     */
     public final void okButtonActionPerformed() {
         returnStatus = ReturnStatus.OK;
         saveViewToModel();
@@ -92,12 +99,16 @@ public class ConfigurationPresenter {
         configurationManager.setServerPort(serverPort);
     }
 
-    /** Performs the Cancel button action. */
+    /**
+     * Performs the Cancel button action.
+     */
     public final void cancelButtonActionPerformed() {
         view.close();
     }
 
-    /** Performs the Browse button action. */
+    /**
+     * Performs the Browse button action.
+     */
     public final void browseButtonActionPerformed() {
         JFileChooser fileChooser = createFileChooser(view.getDatabaseFilePath());
         int option = fileChooser.showDialog(view.getComponent(), ResourceBundle

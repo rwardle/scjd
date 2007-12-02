@@ -69,23 +69,23 @@ public class ConfigurationPresenterTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void constructorDisallowNullConfiguration() {
+    public void shouldThrowExceptionIfConfigurationIsNull() {
         new ConfigurationPresenter(null, mockView);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void constructorDisallowNullView() {
+    public void shouldThrowExceptionIfViewIsNull() {
         new ConfigurationPresenter(new ConfigurationManager(mockConfiguration),
                 null);
     }
 
     @Test
-    public void defaultReturnStatus() {
+    public void shouldReturnCancelledByDefault() {
         assertThat(presenter.getReturnStatus(), is(ReturnStatus.CANCEL));
     }
 
     @Test
-    public void realiseView() {
+    public void shouldRealiseView() {
         context.checking(new Expectations() {
             {
                 one(mockView)
@@ -100,7 +100,7 @@ public class ConfigurationPresenterTest {
     }
 
     @Test
-    public void okButtonActionPerformed() {
+    public void shouldReturnOkWhenOkButtonActionPerformed() {
         final String newDatabaseFilePath = "newDatabaseFilePath";
         final String newServerAddress = "newServerAddress";
         final Integer newServerPort = 9999;
@@ -140,7 +140,7 @@ public class ConfigurationPresenterTest {
     }
 
     @Test
-    public void cancelButtonActionPerformed() {
+    public void shouldReturnCancelWhenCancelButtonActionPerformed() {
         context.checking(new Expectations() {
             {
                 one(mockView).close();
@@ -151,7 +151,7 @@ public class ConfigurationPresenterTest {
     }
 
     @Test
-    public void databaseFilePathNotUpdatedIfErrorInFileChooser() {
+    public void shouldNotUpdateDatabaseFilePathWhenErrorInFileChooser() {
         context.checking(new Expectations() {
             {
                 allowing(mockView).getDatabaseFilePath();
@@ -172,7 +172,7 @@ public class ConfigurationPresenterTest {
     }
 
     @Test
-    public void databaseFilePathNotUpdatedIfFileChooserIsCancelled() {
+    public void shouldNotUpdateDatabaseFilePathWhenFileChooserIsCancelled() {
         context.checking(new Expectations() {
             {
                 allowing(mockView).getDatabaseFilePath();
@@ -193,7 +193,7 @@ public class ConfigurationPresenterTest {
     }
 
     @Test
-    public void databaseFilePathUpdatedIfFileChooserIsApproved() {
+    public void shouldUpdateDatabaseFilePathWhenFileChooserIsApproved() {
         final File newDatabaseFile = new File("newDatabaseFilePath");
         context.checking(new Expectations() {
             {

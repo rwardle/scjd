@@ -27,7 +27,9 @@ import suncertify.service.ContractorModifiedException;
 import suncertify.service.SearchCriteria;
 
 /**
- * Encapsulates the presentation behaviour of the main frame.
+ * A controller that is responsible for handling user events delegated to it
+ * from the {@link MainView} and for updating the view based on data obtained
+ * from the {@link BrokerService}.
  * 
  * @author Richard Wardle
  */
@@ -44,9 +46,12 @@ public class MainPresenter {
      * Creates a new instance of <code>MainPresenter</code>.
      * 
      * @param service
-     *                The broker service.
+     *                Broker service.
      * @param view
-     *                The main view.
+     *                Main view.
+     * @throws IllegalArgumentException
+     *                 If <code>service</code> or <code>view</code> is
+     *                 <code>null</code>.
      */
     public MainPresenter(BrokerService service, MainView view) {
         if (service == null) {
@@ -61,11 +66,22 @@ public class MainPresenter {
                 .getBundle("suncertify/presentation/Bundle");
     }
 
-    /** Realises the view. */
+    /**
+     * Realises the view.
+     */
     public void realiseView() {
         view.realise();
     }
 
+    /**
+     * Performs the search action. The work of the search action is performed on
+     * a {@link SwingWorker} thread and the user interface controls are disabled
+     * until the search action completes.
+     * 
+     * @param componentToFocus
+     *                Component to focus when the search action has completed
+     *                successfully.
+     */
     public final void searchActionPerformed(Component componentToFocus) {
         String nameCriteria = substituteNullForEmptyString(view
                 .getNameCriteria().trim());
@@ -93,6 +109,19 @@ public class MainPresenter {
         return result;
     }
 
+    /**
+     * Performs the book action after first displaying a dialog to capture the
+     * ID of the customer making the booking. The work of the book action is
+     * performed on a {@link SwingWorker} thread and the user interface controls
+     * are disabled until the book action completes.
+     * 
+     * @param rowNo
+     *                Table row number that contains the contractor to be
+     *                booked.
+     * @param componentToFocus
+     *                Component to focus when the search action has completed
+     *                successfully.
+     */
     public final void bookActionPerformed(int rowNo, Component componentToFocus) {
         String customerId = showCustomerIdDialog();
         if (customerId == null) {
@@ -123,6 +152,8 @@ public class MainPresenter {
         JOptionPane.showMessageDialog(view.getFrame(), message, title,
                 messageType);
     }
+
+    // TODO Document SwingWorkers
 
     private static final class SearchWorker extends
             SwingWorker<List<Contractor>, Void> {

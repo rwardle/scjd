@@ -51,17 +51,14 @@ import javax.swing.table.JTableHeader;
 import suncertify.service.Contractor;
 
 /**
+ * An application main frame.
  * 
  * @author Richard Wardle
  */
 public final class MainFrame extends JFrame implements MainView {
 
-    // TODO Check on small screen resultions 640x480
-
     private static final String INITIAL_STATUS_LABEL = " ";
-    // TODO Adjust these sizes
     private static final Dimension PREFERRED_SIZE = new Dimension(640, 480);
-    // TODO Minimum size has no effect on Mac
     private static final Dimension MINIMUM_SIZE = new Dimension(320, 240);
     private static final Dimension TEXT_FIELD_PREFERRED_SIZE = new Dimension(
             100, 25);
@@ -80,6 +77,9 @@ public final class MainFrame extends JFrame implements MainView {
     private MainPresenter presenter;
     private ContractorTableModel tableModel;
 
+    /**
+     * Creates a new instance of <code>MainFrame</code>.
+     */
     public MainFrame() {
         resourceBundle = ResourceBundle
                 .getBundle("suncertify/presentation/Bundle");
@@ -156,11 +156,13 @@ public final class MainFrame extends JFrame implements MainView {
         presenter.searchActionPerformed(componentToFocus);
     }
 
+    /** {@inheritDoc} */
     public void setPresenter(MainPresenter presenter) {
         this.presenter = presenter;
         contractorTableColumnModel.setPresenter(presenter);
     }
 
+    /** {@inheritDoc} */
     public void realise() {
         pack();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -170,22 +172,17 @@ public final class MainFrame extends JFrame implements MainView {
         setVisible(true);
     }
 
+    /** {@inheritDoc} */
     public String getNameCriteria() {
         return nameTextField.getText();
     }
 
-    public void setNameCriteria(String nameCriteria) {
-        nameTextField.setText(null);
-    }
-
+    /** {@inheritDoc} */
     public String getLocationCriteria() {
         return locationTextField.getText();
     }
 
-    public void setLocationCriteria(String locationCriteria) {
-        locationTextField.setText(null);
-    }
-
+    /** {@inheritDoc} */
     public void setTableModel(ContractorTableModel tableModel) {
         this.tableModel = tableModel;
         /*
@@ -196,20 +193,24 @@ public final class MainFrame extends JFrame implements MainView {
         resultsTable.setModel(this.tableModel);
     }
 
+    /** {@inheritDoc} */
     public void setStatusLabelText(String text) {
         statusLabel.setText(text);
     }
 
+    /** {@inheritDoc} */
     public JFrame getFrame() {
         return this;
     }
 
+    /** {@inheritDoc} */
     public void disableControls() {
         glassPane.setVisible(true);
         searchAction.setEnabled(false);
         contractorTableColumnModel.disableRendererBookButton();
     }
 
+    /** {@inheritDoc} */
     public void enableControls(Component componentToFocus) {
         glassPane.setVisible(false);
         searchAction.setEnabled(true);
@@ -220,10 +221,12 @@ public final class MainFrame extends JFrame implements MainView {
         }
     }
 
+    /** {@inheritDoc} */
     public Contractor getContractorAtRow(int rowNo) {
         return tableModel.getContractorAtRow(rowNo);
     }
 
+    /** {@inheritDoc} */
     public void updateContractorAtRow(int rowNo, Contractor contractor) {
         tableModel.updateContractorAtRow(rowNo, contractor);
     }
@@ -506,6 +509,7 @@ public final class MainFrame extends JFrame implements MainView {
         }
     }
 
+    // TODO Document use of GlassPane
     private static final class GlassPane extends JComponent {
 
         public GlassPane() {

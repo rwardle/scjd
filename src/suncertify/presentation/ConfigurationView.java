@@ -9,22 +9,22 @@ package suncertify.presentation;
 import java.awt.Component;
 
 /**
- * The application configuration view.
+ * An application configuration view.
  * 
  * @author Richard Wardle
  */
 public interface ConfigurationView {
 
     /**
-     * Sets the <code>ConfigurationPresenter</code>.
+     * Sets the configuration presenter.
      * 
      * @param presenter
-     *                The presenter.
+     *                Presenter to set.
      */
     void setPresenter(ConfigurationPresenter presenter);
 
     /**
-     * Realises the view and its components.
+     * Realises the view.
      */
     void realise();
 
@@ -34,7 +34,7 @@ public interface ConfigurationView {
     void close();
 
     /**
-     * Gets the database file path.
+     * Returns the database file path.
      * 
      * @return The database file path.
      */
@@ -44,12 +44,12 @@ public interface ConfigurationView {
      * Sets the database file path.
      * 
      * @param databaseFilePath
-     *                The database file path to set.
+     *                Database file path to set.
      */
     void setDatabaseFilePath(String databaseFilePath);
 
     /**
-     * Gets the server address.
+     * Returns the server address.
      * 
      * @return The server address.
      */
@@ -59,7 +59,7 @@ public interface ConfigurationView {
      * Sets the server address.
      * 
      * @param serverAddress
-     *                The server address to set.
+     *                Server address to set.
      */
     void setServerAddress(String serverAddress);
 
@@ -71,17 +71,17 @@ public interface ConfigurationView {
     Integer getServerPort();
 
     /**
-     * Sets the server port.
+     * Returns the server port.
      * 
      * @param serverPort
-     *                The server port to set.
+     *                Server port to set.
      */
     void setServerPort(Integer serverPort);
 
     /**
-     * Gets the view component.
+     * Returns the view component.
      * 
-     * @return The component.
+     * @return The view component.
      */
     Component getComponent();
 }

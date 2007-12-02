@@ -1,7 +1,7 @@
 /*
  * RemoteBrokerService.java
  *
- * 11 June 2007
+ * 11 Jun 2007
  */
 
 package suncertify.service;
