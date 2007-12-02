@@ -6,6 +6,7 @@
 
 package suncertify.presentation;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -34,7 +35,7 @@ import javax.swing.table.TableColumn;
 /**
  * @author Richard Wardle
  */
-public class ContractorTableColumnModel extends DefaultTableColumnModel {
+public final class ContractorTableColumnModel extends DefaultTableColumnModel {
 
     private static final int BOOK_BUTTON_FONT_SIZE = 10;
     private static final Dimension BOOK_BUTTON_DIMENSIONS = new Dimension(65,
@@ -62,17 +63,16 @@ public class ContractorTableColumnModel extends DefaultTableColumnModel {
             addColumn(column);
         }
 
-        this.bookButtonText = resourceBundle
-                .getString("MainFrame.bookButton.text");
+        bookButtonText = resourceBundle.getString("MainFrame.bookButton.text");
 
-        this.columnHeaderToolTips = new String[PresentationConstants.TABLE_COLUMN_COUNT];
+        columnHeaderToolTips = new String[PresentationConstants.TABLE_COLUMN_COUNT];
         for (int i = 0; i < tableColumnNames.length; i++) {
-            this.columnHeaderToolTips[i] = resourceBundle
+            columnHeaderToolTips[i] = resourceBundle
                     .getString("MainFrame.resultsTable.column" + i + ".tooltip");
         }
 
         TableColumn ownerColumn = getColumn(PresentationConstants.TABLE_OWNER_COLUMN_INDEX);
-        this.rendererBookButton = createBookButton();
+        rendererBookButton = createBookButton();
         String bookButtonTooltip = resourceBundle
                 .getString("MainFrame.bookButton.tooltip");
         ownerColumn.setCellRenderer(new OwnerTableCellRenderer(this,
@@ -82,15 +82,15 @@ public class ContractorTableColumnModel extends DefaultTableColumnModel {
     }
 
     String getColumnHeaderToolTipText(int columnIndex) {
-        return this.columnHeaderToolTips[columnIndex];
+        return columnHeaderToolTips[columnIndex];
     }
 
     void disableRendererBookButton() {
-        this.rendererBookButton.setEnabled(false);
+        rendererBookButton.setEnabled(false);
     }
 
     void enableRendererBookButton() {
-        this.rendererBookButton.setEnabled(true);
+        rendererBookButton.setEnabled(true);
     }
 
     void setPresenter(MainPresenter presenter) {
@@ -98,14 +98,13 @@ public class ContractorTableColumnModel extends DefaultTableColumnModel {
     }
 
     private JButton createBookButton() {
-        JButton button = new JButton(this.bookButtonText);
+        JButton button = new JButton(bookButtonText);
         button.setOpaque(false);
         button.setFocusPainted(false);
         Font defaultButtonFont = button.getFont();
         button.setFont(new Font(defaultButtonFont.getName(), defaultButtonFont
-                .getStyle(), ContractorTableColumnModel.BOOK_BUTTON_FONT_SIZE));
-        button
-                .setPreferredSize(ContractorTableColumnModel.BOOK_BUTTON_DIMENSIONS);
+                .getStyle(), BOOK_BUTTON_FONT_SIZE));
+        button.setPreferredSize(BOOK_BUTTON_DIMENSIONS);
         return button;
     }
 
@@ -136,7 +135,7 @@ public class ContractorTableColumnModel extends DefaultTableColumnModel {
                 ContractorTableColumnModel contractorTableColumnModel,
                 String bookButtonTooltip) {
             this.bookButtonTooltip = bookButtonTooltip;
-            this.bookButtonPanel = contractorTableColumnModel
+            bookButtonPanel = contractorTableColumnModel
                     .createBookButtonPanel(contractorTableColumnModel.rendererBookButton);
         }
 
@@ -147,32 +146,37 @@ public class ContractorTableColumnModel extends DefaultTableColumnModel {
             if ("".equals(value)) {
                 Border border;
                 if (hasFocus) {
-                    if (this.focusBorder == null) {
+                    if (focusBorder == null) {
                         // Get and store the default focus border for future use
                         JComponent defaultRendererComponent = (JComponent) table
                                 .getDefaultRenderer(String.class)
                                 .getTableCellRendererComponent(table, value,
                                         isSelected, hasFocus, row, column);
-                        this.focusBorder = defaultRendererComponent.getBorder();
+                        focusBorder = defaultRendererComponent.getBorder();
                     }
-                    border = this.focusBorder;
+                    border = focusBorder;
                 } else {
-                    border = OwnerTableCellRenderer.EMPTY_BORDER;
+                    border = EMPTY_BORDER;
                 }
-                this.bookButtonPanel.setBorder(border);
+                bookButtonPanel.setBorder(border);
 
-                this.bookButtonPanel.setBackground(isSelected ? table
-                        .getSelectionBackground() : table.getBackground());
+                Color backgroundColor;
+                if (isSelected) {
+                    backgroundColor = table.getSelectionBackground();
+                } else {
+                    backgroundColor = table.getBackground();
+                }
+                bookButtonPanel.setBackground(backgroundColor);
 
-                component = this.bookButtonPanel;
-                component.setToolTipText(this.bookButtonTooltip);
+                component = bookButtonPanel;
+                component.setToolTipText(bookButtonTooltip);
             } else {
                 component = (JComponent) table.getDefaultRenderer(String.class)
                         .getTableCellRendererComponent(table, value,
                                 isSelected, hasFocus, row, column);
-                if (this.focusBorder == null && hasFocus) {
+                if (focusBorder == null && hasFocus) {
                     // Store the default focus border for future use
-                    this.focusBorder = component.getBorder();
+                    focusBorder = component.getBorder();
                 }
                 component.setToolTipText(null);
             }
@@ -200,9 +204,9 @@ public class ContractorTableColumnModel extends DefaultTableColumnModel {
             bookButton.setToolTipText(this.bookButtonTooltip);
             bookButton.addActionListener(this);
 
-            this.bookButtonPanel = contractorTableColumnModel
+            bookButtonPanel = contractorTableColumnModel
                     .createBookButtonPanel(bookButton);
-            this.bookButtonPanel.addFocusListener(new FocusListener() {
+            bookButtonPanel.addFocusListener(new FocusListener() {
                 public void focusGained(FocusEvent e) {
                     // Pass the focus to the book button so it can be actioned
                     // with the keyboard
@@ -216,19 +220,19 @@ public class ContractorTableColumnModel extends DefaultTableColumnModel {
         }
 
         public void actionPerformed(ActionEvent e) {
-            this.contractorTableColumnModel.presenter.bookActionPerformed(
-                    this.currentRow, this.resultsTable);
+            contractorTableColumnModel.presenter.bookActionPerformed(
+                    currentRow, resultsTable);
             fireEditingStopped();
         }
 
         public Component getTableCellEditorComponent(JTable table,
                 Object value, boolean isSelected, int row, int column) {
-            this.resultsTable = table;
-            this.currentRow = row;
-            this.bookButtonPanel.setBackground(table.getSelectionBackground());
-            this.bookButtonPanel.setBorder(UIManager
+            resultsTable = table;
+            currentRow = row;
+            bookButtonPanel.setBackground(table.getSelectionBackground());
+            bookButtonPanel.setBorder(UIManager
                     .getBorder("Table.focusCellHighlightBorder"));
-            return this.bookButtonPanel;
+            return bookButtonPanel;
         }
 
         public Object getCellEditorValue() {

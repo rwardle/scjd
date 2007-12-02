@@ -13,12 +13,12 @@ public class ConfigurationManagerTest {
 
     @Before
     public void setUp() {
-        this.mockConfiguration = this.context.mock(Configuration.class);
+        mockConfiguration = context.mock(Configuration.class);
     }
 
     @After
     public void tearDown() {
-        this.context.assertIsSatisfied();
+        context.assertIsSatisfied();
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -28,103 +28,98 @@ public class ConfigurationManagerTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfDatabaseFilePathIsNull() throws Exception {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                ignoring(ConfigurationManagerTest.this.mockConfiguration);
+                ignoring(mockConfiguration);
             }
         });
         ConfigurationManager configurationManager = new ConfigurationManager(
-                this.mockConfiguration);
+                mockConfiguration);
         configurationManager.setDatabaseFilePath(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfServerAddressIsNull() throws Exception {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                ignoring(ConfigurationManagerTest.this.mockConfiguration);
+                ignoring(mockConfiguration);
             }
         });
         ConfigurationManager configurationManager = new ConfigurationManager(
-                this.mockConfiguration);
+                mockConfiguration);
         configurationManager.setServerAddress(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfServerPortIsNull() throws Exception {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                ignoring(ConfigurationManagerTest.this.mockConfiguration);
+                ignoring(mockConfiguration);
             }
         });
         ConfigurationManager configurationManager = new ConfigurationManager(
-                this.mockConfiguration);
+                mockConfiguration);
         configurationManager.setServerPort(null);
     }
 
     @Test
     public void shouldNotLoadConfigurationIfItDoesNotExist() throws Exception {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                ignoring(ConfigurationManagerTest.this.mockConfiguration)
-                        .getProperty(with(Expectations.any(String.class)));
-                ignoring(ConfigurationManagerTest.this.mockConfiguration)
-                        .setProperty(with(Expectations.any(String.class)),
-                                with(Expectations.any(String.class)));
+                ignoring(mockConfiguration)
+                        .getProperty(with(any(String.class)));
+                ignoring(mockConfiguration).setProperty(
+                        with(any(String.class)), with(any(String.class)));
 
-                allowing(ConfigurationManagerTest.this.mockConfiguration)
-                        .exists();
-                will(Expectations.returnValue(false));
+                allowing(mockConfiguration).exists();
+                will(returnValue(false));
 
-                never(ConfigurationManagerTest.this.mockConfiguration).load();
+                never(mockConfiguration).load();
             }
         });
-        new ConfigurationManager(this.mockConfiguration);
+        new ConfigurationManager(mockConfiguration);
     }
 
     @Test
     public void shouldLoadConfigurationIfItExists() throws Exception {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                ignoring(ConfigurationManagerTest.this.mockConfiguration)
-                        .getProperty(with(Expectations.any(String.class)));
-                ignoring(ConfigurationManagerTest.this.mockConfiguration)
-                        .setProperty(with(Expectations.any(String.class)),
-                                with(Expectations.any(String.class)));
+                ignoring(mockConfiguration)
+                        .getProperty(with(any(String.class)));
+                ignoring(mockConfiguration).setProperty(
+                        with(any(String.class)), with(any(String.class)));
 
-                allowing(ConfigurationManagerTest.this.mockConfiguration)
-                        .exists();
-                will(Expectations.returnValue(true));
+                allowing(mockConfiguration).exists();
+                will(returnValue(true));
 
-                one(ConfigurationManagerTest.this.mockConfiguration).load();
+                one(mockConfiguration).load();
             }
         });
-        new ConfigurationManager(this.mockConfiguration);
+        new ConfigurationManager(mockConfiguration);
     }
 
     @Test
     public void shouldGetDefaultConfigurationIfPropertyIsNull()
             throws Exception {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                ignoring(ConfigurationManagerTest.this.mockConfiguration)
-                        .exists();
-                allowing(ConfigurationManagerTest.this.mockConfiguration)
-                        .getProperty(with(Expectations.any(String.class)));
-                will(Expectations.returnValue(null));
-                one(ConfigurationManagerTest.this.mockConfiguration)
+                ignoring(mockConfiguration).exists();
+                allowing(mockConfiguration)
+                        .getProperty(with(any(String.class)));
+                will(returnValue(null));
+                one(mockConfiguration)
                         .setProperty(
                                 with(Expectations
                                         .equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)),
                                 with(Expectations
                                         .equal(ApplicationConstants.DEFAULT_DATABASE_FILE_PATH)));
-                one(ConfigurationManagerTest.this.mockConfiguration)
+                one(mockConfiguration)
                         .setProperty(
                                 with(Expectations
                                         .equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)),
                                 with(Expectations
                                         .equal(ApplicationConstants.DEFAULT_SERVER_ADDRESS)));
-                one(ConfigurationManagerTest.this.mockConfiguration)
+                one(mockConfiguration)
                         .setProperty(
                                 with(Expectations
                                         .equal(ApplicationConstants.SERVER_PORT_PROPERTY)),
@@ -133,7 +128,7 @@ public class ConfigurationManagerTest {
                                                 .toString())));
             }
         });
-        new ConfigurationManager(this.mockConfiguration);
+        new ConfigurationManager(mockConfiguration);
     }
 
     @Test
@@ -141,39 +136,37 @@ public class ConfigurationManagerTest {
         final String newDatabaseFilePath = "newDatabaseFilePath";
         final String newServerAddress = "newServerAddress";
         final Integer newServerPort = 9999;
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                ignoring(ConfigurationManagerTest.this.mockConfiguration)
-                        .exists();
-                ignoring(ConfigurationManagerTest.this.mockConfiguration)
-                        .getProperty(with(Expectations.any(String.class)));
-                one(ConfigurationManagerTest.this.mockConfiguration)
+                ignoring(mockConfiguration).exists();
+                ignoring(mockConfiguration)
+                        .getProperty(with(any(String.class)));
+                one(mockConfiguration)
                         .setProperty(
                                 with(Expectations
                                         .equal(ApplicationConstants.SERVER_PORT_PROPERTY)),
                                 with(Expectations
                                         .equal(ApplicationConstants.DEFAULT_SERVER_PORT
                                                 .toString())));
-                one(ConfigurationManagerTest.this.mockConfiguration)
+                one(mockConfiguration)
                         .setProperty(
                                 with(Expectations
                                         .equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)),
-                                with(Expectations.equal(newDatabaseFilePath)));
-                one(ConfigurationManagerTest.this.mockConfiguration)
+                                with(equal(newDatabaseFilePath)));
+                one(mockConfiguration)
                         .setProperty(
                                 with(Expectations
                                         .equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)),
-                                with(Expectations.equal(newServerAddress)));
-                one(ConfigurationManagerTest.this.mockConfiguration)
+                                with(equal(newServerAddress)));
+                one(mockConfiguration)
                         .setProperty(
                                 with(Expectations
                                         .equal(ApplicationConstants.SERVER_PORT_PROPERTY)),
-                                with(Expectations.equal(newServerPort
-                                        .toString())));
+                                with(equal(newServerPort.toString())));
             }
         });
         ConfigurationManager configurationManager = new ConfigurationManager(
-                this.mockConfiguration);
+                mockConfiguration);
         configurationManager.setDatabaseFilePath(newDatabaseFilePath);
         configurationManager.setServerAddress(newServerAddress);
         configurationManager.setServerPort(newServerPort);
@@ -181,20 +174,18 @@ public class ConfigurationManagerTest {
 
     @Test
     public void shouldSaveConfiguration() throws Exception {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                ignoring(ConfigurationManagerTest.this.mockConfiguration)
-                        .exists();
-                ignoring(ConfigurationManagerTest.this.mockConfiguration)
-                        .getProperty(with(Expectations.any(String.class)));
-                ignoring(ConfigurationManagerTest.this.mockConfiguration)
-                        .setProperty(with(Expectations.any(String.class)),
-                                with(Expectations.any(String.class)));
-                one(ConfigurationManagerTest.this.mockConfiguration).save();
+                ignoring(mockConfiguration).exists();
+                ignoring(mockConfiguration)
+                        .getProperty(with(any(String.class)));
+                ignoring(mockConfiguration).setProperty(
+                        with(any(String.class)), with(any(String.class)));
+                one(mockConfiguration).save();
             }
         });
         ConfigurationManager configurationManager = new ConfigurationManager(
-                this.mockConfiguration);
+                mockConfiguration);
         configurationManager.save();
     }
 }

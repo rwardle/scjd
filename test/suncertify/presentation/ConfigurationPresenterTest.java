@@ -1,16 +1,17 @@
 package suncertify.presentation;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.awt.Component;
 import java.io.File;
 
 import javax.swing.JFileChooser;
 
-import org.hamcrest.CoreMatchers;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,82 +37,66 @@ public class ConfigurationPresenterTest {
 
     @Before
     public void setUp() throws Exception {
-        this.mockConfiguration = this.context.mock(Configuration.class);
-        this.mockView = this.context.mock(ConfigurationView.class);
-        this.mockFileChooser = this.context.mock(JFileChooser.class);
+        mockConfiguration = context.mock(Configuration.class);
+        mockView = context.mock(ConfigurationView.class);
+        mockFileChooser = context.mock(JFileChooser.class);
 
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                ignoring(ConfigurationPresenterTest.this.mockConfiguration)
-                        .exists();
-                ignoring(ConfigurationPresenterTest.this.mockConfiguration)
-                        .load();
+                ignoring(mockConfiguration).exists();
+                ignoring(mockConfiguration).load();
 
-                ignoring(ConfigurationPresenterTest.this.mockConfiguration)
-                        .getProperty(
-                                ApplicationConstants.DATABASE_FILE_PATH_PROPERTY);
-                will(Expectations
-                        .returnValue(ConfigurationPresenterTest.this.databaseFilePath));
+                ignoring(mockConfiguration).getProperty(
+                        ApplicationConstants.DATABASE_FILE_PATH_PROPERTY);
+                will(returnValue(databaseFilePath));
 
-                ignoring(ConfigurationPresenterTest.this.mockConfiguration)
-                        .getProperty(
-                                ApplicationConstants.SERVER_ADDRESS_PROPERTY);
-                will(Expectations
-                        .returnValue(ConfigurationPresenterTest.this.serverAddress));
+                ignoring(mockConfiguration).getProperty(
+                        ApplicationConstants.SERVER_ADDRESS_PROPERTY);
+                will(returnValue(serverAddress));
 
-                ignoring(ConfigurationPresenterTest.this.mockConfiguration)
-                        .getProperty(ApplicationConstants.SERVER_PORT_PROPERTY);
-                will(Expectations
-                        .returnValue(ConfigurationPresenterTest.this.serverPort));
+                ignoring(mockConfiguration).getProperty(
+                        ApplicationConstants.SERVER_PORT_PROPERTY);
+                will(returnValue(serverPort));
             }
         });
-        this.presenter = new StubConfigurationPresenter(
-                new ConfigurationManager(this.mockConfiguration), this.mockView);
+        presenter = new StubConfigurationPresenter(new ConfigurationManager(
+                mockConfiguration), mockView);
     }
 
     @After
     public void tearDown() {
-        this.context.assertIsSatisfied();
+        context.assertIsSatisfied();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructorDisallowNullConfiguration() {
-        new ConfigurationPresenter(null, this.mockView);
+        new ConfigurationPresenter(null, mockView);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructorDisallowNullView() {
-        new ConfigurationPresenter(new ConfigurationManager(
-                this.mockConfiguration), null);
+        new ConfigurationPresenter(new ConfigurationManager(mockConfiguration),
+                null);
     }
 
     @Test
     public void defaultReturnStatus() {
-        Assert.assertThat(this.presenter.getReturnStatus(), CoreMatchers
-                .is(ReturnStatus.CANCEL));
+        assertThat(presenter.getReturnStatus(), is(ReturnStatus.CANCEL));
     }
 
     @Test
     public void realiseView() {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(ConfigurationPresenterTest.this.mockView)
-                        .setDatabaseFilePath(
-                                with(Expectations
-                                        .equal(ConfigurationPresenterTest.this.databaseFilePath)));
-                one(ConfigurationPresenterTest.this.mockView)
-                        .setServerAddress(
-                                with(Expectations
-                                        .equal(ConfigurationPresenterTest.this.serverAddress)));
-                one(ConfigurationPresenterTest.this.mockView)
-                        .setServerPort(
-                                with(Expectations
-                                        .equal(Integer
-                                                .valueOf(ConfigurationPresenterTest.this.serverPort))));
-                one(ConfigurationPresenterTest.this.mockView).realise();
+                one(mockView)
+                        .setDatabaseFilePath(with(equal(databaseFilePath)));
+                one(mockView).setServerAddress(with(equal(serverAddress)));
+                one(mockView).setServerPort(
+                        with(equal(Integer.valueOf(serverPort))));
+                one(mockView).realise();
             }
         });
-        this.presenter.realiseView();
+        presenter.realiseView();
     }
 
     @Test
@@ -120,142 +105,116 @@ public class ConfigurationPresenterTest {
         final String newServerAddress = "newServerAddress";
         final Integer newServerPort = 9999;
 
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(ConfigurationPresenterTest.this.mockView)
-                        .getDatabaseFilePath();
-                will(Expectations.returnValue(newDatabaseFilePath));
+                one(mockView).getDatabaseFilePath();
+                will(returnValue(newDatabaseFilePath));
 
-                one(ConfigurationPresenterTest.this.mockView)
-                        .getServerAddress();
-                will(Expectations.returnValue(newServerAddress));
+                one(mockView).getServerAddress();
+                will(returnValue(newServerAddress));
 
-                one(ConfigurationPresenterTest.this.mockView).getServerPort();
-                will(Expectations.returnValue(newServerPort));
+                one(mockView).getServerPort();
+                will(returnValue(newServerPort));
 
-                one(ConfigurationPresenterTest.this.mockView).close();
-                one(ConfigurationPresenterTest.this.mockConfiguration)
+                one(mockView).close();
+                one(mockConfiguration)
                         .setProperty(
                                 with(Expectations
                                         .equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)),
-                                with(Expectations.equal(newDatabaseFilePath)));
-                one(ConfigurationPresenterTest.this.mockConfiguration)
+                                with(equal(newDatabaseFilePath)));
+                one(mockConfiguration)
                         .setProperty(
                                 with(Expectations
                                         .equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)),
-                                with(Expectations.equal(newServerAddress)));
-                one(ConfigurationPresenterTest.this.mockConfiguration)
+                                with(equal(newServerAddress)));
+                one(mockConfiguration)
                         .setProperty(
                                 with(Expectations
                                         .equal(ApplicationConstants.SERVER_PORT_PROPERTY)),
-                                with(Expectations.equal(newServerPort
-                                        .toString())));
+                                with(equal(newServerPort.toString())));
             }
         });
 
-        this.presenter.okButtonActionPerformed();
-        Assert.assertThat(this.presenter.getReturnStatus(), CoreMatchers
-                .is(ReturnStatus.OK));
+        presenter.okButtonActionPerformed();
+        assertThat(presenter.getReturnStatus(), is(ReturnStatus.OK));
     }
 
     @Test
     public void cancelButtonActionPerformed() {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(ConfigurationPresenterTest.this.mockView).close();
+                one(mockView).close();
             }
         });
-        this.presenter.cancelButtonActionPerformed();
-        Assert.assertThat(this.presenter.getReturnStatus(), CoreMatchers
-                .is(ReturnStatus.CANCEL));
+        presenter.cancelButtonActionPerformed();
+        assertThat(presenter.getReturnStatus(), is(ReturnStatus.CANCEL));
     }
 
     @Test
     public void databaseFilePathNotUpdatedIfErrorInFileChooser() {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                allowing(ConfigurationPresenterTest.this.mockView)
-                        .getDatabaseFilePath();
-                will(Expectations
-                        .returnValue(ConfigurationPresenterTest.this.databaseFilePath));
+                allowing(mockView).getDatabaseFilePath();
+                will(returnValue(databaseFilePath));
 
-                allowing(ConfigurationPresenterTest.this.mockView)
-                        .getComponent();
-                will(Expectations.returnValue(null));
+                allowing(mockView).getComponent();
+                will(returnValue(null));
 
-                one(ConfigurationPresenterTest.this.mockFileChooser)
-                        .showDialog(with(Expectations.any(Component.class)),
-                                with(Expectations.any(String.class)));
-                will(Expectations.returnValue(JFileChooser.ERROR_OPTION));
+                one(mockFileChooser).showDialog(with(any(Component.class)),
+                        with(any(String.class)));
+                will(returnValue(JFileChooser.ERROR_OPTION));
 
-                never(ConfigurationPresenterTest.this.mockFileChooser)
-                        .getSelectedFile();
-                never(ConfigurationPresenterTest.this.mockView)
-                        .setDatabaseFilePath(
-                                with(Expectations.any(String.class)));
+                never(mockFileChooser).getSelectedFile();
+                never(mockView).setDatabaseFilePath(with(any(String.class)));
             }
         });
-        this.presenter.browseButtonActionPerformed();
+        presenter.browseButtonActionPerformed();
     }
 
     @Test
     public void databaseFilePathNotUpdatedIfFileChooserIsCancelled() {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                allowing(ConfigurationPresenterTest.this.mockView)
-                        .getDatabaseFilePath();
-                will(Expectations
-                        .returnValue(ConfigurationPresenterTest.this.databaseFilePath));
+                allowing(mockView).getDatabaseFilePath();
+                will(returnValue(databaseFilePath));
 
-                allowing(ConfigurationPresenterTest.this.mockView)
-                        .getComponent();
-                will(Expectations.returnValue(null));
+                allowing(mockView).getComponent();
+                will(returnValue(null));
 
-                one(ConfigurationPresenterTest.this.mockFileChooser)
-                        .showDialog(with(Expectations.any(Component.class)),
-                                with(Expectations.any(String.class)));
-                will(Expectations.returnValue(JFileChooser.CANCEL_OPTION));
+                one(mockFileChooser).showDialog(with(any(Component.class)),
+                        with(any(String.class)));
+                will(returnValue(JFileChooser.CANCEL_OPTION));
 
-                never(ConfigurationPresenterTest.this.mockFileChooser)
-                        .getSelectedFile();
-                never(ConfigurationPresenterTest.this.mockView)
-                        .setDatabaseFilePath(
-                                with(Expectations.any(String.class)));
+                never(mockFileChooser).getSelectedFile();
+                never(mockView).setDatabaseFilePath(with(any(String.class)));
             }
         });
-        this.presenter.browseButtonActionPerformed();
+        presenter.browseButtonActionPerformed();
     }
 
     @Test
     public void databaseFilePathUpdatedIfFileChooserIsApproved() {
         final File newDatabaseFile = new File("newDatabaseFilePath");
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                allowing(ConfigurationPresenterTest.this.mockView)
-                        .getDatabaseFilePath();
-                will(Expectations
-                        .returnValue(ConfigurationPresenterTest.this.databaseFilePath));
+                allowing(mockView).getDatabaseFilePath();
+                will(returnValue(databaseFilePath));
 
-                allowing(ConfigurationPresenterTest.this.mockView)
-                        .getComponent();
-                will(Expectations.returnValue(null));
+                allowing(mockView).getComponent();
+                will(returnValue(null));
 
-                one(ConfigurationPresenterTest.this.mockFileChooser)
-                        .showDialog(with(Expectations.any(Component.class)),
-                                with(Expectations.any(String.class)));
-                will(Expectations.returnValue(JFileChooser.APPROVE_OPTION));
+                one(mockFileChooser).showDialog(with(any(Component.class)),
+                        with(any(String.class)));
+                will(returnValue(JFileChooser.APPROVE_OPTION));
 
-                one(ConfigurationPresenterTest.this.mockFileChooser)
-                        .getSelectedFile();
-                will(Expectations.returnValue(newDatabaseFile));
+                one(mockFileChooser).getSelectedFile();
+                will(returnValue(newDatabaseFile));
 
-                one(ConfigurationPresenterTest.this.mockView)
-                        .setDatabaseFilePath(
-                                with(Expectations.equal(newDatabaseFile
-                                        .getAbsolutePath())));
+                one(mockView).setDatabaseFilePath(
+                        with(equal(newDatabaseFile.getAbsolutePath())));
             }
         });
-        this.presenter.browseButtonActionPerformed();
+        presenter.browseButtonActionPerformed();
     }
 
     private class StubConfigurationPresenter extends ConfigurationPresenter {
@@ -268,7 +227,7 @@ public class ConfigurationPresenterTest {
 
         @Override
         JFileChooser createFileChooser(String directoryPath) {
-            return ConfigurationPresenterTest.this.mockFileChooser;
+            return mockFileChooser;
         }
     }
 }

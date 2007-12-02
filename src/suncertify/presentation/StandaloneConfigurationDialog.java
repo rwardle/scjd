@@ -16,8 +16,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import suncertify.ApplicationConstants;
-
 /**
  * Standalone mode configuration dialog.
  * 
@@ -32,7 +30,7 @@ public final class StandaloneConfigurationDialog extends
     public StandaloneConfigurationDialog() {
         setTitle(getResourceBundle().getString(
                 "StandaloneConfigurationDialog.title"));
-        this.browseButton.addActionListener(new ActionListener() {
+        browseButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 StandaloneConfigurationDialog.this.getPresenter()
                         .browseButtonActionPerformed();
@@ -46,7 +44,7 @@ public final class StandaloneConfigurationDialog extends
     @Override
     protected String getMessageText() {
         return getResourceBundle().getString(
-                "StandaloneConfigurationDialog.message.text");
+                "StandaloneConfigurationDialog.message");
     }
 
     /**
@@ -54,7 +52,7 @@ public final class StandaloneConfigurationDialog extends
      */
     @Override
     public String getDatabaseFilePath() {
-        return this.databaseFilePathField.getText();
+        return databaseFilePathField.getText();
     }
 
     /**
@@ -62,7 +60,7 @@ public final class StandaloneConfigurationDialog extends
      */
     @Override
     public void setDatabaseFilePath(String databaseFilePath) {
-        this.databaseFilePathField.setText(databaseFilePath);
+        databaseFilePathField.setText(databaseFilePath);
     }
 
     /**
@@ -76,7 +74,7 @@ public final class StandaloneConfigurationDialog extends
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = 0;
         constraints.gridy = 0;
-        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        constraints.insets = PresentationConstants.DEFAULT_INSETS;
         panel.add(new JLabel(getResourceBundle().getString(
                 "StandaloneConfigurationDialog.databaseFilePathLabel.text")),
                 constraints);
@@ -85,26 +83,26 @@ public final class StandaloneConfigurationDialog extends
         constraints.fill = GridBagConstraints.BOTH;
         constraints.gridx = 1;
         constraints.gridy = 0;
-        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        constraints.insets = PresentationConstants.DEFAULT_INSETS;
         constraints.weightx = 1;
-        this.databaseFilePathField = new JTextField();
-        this.databaseFilePathField.setEditable(false);
-        this.databaseFilePathField
+        databaseFilePathField = new JTextField();
+        databaseFilePathField.setEditable(false);
+        databaseFilePathField
                 .setToolTipText(getResourceBundle()
                         .getString(
-                                "StandaloneConfigurationDialog.databaseFilePathField.tooltip"));
-        panel.add(this.databaseFilePathField, constraints);
+                                "StandaloneConfigurationDialog.databaseFilePathTextField.tooltip"));
+        panel.add(databaseFilePathField, constraints);
 
         constraints = new GridBagConstraints();
         constraints.gridx = 2;
         constraints.gridy = 0;
-        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
-        this.browseButton = new JButton(getResourceBundle().getString(
+        constraints.insets = PresentationConstants.DEFAULT_INSETS;
+        browseButton = new JButton(getResourceBundle().getString(
                 "StandaloneConfigurationDialog.browseButton.text"));
-        this.browseButton.setMnemonic(getResourceBundle().getString(
+        browseButton.setMnemonic(getResourceBundle().getString(
                 "StandaloneConfigurationDialog.browseButton.mnemonic")
                 .charAt(0));
-        panel.add(this.browseButton, constraints);
+        panel.add(browseButton, constraints);
 
         return panel;
     }

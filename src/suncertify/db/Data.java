@@ -67,19 +67,19 @@ class Data implements DBMain {
         }
 
         this.databaseFile = databaseFile;
-        this.databaseSchema = new DatabaseSchema();
+        databaseSchema = new DatabaseSchema();
 
         // TODO Move validation to a separate class?
         validateMagicCookie();
         validateSchema();
-        this.dataSectionOffset = this.databaseFile.getFilePointer();
-        this.recordCount = validateRecordCount();
+        dataSectionOffset = this.databaseFile.getFilePointer();
+        recordCount = validateRecordCount();
         cacheDeletedRecordNumbers();
     }
 
     private void validateMagicCookie() throws IOException,
             DataValidationException {
-        int magicCookie = this.databaseFile.readInt();
+        int magicCookie = databaseFile.readInt();
         if (magicCookie != DatabaseConstants.MAGIC_COOKIE) {
             throw new DataValidationException("Invalid magic cookie: "
                     + magicCookie);
@@ -94,8 +94,8 @@ class Data implements DBMain {
 
     private void validateRecordLength() throws IOException,
             DataValidationException {
-        int recordLength = this.databaseFile.readInt();
-        if (recordLength != this.databaseSchema.getRecordLength()) {
+        int recordLength = databaseFile.readInt();
+        if (recordLength != databaseSchema.getRecordLength()) {
             throw new DataValidationException("Invalid record length: "
                     + recordLength);
         }
@@ -103,8 +103,8 @@ class Data implements DBMain {
 
     private void validateFieldCount() throws IOException,
             DataValidationException {
-        short fieldCount = this.databaseFile.readShort();
-        if (fieldCount != this.databaseSchema.getFieldCount()) {
+        short fieldCount = databaseFile.readShort();
+        if (fieldCount != databaseSchema.getFieldCount()) {
             throw new DataValidationException("Invalid field count: "
                     + fieldCount);
         }
@@ -112,10 +112,10 @@ class Data implements DBMain {
 
     private void validateFieldDescriptions() throws IOException,
             DataValidationException {
-        FieldDescription[] fieldDescriptions = this.databaseSchema
+        FieldDescription[] fieldDescriptions = databaseSchema
                 .getFieldDescriptions();
         for (FieldDescription fieldDescription : fieldDescriptions) {
-            short fieldNameLength = this.databaseFile.readShort();
+            short fieldNameLength = databaseFile.readShort();
             if (fieldNameLength != fieldDescription.getName().length()) {
                 throw new DataValidationException("Invalid field name length: "
                         + fieldNameLength + ", for field: "
@@ -123,7 +123,7 @@ class Data implements DBMain {
             }
 
             byte[] bytes = new byte[fieldNameLength];
-            this.databaseFile.readFully(bytes);
+            databaseFile.readFully(bytes);
             String fieldName = new String(bytes,
                     DatabaseConstants.CHARACTER_SET);
             if (!fieldName.equals(fieldDescription.getName())) {
@@ -132,7 +132,7 @@ class Data implements DBMain {
                         + fieldDescription.getName());
             }
 
-            short fieldLength = this.databaseFile.readShort();
+            short fieldLength = databaseFile.readShort();
             if (fieldLength != fieldDescription.getLength()) {
                 throw new DataValidationException("Invalid field length: "
                         + fieldLength + ", for field: "
@@ -143,43 +143,42 @@ class Data implements DBMain {
 
     private int validateRecordCount() throws IOException,
             DataValidationException {
-        long dataSectionLength = this.databaseFile.length()
-                - this.dataSectionOffset;
+        long dataSectionLength = databaseFile.length() - dataSectionOffset;
         if (dataSectionLength
-                % (DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH + this.databaseSchema
+                % (DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH + databaseSchema
                         .getRecordLength()) != 0) {
             throw new DataValidationException(
                     "Data section length cannot contain a whole number of records: "
                             + dataSectionLength);
         }
         // TODO Record count should not be larger than max int
-        return (int) (dataSectionLength / (DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH + this.databaseSchema
+        return (int) (dataSectionLength / (DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH + databaseSchema
                 .getRecordLength()));
     }
 
     private void cacheDeletedRecordNumbers() throws IOException {
-        for (int recNo = 0; recNo < this.recordCount; recNo++) {
-            this.databaseFile.seek(getOffsetForRecord(recNo));
-            if (this.databaseFile.readByte() == DatabaseConstants.DELETED_RECORD_FLAG) {
-                this.deletedRecNos.add(recNo);
+        for (int recNo = 0; recNo < recordCount; recNo++) {
+            databaseFile.seek(getOffsetForRecord(recNo));
+            if (databaseFile.readByte() == DatabaseConstants.DELETED_RECORD_FLAG) {
+                deletedRecNos.add(recNo);
             }
         }
     }
 
     DatabaseSchema getDatabaseSchema() {
-        return this.databaseSchema;
+        return databaseSchema;
     }
 
     long getDataSectionOffset() {
-        return this.dataSectionOffset;
+        return dataSectionOffset;
     }
 
     int getRecordCount() {
-        return this.recordCount;
+        return recordCount;
     }
 
     boolean isRecordDeleted(int recNo) {
-        return this.deletedRecNos.contains(recNo);
+        return deletedRecNos.contains(recNo);
     }
 
     /**
@@ -192,17 +191,17 @@ class Data implements DBMain {
         validateRecordNumber(recNo);
 
         String record;
-        synchronized (this.databaseFile) {
+        synchronized (databaseFile) {
             if (isRecordDeleted(recNo)) {
                 throw new RecordNotFoundException("Record " + recNo
                         + " has been deleted");
             }
 
             try {
-                this.databaseFile.seek(getOffsetForRecord(recNo)
+                databaseFile.seek(getOffsetForRecord(recNo)
                         + DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH);
-                byte[] bytes = new byte[this.databaseSchema.getRecordLength()];
-                this.databaseFile.readFully(bytes);
+                byte[] bytes = new byte[databaseSchema.getRecordLength()];
+                databaseFile.readFully(bytes);
                 record = new String(bytes, DatabaseConstants.CHARACTER_SET);
             } catch (IOException e) {
                 throw new DataAccessException(e);
@@ -213,21 +212,20 @@ class Data implements DBMain {
     }
 
     private void validateRecordNumber(int recNo) throws RecordNotFoundException {
-        if (recNo < 0 || recNo >= this.recordCount) {
+        if (recNo < 0 || recNo >= recordCount) {
             throw new RecordNotFoundException("Invalid record number: " + recNo);
         }
     }
 
     private long getOffsetForRecord(int recNo) {
-        return this.dataSectionOffset
-                + recNo
-                * (DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH + this.databaseSchema
-                        .getRecordLength());
+        long recordLengthWithFlag = DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH
+                + databaseSchema.getRecordLength();
+        return dataSectionOffset + recNo * recordLengthWithFlag;
     }
 
     private String[] splitRecord(String record) {
-        String[] recordValues = new String[this.databaseSchema.getFieldCount()];
-        FieldDescription[] fieldDescriptions = this.databaseSchema
+        String[] recordValues = new String[databaseSchema.getFieldCount()];
+        FieldDescription[] fieldDescriptions = databaseSchema
                 .getFieldDescriptions();
         for (int i = 0; i < fieldDescriptions.length; i++) {
             recordValues[i] = record.substring(
@@ -260,16 +258,16 @@ class Data implements DBMain {
         if (data == null) {
             throw new IllegalArgumentException("data cannot be null");
         }
-        if (data.length != this.databaseSchema.getFieldCount()) {
+        if (data.length != databaseSchema.getFieldCount()) {
             throw new IllegalArgumentException("data array must be of length: "
-                    + this.databaseSchema.getFieldCount());
+                    + databaseSchema.getFieldCount());
         }
         if (!isCurrentThreadHoldingLock(recNo)) {
             throw new IllegalStateException(
                     "Calling thread does not hold the lock on record " + recNo);
         }
 
-        synchronized (this.databaseFile) {
+        synchronized (databaseFile) {
             try {
                 updateRecord(recNo, data);
             } catch (IOException e) {
@@ -279,7 +277,7 @@ class Data implements DBMain {
     }
 
     private boolean isCurrentThreadHoldingLock(int recNo) {
-        Long threadIdHoldingLock = this.lockedRecords.get(recNo);
+        Long threadIdHoldingLock = lockedRecords.get(recNo);
         return threadIdHoldingLock != null
                 && threadIdHoldingLock.equals(Thread.currentThread().getId());
     }
@@ -287,13 +285,13 @@ class Data implements DBMain {
     private void updateRecord(int recNo, String[] data) throws IOException {
         long recValuesStartPos = getOffsetForRecord(recNo)
                 + DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH;
-        FieldDescription[] fieldDescriptions = this.databaseSchema
+        FieldDescription[] fieldDescriptions = databaseSchema
                 .getFieldDescriptions();
         for (int i = 0; i < fieldDescriptions.length; i++) {
             if (data[i] != null) {
-                this.databaseFile.seek(recValuesStartPos
+                databaseFile.seek(recValuesStartPos
                         + fieldDescriptions[i].getRecordOffset());
-                this.databaseFile.write(padOrTruncateData(data[i],
+                databaseFile.write(padOrTruncateData(data[i],
                         fieldDescriptions[i].getLength()).getBytes(
                         DatabaseConstants.CHARACTER_SET));
             }
@@ -339,12 +337,11 @@ class Data implements DBMain {
                     "Calling thread does not hold the lock on record " + recNo);
         }
 
-        synchronized (this.databaseFile) {
+        synchronized (databaseFile) {
             try {
-                this.databaseFile.seek(getOffsetForRecord(recNo));
-                this.databaseFile
-                        .writeByte(DatabaseConstants.DELETED_RECORD_FLAG);
-                this.deletedRecNos.add(recNo);
+                databaseFile.seek(getOffsetForRecord(recNo));
+                databaseFile.writeByte(DatabaseConstants.DELETED_RECORD_FLAG);
+                deletedRecNos.add(recNo);
             } catch (IOException e) {
                 throw new DataAccessException(e);
             }
@@ -366,29 +363,29 @@ class Data implements DBMain {
         if (criteria == null) {
             throw new IllegalArgumentException("criteria cannot be null");
         }
-        if (criteria.length != this.databaseSchema.getFieldCount()) {
+        if (criteria.length != databaseSchema.getFieldCount()) {
             throw new IllegalArgumentException(
                     "criteria array must be of length: "
-                            + this.databaseSchema.getFieldCount());
+                            + databaseSchema.getFieldCount());
         }
 
         List<Integer> matchingRecNos = new ArrayList<Integer>();
-        for (int recNo = 0; recNo < this.recordCount; recNo++) {
+        for (int recNo = 0; recNo < recordCount; recNo++) {
             try {
                 if (!isRecordDeleted(recNo)) {
                     long recValuesStartPos = getOffsetForRecord(recNo)
                             + DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH;
                     byte[] bytes;
-                    synchronized (this.databaseFile) {
-                        this.databaseFile.seek(recValuesStartPos);
+                    synchronized (databaseFile) {
+                        databaseFile.seek(recValuesStartPos);
 
-                        bytes = new byte[this.databaseSchema.getRecordLength()];
-                        this.databaseFile.readFully(bytes);
+                        bytes = new byte[databaseSchema.getRecordLength()];
+                        databaseFile.readFully(bytes);
                     }
 
                     String record = new String(bytes,
                             DatabaseConstants.CHARACTER_SET);
-                    FieldDescription[] fieldDescriptions = this.databaseSchema
+                    FieldDescription[] fieldDescriptions = databaseSchema
                             .getFieldDescriptions();
                     for (int i = 0; i < fieldDescriptions.length; i++) {
                         if (criteria[i] != null) {
@@ -435,9 +432,9 @@ class Data implements DBMain {
         if (data == null) {
             throw new IllegalArgumentException("data cannot be null");
         }
-        if (data.length != this.databaseSchema.getFieldCount()) {
+        if (data.length != databaseSchema.getFieldCount()) {
             throw new IllegalArgumentException("data array must be of length: "
-                    + this.databaseSchema.getFieldCount());
+                    + databaseSchema.getFieldCount());
         }
         for (String element : data) {
             if (element == null) {
@@ -447,24 +444,24 @@ class Data implements DBMain {
         }
 
         int recNoToWrite;
-        synchronized (this.databaseFile) {
-            if (this.deletedRecNos.isEmpty()) {
-                recNoToWrite = this.recordCount;
+        synchronized (databaseFile) {
+            if (deletedRecNos.isEmpty()) {
+                recNoToWrite = recordCount;
             } else {
-                recNoToWrite = this.deletedRecNos.first();
+                recNoToWrite = deletedRecNos.first();
             }
 
             try {
-                this.databaseFile.seek(getOffsetForRecord(recNoToWrite));
+                databaseFile.seek(getOffsetForRecord(recNoToWrite));
                 writeRecord(data);
             } catch (IOException e) {
                 throw new DataAccessException(e);
             }
 
-            if (recNoToWrite == this.recordCount) {
-                this.recordCount++;
+            if (recNoToWrite == recordCount) {
+                recordCount++;
             } else {
-                this.deletedRecNos.remove(recNoToWrite);
+                deletedRecNos.remove(recNoToWrite);
             }
         }
 
@@ -472,14 +469,14 @@ class Data implements DBMain {
     }
 
     private void writeRecord(String[] data) throws IOException {
-        this.databaseFile.writeByte(DatabaseConstants.VALID_RECORD_FLAG);
+        databaseFile.writeByte(DatabaseConstants.VALID_RECORD_FLAG);
 
         StringBuilder recordBuilder = new StringBuilder();
         for (int i = 0; i < data.length; i++) {
-            recordBuilder.append(padOrTruncateData(data[i], this.databaseSchema
+            recordBuilder.append(padOrTruncateData(data[i], databaseSchema
                     .getFieldDescriptions()[i].getLength()));
         }
-        this.databaseFile.write(recordBuilder.toString().getBytes(
+        databaseFile.write(recordBuilder.toString().getBytes(
                 DatabaseConstants.CHARACTER_SET));
     }
 
@@ -502,16 +499,16 @@ class Data implements DBMain {
                     + " has been deleted");
         }
 
-        this.lock.lock();
+        lock.lock();
         try {
-            Condition condition = this.conditionsMap.get(recNo);
+            Condition condition = conditionsMap.get(recNo);
             if (condition == null) {
-                condition = this.lock.newCondition();
-                this.conditionsMap.put(recNo, condition);
+                condition = lock.newCondition();
+                conditionsMap.put(recNo, condition);
             }
 
             try {
-                while (this.lockedRecords.containsKey(recNo)) {
+                while (lockedRecords.containsKey(recNo)) {
                     condition.await();
                 }
             } catch (InterruptedException e) {
@@ -528,9 +525,9 @@ class Data implements DBMain {
                         + " has been deleted");
             }
 
-            this.lockedRecords.put(recNo, Thread.currentThread().getId());
+            lockedRecords.put(recNo, Thread.currentThread().getId());
         } finally {
-            this.lock.unlock();
+            lock.unlock();
         }
     }
 
@@ -557,14 +554,14 @@ class Data implements DBMain {
     }
 
     private void unlockRecord(int recNo) {
-        this.lock.lock();
+        lock.lock();
         try {
-            this.lockedRecords.remove(recNo);
+            lockedRecords.remove(recNo);
             // TODO Could use signalAll here and still meet the spec
             // requirements
-            this.conditionsMap.get(recNo).signal();
+            conditionsMap.get(recNo).signal();
         } finally {
-            this.lock.unlock();
+            lock.unlock();
         }
     }
 
@@ -577,6 +574,6 @@ class Data implements DBMain {
             throw new RecordNotFoundException("Record " + recNo
                     + " has been deleted");
         }
-        return this.lockedRecords.containsKey(recNo);
+        return lockedRecords.containsKey(recNo);
     }
 }

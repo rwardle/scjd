@@ -47,7 +47,7 @@ public class ConfigurationPresenter {
 
         this.configurationManager = configurationManager;
         this.view = view;
-        this.returnStatus = ReturnStatus.CANCEL;
+        returnStatus = ReturnStatus.CANCEL;
     }
 
     /**
@@ -56,60 +56,55 @@ public class ConfigurationPresenter {
      * @return The returnStatus.
      */
     public ReturnStatus getReturnStatus() {
-        return this.returnStatus;
+        return returnStatus;
     }
 
     /** Realises the view. */
     public void realiseView() {
         loadViewFromModel();
-        this.view.realise();
+        view.realise();
     }
 
     private void loadViewFromModel() {
-        this.view.setDatabaseFilePath(this.configurationManager
-                .getDatabaseFilePath());
-        this.view
-                .setServerAddress(this.configurationManager.getServerAddress());
-        this.view.setServerPort(this.configurationManager.getServerPort());
+        view.setDatabaseFilePath(configurationManager.getDatabaseFilePath());
+        view.setServerAddress(configurationManager.getServerAddress());
+        view.setServerPort(configurationManager.getServerPort());
     }
 
     /** Performs the OK button action. */
-    public void okButtonActionPerformed() {
-        this.returnStatus = ReturnStatus.OK;
+    public final void okButtonActionPerformed() {
+        returnStatus = ReturnStatus.OK;
         saveViewToModel();
-        this.view.close();
+        view.close();
     }
 
     private void saveViewToModel() {
-        String databaseFilePath = this.view.getDatabaseFilePath();
-        String serverAddress = this.view.getServerAddress();
-        Integer serverPort = this.view.getServerPort();
+        String databaseFilePath = view.getDatabaseFilePath();
+        String serverAddress = view.getServerAddress();
+        Integer serverPort = view.getServerPort();
 
-        ConfigurationPresenter.LOGGER
-                .info("Application configured with: databaseFilePath="
-                        + databaseFilePath + ", serverAddress=" + serverAddress
-                        + ", serverPort=" + serverPort);
+        LOGGER.info("Application configured with: databaseFilePath="
+                + databaseFilePath + ", serverAddress=" + serverAddress
+                + ", serverPort=" + serverPort);
 
-        this.configurationManager.setDatabaseFilePath(databaseFilePath);
-        this.configurationManager.setServerAddress(serverAddress);
-        this.configurationManager.setServerPort(serverPort);
+        configurationManager.setDatabaseFilePath(databaseFilePath);
+        configurationManager.setServerAddress(serverAddress);
+        configurationManager.setServerPort(serverPort);
     }
 
     /** Performs the Cancel button action. */
-    public void cancelButtonActionPerformed() {
-        this.view.close();
+    public final void cancelButtonActionPerformed() {
+        view.close();
     }
 
     /** Performs the Browse button action. */
-    public void browseButtonActionPerformed() {
-        JFileChooser fileChooser = createFileChooser(this.view
-                .getDatabaseFilePath());
-        int option = fileChooser
-                .showDialog(this.view.getComponent(), ResourceBundle.getBundle(
-                        "suncertify/presentation/Bundle").getString(
+    public final void browseButtonActionPerformed() {
+        JFileChooser fileChooser = createFileChooser(view.getDatabaseFilePath());
+        int option = fileChooser.showDialog(view.getComponent(), ResourceBundle
+                .getBundle("suncertify/presentation/Bundle").getString(
                         "ConfigurationPresenter.approveButton.text"));
         if (option == JFileChooser.APPROVE_OPTION) {
-            this.view.setDatabaseFilePath(fileChooser.getSelectedFile()
+            view.setDatabaseFilePath(fileChooser.getSelectedFile()
                     .getAbsolutePath());
         }
     }

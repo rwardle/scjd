@@ -48,21 +48,20 @@ public final class PropertiesConfiguration implements Configuration {
         }
 
         this.propertiesFile = propertiesFile;
-        this.properties = new Properties();
+        properties = new Properties();
     }
 
     /** {@inheritDoc} */
     public boolean exists() {
-        return this.propertiesFile.exists();
+        return propertiesFile.exists();
     }
 
     /** {@inheritDoc} */
     public void load() throws ConfigurationException {
         InputStream in = null;
         try {
-            in = new BufferedInputStream(new FileInputStream(
-                    this.propertiesFile));
-            this.properties.load(in);
+            in = new BufferedInputStream(new FileInputStream(propertiesFile));
+            properties.load(in);
         } catch (IOException e) {
             throw new ConfigurationException(e);
         } finally {
@@ -70,8 +69,7 @@ public final class PropertiesConfiguration implements Configuration {
                 try {
                     in.close();
                 } catch (IOException e) {
-                    PropertiesConfiguration.LOGGER.log(Level.WARNING,
-                            "Error closing stream", e);
+                    LOGGER.log(Level.WARNING, "Error closing stream", e);
                 }
             }
         }
@@ -81,9 +79,8 @@ public final class PropertiesConfiguration implements Configuration {
     public void save() throws ConfigurationException {
         OutputStream out = null;
         try {
-            out = new BufferedOutputStream(new FileOutputStream(
-                    this.propertiesFile));
-            this.properties.store(out, null);
+            out = new BufferedOutputStream(new FileOutputStream(propertiesFile));
+            properties.store(out, null);
         } catch (IOException e) {
             throw new ConfigurationException(e);
         } finally {
@@ -91,8 +88,7 @@ public final class PropertiesConfiguration implements Configuration {
                 try {
                     out.close();
                 } catch (IOException e) {
-                    PropertiesConfiguration.LOGGER.log(Level.WARNING,
-                            "Error closing stream", e);
+                    LOGGER.log(Level.WARNING, "Error closing stream", e);
                 }
             }
         }
@@ -100,11 +96,11 @@ public final class PropertiesConfiguration implements Configuration {
 
     /** {@inheritDoc} */
     public String getProperty(String name) {
-        return this.properties.getProperty(name);
+        return properties.getProperty(name);
     }
 
     /** {@inheritDoc} */
     public void setProperty(String name, String value) {
-        this.properties.setProperty(name, value);
+        properties.setProperty(name, value);
     }
 }

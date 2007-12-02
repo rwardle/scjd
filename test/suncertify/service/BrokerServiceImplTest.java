@@ -1,13 +1,14 @@
 package suncertify.service;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.io.IOException;
 import java.util.List;
 
-import org.hamcrest.CoreMatchers;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,14 +28,14 @@ public class BrokerServiceImplTest {
 
     @Before
     public void setUp() {
-        this.context = new Mockery();
-        this.mockDatabase = this.context.mock(Database.class);
-        this.brokerService = new BrokerServiceImpl(this.mockDatabase);
+        context = new Mockery();
+        mockDatabase = context.mock(Database.class);
+        brokerService = new BrokerServiceImpl(mockDatabase);
     }
 
     @After
     public void tearDown() {
-        this.context.assertIsSatisfied();
+        context.assertIsSatisfied();
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -44,104 +45,92 @@ public class BrokerServiceImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void searchWithNullCriteriaObjectThrowsException() throws Exception {
-        this.brokerService.search(null);
+        brokerService.search(null);
     }
 
     @Test(expected = IOException.class)
     public void searchThrowsIOExceptionWhenFindThrowsIOException()
             throws Exception {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(BrokerServiceImplTest.this.mockDatabase).find(
-                        with(Expectations.any(String[].class)));
-                will(Expectations.throwException(new IOException()));
+                one(mockDatabase).find(with(any(String[].class)));
+                will(throwException(new IOException()));
             }
         });
-        this.brokerService.search(new SearchCriteria());
+        brokerService.search(new SearchCriteria());
     }
 
     @Test
     public void searchReturnsEmptyListWhenFindReturnsNoRecords()
             throws Exception {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(BrokerServiceImplTest.this.mockDatabase).find(
-                        with(Expectations.any(String[].class)));
-                will(Expectations.returnValue(new int[0]));
+                one(mockDatabase).find(with(any(String[].class)));
+                will(returnValue(new int[0]));
             }
         });
-        Assert.assertThat(this.brokerService.search(new SearchCriteria())
-                .size(), CoreMatchers.is(0));
+        assertThat(brokerService.search(new SearchCriteria()).size(), is(0));
     }
 
     @Test
     public void searchReturnsAllContractorsWhenCriteriaAreNull()
             throws Exception {
         final int[] recNos = { 0, 2 };
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(BrokerServiceImplTest.this.mockDatabase)
-                        .find(
-                                with(Expectations
-                                        .equal(new String[BrokerServiceImplTest.DATABASE_FIELD_COUNT])));
-                will(Expectations.returnValue(recNos));
+                one(mockDatabase).find(
+                        with(Expectations
+                                .equal(new String[DATABASE_FIELD_COUNT])));
+                will(returnValue(recNos));
 
                 for (int recNo : recNos) {
-                    one(BrokerServiceImplTest.this.mockDatabase).read(
-                            with(Expectations.equal(recNo)));
+                    one(mockDatabase).read(with(equal(recNo)));
                     will(Expectations
-                            .returnValue(new String[BrokerServiceImplTest.DATABASE_FIELD_COUNT]));
+                            .returnValue(new String[DATABASE_FIELD_COUNT]));
                 }
             }
         });
-        Assert.assertThat(this.brokerService.search(new SearchCriteria())
-                .size(), CoreMatchers.is(recNos.length));
+        assertThat(brokerService.search(new SearchCriteria()).size(),
+                is(recNos.length));
     }
 
     @Test(expected = IOException.class)
     public void searchThrowsIOExceptionWhenReadThrowsIOException()
             throws Exception {
         final int[] recNos = { 0, 2 };
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(BrokerServiceImplTest.this.mockDatabase)
-                        .find(
-                                with(Expectations
-                                        .equal(new String[BrokerServiceImplTest.DATABASE_FIELD_COUNT])));
-                will(Expectations.returnValue(recNos));
+                one(mockDatabase).find(
+                        with(Expectations
+                                .equal(new String[DATABASE_FIELD_COUNT])));
+                will(returnValue(recNos));
 
-                one(BrokerServiceImplTest.this.mockDatabase).read(
-                        with(Expectations.equal(recNos[0])));
-                will(Expectations.throwException(new IOException()));
+                one(mockDatabase).read(with(equal(recNos[0])));
+                will(throwException(new IOException()));
             }
         });
-        this.brokerService.search(new SearchCriteria());
+        brokerService.search(new SearchCriteria());
     }
 
     @Test
     public void searchDoesNotReturnContractorForWhichReadThrowsRecordNotFoundException()
             throws Exception {
         final int[] recNos = { 0, 2 };
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(BrokerServiceImplTest.this.mockDatabase)
-                        .find(
-                                with(Expectations
-                                        .equal(new String[BrokerServiceImplTest.DATABASE_FIELD_COUNT])));
-                will(Expectations.returnValue(recNos));
+                one(mockDatabase).find(
+                        with(Expectations
+                                .equal(new String[DATABASE_FIELD_COUNT])));
+                will(returnValue(recNos));
 
-                one(BrokerServiceImplTest.this.mockDatabase).read(
-                        with(Expectations.equal(recNos[0])));
-                will(Expectations.throwException(new RecordNotFoundException()));
+                one(mockDatabase).read(with(equal(recNos[0])));
+                will(throwException(new RecordNotFoundException()));
 
-                one(BrokerServiceImplTest.this.mockDatabase).read(
-                        with(Expectations.equal(recNos[1])));
-                will(Expectations
-                        .returnValue(new String[BrokerServiceImplTest.DATABASE_FIELD_COUNT]));
+                one(mockDatabase).read(with(equal(recNos[1])));
+                will(Expectations.returnValue(new String[DATABASE_FIELD_COUNT]));
             }
         });
-        Assert.assertThat(this.brokerService.search(new SearchCriteria())
-                .size(), CoreMatchers.is(1));
+        assertThat(brokerService.search(new SearchCriteria()).size(), is(1));
     }
 
     @Test
@@ -150,38 +139,32 @@ public class BrokerServiceImplTest {
         final String[] recordData = { "Buonarotti & Company", "Smallville",
                 "Air Conditioning, Painting, Painting", "10", "$40.00",
                 "1245678" };
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(BrokerServiceImplTest.this.mockDatabase)
-                        .find(
-                                with(Expectations
-                                        .equal(new String[BrokerServiceImplTest.DATABASE_FIELD_COUNT])));
-                will(Expectations.returnValue(recNos));
+                one(mockDatabase).find(
+                        with(Expectations
+                                .equal(new String[DATABASE_FIELD_COUNT])));
+                will(returnValue(recNos));
 
-                one(BrokerServiceImplTest.this.mockDatabase).read(
-                        with(Expectations.equal(recNos[0])));
-                will(Expectations.returnValue(recordData));
+                one(mockDatabase).read(with(equal(recNos[0])));
+                will(returnValue(recordData));
             }
         });
-        List<Contractor> contractors = this.brokerService
+        List<Contractor> contractors = brokerService
                 .search(new SearchCriteria());
-        Assert.assertThat(contractors.size(), CoreMatchers.is(1));
+        assertThat(contractors.size(), is(1));
         assertContractor(recNos[0], recordData, contractors.get(0));
     }
 
     private void assertContractor(int recNo, String[] recordData,
             Contractor contractor) {
-        Assert.assertThat(contractor.getRecordNumber(), CoreMatchers.is(recNo));
-        Assert.assertThat(contractor.getName(), CoreMatchers.is(recordData[0]));
-        Assert.assertThat(contractor.getLocation(), CoreMatchers
-                .is(recordData[1]));
-        Assert.assertThat(contractor.getSpecialties(), CoreMatchers
-                .is(recordData[2]));
-        Assert.assertThat(contractor.getSize(), CoreMatchers.is(recordData[3]));
-        Assert.assertThat(contractor.getRate(), CoreMatchers.is(recordData[4]));
-        Assert
-                .assertThat(contractor.getOwner(), CoreMatchers
-                        .is(recordData[5]));
+        assertThat(contractor.getRecordNumber(), is(recNo));
+        assertThat(contractor.getName(), is(recordData[0]));
+        assertThat(contractor.getLocation(), is(recordData[1]));
+        assertThat(contractor.getSpecialties(), is(recordData[2]));
+        assertThat(contractor.getSize(), is(recordData[3]));
+        assertThat(contractor.getRate(), is(recordData[4]));
+        assertThat(contractor.getOwner(), is(recordData[5]));
     }
 
     @Test
@@ -189,23 +172,23 @@ public class BrokerServiceImplTest {
         final SearchCriteria criteria = new SearchCriteria().setName("name")
                 .setLocation("location").setSpecialties("specialties").setSize(
                         "size").setRate("rate").setOwner("owner");
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(BrokerServiceImplTest.this.mockDatabase).find(
-                        with(Expectations.equal(new String[] {
-                                criteria.getName(), criteria.getLocation(),
+                one(mockDatabase).find(
+                        with(equal(new String[] { criteria.getName(),
+                                criteria.getLocation(),
                                 criteria.getSpecialties(), criteria.getSize(),
                                 criteria.getRate(), criteria.getOwner() })));
-                will(Expectations.returnValue(new int[0]));
+                will(returnValue(new int[0]));
             }
         });
-        this.brokerService.search(criteria);
+        brokerService.search(criteria);
     }
 
     @Test
     public void searchOnlyReturnsExactMatches() throws Exception {
         final int[] recNos = { 0, 1, 2, 3, 4, 5, 6 };
-        final String[] matchingData = BrokerServiceImplTest.RECORD_DATA.clone();
+        final String[] matchingData = RECORD_DATA.clone();
         matchingData[5] = "12345678";
         final SearchCriteria criteria = new SearchCriteria().setName(
                 matchingData[0]).setLocation(matchingData[1]).setSpecialties(
@@ -219,242 +202,215 @@ public class BrokerServiceImplTest {
         }
         records[recNos.length - 1] = matchingData;
 
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(BrokerServiceImplTest.this.mockDatabase).find(
-                        with(Expectations.equal(new String[] {
-                                criteria.getName(), criteria.getLocation(),
+                one(mockDatabase).find(
+                        with(equal(new String[] { criteria.getName(),
+                                criteria.getLocation(),
                                 criteria.getSpecialties(), criteria.getSize(),
                                 criteria.getRate(), criteria.getOwner() })));
-                will(Expectations.returnValue(recNos));
+                will(returnValue(recNos));
 
                 for (int i = 0; i < recNos.length; i++) {
-                    one(BrokerServiceImplTest.this.mockDatabase).read(
-                            with(Expectations.equal(recNos[i])));
-                    will(Expectations.returnValue(records[i]));
+                    one(mockDatabase).read(with(equal(recNos[i])));
+                    will(returnValue(records[i]));
                 }
             }
         });
-        List<Contractor> contractors = this.brokerService.search(criteria);
-        Assert.assertThat(contractors.size(), CoreMatchers.is(1));
+        List<Contractor> contractors = brokerService.search(criteria);
+        assertThat(contractors.size(), is(1));
         assertContractor(recNos[recNos.length - 1], records[recNos.length - 1],
                 contractors.get(0));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void bookWithNullCustomerIdThrowsException() throws Exception {
-        this.brokerService.book(null, new Contractor(0,
-                BrokerServiceImplTest.RECORD_DATA));
+        brokerService.book(null, new Contractor(0, RECORD_DATA));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void bookWithNullContractorThrowsException() throws Exception {
-        this.brokerService.book("1234678", null);
+        brokerService.book("1234678", null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void bookWithNullContractorFieldThrowsException() throws Exception {
-        String[] data = BrokerServiceImplTest.RECORD_DATA.clone();
+        String[] data = RECORD_DATA.clone();
         data[5] = null;
-        this.brokerService.book("12345678", new Contractor(0, data));
+        brokerService.book("12345678", new Contractor(0, data));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void bookWithInvalidCustomerIdThrowsException() throws Exception {
-        this.brokerService.book("123456789", new Contractor(0,
-                BrokerServiceImplTest.RECORD_DATA));
+        brokerService.book("123456789", new Contractor(0, RECORD_DATA));
     }
 
     @Test(expected = ContractorDeletedException.class)
     public void bookContractorThatHasBeenDeletedThrowsException()
             throws Exception {
         final int recNo = 0;
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(BrokerServiceImplTest.this.mockDatabase).lock(
-                        with(Expectations.equal(recNo)));
-                will(Expectations.throwException(new RecordNotFoundException()));
+                one(mockDatabase).lock(with(equal(recNo)));
+                will(throwException(new RecordNotFoundException()));
             }
         });
-        this.brokerService.book("12345678", new Contractor(recNo,
-                BrokerServiceImplTest.RECORD_DATA));
+        brokerService.book("12345678", new Contractor(recNo, RECORD_DATA));
     }
 
     @Test(expected = IOException.class)
     public void bookThrowsExceptionIfLockThrowsInterruptedException()
             throws Exception {
         final int recNo = 0;
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(BrokerServiceImplTest.this.mockDatabase).lock(
-                        with(Expectations.equal(recNo)));
-                will(Expectations.throwException(new InterruptedException()));
+                one(mockDatabase).lock(with(equal(recNo)));
+                will(throwException(new InterruptedException()));
             }
         });
-        this.brokerService.book("12345678", new Contractor(recNo,
-                BrokerServiceImplTest.RECORD_DATA));
+        brokerService.book("12345678", new Contractor(recNo, RECORD_DATA));
     }
 
     @Test(expected = ContractorDeletedException.class)
     public void bookThrowsExceptionIfReadThrowsRecordNotFoundException()
             throws Exception {
         final int recNo = 0;
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(BrokerServiceImplTest.this.mockDatabase).lock(
-                        with(Expectations.equal(recNo)));
+                one(mockDatabase).lock(with(equal(recNo)));
 
-                one(BrokerServiceImplTest.this.mockDatabase).read(recNo);
-                will(Expectations.throwException(new RecordNotFoundException()));
+                one(mockDatabase).read(recNo);
+                will(throwException(new RecordNotFoundException()));
 
-                one(BrokerServiceImplTest.this.mockDatabase).unlock(recNo);
+                one(mockDatabase).unlock(recNo);
             }
         });
-        this.brokerService.book("12345678", new Contractor(recNo,
-                BrokerServiceImplTest.RECORD_DATA));
+        brokerService.book("12345678", new Contractor(recNo, RECORD_DATA));
     }
 
     @Test(expected = ContractorModifiedException.class)
     public void bookContractorThatHasBeenModifiedThrowsException()
             throws Exception {
         final int recNo = 0;
-        final String[] modifiedData = BrokerServiceImplTest.RECORD_DATA.clone();
+        final String[] modifiedData = RECORD_DATA.clone();
         modifiedData[4] += " this is modified";
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(BrokerServiceImplTest.this.mockDatabase).lock(
-                        with(Expectations.equal(recNo)));
+                one(mockDatabase).lock(with(equal(recNo)));
 
-                one(BrokerServiceImplTest.this.mockDatabase).read(recNo);
-                will(Expectations.returnValue(modifiedData));
+                one(mockDatabase).read(recNo);
+                will(returnValue(modifiedData));
 
-                one(BrokerServiceImplTest.this.mockDatabase).unlock(recNo);
+                one(mockDatabase).unlock(recNo);
             }
         });
-        this.brokerService.book("12345678", new Contractor(recNo,
-                BrokerServiceImplTest.RECORD_DATA));
+        brokerService.book("12345678", new Contractor(recNo, RECORD_DATA));
     }
 
     @Test(expected = ContractorModifiedException.class)
     public void bookContractorThatHasAlreadyBeenBookedThrowsException()
             throws Exception {
         final int recNo = 0;
-        final String[] modifiedData = BrokerServiceImplTest.RECORD_DATA.clone();
+        final String[] modifiedData = RECORD_DATA.clone();
         modifiedData[5] = "87654321";
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(BrokerServiceImplTest.this.mockDatabase).lock(
-                        with(Expectations.equal(recNo)));
+                one(mockDatabase).lock(with(equal(recNo)));
 
-                one(BrokerServiceImplTest.this.mockDatabase).read(recNo);
-                will(Expectations.returnValue(modifiedData));
+                one(mockDatabase).read(recNo);
+                will(returnValue(modifiedData));
 
-                one(BrokerServiceImplTest.this.mockDatabase).unlock(recNo);
+                one(mockDatabase).unlock(recNo);
             }
         });
-        this.brokerService.book("12345678", new Contractor(recNo,
-                BrokerServiceImplTest.RECORD_DATA));
+        brokerService.book("12345678", new Contractor(recNo, RECORD_DATA));
     }
 
     @Test
     public void bookContractorThatHasBeenUnbookedDoesNotThrowException()
             throws Exception {
         final int recNo = 0;
-        String[] data = BrokerServiceImplTest.RECORD_DATA.clone();
+        String[] data = RECORD_DATA.clone();
         data[5] = "87654321";
-        final String[] modifiedData = BrokerServiceImplTest.RECORD_DATA.clone();
+        final String[] modifiedData = RECORD_DATA.clone();
         modifiedData[5] = "";
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(BrokerServiceImplTest.this.mockDatabase).lock(
-                        with(Expectations.equal(recNo)));
+                one(mockDatabase).lock(with(equal(recNo)));
 
-                one(BrokerServiceImplTest.this.mockDatabase).read(recNo);
-                will(Expectations.returnValue(modifiedData));
+                one(mockDatabase).read(recNo);
+                will(returnValue(modifiedData));
 
-                allowing(BrokerServiceImplTest.this.mockDatabase).update(
-                        with(Expectations.any(int.class)),
-                        with(Expectations.any(String[].class)));
+                allowing(mockDatabase).update(with(any(int.class)),
+                        with(any(String[].class)));
 
-                one(BrokerServiceImplTest.this.mockDatabase).unlock(recNo);
+                one(mockDatabase).unlock(recNo);
             }
         });
-        this.brokerService.book("12345678", new Contractor(recNo, data));
+        brokerService.book("12345678", new Contractor(recNo, data));
     }
 
     @Test
     public void bookDoesNotThrowExceptionIfUnlockThrowsException()
             throws Exception {
         final int recNo = 0;
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(BrokerServiceImplTest.this.mockDatabase).lock(
-                        with(Expectations.equal(recNo)));
+                one(mockDatabase).lock(with(equal(recNo)));
 
-                one(BrokerServiceImplTest.this.mockDatabase).read(recNo);
-                will(Expectations
-                        .returnValue(BrokerServiceImplTest.RECORD_DATA));
+                one(mockDatabase).read(recNo);
+                will(Expectations.returnValue(RECORD_DATA));
 
-                allowing(BrokerServiceImplTest.this.mockDatabase).update(
-                        with(Expectations.any(int.class)),
-                        with(Expectations.any(String[].class)));
+                allowing(mockDatabase).update(with(any(int.class)),
+                        with(any(String[].class)));
 
-                one(BrokerServiceImplTest.this.mockDatabase).unlock(recNo);
-                will(Expectations.throwException(new RecordNotFoundException()));
+                one(mockDatabase).unlock(recNo);
+                will(throwException(new RecordNotFoundException()));
             }
         });
-        this.brokerService.book("12345678", new Contractor(recNo,
-                BrokerServiceImplTest.RECORD_DATA));
+        brokerService.book("12345678", new Contractor(recNo, RECORD_DATA));
     }
 
     @Test
     public void bookHappyPath() throws Exception {
         final int recNo = 0;
         String customerId = "12345678";
-        final String[] data = new String[BrokerServiceImplTest.DATABASE_FIELD_COUNT];
-        data[BrokerServiceImplTest.DATABASE_FIELD_COUNT - 1] = customerId;
-        this.context.checking(new Expectations() {
+        final String[] data = new String[DATABASE_FIELD_COUNT];
+        data[DATABASE_FIELD_COUNT - 1] = customerId;
+        context.checking(new Expectations() {
             {
-                one(BrokerServiceImplTest.this.mockDatabase).lock(
-                        with(Expectations.equal(recNo)));
+                one(mockDatabase).lock(with(equal(recNo)));
 
-                one(BrokerServiceImplTest.this.mockDatabase).read(recNo);
-                will(Expectations
-                        .returnValue(BrokerServiceImplTest.RECORD_DATA));
+                one(mockDatabase).read(recNo);
+                will(Expectations.returnValue(RECORD_DATA));
 
-                one(BrokerServiceImplTest.this.mockDatabase).update(
-                        with(CoreMatchers.is(recNo)),
-                        with(CoreMatchers.is(data)));
+                one(mockDatabase).update(with(is(recNo)), with(is(data)));
 
-                one(BrokerServiceImplTest.this.mockDatabase).unlock(recNo);
+                one(mockDatabase).unlock(recNo);
             }
         });
-        this.brokerService.book(customerId, new Contractor(recNo,
-                BrokerServiceImplTest.RECORD_DATA));
+        brokerService.book(customerId, new Contractor(recNo, RECORD_DATA));
     }
 
     @Test
     public void unbookHappyPath() throws Exception {
         final int recNo = 0;
-        final String[] data = BrokerServiceImplTest.RECORD_DATA.clone();
-        data[BrokerServiceImplTest.DATABASE_FIELD_COUNT - 1] = "12345678";
-        final String[] updateData = new String[BrokerServiceImplTest.DATABASE_FIELD_COUNT];
-        updateData[BrokerServiceImplTest.DATABASE_FIELD_COUNT - 1] = "";
-        this.context.checking(new Expectations() {
+        final String[] data = RECORD_DATA.clone();
+        data[DATABASE_FIELD_COUNT - 1] = "12345678";
+        final String[] updateData = new String[DATABASE_FIELD_COUNT];
+        updateData[DATABASE_FIELD_COUNT - 1] = "";
+        context.checking(new Expectations() {
             {
-                one(BrokerServiceImplTest.this.mockDatabase).lock(
-                        with(Expectations.equal(recNo)));
+                one(mockDatabase).lock(with(equal(recNo)));
 
-                one(BrokerServiceImplTest.this.mockDatabase).read(recNo);
-                will(Expectations.returnValue(data));
+                one(mockDatabase).read(recNo);
+                will(returnValue(data));
 
-                one(BrokerServiceImplTest.this.mockDatabase).update(
-                        with(CoreMatchers.is(recNo)),
-                        with(CoreMatchers.is(updateData)));
+                one(mockDatabase).update(with(is(recNo)), with(is(updateData)));
 
-                one(BrokerServiceImplTest.this.mockDatabase).unlock(recNo);
+                one(mockDatabase).unlock(recNo);
             }
         });
-        this.brokerService.book("", new Contractor(recNo, data));
+        brokerService.book("", new Contractor(recNo, data));
     }
 }

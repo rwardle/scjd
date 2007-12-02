@@ -7,70 +7,62 @@
 package suncertify.service;
 
 import java.net.MalformedURLException;
-import java.rmi.AccessException;
+import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.rmi.server.ObjID;
+import java.rmi.registry.LocateRegistry;
 
+/**
+ * An interface grouping all methods for performing Remote Method Invocation
+ * (RMI) operations.
+ * 
+ * @author Richard Wardle
+ */
 public interface RmiService {
 
     /**
-     * Creates and exports a <code>Registry</code> instance on the local host
-     * that accepts requests on the specified <code>port</code>.
-     * 
-     * <p>
-     * The <code>Registry</code> instance is exported as if the static
-     * {@link UnicastRemoteObject.exportObject(Remote,int)
-     * UnicastRemoteObject.exportObject} method is invoked, passing the
-     * <code>Registry</code> instance and the specified <code>port</code> as
-     * arguments, except that the <code>Registry</code> instance is exported
-     * with a well-known object identifier, an {@link ObjID} instance
-     * constructed with the value {@link ObjID#REGISTRY_ID}.
+     * Creates an RMI registry on the local host at the specified port.
      * 
      * @param port
-     *                the port on which the registry accepts requests
-     * @return the registry
+     *                Port on which the registry accepts requests.
      * @throws RemoteException
-     *                 if the registry could not be exported
+     *                 If the registry could not be created.
+     * @see LocateRegistry#createRegistry(int)
      */
     void createRegistry(int port) throws RemoteException;
 
     /**
-     * Rebinds the specified name to a new remote object. Any existing binding
-     * for the name is replaced.
+     * Rebinds the specified name to the specified remote object.
      * 
      * @param name
-     *                a name in URL format (without the scheme component)
+     *                Name of the remote object in URL form.
      * @param obj
-     *                new remote object to associate with the name
-     * @throws MalformedURLException
-     *                 if the name is not an appropriately formatted URL
+     *                Remote object to associate with the name.
      * @throws RemoteException
-     *                 if registry could not be contacted
-     * @throws AccessException
-     *                 if this operation is not permitted (if originating from a
-     *                 non-local host, for example)
+     *                 If the registry could not be contacted.
+     * @throws MalformedURLException
+     *                 If <code>name</code> is malformed.
+     * @see Naming#rebind(String, Remote)
      */
     void rebind(String name, Remote obj) throws RemoteException,
             MalformedURLException;
 
     /**
-     * Returns a reference, a stub, for the remote object associated with the
-     * specified <code>name</code>.
+     * Returns a reference to the remote object associated with the specified
+     * name.
      * 
      * @param name
-     *                a name in URL format (without the scheme component)
-     * @return a reference for a remote object
-     * @throws NotBoundException
-     *                 if name is not currently bound
+     *                Name of the remote object in URL form.
+     * @return The remote object reference.
      * @throws RemoteException
-     *                 if registry could not be contacted
-     * @throws AccessException
-     *                 if this operation is not permitted
+     *                 If the registry could not be contacted.
      * @throws MalformedURLException
-     *                 if the name is not an appropriately formatted URL
+     *                 If <code>name</code> is malformed.
+     * @throws NotBoundException
+     *                 If <code>name</code> is not currently bound.
+     * @see Naming#lookup(String)
      */
-    Remote lookup(String name) throws MalformedURLException, RemoteException,
+    Remote lookup(String name) throws RemoteException, MalformedURLException,
             NotBoundException;
 }

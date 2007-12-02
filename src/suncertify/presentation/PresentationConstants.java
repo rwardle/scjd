@@ -6,16 +6,27 @@
 
 package suncertify.presentation;
 
+import java.awt.Color;
+import java.awt.Insets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Presentation constants.
+ * Constants for the presentation layer.
  * 
  * @author Richard Wardle
  */
 public class PresentationConstants {
+
+    /** Default insets for the user interface. */
+    public static final Insets DEFAULT_INSETS = new Insets(4, 4, 4, 4);
+
+    /** Dark blue colour for gradient panels. */
+    public static final Color DARK_BLUE = new Color(184, 206, 228);
+
+    /** Light blue colour for gradient panels. */
+    public static final Color LIGHT_BLUE = new Color(226, 236, 245);
 
     /** Number of table columns. */
     public static final int TABLE_COLUMN_COUNT = 6;
@@ -47,29 +58,18 @@ public class PresentationConstants {
 
     private static final Map<Integer, Integer> WIDTHS = new HashMap<Integer, Integer>();
     static {
-        PresentationConstants.WIDTHS.put(
-                PresentationConstants.TABLE_NAME_COLUMN_INDEX,
-                PresentationConstants.TABLE_NAME_COLUMN_WIDTH);
-        PresentationConstants.WIDTHS.put(
-                PresentationConstants.TABLE_LOCATION_COLUMN_INDEX,
-                PresentationConstants.TABLE_LOCATION_COLUMN_WIDTH);
-        PresentationConstants.WIDTHS.put(
-                PresentationConstants.TABLE_SPECIALTIES_COLUMN_INDEX,
-                PresentationConstants.TABLE_SPECIALTIES_COLUMN_WIDTH);
-        PresentationConstants.WIDTHS.put(
-                PresentationConstants.TABLE_SIZE_COLUMN_INDEX,
-                PresentationConstants.TABLE_SIZE_COLUMN_WIDTH);
-        PresentationConstants.WIDTHS.put(
-                PresentationConstants.TABLE_RATE_COLUMN_INDEX,
-                PresentationConstants.TABLE_RATE_COLUMN_WIDTH);
-        PresentationConstants.WIDTHS.put(
-                PresentationConstants.TABLE_OWNER_COLUMN_INDEX,
-                PresentationConstants.TABLE_OWNER_COLUMN_WIDTH);
+        WIDTHS.put(TABLE_NAME_COLUMN_INDEX, TABLE_NAME_COLUMN_WIDTH);
+        WIDTHS.put(TABLE_LOCATION_COLUMN_INDEX, TABLE_LOCATION_COLUMN_WIDTH);
+        WIDTHS.put(TABLE_SPECIALTIES_COLUMN_INDEX,
+                TABLE_SPECIALTIES_COLUMN_WIDTH);
+        WIDTHS.put(TABLE_SIZE_COLUMN_INDEX, TABLE_SIZE_COLUMN_WIDTH);
+        WIDTHS.put(TABLE_RATE_COLUMN_INDEX, TABLE_RATE_COLUMN_WIDTH);
+        WIDTHS.put(TABLE_OWNER_COLUMN_INDEX, TABLE_OWNER_COLUMN_WIDTH);
     }
 
     /** Unmodifiable map of table column indices against column widths. */
     public static final Map<Integer, Integer> TABLE_COLUMN_WIDTHS = Collections
-            .unmodifiableMap(PresentationConstants.WIDTHS);
+            .unmodifiableMap(WIDTHS);
 
     private PresentationConstants() {
         // Prevent instantiation

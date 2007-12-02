@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Provides a simplified interface for <code>Configuration</code> (façade
+ * Provides a simplified interface for <code>Configuration</code> (facade
  * pattern).
  * 
  * @author Richard Wardle
@@ -41,7 +41,7 @@ public final class ConfigurationManager {
             try {
                 this.configuration.load();
             } catch (ConfigurationException e) {
-                ConfigurationManager.LOGGER.log(Level.WARNING,
+                LOGGER.log(Level.WARNING,
                         "Error loading configuration, using default values", e);
             }
         }
@@ -70,7 +70,7 @@ public final class ConfigurationManager {
      *                 If the configuration cannot be saved.
      */
     public void save() throws ConfigurationException {
-        this.configuration.save();
+        configuration.save();
     }
 
     /**
@@ -79,7 +79,7 @@ public final class ConfigurationManager {
      * @return The database file path.
      */
     public String getDatabaseFilePath() {
-        return this.configuration
+        return configuration
                 .getProperty(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY);
     }
 
@@ -96,7 +96,7 @@ public final class ConfigurationManager {
             throw new IllegalArgumentException(
                     "databaseFilePath must be non-null");
         }
-        this.configuration.setProperty(
+        configuration.setProperty(
                 ApplicationConstants.DATABASE_FILE_PATH_PROPERTY,
                 databaseFilePath);
     }
@@ -107,7 +107,7 @@ public final class ConfigurationManager {
      * @return The server address.
      */
     public String getServerAddress() {
-        return this.configuration
+        return configuration
                 .getProperty(ApplicationConstants.SERVER_ADDRESS_PROPERTY);
     }
 
@@ -123,8 +123,8 @@ public final class ConfigurationManager {
         if (serverAddress == null) {
             throw new IllegalArgumentException("serverAddress must be non-null");
         }
-        this.configuration.setProperty(
-                ApplicationConstants.SERVER_ADDRESS_PROPERTY, serverAddress);
+        configuration.setProperty(ApplicationConstants.SERVER_ADDRESS_PROPERTY,
+                serverAddress);
     }
 
     /**
@@ -135,7 +135,7 @@ public final class ConfigurationManager {
      *                 If the server port property is not a number.
      */
     public Integer getServerPort() {
-        return Integer.valueOf(this.configuration
+        return Integer.valueOf(configuration
                 .getProperty(ApplicationConstants.SERVER_PORT_PROPERTY));
     }
 
@@ -151,8 +151,7 @@ public final class ConfigurationManager {
         if (serverPort == null) {
             throw new IllegalArgumentException("serverPort must be non-null");
         }
-        this.configuration.setProperty(
-                ApplicationConstants.SERVER_PORT_PROPERTY, serverPort
-                        .toString());
+        configuration.setProperty(ApplicationConstants.SERVER_PORT_PROPERTY,
+                serverPort.toString());
     }
 }

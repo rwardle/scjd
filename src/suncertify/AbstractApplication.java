@@ -42,9 +42,9 @@ public abstract class AbstractApplication implements Application {
             throw new IllegalArgumentException("configuration must be non-null");
         }
 
-        this.configurationManager = new ConfigurationManager(configuration);
-        this.exceptionHandler = new FatalExceptionHandler();
-        this.resourceBundle = ResourceBundle.getBundle("suncertify/Bundle");
+        configurationManager = new ConfigurationManager(configuration);
+        exceptionHandler = new FatalExceptionHandler();
+        resourceBundle = ResourceBundle.getBundle("suncertify/Bundle");
     }
 
     /**
@@ -53,7 +53,7 @@ public abstract class AbstractApplication implements Application {
      * @return The configuration manager.
      */
     protected final ConfigurationManager getConfigurationManager() {
-        return this.configurationManager;
+        return configurationManager;
     }
 
     /**
@@ -72,17 +72,16 @@ public abstract class AbstractApplication implements Application {
             initialised = true;
 
             try {
-                AbstractApplication.LOGGER.info("Saving configuration to disk");
+                LOGGER.info("Saving configuration to disk");
                 getConfigurationManager().save();
             } catch (ConfigurationException e) {
-                AbstractApplication.LOGGER.log(Level.WARNING,
+                LOGGER.log(Level.WARNING,
                         "Could not save configuration to disk", e);
                 showSaveWarningDialog();
             }
         } else {
             initialised = false;
-            AbstractApplication.LOGGER
-                    .info("Configuration cancelled by user, exiting application");
+            LOGGER.info("Configuration cancelled by user, exiting application");
         }
 
         return initialised;
@@ -92,9 +91,8 @@ public abstract class AbstractApplication implements Application {
         ConfigurationPresenter presenter = createConfigurationPresenter();
         presenter.realiseView();
         ReturnStatus returnStatus = presenter.getReturnStatus();
-        AbstractApplication.LOGGER
-                .info("Returned from configuration dialog with status: "
-                        + returnStatus);
+        LOGGER.info("Returned from configuration dialog with status: "
+                + returnStatus);
         return returnStatus;
     }
 
@@ -118,9 +116,9 @@ public abstract class AbstractApplication implements Application {
     protected abstract ConfigurationView createConfigurationView();
 
     void showSaveWarningDialog() {
-        String message = this.resourceBundle
+        String message = resourceBundle
                 .getString("AbstractApplication.saveConfigurationWarningDialog.message");
-        String title = this.resourceBundle
+        String title = resourceBundle
                 .getString("AbstractApplication.saveConfigurationWarningDialog.title");
         JOptionPane.showMessageDialog(null, message, title,
                 JOptionPane.WARNING_MESSAGE);
@@ -128,6 +126,6 @@ public abstract class AbstractApplication implements Application {
 
     /** {@inheritDoc} */
     public final void handleFatalException(FatalException exception) {
-        this.exceptionHandler.handleException(exception);
+        exceptionHandler.handleException(exception);
     }
 }

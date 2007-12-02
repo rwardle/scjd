@@ -63,21 +63,21 @@ public final class StandaloneApplication extends AbstractGuiApplication {
     @Override
     protected BrokerService createBrokerService() throws FatalException {
         try {
-            return new BrokerServiceImpl(this.databaseFactory
+            return new BrokerServiceImpl(databaseFactory
                     .createDatabase(getConfigurationManager()
                             .getDatabaseFilePath()));
         } catch (FileNotFoundException e) {
             throw new FatalException(
                     "Could not create database: file not found",
-                    "FatalException.databaseFileNotFound", e);
+                    "FatalException.databaseFileNotFound.message", e);
         } catch (DataValidationException e) {
             throw new FatalException(
                     "Could not create database: invalid database file",
-                    "FatalException.databaseInvalid", e);
+                    "FatalException.databaseInvalid.message", e);
         } catch (IOException e) {
             throw new FatalException(
                     "Could not create database: error reading database file",
-                    "FatalException.databaseReadError", e);
+                    "FatalException.databaseReadError.message", e);
         }
     }
 }

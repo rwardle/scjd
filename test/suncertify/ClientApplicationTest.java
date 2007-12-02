@@ -1,5 +1,7 @@
 package suncertify;
 
+import static org.junit.Assert.assertTrue;
+
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -7,7 +9,6 @@ import java.rmi.RemoteException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,52 +28,48 @@ public class ClientApplicationTest {
 
     @Before
     public void setUp() {
-        this.mockConfiguration = this.context.mock(Configuration.class);
-        this.mockRmiService = this.context.mock(RmiService.class);
-        this.mockRemoteBrokerService = this.context
-                .mock(RemoteBrokerService.class);
-        this.serverAddress = "128.0.0.1";
-        this.serverPort = "1199";
-        this.url = "//" + this.serverAddress + ":" + this.serverPort + "/"
+        mockConfiguration = context.mock(Configuration.class);
+        mockRmiService = context.mock(RmiService.class);
+        mockRemoteBrokerService = context.mock(RemoteBrokerService.class);
+        serverAddress = "128.0.0.1";
+        serverPort = "1199";
+        url = "//" + serverAddress + ":" + serverPort + "/"
                 + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME;
     }
 
     @After
     public void tearDown() {
-        this.context.assertIsSatisfied();
+        context.assertIsSatisfied();
     }
 
     @Test
     public void shouldCreateClientConfigurationDialog() throws Exception {
         checkingConfiguration();
         ClientApplication application = new ClientApplication(
-                this.mockConfiguration, this.mockRmiService);
-        Assert
-                .assertTrue(application.createConfigurationView() instanceof ClientConfigurationDialog);
+                mockConfiguration, mockRmiService);
+        assertTrue(application.createConfigurationView() instanceof ClientConfigurationDialog);
     }
 
     private void checkingConfiguration() throws Exception {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                ignoring(ClientApplicationTest.this.mockConfiguration).exists();
-                ignoring(ClientApplicationTest.this.mockConfiguration)
+                ignoring(mockConfiguration).exists();
+                ignoring(mockConfiguration)
                         .getProperty(
                                 with(Expectations
                                         .equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)));
 
-                allowing(ClientApplicationTest.this.mockConfiguration)
+                allowing(mockConfiguration)
                         .getProperty(
                                 with(Expectations
                                         .equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)));
-                will(Expectations
-                        .returnValue(ClientApplicationTest.this.serverAddress));
+                will(returnValue(serverAddress));
 
-                allowing(ClientApplicationTest.this.mockConfiguration)
+                allowing(mockConfiguration)
                         .getProperty(
                                 with(Expectations
                                         .equal(ApplicationConstants.SERVER_PORT_PROPERTY)));
-                will(Expectations
-                        .returnValue(ClientApplicationTest.this.serverPort));
+                will(returnValue(serverPort));
             }
         });
     }
@@ -80,36 +77,28 @@ public class ClientApplicationTest {
     @Test
     public void shouldCreateRemoteBrokerService() throws Exception {
         checkingConfiguration();
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(ClientApplicationTest.this.mockRmiService)
-                        .lookup(
-                                with(Expectations
-                                        .equal(ClientApplicationTest.this.url)));
-                will(Expectations
-                        .returnValue(ClientApplicationTest.this.mockRemoteBrokerService));
+                one(mockRmiService).lookup(with(equal(url)));
+                will(returnValue(mockRemoteBrokerService));
             }
         });
 
         ClientApplication application = new ClientApplication(
-                this.mockConfiguration, this.mockRmiService);
-        Assert
-                .assertTrue(application.createBrokerService() instanceof RemoteBrokerService);
+                mockConfiguration, mockRmiService);
+        assertTrue(application.createBrokerService() instanceof RemoteBrokerService);
     }
 
     @Test(expected = FatalException.class)
     public void shouldThrowFatalExceptionWhenUrlIsMalformed() throws Exception {
         checkingConfiguration();
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(ClientApplicationTest.this.mockRmiService)
-                        .lookup(
-                                with(Expectations
-                                        .equal(ClientApplicationTest.this.url)));
-                will(Expectations.throwException(new MalformedURLException()));
+                one(mockRmiService).lookup(with(equal(url)));
+                will(throwException(new MalformedURLException()));
             }
         });
-        new ClientApplication(this.mockConfiguration, this.mockRmiService)
+        new ClientApplication(mockConfiguration, mockRmiService)
                 .createBrokerService();
     }
 
@@ -117,16 +106,13 @@ public class ClientApplicationTest {
     public void shouldThrowFatalExceptionWhenServerCannotBeCommunicatedWith()
             throws Exception {
         checkingConfiguration();
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(ClientApplicationTest.this.mockRmiService)
-                        .lookup(
-                                with(Expectations
-                                        .equal(ClientApplicationTest.this.url)));
-                will(Expectations.throwException(new RemoteException()));
+                one(mockRmiService).lookup(with(equal(url)));
+                will(throwException(new RemoteException()));
             }
         });
-        new ClientApplication(this.mockConfiguration, this.mockRmiService)
+        new ClientApplication(mockConfiguration, mockRmiService)
                 .createBrokerService();
     }
 
@@ -134,16 +120,13 @@ public class ClientApplicationTest {
     public void shouldThrowFatalExceptionWhenRemoveObjectIsNotBound()
             throws Exception {
         checkingConfiguration();
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(ClientApplicationTest.this.mockRmiService)
-                        .lookup(
-                                with(Expectations
-                                        .equal(ClientApplicationTest.this.url)));
-                will(Expectations.throwException(new NotBoundException()));
+                one(mockRmiService).lookup(with(equal(url)));
+                will(throwException(new NotBoundException()));
             }
         });
-        new ClientApplication(this.mockConfiguration, this.mockRmiService)
+        new ClientApplication(mockConfiguration, mockRmiService)
                 .createBrokerService();
     }
 }

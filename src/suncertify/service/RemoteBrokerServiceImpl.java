@@ -16,54 +16,67 @@ import java.util.logging.Logger;
 import suncertify.db.Database;
 
 /**
- * 
+ * Remote object implementation of {@link RemoteBrokerService} that uses a
+ * {@link Database} object to obtain and store contractor data. All method calls
+ * are delegated to an instance of {@link BrokerServiceImpl}.
  * 
  * @author Richard Wardle
  */
 public final class RemoteBrokerServiceImpl extends UnicastRemoteObject
         implements RemoteBrokerService {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger
             .getLogger(RemoteBrokerServiceImpl.class.getName());
 
     private final BrokerServiceImpl service;
 
     /**
-     * Creates a new instance of RemoteBrokerServiceImpl.
+     * Creates and exports a new instance of
+     * <code>RemoteBrokerServiceImpl</code> using the specified database.
+     * 
+     * @param database
+     *                Database of contractors.
+     * @throws RemoteException
+     *                 If the export failed.
+     * @throws IllegalArgumentException
+     *                 If <code>database</code> is <code>null</code>.
      */
     public RemoteBrokerServiceImpl(Database database) throws RemoteException {
-        this.service = new BrokerServiceImpl(database);
+        if (database == null) {
+            throw new IllegalArgumentException("database cannot be null");
+        }
+        service = new BrokerServiceImpl(database);
     }
 
+    /** {@inheritDoc} */
     public List<Contractor> search(SearchCriteria searchCriteria)
             throws IOException {
         try {
-            return this.service.search(searchCriteria);
+            return service.search(searchCriteria);
         } catch (IOException e) {
-            RemoteBrokerServiceImpl.LOGGER.log(Level.SEVERE,
+            LOGGER.log(Level.SEVERE,
                     "IO error while searching for contractors with criteria: "
                             + searchCriteria, e);
             throw e;
         }
     }
 
+    /** {@inheritDoc} */
     public void book(String customerId, Contractor contractor)
             throws IOException, ContractorDeletedException,
             ContractorModifiedException {
         try {
-            this.service.book(customerId, contractor);
+            service.book(customerId, contractor);
         } catch (IOException e) {
-            RemoteBrokerServiceImpl.LOGGER.log(Level.SEVERE,
-                    "IO error while booking contractor", e);
+            LOGGER.log(Level.SEVERE, "IO error while booking contractor", e);
             throw e;
         } catch (ContractorDeletedException e) {
-            RemoteBrokerServiceImpl.LOGGER.log(Level.SEVERE,
+            LOGGER.log(Level.SEVERE,
                     "Contractor to be booked has been deleted, recordNo: "
                             + contractor.getRecordNumber(), e);
             throw e;
         } catch (ContractorModifiedException e) {
-            RemoteBrokerServiceImpl.LOGGER.log(Level.SEVERE,
+            LOGGER.log(Level.SEVERE,
                     "Contractor to be booked has been modified, recordNo: "
                             + contractor.getRecordNumber(), e);
             throw e;

@@ -12,14 +12,28 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 /**
- * Extends {@link BrokerService} for use with RMI.
+ * Specialisation of {@link BrokerService} that enables its methods to be called
+ * from a remote virtual machine via Remote Method Invocation (RMI).
  * 
  * @author Richard Wardle
  */
 public interface RemoteBrokerService extends Remote, BrokerService {
 
-    List<Contractor> search(SearchCriteria searchCriteria) throws IOException;
+    /**
+     * {@inheritDoc}
+     * 
+     * @throws RemoteException
+     *                 If there is an error executing the remote method call.
+     */
+    List<Contractor> search(SearchCriteria searchCriteria)
+            throws RemoteException, IOException;
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @throws RemoteException
+     *                 If there is an error executing the remote method call.
+     */
     void book(String customerId, Contractor contractor) throws RemoteException,
             IOException, ContractorDeletedException,
             ContractorModifiedException;

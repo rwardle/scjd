@@ -1,5 +1,7 @@
 package suncertify;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -8,7 +10,6 @@ import java.rmi.RemoteException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,51 +31,46 @@ public class ServerApplicationTest {
 
     @Before
     public void setUp() {
-        this.mockConfiguration = this.context.mock(Configuration.class);
-        this.mockRmiService = this.context.mock(RmiService.class);
-        this.mockDatabaseFactory = this.context.mock(DatabaseFactory.class);
-        this.serverPort = "1189";
-        this.databaseFilePath = "databaseFilePath";
-        this.url = "//" + ApplicationConstants.LOCALHOST_ADDRESS + ":"
-                + this.serverPort + "/"
-                + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME;
+        mockConfiguration = context.mock(Configuration.class);
+        mockRmiService = context.mock(RmiService.class);
+        mockDatabaseFactory = context.mock(DatabaseFactory.class);
+        serverPort = "1189";
+        databaseFilePath = "databaseFilePath";
+        url = "//" + ApplicationConstants.LOCALHOST_ADDRESS + ":" + serverPort
+                + "/" + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME;
     }
 
     @After
     public void tearDown() {
-        this.context.assertIsSatisfied();
+        context.assertIsSatisfied();
     }
 
     @Test
     public void shouldCreateServerConfigurationDialog() {
         checkingConfiguration();
         ServerApplication application = new ServerApplication(
-                this.mockConfiguration, this.mockRmiService,
-                this.mockDatabaseFactory);
-        Assert
-                .assertTrue(application.createConfigurationView() instanceof ServerConfigurationDialog);
+                mockConfiguration, mockRmiService, mockDatabaseFactory);
+        assertTrue(application.createConfigurationView() instanceof ServerConfigurationDialog);
     }
 
     private void checkingConfiguration() {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                ignoring(ServerApplicationTest.this.mockConfiguration).exists();
+                ignoring(mockConfiguration).exists();
 
-                allowing(ServerApplicationTest.this.mockConfiguration)
+                allowing(mockConfiguration)
                         .getProperty(
                                 with(Expectations
                                         .equal(ApplicationConstants.SERVER_PORT_PROPERTY)));
-                will(Expectations
-                        .returnValue(ServerApplicationTest.this.serverPort));
+                will(returnValue(serverPort));
 
-                allowing(ServerApplicationTest.this.mockConfiguration)
+                allowing(mockConfiguration)
                         .getProperty(
                                 with(Expectations
                                         .equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)));
-                will(Expectations
-                        .returnValue(ServerApplicationTest.this.databaseFilePath));
+                will(returnValue(databaseFilePath));
 
-                allowing(ServerApplicationTest.this.mockConfiguration)
+                allowing(mockConfiguration)
                         .getProperty(
                                 with(Expectations
                                         .equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)));
@@ -85,176 +81,131 @@ public class ServerApplicationTest {
     @Test
     public void shouldStartupRmiAndCreateDatabase() throws Exception {
         checkingConfiguration();
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(ServerApplicationTest.this.mockRmiService)
-                        .createRegistry(
-                                with(Expectations
-                                        .equal(Integer
-                                                .parseInt(ServerApplicationTest.this.serverPort))));
+                one(mockRmiService).createRegistry(
+                        with(equal(Integer.parseInt(serverPort))));
 
-                one(ServerApplicationTest.this.mockDatabaseFactory)
-                        .createDatabase(
-                                with(Expectations
-                                        .equal(ServerApplicationTest.this.databaseFilePath)));
+                one(mockDatabaseFactory).createDatabase(
+                        with(equal(databaseFilePath)));
 
-                one(ServerApplicationTest.this.mockRmiService)
-                        .rebind(
-                                with(Expectations
-                                        .equal(ServerApplicationTest.this.url)),
-                                with(Expectations
-                                        .any(RemoteBrokerServiceImpl.class)));
+                one(mockRmiService).rebind(with(equal(url)),
+                        with(any(RemoteBrokerServiceImpl.class)));
             }
         });
-        new ServerApplication(this.mockConfiguration, this.mockRmiService,
-                this.mockDatabaseFactory).startup();
+        new ServerApplication(mockConfiguration, mockRmiService,
+                mockDatabaseFactory).startup();
     }
 
     @Test(expected = FatalException.class)
     public void shouldThrowFatalExceptionWhenRegistryCannotBeCreated()
             throws Exception {
         checkingConfiguration();
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(ServerApplicationTest.this.mockRmiService)
-                        .createRegistry(
-                                with(Expectations
-                                        .equal(Integer
-                                                .parseInt(ServerApplicationTest.this.serverPort))));
-                will(Expectations.throwException(new RemoteException()));
+                one(mockRmiService).createRegistry(
+                        with(equal(Integer.parseInt(serverPort))));
+                will(throwException(new RemoteException()));
             }
         });
-        new ServerApplication(this.mockConfiguration, this.mockRmiService,
-                this.mockDatabaseFactory).startup();
+        new ServerApplication(mockConfiguration, mockRmiService,
+                mockDatabaseFactory).startup();
     }
 
     @Test(expected = FatalException.class)
     public void shouldThrowFatalExceptionWhenDatabaseFileCannotBeFound()
             throws Exception {
         checkingConfiguration();
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(ServerApplicationTest.this.mockRmiService)
-                        .createRegistry(
-                                with(Expectations
-                                        .equal(Integer
-                                                .parseInt(ServerApplicationTest.this.serverPort))));
+                one(mockRmiService).createRegistry(
+                        with(equal(Integer.parseInt(serverPort))));
 
-                one(ServerApplicationTest.this.mockDatabaseFactory)
-                        .createDatabase(
-                                with(Expectations
-                                        .equal(ServerApplicationTest.this.databaseFilePath)));
-                will(Expectations.throwException(new FileNotFoundException()));
+                one(mockDatabaseFactory).createDatabase(
+                        with(equal(databaseFilePath)));
+                will(throwException(new FileNotFoundException()));
             }
         });
-        new ServerApplication(this.mockConfiguration, this.mockRmiService,
-                this.mockDatabaseFactory).startup();
+        new ServerApplication(mockConfiguration, mockRmiService,
+                mockDatabaseFactory).startup();
     }
 
     @Test(expected = FatalException.class)
     public void shouldThrowFatalExceptionWhenDatabaseFileCannotBeRead()
             throws Exception {
         checkingConfiguration();
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(ServerApplicationTest.this.mockRmiService)
-                        .createRegistry(
-                                with(Expectations
-                                        .equal(Integer
-                                                .parseInt(ServerApplicationTest.this.serverPort))));
+                one(mockRmiService).createRegistry(
+                        with(equal(Integer.parseInt(serverPort))));
 
-                one(ServerApplicationTest.this.mockDatabaseFactory)
-                        .createDatabase(
-                                with(Expectations
-                                        .equal(ServerApplicationTest.this.databaseFilePath)));
-                will(Expectations.throwException(new IOException()));
+                one(mockDatabaseFactory).createDatabase(
+                        with(equal(databaseFilePath)));
+                will(throwException(new IOException()));
             }
         });
-        new ServerApplication(this.mockConfiguration, this.mockRmiService,
-                this.mockDatabaseFactory).startup();
+        new ServerApplication(mockConfiguration, mockRmiService,
+                mockDatabaseFactory).startup();
     }
 
     @Test(expected = FatalException.class)
     public void shouldThrowFatalExceptionWhenDatabaseFileIsInvalid()
             throws Exception {
         checkingConfiguration();
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(ServerApplicationTest.this.mockRmiService)
-                        .createRegistry(
-                                with(Expectations
-                                        .equal(Integer
-                                                .parseInt(ServerApplicationTest.this.serverPort))));
+                one(mockRmiService).createRegistry(
+                        with(equal(Integer.parseInt(serverPort))));
 
-                one(ServerApplicationTest.this.mockDatabaseFactory)
-                        .createDatabase(
-                                with(Expectations
-                                        .equal(ServerApplicationTest.this.databaseFilePath)));
+                one(mockDatabaseFactory).createDatabase(
+                        with(equal(databaseFilePath)));
                 will(Expectations
                         .throwException(new DataValidationException("")));
             }
         });
-        new ServerApplication(this.mockConfiguration, this.mockRmiService,
-                this.mockDatabaseFactory).startup();
+        new ServerApplication(mockConfiguration, mockRmiService,
+                mockDatabaseFactory).startup();
     }
 
     @Test(expected = FatalException.class)
     public void shouldThrowFatalExceptionWhenRemoteObjectUrlIsMalformed()
             throws Exception {
         checkingConfiguration();
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(ServerApplicationTest.this.mockRmiService)
-                        .createRegistry(
-                                with(Expectations
-                                        .equal(Integer
-                                                .parseInt(ServerApplicationTest.this.serverPort))));
+                one(mockRmiService).createRegistry(
+                        with(equal(Integer.parseInt(serverPort))));
 
-                one(ServerApplicationTest.this.mockDatabaseFactory)
-                        .createDatabase(
-                                with(Expectations
-                                        .equal(ServerApplicationTest.this.databaseFilePath)));
+                one(mockDatabaseFactory).createDatabase(
+                        with(equal(databaseFilePath)));
 
-                one(ServerApplicationTest.this.mockRmiService)
-                        .rebind(
-                                with(Expectations
-                                        .equal(ServerApplicationTest.this.url)),
-                                with(Expectations
-                                        .any(RemoteBrokerServiceImpl.class)));
-                will(Expectations.throwException(new MalformedURLException()));
+                one(mockRmiService).rebind(with(equal(url)),
+                        with(any(RemoteBrokerServiceImpl.class)));
+                will(throwException(new MalformedURLException()));
             }
         });
-        new ServerApplication(this.mockConfiguration, this.mockRmiService,
-                this.mockDatabaseFactory).startup();
+        new ServerApplication(mockConfiguration, mockRmiService,
+                mockDatabaseFactory).startup();
     }
 
     @Test(expected = FatalException.class)
     public void shouldThrowFatalExceptionWhenRemoteObjectCannotBeBound()
             throws Exception {
         checkingConfiguration();
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(ServerApplicationTest.this.mockRmiService)
-                        .createRegistry(
-                                with(Expectations
-                                        .equal(Integer
-                                                .parseInt(ServerApplicationTest.this.serverPort))));
+                one(mockRmiService).createRegistry(
+                        with(equal(Integer.parseInt(serverPort))));
 
-                one(ServerApplicationTest.this.mockDatabaseFactory)
-                        .createDatabase(
-                                with(Expectations
-                                        .equal(ServerApplicationTest.this.databaseFilePath)));
+                one(mockDatabaseFactory).createDatabase(
+                        with(equal(databaseFilePath)));
 
-                one(ServerApplicationTest.this.mockRmiService)
-                        .rebind(
-                                with(Expectations
-                                        .equal(ServerApplicationTest.this.url)),
-                                with(Expectations
-                                        .any(RemoteBrokerServiceImpl.class)));
-                will(Expectations.throwException(new RemoteException()));
+                one(mockRmiService).rebind(with(equal(url)),
+                        with(any(RemoteBrokerServiceImpl.class)));
+                will(throwException(new RemoteException()));
             }
         });
-        new ServerApplication(this.mockConfiguration, this.mockRmiService,
-                this.mockDatabaseFactory).startup();
+        new ServerApplication(mockConfiguration, mockRmiService,
+                mockDatabaseFactory).startup();
     }
 }

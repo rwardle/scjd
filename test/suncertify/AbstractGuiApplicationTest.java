@@ -24,27 +24,25 @@ public class AbstractGuiApplicationTest {
 
     @Before
     public void setUp() {
-        this.mockConfiguration = this.context.mock(Configuration.class);
-        this.mockPresenter = this.context.mock(MainPresenter.class);
+        mockConfiguration = context.mock(Configuration.class);
+        mockPresenter = context.mock(MainPresenter.class);
     }
 
     @After
     public void tearDown() {
-        this.context.assertIsSatisfied();
+        context.assertIsSatisfied();
     }
 
     @Test
     public void startupApplicationRealisesMainView() throws FatalException {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                ignoring(AbstractGuiApplicationTest.this.mockConfiguration);
-                one(AbstractGuiApplicationTest.this.mockPresenter)
-                        .realiseView();
+                ignoring(mockConfiguration);
+                one(mockPresenter).realiseView();
             }
         });
-        this.application = new StubAbstractGuiApplication(
-                this.mockConfiguration);
-        this.application.startup();
+        application = new StubAbstractGuiApplication(mockConfiguration);
+        application.startup();
     }
 
     private class StubAbstractGuiApplication extends AbstractGuiApplication {
@@ -67,7 +65,7 @@ public class AbstractGuiApplicationTest {
 
         @Override
         protected MainPresenter createMainPresenter() {
-            return AbstractGuiApplicationTest.this.mockPresenter;
+            return mockPresenter;
         }
     }
 }

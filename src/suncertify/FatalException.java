@@ -23,7 +23,7 @@ public final class FatalException extends Exception {
      * initialised to <code>null</code>.
      */
     public FatalException() {
-        this.messageKey = null;
+        messageKey = null;
     }
 
     /**
@@ -36,7 +36,7 @@ public final class FatalException extends Exception {
      */
     public FatalException(String message) {
         super(message);
-        this.messageKey = null;
+        messageKey = null;
     }
 
     /**
@@ -78,6 +78,6 @@ public final class FatalException extends Exception {
      * @return The message key.
      */
     public String getMessageKey() {
-        return this.messageKey;
+        return messageKey;
     }
 }

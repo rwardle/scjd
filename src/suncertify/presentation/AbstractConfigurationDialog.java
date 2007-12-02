@@ -24,8 +24,6 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
-import suncertify.ApplicationConstants;
-
 /**
  * 
  * @author Richard Wardle
@@ -50,24 +48,22 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
 
     /** Constructor. */
     protected AbstractConfigurationDialog() {
-        this.resourceBundle = ResourceBundle
+        resourceBundle = ResourceBundle
                 .getBundle("suncertify/presentation/Bundle");
 
-        this.okButton = new JButton(this.resourceBundle
+        okButton = new JButton(resourceBundle
                 .getString("AbstractConfigurationDialog.okButton.text"));
-        this.okButton.addActionListener(new ActionListener() {
+        okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                AbstractConfigurationDialog.this.presenter
-                        .okButtonActionPerformed();
+                presenter.okButtonActionPerformed();
             }
         });
 
-        this.cancelButton = new JButton(this.resourceBundle
+        cancelButton = new JButton(resourceBundle
                 .getString("AbstractConfigurationDialog.cancelButton.text"));
-        this.cancelButton.addActionListener(new ActionListener() {
+        cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                AbstractConfigurationDialog.this.presenter
-                        .cancelButtonActionPerformed();
+                presenter.cancelButtonActionPerformed();
             }
         });
 
@@ -83,11 +79,11 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
      * @return The resource bundle.
      */
     protected final ResourceBundle getResourceBundle() {
-        return this.resourceBundle;
+        return resourceBundle;
     }
 
     protected final ConfigurationPresenter getPresenter() {
-        return this.presenter;
+        return presenter;
     }
 
     /** {@inheritDoc} */
@@ -102,7 +98,7 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
         Dimension dialogSize = getSize();
         setLocation((screenSize.width - dialogSize.width) / 2,
                 (screenSize.height - dialogSize.height) / 2);
-        this.okButton.requestFocus();
+        okButton.requestFocus();
         setVisible(true);
     }
 
@@ -123,7 +119,7 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
      * {@inheritDoc}
      */
     public String getDatabaseFilePath() {
-        return this.databaseFilePath;
+        return databaseFilePath;
     }
 
     /**
@@ -137,7 +133,7 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
      * {@inheritDoc}
      */
     public String getServerAddress() {
-        return this.serverAddress;
+        return serverAddress;
     }
 
     /**
@@ -151,7 +147,7 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
      * {@inheritDoc}
      */
     public Integer getServerPort() {
-        return this.serverPort;
+        return serverPort;
     }
 
     /**
@@ -209,14 +205,15 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
     private Component initialiseButtonPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(1, 2, 4, 4));
-        panel.add(this.okButton);
-        panel.add(this.cancelButton);
+        panel.add(okButton);
+        panel.add(cancelButton);
         return panel;
     }
 
     private JPanel initialiseMessagePanel() {
         JGradientPanel panel = new JGradientPanel(
-                ApplicationConstants.DARK_BLUE, ApplicationConstants.LIGHT_BLUE);
+                PresentationConstants.DARK_BLUE,
+                PresentationConstants.LIGHT_BLUE);
         panel.setLayout(new GridBagLayout());
 
         GridBagConstraints constraints = new GridBagConstraints();
@@ -224,7 +221,7 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.gridx = 0;
         constraints.gridy = 0;
-        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        constraints.insets = PresentationConstants.DEFAULT_INSETS;
         constraints.weightx = 1;
         panel.add(new JLabel(getMessageText()), constraints);
         return panel;

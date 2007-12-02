@@ -41,12 +41,10 @@ public final class FatalExceptionHandler implements
      * Creates a new instance of <code>FatalExceptionHandler</code>.
      */
     public FatalExceptionHandler() {
-        this.resourceBundle = ResourceBundle.getBundle("suncertify/Bundle");
-        this.title = this.resourceBundle
-                .getString("FatalExceptionHandler.title");
-        this.pattern = this.resourceBundle
-                .getString("FatalExceptionHandler.pattern");
-        this.defaultMessage = this.resourceBundle
+        resourceBundle = ResourceBundle.getBundle("suncertify/Bundle");
+        title = resourceBundle.getString("FatalExceptionHandler.title");
+        pattern = resourceBundle.getString("FatalExceptionHandler.pattern");
+        defaultMessage = resourceBundle
                 .getString("FatalExceptionHandler.defaultMessage");
     }
 
@@ -57,15 +55,14 @@ public final class FatalExceptionHandler implements
      *                Fatal exception.
      */
     public void handleException(FatalException exception) {
-        FatalExceptionHandler.LOGGER.log(Level.SEVERE,
-                "Handling fatal exception", exception);
+        LOGGER.log(Level.SEVERE, "Handling fatal exception", exception);
         String messageKey = exception.getMessageKey();
 
         String message;
         if (messageKey == null) {
-            message = this.defaultMessage;
+            message = defaultMessage;
         } else {
-            message = this.resourceBundle.getString(messageKey);
+            message = resourceBundle.getString(messageKey);
         }
 
         showDialog(message);
@@ -73,13 +70,12 @@ public final class FatalExceptionHandler implements
 
     /** {@inheritDoc} */
     public void uncaughtException(Thread thread, Throwable exception) {
-        FatalExceptionHandler.LOGGER.log(Level.SEVERE,
-                "Handling uncaught exception", exception);
-        showDialog(this.defaultMessage);
+        LOGGER.log(Level.SEVERE, "Handling uncaught exception", exception);
+        showDialog(defaultMessage);
     }
 
     private void showDialog(String message) {
-        JOptionPane.showMessageDialog(null, MessageFormat.format(this.pattern,
-                message), this.title, JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, MessageFormat.format(pattern,
+                message), title, JOptionPane.ERROR_MESSAGE);
     }
 }

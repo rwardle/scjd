@@ -1,11 +1,12 @@
 package suncertify;
 
-import org.hamcrest.CoreMatchers;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,13 +25,13 @@ public class AbstractApplicationTest {
 
     @Before
     public void setUp() {
-        this.mockConfiguration = this.context.mock(Configuration.class);
-        this.mockPresenter = this.context.mock(ConfigurationPresenter.class);
+        mockConfiguration = context.mock(Configuration.class);
+        mockPresenter = context.mock(ConfigurationPresenter.class);
     }
 
     @After
     public void tearDown() {
-        this.context.assertIsSatisfied();
+        context.assertIsSatisfied();
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -41,74 +42,67 @@ public class AbstractApplicationTest {
     @Test
     public void shouldReturnTrueFromInitialiseWhenConfigurationIsOkayed()
             throws Exception {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                ignoring(AbstractApplicationTest.this.mockConfiguration)
-                        .exists();
-                ignoring(AbstractApplicationTest.this.mockConfiguration)
-                        .getProperty(with(Expectations.any(String.class)));
-                ignoring(AbstractApplicationTest.this.mockConfiguration)
-                        .setProperty(with(Expectations.any(String.class)),
-                                with(Expectations.any(String.class)));
-                one(AbstractApplicationTest.this.mockPresenter).realiseView();
+                ignoring(mockConfiguration).exists();
+                ignoring(mockConfiguration)
+                        .getProperty(with(any(String.class)));
+                ignoring(mockConfiguration).setProperty(
+                        with(any(String.class)), with(any(String.class)));
+                one(mockPresenter).realiseView();
 
-                allowing(AbstractApplicationTest.this.mockPresenter)
-                        .getReturnStatus();
-                will(Expectations.returnValue(ReturnStatus.OK));
+                allowing(mockPresenter).getReturnStatus();
+                will(returnValue(ReturnStatus.OK));
 
-                one(AbstractApplicationTest.this.mockConfiguration).save();
+                one(mockConfiguration).save();
             }
         });
         StubAbstractApplication application = new StubAbstractApplication(
-                this.mockConfiguration);
-        Assert.assertThat(application.initialise(), CoreMatchers.is(true));
+                mockConfiguration);
+        assertThat(application.initialise(), is(true));
     }
 
     @Test
     public void shouldReturnFalseFromInitialiseWhenConfigurationIsCancelled()
             throws Exception {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                ignoring(AbstractApplicationTest.this.mockConfiguration);
-                one(AbstractApplicationTest.this.mockPresenter).realiseView();
+                ignoring(mockConfiguration);
+                one(mockPresenter).realiseView();
 
-                allowing(AbstractApplicationTest.this.mockPresenter)
-                        .getReturnStatus();
-                will(Expectations.returnValue(ReturnStatus.CANCEL));
+                allowing(mockPresenter).getReturnStatus();
+                will(returnValue(ReturnStatus.CANCEL));
             }
         });
 
         StubAbstractApplication application = new StubAbstractApplication(
-                this.mockConfiguration);
-        Assert.assertThat(application.initialise(), CoreMatchers.is(false));
+                mockConfiguration);
+        assertThat(application.initialise(), is(false));
     }
 
     @Test
     public void shouldReturnTrueFromInitialiseWhenConfigurationCannotBeSaved()
             throws Exception {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                ignoring(AbstractApplicationTest.this.mockConfiguration)
-                        .exists();
-                ignoring(AbstractApplicationTest.this.mockConfiguration)
-                        .getProperty(with(Expectations.any(String.class)));
-                ignoring(AbstractApplicationTest.this.mockConfiguration)
-                        .setProperty(with(Expectations.any(String.class)),
-                                with(Expectations.any(String.class)));
-                one(AbstractApplicationTest.this.mockPresenter).realiseView();
+                ignoring(mockConfiguration).exists();
+                ignoring(mockConfiguration)
+                        .getProperty(with(any(String.class)));
+                ignoring(mockConfiguration).setProperty(
+                        with(any(String.class)), with(any(String.class)));
+                one(mockPresenter).realiseView();
 
-                allowing(AbstractApplicationTest.this.mockPresenter)
-                        .getReturnStatus();
-                will(Expectations.returnValue(ReturnStatus.OK));
+                allowing(mockPresenter).getReturnStatus();
+                will(returnValue(ReturnStatus.OK));
 
-                one(AbstractApplicationTest.this.mockConfiguration).save();
-                will(Expectations.throwException(new ConfigurationException()));
+                one(mockConfiguration).save();
+                will(throwException(new ConfigurationException()));
             }
         });
 
         StubAbstractApplication application = new StubAbstractApplication(
-                this.mockConfiguration);
-        Assert.assertThat(application.initialise(), CoreMatchers.is(true));
+                mockConfiguration);
+        assertThat(application.initialise(), is(true));
     }
 
     private class StubAbstractApplication extends AbstractApplication {
@@ -118,7 +112,7 @@ public class AbstractApplicationTest {
 
         @Override
         ConfigurationPresenter createConfigurationPresenter() {
-            return AbstractApplicationTest.this.mockPresenter;
+            return mockPresenter;
         }
 
         @Override

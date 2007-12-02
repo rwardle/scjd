@@ -34,3 +34,5 @@ But this gives us 2 possibilites: a) concurrent requests are routed to separate 
 32. If the client dies in the middle of an RMI call this will not be a problem since all locking is done on the server side. The server operation will complete and unlock the record.
 33. Some methods have package access to enable them to be overridden in tests.
 34. Only defining serialVersionUID in classes that will be going over the network. Not defined it in classes that extend Swing components since they will not go over the network and are not designed to be saved to disk using serialization. Using a serialverisonUID of 1 to make verisoning explicit and obvious.
+35. Explain choice of service package structure, i.e. RemoteBrokerService extends BrokerService and delegating.
+36. RmiService groups together all RMI operations into a single interface to allow mocking in tests.

@@ -13,26 +13,33 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 
-public class RmiServiceImpl implements RmiService {
+/**
+ * Implementation of {@link RmiService} that delegates to {@link LocateRegistry}
+ * and {@link Naming}.
+ * 
+ * @author Richard Wardle
+ */
+public final class RmiServiceImpl implements RmiService {
 
     /**
-     * {@inheritDoc}
+     * Creates a new instance of <code>RmiServiceImpl</code>.
      */
+    public RmiServiceImpl() {
+        super();
+    }
+
+    /** {@inheritDoc} */
     public void createRegistry(int port) throws RemoteException {
         LocateRegistry.createRegistry(port);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void rebind(String name, Remote obj) throws RemoteException,
             MalformedURLException {
         Naming.rebind(name, obj);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Remote lookup(String name) throws MalformedURLException,
             RemoteException, NotBoundException {
         return Naming.lookup(name);

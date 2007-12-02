@@ -8,7 +8,7 @@ package suncertify.db;
 
 import java.io.IOException;
 
-public class DataAdapter implements Database {
+public final class DataAdapter implements Database {
 
     private final Data data;
 
@@ -18,7 +18,7 @@ public class DataAdapter implements Database {
 
     public String[] read(int recNo) throws RecordNotFoundException, IOException {
         try {
-            return this.data.read(recNo);
+            return data.read(recNo);
         } catch (DataAccessException e) {
             throw (IOException) e.getCause();
         }
@@ -27,7 +27,7 @@ public class DataAdapter implements Database {
     public void update(int recNo, String[] recordData)
             throws RecordNotFoundException, IOException {
         try {
-            this.data.update(recNo, recordData);
+            data.update(recNo, recordData);
         } catch (DataAccessException e) {
             throw (IOException) e.getCause();
         }
@@ -35,7 +35,7 @@ public class DataAdapter implements Database {
 
     public void delete(int recNo) throws RecordNotFoundException, IOException {
         try {
-            this.data.delete(recNo);
+            data.delete(recNo);
         } catch (DataAccessException e) {
             throw (IOException) e.getCause();
         }
@@ -43,7 +43,7 @@ public class DataAdapter implements Database {
 
     public int[] find(String[] criteria) throws IOException {
         try {
-            return this.data.find(criteria);
+            return data.find(criteria);
         } catch (DataAccessException e) {
             throw (IOException) e.getCause();
         }
@@ -51,7 +51,7 @@ public class DataAdapter implements Database {
 
     public int create(String[] recordData) throws IOException {
         try {
-            return this.data.create(recordData);
+            return data.create(recordData);
         } catch (DataAccessException e) {
             throw (IOException) e.getCause();
         }
@@ -60,17 +60,17 @@ public class DataAdapter implements Database {
     public void lock(int recNo) throws RecordNotFoundException,
             InterruptedException {
         try {
-            this.data.lock(recNo);
+            data.lock(recNo);
         } catch (IllegalThreadStateException e) {
             throw (InterruptedException) e.getCause();
         }
     }
 
     public void unlock(int recNo) throws RecordNotFoundException {
-        this.data.unlock(recNo);
+        data.unlock(recNo);
     }
 
     public boolean isLocked(int recNo) throws RecordNotFoundException {
-        return this.data.isLocked(recNo);
+        return data.isLocked(recNo);
     }
 }

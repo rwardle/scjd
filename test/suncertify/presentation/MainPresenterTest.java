@@ -42,18 +42,17 @@ public class MainPresenterTest {
 
     @Before
     public void setUp() {
-        this.workerRunning = false;
-        this.mockBrokerService = this.context.mock(BrokerService.class);
-        this.mockView = this.context.mock(MainView.class);
-        this.presenter = new StubMainPresenter(this.mockBrokerService,
-                this.mockView);
-        this.customerId = "12345678";
-        this.componentToFocus = new Container();
+        workerRunning = false;
+        mockBrokerService = context.mock(BrokerService.class);
+        mockView = context.mock(MainView.class);
+        presenter = new StubMainPresenter(mockBrokerService, mockView);
+        customerId = "12345678";
+        componentToFocus = new Container();
     }
 
     @After
     public void tearDown() {
-        for (int i = 0; this.workerRunning && i < 10; i++) {
+        for (int i = 0; workerRunning && i < 10; i++) {
             // Wait for any swing workers to complete
             try {
                 Thread.sleep(100);
@@ -61,27 +60,27 @@ public class MainPresenterTest {
                 e.printStackTrace();
             }
         }
-        this.context.assertIsSatisfied();
+        context.assertIsSatisfied();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructionWithNullServiceThrowsException() {
-        new MainPresenter(null, this.mockView);
+        new MainPresenter(null, mockView);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructionWithNullViewThrowsException() {
-        new MainPresenter(this.mockBrokerService, null);
+        new MainPresenter(mockBrokerService, null);
     }
 
     @Test
     public void realiseView() {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(MainPresenterTest.this.mockView).realise();
+                one(mockView).realise();
             }
         });
-        this.presenter.realiseView();
+        presenter.realiseView();
     }
 
     @Test
@@ -96,34 +95,30 @@ public class MainPresenterTest {
         final String statusLabelText = "<html>Viewing <b>" + contractors.size()
                 + " contractors</b> where Name is <b>" + nameCriteria
                 + "</b> and Location is <b>" + locationCriteria + "</b></html>";
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(MainPresenterTest.this.mockView).disableControls();
+                one(mockView).disableControls();
 
-                one(MainPresenterTest.this.mockView).getNameCriteria();
-                will(Expectations.returnValue(nameCriteria));
+                one(mockView).getNameCriteria();
+                will(returnValue(nameCriteria));
 
-                one(MainPresenterTest.this.mockView).getLocationCriteria();
-                will(Expectations.returnValue(locationCriteria));
+                one(mockView).getLocationCriteria();
+                will(returnValue(locationCriteria));
 
-                one(MainPresenterTest.this.mockBrokerService).search(
-                        with(Expectations.equal(new SearchCriteria().setName(
-                                nameCriteria).setLocation(locationCriteria))));
-                will(Expectations.returnValue(contractors));
+                one(mockBrokerService).search(
+                        with(searchCriteriaMatching(nameCriteria,
+                                locationCriteria)));
+                will(returnValue(contractors));
 
-                one(MainPresenterTest.this.mockView).setTableModel(
+                one(mockView).setTableModel(
                         with(aContractorTableModelContaining(contractors)));
 
-                one(MainPresenterTest.this.mockView).setStatusLabelText(
-                        with(Expectations.equal(statusLabelText)));
+                one(mockView).setStatusLabelText(with(equal(statusLabelText)));
 
-                one(MainPresenterTest.this.mockView)
-                        .enableControls(
-                                with(Expectations
-                                        .equal(MainPresenterTest.this.componentToFocus)));
+                one(mockView).enableControls(with(equal(componentToFocus)));
             }
         });
-        this.presenter.searchActionPerformed(this.componentToFocus);
+        presenter.searchActionPerformed(componentToFocus);
     }
 
     @Test
@@ -134,32 +129,29 @@ public class MainPresenterTest {
         final String statusLabelText = "<html>Viewing <b>" + contractors.size()
                 + " contractors</b> where Name is <b>" + nameCriteria
                 + "</b></html>";
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(MainPresenterTest.this.mockView).disableControls();
+                one(mockView).disableControls();
 
-                one(MainPresenterTest.this.mockView).getNameCriteria();
-                will(Expectations.returnValue(nameCriteria));
+                one(mockView).getNameCriteria();
+                will(returnValue(nameCriteria));
 
-                one(MainPresenterTest.this.mockView).getLocationCriteria();
-                will(Expectations.returnValue(locationCriteria));
+                one(mockView).getLocationCriteria();
+                will(returnValue(locationCriteria));
 
-                one(MainPresenterTest.this.mockBrokerService).search(
-                        with(Expectations.equal(new SearchCriteria()
-                                .setName(nameCriteria))));
-                will(Expectations.returnValue(contractors));
+                one(mockBrokerService).search(
+                        with(searchCriteriaMatching(nameCriteria, null)));
+                will(returnValue(contractors));
 
-                one(MainPresenterTest.this.mockView).setTableModel(
+                one(mockView).setTableModel(
                         with(aContractorTableModelContaining(contractors)));
 
-                one(MainPresenterTest.this.mockView).setStatusLabelText(
-                        with(Expectations.equal(statusLabelText)));
+                one(mockView).setStatusLabelText(with(equal(statusLabelText)));
 
-                one(MainPresenterTest.this.mockView).enableControls(
-                        MainPresenterTest.this.componentToFocus);
+                one(mockView).enableControls(componentToFocus);
             }
         });
-        this.presenter.searchActionPerformed(this.componentToFocus);
+        presenter.searchActionPerformed(componentToFocus);
     }
 
     @Test
@@ -171,32 +163,29 @@ public class MainPresenterTest {
         final String statusLabelText = "<html>Viewing <b>" + contractors.size()
                 + " contractors</b> where Location is <b>" + locationCriteria
                 + "</b></html>";
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(MainPresenterTest.this.mockView).disableControls();
+                one(mockView).disableControls();
 
-                one(MainPresenterTest.this.mockView).getNameCriteria();
-                will(Expectations.returnValue(nameCriteria));
+                one(mockView).getNameCriteria();
+                will(returnValue(nameCriteria));
 
-                one(MainPresenterTest.this.mockView).getLocationCriteria();
-                will(Expectations.returnValue(locationCriteria));
+                one(mockView).getLocationCriteria();
+                will(returnValue(locationCriteria));
 
-                one(MainPresenterTest.this.mockBrokerService).search(
-                        with(Expectations.equal(new SearchCriteria()
-                                .setLocation(locationCriteria))));
-                will(Expectations.returnValue(contractors));
+                one(mockBrokerService).search(
+                        with(searchCriteriaMatching(null, locationCriteria)));
+                will(returnValue(contractors));
 
-                one(MainPresenterTest.this.mockView).setTableModel(
+                one(mockView).setTableModel(
                         with(aContractorTableModelContaining(contractors)));
 
-                one(MainPresenterTest.this.mockView).setStatusLabelText(
-                        with(Expectations.equal(statusLabelText)));
+                one(mockView).setStatusLabelText(with(equal(statusLabelText)));
 
-                one(MainPresenterTest.this.mockView).enableControls(
-                        MainPresenterTest.this.componentToFocus);
+                one(mockView).enableControls(componentToFocus);
             }
         });
-        this.presenter.searchActionPerformed(this.componentToFocus);
+        presenter.searchActionPerformed(componentToFocus);
     }
 
     @Test
@@ -208,31 +197,29 @@ public class MainPresenterTest {
                 "spec1", "size1", "rate1", "owner1" }));
         final String statusLabelText = "<html>Viewing all <b>"
                 + contractors.size() + " contractor</b></html>";
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(MainPresenterTest.this.mockView).disableControls();
+                one(mockView).disableControls();
 
-                one(MainPresenterTest.this.mockView).getNameCriteria();
-                will(Expectations.returnValue(nameCriteria));
+                one(mockView).getNameCriteria();
+                will(returnValue(nameCriteria));
 
-                one(MainPresenterTest.this.mockView).getLocationCriteria();
-                will(Expectations.returnValue(locationCriteria));
+                one(mockView).getLocationCriteria();
+                will(returnValue(locationCriteria));
 
-                one(MainPresenterTest.this.mockBrokerService).search(
-                        with(Expectations.equal(new SearchCriteria())));
-                will(Expectations.returnValue(contractors));
+                one(mockBrokerService).search(
+                        with(searchCriteriaMatching(null, null)));
+                will(returnValue(contractors));
 
-                one(MainPresenterTest.this.mockView).setTableModel(
+                one(mockView).setTableModel(
                         with(aContractorTableModelContaining(contractors)));
 
-                one(MainPresenterTest.this.mockView).setStatusLabelText(
-                        with(Expectations.equal(statusLabelText)));
+                one(mockView).setStatusLabelText(with(equal(statusLabelText)));
 
-                one(MainPresenterTest.this.mockView).enableControls(
-                        MainPresenterTest.this.componentToFocus);
+                one(mockView).enableControls(componentToFocus);
             }
         });
-        this.presenter.searchActionPerformed(this.componentToFocus);
+        presenter.searchActionPerformed(componentToFocus);
     }
 
     @Test
@@ -242,59 +229,54 @@ public class MainPresenterTest {
         final List<Contractor> contractors = new ArrayList<Contractor>();
         final String statusLabelText = "<html>Viewing all <b>"
                 + contractors.size() + " contractors</b></html>";
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(MainPresenterTest.this.mockView).disableControls();
+                one(mockView).disableControls();
 
-                one(MainPresenterTest.this.mockView).getNameCriteria();
-                will(Expectations.returnValue(nameCriteria));
+                one(mockView).getNameCriteria();
+                will(returnValue(nameCriteria));
 
-                one(MainPresenterTest.this.mockView).getLocationCriteria();
-                will(Expectations.returnValue(locationCriteria));
+                one(mockView).getLocationCriteria();
+                will(returnValue(locationCriteria));
 
-                one(MainPresenterTest.this.mockBrokerService).search(
-                        with(Expectations.equal(new SearchCriteria())));
-                will(Expectations.returnValue(contractors));
+                one(mockBrokerService).search(
+                        with(searchCriteriaMatching(null, null)));
+                will(returnValue(contractors));
 
-                one(MainPresenterTest.this.mockView).setTableModel(
+                one(mockView).setTableModel(
                         with(aContractorTableModelContaining(contractors)));
 
-                one(MainPresenterTest.this.mockView).setStatusLabelText(
-                        with(Expectations.equal(statusLabelText)));
+                one(mockView).setStatusLabelText(with(equal(statusLabelText)));
 
-                one(MainPresenterTest.this.mockView).enableControls(
-                        MainPresenterTest.this.componentToFocus);
+                one(mockView).enableControls(componentToFocus);
             }
         });
-        this.presenter.searchActionPerformed(this.componentToFocus);
+        presenter.searchActionPerformed(componentToFocus);
     }
 
     @Test
     public void shouldNotUpdateInterfaceIfSearchThrowsException()
             throws Exception {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(MainPresenterTest.this.mockView).disableControls();
+                one(mockView).disableControls();
 
-                allowing(MainPresenterTest.this.mockView).getNameCriteria();
+                allowing(mockView).getNameCriteria();
 
-                allowing(MainPresenterTest.this.mockView).getLocationCriteria();
+                allowing(mockView).getLocationCriteria();
 
-                one(MainPresenterTest.this.mockBrokerService).search(
-                        with(Expectations.any(SearchCriteria.class)));
-                will(Expectations.throwException(new IOException()));
+                one(mockBrokerService).search(with(any(SearchCriteria.class)));
+                will(throwException(new IOException()));
 
-                never(MainPresenterTest.this.mockView).setTableModel(
-                        with(Expectations.any(ContractorTableModel.class)));
+                never(mockView).setTableModel(
+                        with(any(ContractorTableModel.class)));
 
-                never(MainPresenterTest.this.mockView).setStatusLabelText(
-                        with(Expectations.any(String.class)));
+                never(mockView).setStatusLabelText(with(any(String.class)));
 
-                one(MainPresenterTest.this.mockView).enableControls(
-                        MainPresenterTest.this.componentToFocus);
+                one(mockView).enableControls(componentToFocus);
             }
         });
-        this.presenter.searchActionPerformed(this.componentToFocus);
+        presenter.searchActionPerformed(componentToFocus);
     }
 
     @Test
@@ -305,110 +287,96 @@ public class MainPresenterTest {
         final Contractor preBookingContractor = new Contractor(rowNo,
                 preBookingContractorData);
         String[] postBookingContractorData = preBookingContractorData.clone();
-        postBookingContractorData[PresentationConstants.TABLE_OWNER_COLUMN_INDEX] = this.customerId;
+        postBookingContractorData[PresentationConstants.TABLE_OWNER_COLUMN_INDEX] = customerId;
         final Contractor postBookingContractor = new Contractor(rowNo,
                 postBookingContractorData);
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(MainPresenterTest.this.mockView).getContractorAtRow(
-                        with(Expectations.equal(rowNo)));
-                will(Expectations.returnValue(preBookingContractor));
+                one(mockView).getContractorAtRow(with(equal(rowNo)));
+                will(returnValue(preBookingContractor));
 
-                one(MainPresenterTest.this.mockView).disableControls();
+                one(mockView).disableControls();
 
-                one(MainPresenterTest.this.mockBrokerService).book(
-                        with(Expectations
-                                .equal(MainPresenterTest.this.customerId)),
-                        with(Expectations.equal(preBookingContractor)));
+                one(mockBrokerService).book(with(equal(customerId)),
+                        with(aContractorMatching(preBookingContractor)));
 
-                one(MainPresenterTest.this.mockView).updateContractorAtRow(
-                        with(Expectations.equal(rowNo)),
-                        with(Expectations.equal(postBookingContractor)));
+                one(mockView).updateContractorAtRow(with(equal(rowNo)),
+                        with(aContractorMatching(postBookingContractor)));
 
-                one(MainPresenterTest.this.mockView).enableControls(
-                        MainPresenterTest.this.componentToFocus);
+                one(mockView).enableControls(componentToFocus);
             }
         });
-        this.presenter.bookActionPerformed(rowNo, this.componentToFocus);
+        presenter.bookActionPerformed(rowNo, componentToFocus);
     }
 
     @Test
     public void shouldNotBookIfUserCancelsCustomerIdDialog() throws Exception {
         // Null returned from customer dialog means that it was cancelled
-        this.customerId = null;
+        customerId = null;
         final int rowNo = 1;
-        this.presenter.bookActionPerformed(rowNo, this.componentToFocus);
+        presenter.bookActionPerformed(rowNo, componentToFocus);
     }
 
     @Test
     public void shouldNotUpdateInterfaceIfBookThrowsIOException()
             throws Exception {
         final int rowNo = 1;
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                allowing(MainPresenterTest.this.mockView).getContractorAtRow(
-                        with(Expectations.any(int.class)));
+                allowing(mockView).getContractorAtRow(with(any(int.class)));
 
-                one(MainPresenterTest.this.mockView).disableControls();
+                one(mockView).disableControls();
 
-                one(MainPresenterTest.this.mockBrokerService).book(
-                        with(Expectations.any(String.class)),
-                        with(Expectations.any(Contractor.class)));
-                will(Expectations.throwException(new IOException()));
+                one(mockBrokerService).book(with(any(String.class)),
+                        with(any(Contractor.class)));
+                will(throwException(new IOException()));
 
-                one(MainPresenterTest.this.mockView).enableControls(
-                        MainPresenterTest.this.componentToFocus);
+                one(mockView).enableControls(componentToFocus);
             }
         });
-        this.presenter.bookActionPerformed(rowNo, this.componentToFocus);
+        presenter.bookActionPerformed(rowNo, componentToFocus);
     }
 
     @Test
     public void shouldNotUpdateInterfaceIfBookThrowsContractorDeletedException()
             throws Exception {
         final int rowNo = 1;
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                allowing(MainPresenterTest.this.mockView).getContractorAtRow(
-                        with(Expectations.any(int.class)));
+                allowing(mockView).getContractorAtRow(with(any(int.class)));
 
-                one(MainPresenterTest.this.mockView).disableControls();
+                one(mockView).disableControls();
 
-                one(MainPresenterTest.this.mockBrokerService).book(
-                        with(Expectations.any(String.class)),
-                        with(Expectations.any(Contractor.class)));
+                one(mockBrokerService).book(with(any(String.class)),
+                        with(any(Contractor.class)));
                 will(Expectations
                         .throwException(new ContractorDeletedException()));
 
-                one(MainPresenterTest.this.mockView).enableControls(
-                        MainPresenterTest.this.componentToFocus);
+                one(mockView).enableControls(componentToFocus);
             }
         });
-        this.presenter.bookActionPerformed(rowNo, this.componentToFocus);
+        presenter.bookActionPerformed(rowNo, componentToFocus);
     }
 
     @Test
     public void shouldNotUpdateInterfaceIfBookThrowsContractorModifiedException()
             throws Exception {
         final int rowNo = 1;
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                allowing(MainPresenterTest.this.mockView).getContractorAtRow(
-                        with(Expectations.any(int.class)));
+                allowing(mockView).getContractorAtRow(with(any(int.class)));
 
-                one(MainPresenterTest.this.mockView).disableControls();
+                one(mockView).disableControls();
 
-                one(MainPresenterTest.this.mockBrokerService).book(
-                        with(Expectations.any(String.class)),
-                        with(Expectations.any(Contractor.class)));
+                one(mockBrokerService).book(with(any(String.class)),
+                        with(any(Contractor.class)));
                 will(Expectations
                         .throwException(new ContractorModifiedException()));
 
-                one(MainPresenterTest.this.mockView).enableControls(
-                        MainPresenterTest.this.componentToFocus);
+                one(mockView).enableControls(componentToFocus);
             }
         });
-        this.presenter.bookActionPerformed(rowNo, this.componentToFocus);
+        presenter.bookActionPerformed(rowNo, componentToFocus);
     }
 
     private Matcher<ContractorTableModel> aContractorTableModelContaining(
@@ -427,12 +395,12 @@ public class MainPresenterTest {
 
         public boolean matches(Object item) {
             ContractorTableModel tableModel = (ContractorTableModel) item;
-            if (this.contractors.size() != tableModel.getRowCount()) {
+            if (contractors.size() != tableModel.getRowCount()) {
                 return false;
             }
 
             boolean match = true;
-            for (int i = 0; i < this.contractors.size(); i++) {
+            for (int i = 0; i < contractors.size(); i++) {
                 String[] contractorData = new String[6];
                 for (int j = 0; j < contractorData.length; j++) {
                     contractorData[j] = (String) tableModel.getValueAt(i, j);
@@ -440,14 +408,109 @@ public class MainPresenterTest {
 
                 Contractor actualContractor = new Contractor(tableModel
                         .getRecordNumberAt(i), contractorData);
-                match = this.contractors.get(i).equals(actualContractor);
+                match = new ContractorMatching(contractors.get(i))
+                        .matches(actualContractor);
             }
             return match;
         }
 
         public void describeTo(Description description) {
             description.appendValueList("a table model containing: ", " & ",
-                    "", this.contractors);
+                    "", contractors);
+        }
+    }
+
+    private Matcher<SearchCriteria> searchCriteriaMatching(String nameCriteria,
+            String locationCriteria) {
+        return new SearchCriteriaMatching(nameCriteria, locationCriteria);
+    }
+
+    private static final class SearchCriteriaMatching extends
+            BaseMatcher<SearchCriteria> {
+
+        private final String nameCriteria;
+        private final String locationCriteria;
+
+        public SearchCriteriaMatching(String nameCriteria,
+                String locationCriteria) {
+            this.nameCriteria = nameCriteria;
+            this.locationCriteria = locationCriteria;
+        }
+
+        public boolean matches(Object item) {
+            SearchCriteria searchCriteria = (SearchCriteria) item;
+            return nameCriteria == null ? searchCriteria.getName() == null
+                    : nameCriteria.equals(searchCriteria.getName())
+                            && locationCriteria == null ? searchCriteria
+                            .getLocation() == null : locationCriteria
+                            .equals(searchCriteria.getLocation());
+        }
+
+        public void describeTo(Description description) {
+            description.appendText("search criteria matching: name=")
+                    .appendText(nameCriteria).appendText(", location=")
+                    .appendText(locationCriteria);
+        }
+    }
+
+    private Matcher<Contractor> aContractorMatching(Contractor contractor) {
+        return new ContractorMatching(contractor);
+    }
+
+    private static final class ContractorMatching extends
+            BaseMatcher<Contractor> {
+
+        private final Contractor expectedContractor;
+
+        public ContractorMatching(Contractor contractor) {
+            expectedContractor = contractor;
+        }
+
+        public boolean matches(Object item) {
+            Contractor actualContractor = (Contractor) item;
+            return expectedContractor.getRecordNumber() == actualContractor
+                    .getRecordNumber()
+                    && expectedContractor.getName() == null ? actualContractor
+                    .getName() == null
+                    : expectedContractor.getName().equals(
+                            actualContractor.getName())
+                            && expectedContractor.getLocation() == null ? actualContractor
+                            .getLocation() == null
+                            : expectedContractor.getLocation().equals(
+                                    actualContractor.getLocation())
+                                    && expectedContractor.getSpecialties() == null ? actualContractor
+                                    .getSpecialties() == null
+                                    : expectedContractor.getSpecialties()
+                                            .equals(
+                                                    actualContractor
+                                                            .getSpecialties())
+                                            && expectedContractor.getSize() == null ? actualContractor
+                                            .getSize() == null
+                                            : expectedContractor.getSize()
+                                                    .equals(
+                                                            actualContractor
+                                                                    .getSize())
+                                                    && expectedContractor
+                                                            .getRate() == null ? actualContractor
+                                                    .getRate() == null
+                                                    : expectedContractor
+                                                            .getRate()
+                                                            .equals(
+                                                                    actualContractor
+                                                                            .getRate())
+                                                            && expectedContractor
+                                                                    .getOwner() == null ? actualContractor
+                                                            .getOwner() == null
+                                                            : expectedContractor
+                                                                    .getOwner()
+                                                                    .equals(
+                                                                            actualContractor
+                                                                                    .getOwner());
+        }
+
+        public void describeTo(Description description) {
+            description.appendText("a contractor matching: "
+                    + expectedContractor);
         }
     }
 
@@ -468,7 +531,7 @@ public class MainPresenterTest {
 
         @Override
         String showCustomerIdDialog() {
-            return MainPresenterTest.this.customerId;
+            return customerId;
         }
 
         @Override
@@ -482,12 +545,12 @@ public class MainPresenterTest {
 
         @SuppressWarnings("unchecked")
         private void addWorkerPropertyChangeListener(SwingWorker worker) {
-            MainPresenterTest.this.workerRunning = true;
+            workerRunning = true;
             worker.addPropertyChangeListener(new PropertyChangeListener() {
                 public void propertyChange(PropertyChangeEvent evt) {
                     if ("state".equals(evt.getPropertyName())
                             && evt.getNewValue() == StateValue.DONE) {
-                        MainPresenterTest.this.workerRunning = false;
+                        workerRunning = false;
                     }
                 }
             });

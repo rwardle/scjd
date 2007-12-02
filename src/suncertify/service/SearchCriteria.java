@@ -1,5 +1,5 @@
 /*
- * java
+ * SearchCriteria.java
  *
  * 16 Oct 2007
  */
@@ -8,118 +8,211 @@ package suncertify.service;
 
 import java.io.Serializable;
 
-public class SearchCriteria implements Serializable {
+/**
+ * Criteria for searching for contractors. All <code>setXXX</code> methods of
+ * this class return <code>this</code> to enable use of the builder pattern
+ * when creating <code>SearchCriteria</code> objects.
+ * 
+ * @author Richard Wardle
+ */
+public final class SearchCriteria implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Contractor name criteria.
+     * 
+     * @serial
+     */
     private String name;
+
+    /**
+     * Contractor location criteria.
+     * 
+     * @serial
+     */
     private String location;
+
+    /**
+     * Contractor specialties criteria.
+     * 
+     * @serial
+     */
     private String specialties;
+
+    /**
+     * Contractor size criteria.
+     * 
+     * @serial
+     */
     private String size;
+
+    /**
+     * Contractor rate criteria.
+     * 
+     * @serial
+     */
     private String rate;
+
+    /**
+     * Contractor owner criteria.
+     * 
+     * @serial
+     */
     private String owner;
 
-    public String getName() {
-        return this.name;
+    /**
+     * Creates a new instance of <code>SearchCriteria</code> with all criteria
+     * fields initialised to <code>null</code>.
+     */
+    public SearchCriteria() {
+        super();
     }
 
+    /**
+     * Returns the contractor name criteria.
+     * 
+     * @return The name criteria.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets the contractor name criteria.
+     * 
+     * @param name
+     *                Name critiera.
+     * @return This <code>SearchCriteria</code> object.
+     */
     public SearchCriteria setName(String name) {
         this.name = name;
         return this;
     }
 
+    /**
+     * Returns the contractor location criteria.
+     * 
+     * @return The location criteria.
+     */
     public String getLocation() {
-        return this.location;
+        return location;
     }
 
+    /**
+     * Sets the contractor location criteria.
+     * 
+     * @param location
+     *                Location critiera.
+     * @return This <code>SearchCriteria</code> object.
+     */
     public SearchCriteria setLocation(String location) {
         this.location = location;
         return this;
     }
 
+    /**
+     * Returns the contractor specialties criteria.
+     * 
+     * @return The specialties criteria.
+     */
     public String getSpecialties() {
-        return this.specialties;
+        return specialties;
     }
 
+    /**
+     * Sets the contractor specialties criteria.
+     * 
+     * @param specialties
+     *                Specialties critiera.
+     * @return This <code>SearchCriteria</code> object.
+     */
     public SearchCriteria setSpecialties(String specialties) {
         this.specialties = specialties;
         return this;
     }
 
+    /**
+     * Returns the contractor size criteria.
+     * 
+     * @return The size criteria.
+     */
     public String getSize() {
-        return this.size;
+        return size;
     }
 
+    /**
+     * Sets the contractor size criteria.
+     * 
+     * @param size
+     *                Size critiera.
+     * @return This <code>SearchCriteria</code> object.
+     */
     public SearchCriteria setSize(String size) {
         this.size = size;
         return this;
     }
 
+    /**
+     * Returns the contractor rate criteria.
+     * 
+     * @return The rate criteria.
+     */
     public String getRate() {
-        return this.rate;
+        return rate;
     }
 
+    /**
+     * Sets the contractor rate criteria.
+     * 
+     * @param rate
+     *                Rate critiera.
+     * @return This <code>SearchCriteria</code> object.
+     */
     public SearchCriteria setRate(String rate) {
         this.rate = rate;
         return this;
     }
 
+    /**
+     * Returns the contractor owner criteria.
+     * 
+     * @return The owner criteria.
+     */
     public String getOwner() {
-        return this.owner;
+        return owner;
     }
 
+    /**
+     * Sets the contractor owner criteria.
+     * 
+     * @param owner
+     *                Owner critiera.
+     * @return This <code>SearchCriteria</code> object.
+     */
     public SearchCriteria setOwner(String owner) {
         this.owner = owner;
         return this;
     }
 
+    /**
+     * Returns the search critieria as an array of <code>String</code>s.
+     * 
+     * @return An array of length 6 containing the search criteria in the
+     *         following order: name, location, specialties, size, rate, owner.
+     */
     public String[] toArray() {
-        return new String[] { this.name, this.location, this.specialties,
-                this.size, this.rate, this.owner };
+        return new String[] { name, location, specialties, size, rate, owner };
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof SearchCriteria)) {
-            return false;
-        }
-        SearchCriteria criteria = (SearchCriteria) obj;
-        return this.name == null ? criteria.name == null
-                : this.name.equals(criteria.name) && this.location == null ? criteria.location == null
-                        : this.location.equals(criteria.location)
-                                && this.specialties == null ? criteria.specialties == null
-                                : this.specialties.equals(criteria.specialties)
-                                        && this.size == null ? criteria.size == null
-                                        : this.size.equals(criteria.size)
-                                                && this.rate == null ? criteria.rate == null
-                                                : this.rate
-                                                        .equals(criteria.rate)
-                                                        && this.owner == null ? criteria.owner == null
-                                                        : this.owner
-                                                                .equals(criteria.owner);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = 17;
-        result = 37 * result + (this.name == null ? 0 : this.name.hashCode());
-        result = 37 * result
-                + (this.location == null ? 0 : this.location.hashCode());
-        result = 37 * result
-                + (this.specialties == null ? 0 : this.specialties.hashCode());
-        result = 37 * result + (this.size == null ? 0 : this.size.hashCode());
-        result = 37 * result + (this.rate == null ? 0 : this.rate.hashCode());
-        result = 37 * result + (this.owner == null ? 0 : this.owner.hashCode());
-        return result;
-    }
-
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        return builder.append(super.toString()).append(": name=").append(
-                this.name).append(", location=").append(this.location).append(
-                ", specialties=").append(this.specialties).append(", size=")
-                .append(this.size).append(", rate=").append(this.rate).append(
-                        ", owner=").append(this.owner).toString();
+        return builder.append(super.toString()).append(": name=").append(name)
+                .append(", location=").append(location)
+                .append(", specialties=").append(specialties).append(", size=")
+                .append(size).append(", rate=").append(rate).append(", owner=")
+                .append(owner).toString();
     }
 }

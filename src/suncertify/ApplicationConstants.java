@@ -6,11 +6,8 @@
 
 package suncertify;
 
-import java.awt.Color;
-import java.awt.Insets;
-
 /**
- * Application constants.
+ * Constants for the application layer.
  * 
  * @author Richard Wardle
  */
@@ -44,18 +41,6 @@ public class ApplicationConstants {
      * registry.
      */
     public static final String REMOTE_BROKER_SERVICE_NAME = "BrokerService";
-
-    /** Default insets for the user interface. */
-    public static final Insets DEFAULT_INSETS = new Insets(4, 4, 4, 4);
-
-    /** Dark blue colour for gradient panels. */
-    public static final Color DARK_BLUE = new Color(184, 206, 228);
-
-    /** Light blue colour for gradient panels. */
-    public static final Color LIGHT_BLUE = new Color(226, 236, 245);
-
-    /** Dark grey colour for gradient panels. */
-    public static final Color DARK_GREY = new Color(204, 205, 219);
 
     private ApplicationConstants() {
         // Disallow instantiation.

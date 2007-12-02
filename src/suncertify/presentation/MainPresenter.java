@@ -7,6 +7,7 @@
 package suncertify.presentation;
 
 import java.awt.Component;
+import java.io.IOException;
 import java.text.ChoiceFormat;
 import java.text.MessageFormat;
 import java.util.List;
@@ -56,26 +57,26 @@ public class MainPresenter {
         }
         this.service = service;
         this.view = view;
-        this.resourceBundle = ResourceBundle
+        resourceBundle = ResourceBundle
                 .getBundle("suncertify/presentation/Bundle");
     }
 
     /** Realises the view. */
     public void realiseView() {
-        this.view.realise();
+        view.realise();
     }
 
     public final void searchActionPerformed(Component componentToFocus) {
-        String nameCriteria = substituteNullForEmptyString(this.view
+        String nameCriteria = substituteNullForEmptyString(view
                 .getNameCriteria().trim());
-        String locationCriteria = substituteNullForEmptyString(this.view
+        String locationCriteria = substituteNullForEmptyString(view
                 .getLocationCriteria().trim());
         final SearchCriteria searchCriteria = new SearchCriteria().setName(
                 nameCriteria).setLocation(locationCriteria);
 
         SwingWorker<List<Contractor>, Void> searchWorker = createSearchWorker(
                 searchCriteria, componentToFocus);
-        this.view.disableControls();
+        view.disableControls();
         searchWorker.execute();
     }
 
@@ -85,25 +86,29 @@ public class MainPresenter {
     }
 
     private String substituteNullForEmptyString(String str) {
-        return "".equals(str) ? null : str;
+        String result = str;
+        if ("".equals(str)) {
+            result = null;
+        }
+        return result;
     }
 
-    public void bookActionPerformed(int rowNo, Component componentToFocus) {
+    public final void bookActionPerformed(int rowNo, Component componentToFocus) {
         String customerId = showCustomerIdDialog();
-        if (customerId != null) {
-            Contractor contractor = this.view.getContractorAtRow(rowNo);
-            SwingWorker<Void, Void> bookWorker = createBookWorker(customerId,
-                    contractor, rowNo, componentToFocus);
-            this.view.disableControls();
-            bookWorker.execute();
-        } else {
+        if (customerId == null) {
             // Dialog cancelled - return the focus to where it was previously
             componentToFocus.requestFocus();
+        } else {
+            Contractor contractor = view.getContractorAtRow(rowNo);
+            SwingWorker<Void, Void> bookWorker = createBookWorker(customerId,
+                    contractor, rowNo, componentToFocus);
+            view.disableControls();
+            bookWorker.execute();
         }
     }
 
     String showCustomerIdDialog() {
-        CustomerIdDialog dialog = new CustomerIdDialog(this.view.getFrame());
+        CustomerIdDialog dialog = new CustomerIdDialog(view.getFrame());
         dialog.setVisible(true);
         return dialog.getCustomerId();
     }
@@ -115,7 +120,7 @@ public class MainPresenter {
     }
 
     void showOptionPane(String message, String title, int messageType) {
-        JOptionPane.showMessageDialog(this.view.getFrame(), message, title,
+        JOptionPane.showMessageDialog(view.getFrame(), message, title,
                 messageType);
     }
 
@@ -128,14 +133,14 @@ public class MainPresenter {
 
         public SearchWorker(MainPresenter mainPresenter,
                 SearchCriteria searchCriteria, Component componentToFocus) {
-            this.presenter = mainPresenter;
+            presenter = mainPresenter;
             this.searchCriteria = searchCriteria;
             this.componentToFocus = componentToFocus;
         }
 
         @Override
-        protected List<Contractor> doInBackground() throws Exception {
-            return this.presenter.service.search(this.searchCriteria);
+        protected List<Contractor> doInBackground() throws IOException {
+            return presenter.service.search(searchCriteria);
         }
 
         @Override
@@ -144,31 +149,31 @@ public class MainPresenter {
                 List<Contractor> contractors = get();
                 ContractorTableModel tableModel = new ContractorTableModel(
                         contractors);
-                this.presenter.view.setTableModel(tableModel);
-                this.presenter.view
+                presenter.view.setTableModel(tableModel);
+                presenter.view
                         .setStatusLabelText(buildStatusLabelText(contractors
                                 .size()));
             } catch (InterruptedException e) {
-                MainPresenter.LOGGER
+                LOGGER
                         .log(
                                 Level.WARNING,
                                 "Thread was interruped while waiting for result of search SwingWorker",
                                 e);
                 showSearchErrorDialog();
             } catch (ExecutionException e) {
-                MainPresenter.LOGGER.log(Level.SEVERE,
+                LOGGER.log(Level.SEVERE,
                         "Error searching for contractors with criteria: "
-                                + this.searchCriteria, e);
+                                + searchCriteria, e);
                 showSearchErrorDialog();
             } finally {
-                this.presenter.view.enableControls(this.componentToFocus);
+                presenter.view.enableControls(componentToFocus);
             }
         }
 
         private String buildStatusLabelText(int contractorsCount) {
-            String oneContractorFormat = this.presenter.resourceBundle
+            String oneContractorFormat = presenter.resourceBundle
                     .getString("MainPresenter.statusLabel.oneContractor.text");
-            String manyContractorsFormat = this.presenter.resourceBundle
+            String manyContractorsFormat = presenter.resourceBundle
                     .getString("MainPresenter.statusLabel.manyContractors.text");
             double[] limits = { 0, 1, ChoiceFormat.nextDouble(1) };
             String[] formats = { manyContractorsFormat, oneContractorFormat,
@@ -180,36 +185,35 @@ public class MainPresenter {
             messageFormat.setFormatByArgumentIndex(0, choiceFormat);
 
             return messageFormat.format(new Object[] { contractorsCount,
-                    contractorsCount, this.searchCriteria.getName(),
-                    this.searchCriteria.getLocation() });
+                    contractorsCount, searchCriteria.getName(),
+                    searchCriteria.getLocation() });
         }
 
         private String getMessageFormatPattern() {
             String pattern;
-            if (this.searchCriteria.getName() != null
-                    && this.searchCriteria.getLocation() != null) {
-                pattern = this.presenter.resourceBundle
-                        .getString("MainPresenter.statusLabel.nameAndLocationCriteria.text");
-            } else if (this.searchCriteria.getName() != null) {
-                pattern = this.presenter.resourceBundle
-                        .getString("MainPresenter.statusLabel.nameCriteria.text");
-            } else if (this.searchCriteria.getLocation() != null) {
-                pattern = this.presenter.resourceBundle
-                        .getString("MainPresenter.statusLabel.locationCriteria.text");
-            } else {
-                pattern = this.presenter.resourceBundle
+            if (searchCriteria.getName() == null
+                    && searchCriteria.getLocation() == null) {
+                pattern = presenter.resourceBundle
                         .getString("MainPresenter.statusLabel.noCriteria.text");
+            } else if (searchCriteria.getName() == null) {
+                pattern = presenter.resourceBundle
+                        .getString("MainPresenter.statusLabel.locationCriteria.text");
+            } else if (searchCriteria.getLocation() == null) {
+                pattern = presenter.resourceBundle
+                        .getString("MainPresenter.statusLabel.nameCriteria.text");
+            } else {
+                pattern = presenter.resourceBundle
+                        .getString("MainPresenter.statusLabel.nameAndLocationCriteria.text");
             }
             return pattern;
         }
 
         private void showSearchErrorDialog() {
-            String message = this.presenter.resourceBundle
-                    .getString("MainPresenter.searchErrorDialog.message.text");
-            String title = this.presenter.resourceBundle
-                    .getString("MainPresenter.searchErrorDialog.title.text");
-            this.presenter.showOptionPane(message, title,
-                    JOptionPane.ERROR_MESSAGE);
+            String message = presenter.resourceBundle
+                    .getString("MainPresenter.searchErrorDialog.message");
+            String title = presenter.resourceBundle
+                    .getString("MainPresenter.searchErrorDialog.title");
+            presenter.showOptionPane(message, title, JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -223,7 +227,7 @@ public class MainPresenter {
 
         public BookWorker(MainPresenter mainPresenter, String customerId,
                 Contractor contractor, int rowNo, Component componentToFocus) {
-            this.presenter = mainPresenter;
+            presenter = mainPresenter;
             this.customerId = customerId;
             this.contractor = contractor;
             this.rowNo = rowNo;
@@ -231,8 +235,9 @@ public class MainPresenter {
         }
 
         @Override
-        protected Void doInBackground() throws Exception {
-            this.presenter.service.book(this.customerId, this.contractor);
+        protected Void doInBackground() throws IOException,
+                ContractorDeletedException, ContractorModifiedException {
+            presenter.service.book(customerId, contractor);
             return null;
         }
 
@@ -242,17 +247,14 @@ public class MainPresenter {
                 // Although we don't need to call "get" to retrieve a
                 // result, we do need to know if any exceptions were thrown
                 get();
-                Contractor updatedContractor = new Contractor(this.contractor
+                Contractor updatedContractor = new Contractor(contractor
                         .getRecordNumber(), new String[] {
-                        this.contractor.getName(),
-                        this.contractor.getLocation(),
-                        this.contractor.getSpecialties(),
-                        this.contractor.getSize(), this.contractor.getRate(),
-                        this.customerId });
-                this.presenter.view.updateContractorAtRow(this.rowNo,
-                        updatedContractor);
+                        contractor.getName(), contractor.getLocation(),
+                        contractor.getSpecialties(), contractor.getSize(),
+                        contractor.getRate(), customerId });
+                presenter.view.updateContractorAtRow(rowNo, updatedContractor);
             } catch (InterruptedException e) {
-                MainPresenter.LOGGER
+                LOGGER
                         .log(
                                 Level.WARNING,
                                 "Thread was interruped while waiting for result of book SwingWorker",
@@ -261,53 +263,50 @@ public class MainPresenter {
             } catch (ExecutionException e) {
                 handleBookException(e);
             } finally {
-                this.presenter.view.enableControls(this.componentToFocus);
+                presenter.view.enableControls(componentToFocus);
             }
         }
 
         private void showBookErrorDialog() {
-            String message = this.presenter.resourceBundle
-                    .getString("MainPresenter.bookErrorDialog.message.text");
-            String title = this.presenter.resourceBundle
-                    .getString("MainPresenter.bookErrorDialog.title.text");
-            this.presenter.showOptionPane(message, title,
-                    JOptionPane.ERROR_MESSAGE);
+            String message = presenter.resourceBundle
+                    .getString("MainPresenter.bookErrorDialog.message");
+            String title = presenter.resourceBundle
+                    .getString("MainPresenter.bookErrorDialog.title");
+            presenter.showOptionPane(message, title, JOptionPane.ERROR_MESSAGE);
         }
 
         private void handleBookException(ExecutionException e) {
             if (e.getCause() instanceof ContractorDeletedException) {
-                MainPresenter.LOGGER
+                LOGGER
                         .log(
                                 Level.WARNING,
                                 "Customer "
-                                        + this.customerId
+                                        + customerId
                                         + " attempted to book a contractor that has been deleted: "
-                                        + this.contractor, e);
-                showBookWarningDialog(this.presenter.resourceBundle
-                        .getString("MainPresenter.bookWarningDialog.contractorDeletedMessage.text"));
+                                        + contractor, e);
+                showBookWarningDialog(presenter.resourceBundle
+                        .getString("MainPresenter.bookWarningDialog.contractorDeleted.message"));
             } else if (e.getCause() instanceof ContractorModifiedException) {
-                MainPresenter.LOGGER
+                LOGGER
                         .log(
                                 Level.WARNING,
                                 "Customer "
-                                        + this.customerId
+                                        + customerId
                                         + " attempted to book a contractor that has been modified: "
-                                        + this.contractor, e);
-                showBookWarningDialog(this.presenter.resourceBundle
-                        .getString("MainPresenter.bookWarningDialog.contractorModifiedMessage.text"));
+                                        + contractor, e);
+                showBookWarningDialog(presenter.resourceBundle
+                        .getString("MainPresenter.bookWarningDialog.contractorModified.message"));
             } else {
-                MainPresenter.LOGGER.log(Level.SEVERE, "Customer "
-                        + this.customerId
-                        + " got an error booking contractor: "
-                        + this.contractor, e);
+                LOGGER.log(Level.SEVERE, "Customer " + customerId
+                        + " got an error booking contractor: " + contractor, e);
                 showBookErrorDialog();
             }
         }
 
         private void showBookWarningDialog(String message) {
-            String title = this.presenter.resourceBundle
+            String title = presenter.resourceBundle
                     .getString("MainPresenter.bookWarningDialog.title.text");
-            this.presenter.showOptionPane(message, title,
+            presenter.showOptionPane(message, title,
                     JOptionPane.WARNING_MESSAGE);
         }
     }

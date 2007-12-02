@@ -17,7 +17,7 @@ import suncertify.service.Contractor;
  * 
  * @author Richard Wardle
  */
-public class ContractorTableModel extends AbstractTableModel {
+public final class ContractorTableModel extends AbstractTableModel {
 
     private final List<Contractor> contractors;
 
@@ -26,7 +26,7 @@ public class ContractorTableModel extends AbstractTableModel {
     }
 
     public int getRowCount() {
-        return this.contractors.size();
+        return contractors.size();
     }
 
     public int getColumnCount() {
@@ -34,7 +34,7 @@ public class ContractorTableModel extends AbstractTableModel {
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Contractor contractor = this.contractors.get(rowIndex);
+        Contractor contractor = contractors.get(rowIndex);
         String value;
         switch (columnIndex) {
         case PresentationConstants.TABLE_NAME_COLUMN_INDEX:
@@ -65,20 +65,20 @@ public class ContractorTableModel extends AbstractTableModel {
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return columnIndex == PresentationConstants.TABLE_OWNER_COLUMN_INDEX
-                && "".equals(this.contractors.get(rowIndex).getOwner());
+                && "".equals(contractors.get(rowIndex).getOwner());
     }
 
     int getRecordNumberAt(int rowIndex) {
-        return this.contractors.get(rowIndex).getRecordNumber();
+        return contractors.get(rowIndex).getRecordNumber();
     }
 
     public Contractor getContractorAtRow(int rowNo) {
-        return this.contractors.get(rowNo);
+        return contractors.get(rowNo);
     }
 
     public void updateContractorAtRow(int rowNo, Contractor contractor) {
-        this.contractors.remove(rowNo);
-        this.contractors.add(rowNo, contractor);
+        contractors.remove(rowNo);
+        contractors.add(rowNo, contractor);
         fireTableRowsUpdated(rowNo, rowNo);
     }
 }

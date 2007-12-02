@@ -48,7 +48,6 @@ import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.JTableHeader;
 
-import suncertify.ApplicationConstants;
 import suncertify.service.Contractor;
 
 /**
@@ -67,7 +66,7 @@ public final class MainFrame extends JFrame implements MainView {
     private static final Dimension TEXT_FIELD_PREFERRED_SIZE = new Dimension(
             100, 25);
     private static final int TABLE_ROW_HEIGHT = 18;
-    private static final String USER_GUIDE_PATH = "suncertify/presentation/help/userguide.html";
+    private static final String USER_GUIDE_PATH = "suncertify/presentation/userguide.html";
 
     private final ResourceBundle resourceBundle;
     private final JLabel statusLabel;
@@ -82,66 +81,66 @@ public final class MainFrame extends JFrame implements MainView {
     private ContractorTableModel tableModel;
 
     public MainFrame() {
-        this.resourceBundle = ResourceBundle
+        resourceBundle = ResourceBundle
                 .getBundle("suncertify/presentation/Bundle");
-        this.statusLabel = new JLabel(MainFrame.INITIAL_STATUS_LABEL);
+        statusLabel = new JLabel(INITIAL_STATUS_LABEL);
 
         // Display an empty table initially
-        this.tableModel = new ContractorTableModel(new ArrayList<Contractor>());
-        this.contractorTableColumnModel = new ContractorTableColumnModel();
-        this.resultsTable = createResultsTable();
-        this.resultsTable.setRowHeight(MainFrame.TABLE_ROW_HEIGHT);
-        this.resultsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        this.resultsTable.setSurrendersFocusOnKeystroke(true);
+        tableModel = new ContractorTableModel(new ArrayList<Contractor>());
+        contractorTableColumnModel = new ContractorTableColumnModel();
+        resultsTable = createResultsTable();
+        resultsTable.setRowHeight(TABLE_ROW_HEIGHT);
+        resultsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        resultsTable.setSurrendersFocusOnKeystroke(true);
 
-        this.nameTextField = new JTextField();
-        this.nameTextField.setToolTipText(this.resourceBundle
-                .getString("MainFrame.nameField.tooltip"));
-        this.nameTextField.addActionListener(new ActionListener() {
+        nameTextField = new JTextField();
+        nameTextField.setToolTipText(resourceBundle
+                .getString("MainFrame.nameTextField.tooltip"));
+        nameTextField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 MainFrame.this.searchActionPerformed(e);
             }
         });
 
-        this.locationTextField = new JTextField();
-        this.locationTextField.setToolTipText(this.resourceBundle
-                .getString("MainFrame.locationField.tooltip"));
-        this.locationTextField.addActionListener(new ActionListener() {
+        locationTextField = new JTextField();
+        locationTextField.setToolTipText(resourceBundle
+                .getString("MainFrame.locationTextField.tooltip"));
+        locationTextField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 MainFrame.this.searchActionPerformed(e);
             }
         });
 
-        this.searchAction = new SearchAction(this);
-        this.clearCriteriaAction = new ClearCriteriaAction(this);
+        searchAction = new SearchAction(this);
+        clearCriteriaAction = new ClearCriteriaAction(this);
 
-        this.glassPane = new GlassPane();
-        setGlassPane(this.glassPane);
+        glassPane = new GlassPane();
+        setGlassPane(glassPane);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setJMenuBar(initialiseMenuBar());
-        setMinimumSize(MainFrame.MINIMUM_SIZE);
-        setPreferredSize(MainFrame.PREFERRED_SIZE);
-        setTitle(this.resourceBundle.getString("MainFrame.title.text"));
+        setMinimumSize(MINIMUM_SIZE);
+        setPreferredSize(PREFERRED_SIZE);
+        setTitle(resourceBundle.getString("MainFrame.title"));
         setLayout(new GridBagLayout());
         initialiseComponents();
     }
 
     private JTable createResultsTable() {
-        return new JTable(this.tableModel, this.contractorTableColumnModel) {
+        return new JTable(tableModel, contractorTableColumnModel) {
 
             @Override
             protected JTableHeader createDefaultTableHeader() {
-                return new JTableHeader(this.columnModel) {
+                return new JTableHeader(columnModel) {
 
                     @Override
                     public String getToolTipText(MouseEvent e) {
                         Point point = e.getPoint();
-                        int columnIndex = this.columnModel
+                        int columnIndex = columnModel
                                 .getColumnIndexAtX(point.x);
-                        int modelIndex = this.columnModel
-                                .getColumn(columnIndex).getModelIndex();
-                        return ((ContractorTableColumnModel) this.columnModel)
+                        int modelIndex = columnModel.getColumn(columnIndex)
+                                .getModelIndex();
+                        return ((ContractorTableColumnModel) columnModel)
                                 .getColumnHeaderToolTipText(modelIndex);
                     }
                 };
@@ -154,12 +153,12 @@ public final class MainFrame extends JFrame implements MainView {
         if (e.getSource() instanceof Component) {
             componentToFocus = (Component) e.getSource();
         }
-        this.presenter.searchActionPerformed(componentToFocus);
+        presenter.searchActionPerformed(componentToFocus);
     }
 
     public void setPresenter(MainPresenter presenter) {
         this.presenter = presenter;
-        this.contractorTableColumnModel.setPresenter(presenter);
+        contractorTableColumnModel.setPresenter(presenter);
     }
 
     public void realise() {
@@ -172,19 +171,19 @@ public final class MainFrame extends JFrame implements MainView {
     }
 
     public String getNameCriteria() {
-        return this.nameTextField.getText();
+        return nameTextField.getText();
     }
 
     public void setNameCriteria(String nameCriteria) {
-        this.nameTextField.setText(null);
+        nameTextField.setText(null);
     }
 
     public String getLocationCriteria() {
-        return this.locationTextField.getText();
+        return locationTextField.getText();
     }
 
     public void setLocationCriteria(String locationCriteria) {
-        this.locationTextField.setText(null);
+        locationTextField.setText(null);
     }
 
     public void setTableModel(ContractorTableModel tableModel) {
@@ -193,12 +192,12 @@ public final class MainFrame extends JFrame implements MainView {
          * Don't want an edit from the previous table model to continue once the
          * new one has been set
          */
-        this.resultsTable.removeEditor();
-        this.resultsTable.setModel(this.tableModel);
+        resultsTable.removeEditor();
+        resultsTable.setModel(this.tableModel);
     }
 
     public void setStatusLabelText(String text) {
-        this.statusLabel.setText(text);
+        statusLabel.setText(text);
     }
 
     public JFrame getFrame() {
@@ -206,27 +205,27 @@ public final class MainFrame extends JFrame implements MainView {
     }
 
     public void disableControls() {
-        this.glassPane.setVisible(true);
-        this.searchAction.setEnabled(false);
-        this.contractorTableColumnModel.disableRendererBookButton();
+        glassPane.setVisible(true);
+        searchAction.setEnabled(false);
+        contractorTableColumnModel.disableRendererBookButton();
     }
 
     public void enableControls(Component componentToFocus) {
-        this.glassPane.setVisible(false);
-        this.searchAction.setEnabled(true);
-        this.contractorTableColumnModel.enableRendererBookButton();
-        this.resultsTable.requestFocus();
+        glassPane.setVisible(false);
+        searchAction.setEnabled(true);
+        contractorTableColumnModel.enableRendererBookButton();
+        resultsTable.requestFocus();
         if (componentToFocus != null) {
             componentToFocus.requestFocus();
         }
     }
 
     public Contractor getContractorAtRow(int rowNo) {
-        return this.tableModel.getContractorAtRow(rowNo);
+        return tableModel.getContractorAtRow(rowNo);
     }
 
     public void updateContractorAtRow(int rowNo, Contractor contractor) {
-        this.tableModel.updateContractorAtRow(rowNo, contractor);
+        tableModel.updateContractorAtRow(rowNo, contractor);
     }
 
     private JMenuBar initialiseMenuBar() {
@@ -234,25 +233,22 @@ public final class MainFrame extends JFrame implements MainView {
         exitMenuItem.setAction(new ExitAction(this));
 
         JMenu fileMenu = new JMenu();
-        fileMenu.setText(this.resourceBundle
-                .getString("MainFrame.fileMenu.text"));
-        fileMenu.setMnemonic(this.resourceBundle.getString(
+        fileMenu.setText(resourceBundle.getString("MainFrame.fileMenu.text"));
+        fileMenu.setMnemonic(resourceBundle.getString(
                 "MainFrame.fileMenu.mnemonic").charAt(0));
         fileMenu.add(exitMenuItem);
 
-        JMenuItem searchMenuItem = new JMenuItem(this.searchAction);
+        JMenuItem searchMenuItem = new JMenuItem(searchAction);
         searchMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
                 InputEvent.CTRL_DOWN_MASK));
 
-        JMenuItem clearCriteriaMenuItem = new JMenuItem(
-                this.clearCriteriaAction);
+        JMenuItem clearCriteriaMenuItem = new JMenuItem(clearCriteriaAction);
         clearCriteriaMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_L, InputEvent.CTRL_DOWN_MASK));
 
         JMenu editMenu = new JMenu();
-        editMenu.setText(this.resourceBundle
-                .getString("MainFrame.editMenu.text"));
-        editMenu.setMnemonic(this.resourceBundle.getString(
+        editMenu.setText(resourceBundle.getString("MainFrame.editMenu.text"));
+        editMenu.setMnemonic(resourceBundle.getString(
                 "MainFrame.editMenu.mnemonic").charAt(0));
         editMenu.add(searchMenuItem);
         editMenu.add(clearCriteriaMenuItem);
@@ -263,9 +259,8 @@ public final class MainFrame extends JFrame implements MainView {
                 KeyEvent.VK_F1, 0));
 
         JMenu helpMenu = new JMenu();
-        helpMenu.setText(this.resourceBundle
-                .getString("MainFrame.helpMenu.text"));
-        helpMenu.setMnemonic(this.resourceBundle.getString(
+        helpMenu.setText(resourceBundle.getString("MainFrame.helpMenu.text"));
+        helpMenu.setMnemonic(resourceBundle.getString(
                 "MainFrame.helpMenu.mnemonic").charAt(0));
         helpMenu.add(helpContentsMenuItem);
 
@@ -301,7 +296,8 @@ public final class MainFrame extends JFrame implements MainView {
 
     private JPanel initialiseSearchPanel() {
         JGradientPanel panel = new JGradientPanel(
-                ApplicationConstants.DARK_BLUE, ApplicationConstants.LIGHT_BLUE);
+                PresentationConstants.DARK_BLUE,
+                PresentationConstants.LIGHT_BLUE);
         panel.setLayout(new GridBagLayout());
 
         GridBagConstraints constraints = new GridBagConstraints();
@@ -311,7 +307,7 @@ public final class MainFrame extends JFrame implements MainView {
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.insets = new Insets(0, 6, 0, 4);
-        panel.add(new JLabel(this.resourceBundle
+        panel.add(new JLabel(resourceBundle
                 .getString("MainFrame.preambleLabel.text")), constraints);
 
         Insets criteriaLabelInsets = new Insets(0, 6, 0, 4);
@@ -321,7 +317,7 @@ public final class MainFrame extends JFrame implements MainView {
         constraints.gridx = 0;
         constraints.gridy = 1;
         constraints.insets = criteriaLabelInsets;
-        panel.add(new JLabel(this.resourceBundle
+        panel.add(new JLabel(resourceBundle
                 .getString("MainFrame.nameLabel.text")), constraints);
 
         constraints = new GridBagConstraints();
@@ -329,7 +325,7 @@ public final class MainFrame extends JFrame implements MainView {
         constraints.gridx = 1;
         constraints.gridy = 1;
         constraints.insets = criteriaLabelInsets;
-        panel.add(new JLabel(this.resourceBundle
+        panel.add(new JLabel(resourceBundle
                 .getString("MainFrame.locationLabel.text")), constraints);
 
         Insets insetsZeroTop = new Insets(0, 4, 15, 4);
@@ -340,9 +336,8 @@ public final class MainFrame extends JFrame implements MainView {
         constraints.gridy = 2;
         constraints.insets = insetsZeroTop;
         constraints.weightx = 1;
-        this.nameTextField
-                .setPreferredSize(MainFrame.TEXT_FIELD_PREFERRED_SIZE);
-        panel.add(this.nameTextField, constraints);
+        nameTextField.setPreferredSize(TEXT_FIELD_PREFERRED_SIZE);
+        panel.add(nameTextField, constraints);
 
         constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -350,18 +345,17 @@ public final class MainFrame extends JFrame implements MainView {
         constraints.gridy = 2;
         constraints.insets = insetsZeroTop;
         constraints.weightx = 1;
-        this.locationTextField
-                .setPreferredSize(MainFrame.TEXT_FIELD_PREFERRED_SIZE);
-        panel.add(this.locationTextField, constraints);
+        locationTextField.setPreferredSize(TEXT_FIELD_PREFERRED_SIZE);
+        panel.add(locationTextField, constraints);
 
         constraints = new GridBagConstraints();
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.gridx = 2;
         constraints.gridy = 2;
         constraints.insets = insetsZeroTop;
-        JButton searchButton = new JButton(this.searchAction);
-        searchButton.setOpaque(false); // Mac VM bug?
-        searchButton.setToolTipText(this.resourceBundle
+        JButton searchButton = new JButton(searchAction);
+        searchButton.setOpaque(false); // TODO Mac VM bug?
+        searchButton.setToolTipText(resourceBundle
                 .getString("MainFrame.searchButton.tooltip"));
         panel.add(searchButton, constraints);
 
@@ -370,12 +364,13 @@ public final class MainFrame extends JFrame implements MainView {
 
     private Component initialiseResultsPanel() {
         JPanel panel = new JPanel();
-        panel.setBackground(ApplicationConstants.LIGHT_BLUE);
+        panel.setBackground(PresentationConstants.LIGHT_BLUE);
         panel.setLayout(new GridBagLayout());
 
         JScrollPane scrollPane = new JScrollPane();
-        scrollPane.getViewport().setBackground(ApplicationConstants.LIGHT_BLUE);
-        scrollPane.setViewportView(this.resultsTable);
+        scrollPane.getViewport()
+                .setBackground(PresentationConstants.LIGHT_BLUE);
+        scrollPane.setViewportView(resultsTable);
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.BOTH;
@@ -383,7 +378,7 @@ public final class MainFrame extends JFrame implements MainView {
         constraints.gridy = 0;
         constraints.weightx = 1;
         constraints.weighty = 1;
-        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        constraints.insets = PresentationConstants.DEFAULT_INSETS;
         panel.add(scrollPane, constraints);
 
         return panel;
@@ -391,7 +386,8 @@ public final class MainFrame extends JFrame implements MainView {
 
     private JPanel initialiseStatusPanel() {
         JGradientPanel panel = new JGradientPanel(
-                ApplicationConstants.LIGHT_BLUE, ApplicationConstants.DARK_BLUE);
+                PresentationConstants.LIGHT_BLUE,
+                PresentationConstants.DARK_BLUE);
         panel.setLayout(new GridBagLayout());
 
         GridBagConstraints constraints = new GridBagConstraints();
@@ -401,14 +397,14 @@ public final class MainFrame extends JFrame implements MainView {
         constraints.gridy = 1;
         constraints.insets = new Insets(2, 4, 2, 4);
         constraints.weightx = 1;
-        panel.add(this.statusLabel, constraints);
+        panel.add(statusLabel, constraints);
 
         return panel;
     }
 
     private void clearCriteriaActionPerformed() {
-        this.nameTextField.setText(null);
-        this.locationTextField.setText(null);
+        nameTextField.setText(null);
+        locationTextField.setText(null);
     }
 
     private static final class SearchAction extends AbstractAction {
@@ -419,13 +415,13 @@ public final class MainFrame extends JFrame implements MainView {
             super(mainFrame.resourceBundle
                     .getString("MainFrame.searchAction.text"));
             this.mainFrame = mainFrame;
-            putValue(Action.MNEMONIC_KEY, new Integer(
-                    this.mainFrame.resourceBundle.getString(
+            putValue(Action.MNEMONIC_KEY, Integer
+                    .valueOf(this.mainFrame.resourceBundle.getString(
                             "MainFrame.searchAction.mnemonic").charAt(0)));
         }
 
         public void actionPerformed(ActionEvent e) {
-            this.mainFrame.searchActionPerformed(e);
+            mainFrame.searchActionPerformed(e);
         }
     }
 
@@ -437,14 +433,15 @@ public final class MainFrame extends JFrame implements MainView {
             super(mainFrame.resourceBundle
                     .getString("MainFrame.clearCriteriaAction.text"));
             this.mainFrame = mainFrame;
-            putValue(
-                    Action.MNEMONIC_KEY,
-                    new Integer(this.mainFrame.resourceBundle.getString(
-                            "MainFrame.clearCriteriaAction.mnemonic").charAt(0)));
+            putValue(Action.MNEMONIC_KEY,
+                    Integer
+                            .valueOf(this.mainFrame.resourceBundle.getString(
+                                    "MainFrame.clearCriteriaAction.mnemonic")
+                                    .charAt(0)));
         }
 
         public void actionPerformed(ActionEvent e) {
-            this.mainFrame.clearCriteriaActionPerformed();
+            mainFrame.clearCriteriaActionPerformed();
         }
     }
 
@@ -456,24 +453,24 @@ public final class MainFrame extends JFrame implements MainView {
             super(mainFrame.resourceBundle
                     .getString("MainFrame.helpContentsAction.text"));
             this.mainFrame = mainFrame;
-            putValue(Action.MNEMONIC_KEY, new Integer(
-                    this.mainFrame.resourceBundle.getString(
+            putValue(Action.MNEMONIC_KEY, Integer
+                    .valueOf(this.mainFrame.resourceBundle.getString(
                             "MainFrame.helpContentsAction.mnemonic").charAt(0)));
         }
 
         public void actionPerformed(ActionEvent evt) {
             URL helpContentsUrl = ClassLoader
-                    .getSystemResource(MainFrame.USER_GUIDE_PATH);
+                    .getSystemResource(USER_GUIDE_PATH);
             if (helpContentsUrl == null) {
                 showErrorDialog();
             } else {
                 try {
                     JEditorPane editorPane = new JEditorPane(helpContentsUrl);
-                    JFrame frame = new JFrame(this.mainFrame.resourceBundle
+                    JFrame frame = new JFrame(mainFrame.resourceBundle
                             .getString("MainFrame.helpContents.title"));
                     frame.add(editorPane);
                     frame.pack();
-                    frame.setLocationRelativeTo(this.mainFrame);
+                    frame.setLocationRelativeTo(mainFrame);
                     frame.setVisible(true);
                 } catch (IOException e) {
                     showErrorDialog();
@@ -482,11 +479,11 @@ public final class MainFrame extends JFrame implements MainView {
         }
 
         private void showErrorDialog() {
-            String message = this.mainFrame.resourceBundle
+            String message = mainFrame.resourceBundle
                     .getString("MainFrame.helpContentsErrorDialog.message");
-            String title = this.mainFrame.resourceBundle
+            String title = mainFrame.resourceBundle
                     .getString("MainFrame.helpContentsErrorDialog.title");
-            JOptionPane.showMessageDialog(this.mainFrame, message, title,
+            JOptionPane.showMessageDialog(mainFrame, message, title,
                     JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -499,8 +496,8 @@ public final class MainFrame extends JFrame implements MainView {
             super(mainFrame.resourceBundle
                     .getString("MainFrame.exitMenuItem.text"));
             this.mainFrame = mainFrame;
-            putValue(Action.MNEMONIC_KEY, new Integer(
-                    this.mainFrame.resourceBundle.getString(
+            putValue(Action.MNEMONIC_KEY, Integer
+                    .valueOf(this.mainFrame.resourceBundle.getString(
                             "MainFrame.exitMenuItem.mnemonic").charAt(0)));
         }
 

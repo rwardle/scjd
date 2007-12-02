@@ -13,7 +13,7 @@ import java.io.RandomAccessFile;
 /**
  * @author Richard Wardle
  */
-public class DatabaseFileImpl implements DatabaseFile {
+public final class DatabaseFileImpl implements DatabaseFile {
 
     private final RandomAccessFile file;
 
@@ -29,42 +29,42 @@ public class DatabaseFileImpl implements DatabaseFile {
         }
 
         // TODO Consider rws and rwd modes
-        this.file = new RandomAccessFile(new File(databaseFilePath), "rw");
+        file = new RandomAccessFile(new File(databaseFilePath), "rw");
     }
 
     public long getFilePointer() throws IOException {
-        return this.file.getFilePointer();
+        return file.getFilePointer();
     }
 
     public long length() throws IOException {
-        return this.file.length();
+        return file.length();
     }
 
     public void seek(long pos) throws IOException {
-        this.file.seek(pos);
+        file.seek(pos);
     }
 
     public byte readByte() throws IOException {
-        return this.file.readByte();
+        return file.readByte();
     }
 
     public short readShort() throws IOException {
-        return this.file.readShort();
+        return file.readShort();
     }
 
     public int readInt() throws IOException {
-        return this.file.readInt();
+        return file.readInt();
     }
 
     public void readFully(byte[] b) throws IOException {
-        this.file.readFully(b);
+        file.readFully(b);
     }
 
     public void write(byte[] b) throws IOException {
-        this.file.write(b);
+        file.write(b);
     }
 
     public void writeByte(int v) throws IOException {
-        this.file.writeByte(v);
+        file.writeByte(v);
     }
 }

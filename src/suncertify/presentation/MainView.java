@@ -46,7 +46,7 @@ public interface MainView {
     void disableControls();
 
     /**
-     * @param focussedComponent
+     * @param componentToFocus
      *                May be null.
      */
     void enableControls(Component componentToFocus);

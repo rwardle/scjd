@@ -11,6 +11,10 @@ import java.io.IOException;
 
 public class DatabaseFactoryImpl implements DatabaseFactory {
 
+    public DatabaseFactoryImpl() {
+        super();
+    }
+
     /**
      * {@inheritDoc}
      */

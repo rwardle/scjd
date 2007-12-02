@@ -76,31 +76,31 @@ public final class ServerApplication extends AbstractApplication {
         String url = getRemoteBrokerServiceUrl();
 
         try {
-            this.rmiService.createRegistry(serverPort);
+            rmiService.createRegistry(serverPort);
             RemoteBrokerService service = new RemoteBrokerServiceImpl(
-                    this.databaseFactory.createDatabase(databaseFilePath));
-            this.rmiService.rebind(url, service);
+                    databaseFactory.createDatabase(databaseFilePath));
+            rmiService.rebind(url, service);
         } catch (RemoteException e) {
             throw new FatalException("Error starting RMI on port: "
-                    + serverPort, "FatalException.rmiServerError", e);
+                    + serverPort, "FatalException.rmiServerError.message", e);
         } catch (MalformedURLException e) {
             throw new FatalException("Broker service URL is malformed: " + url,
-                    "FatalException.rmiServerError", e);
+                    "FatalException.rmiServerError.message", e);
         } catch (FileNotFoundException e) {
             throw new FatalException(
                     "Could not create database: file not found",
-                    "FatalException.databaseFileNotFound", e);
+                    "FatalException.databaseFileNotFound.message", e);
         } catch (DataValidationException e) {
             throw new FatalException(
                     "Could not create database: invalid database file",
-                    "FatalException.databaseInvalid", e);
+                    "FatalException.databaseInvalid.message", e);
         } catch (IOException e) {
             throw new FatalException(
                     "Could not create database: error reading database file",
-                    "FatalException.databaseReadError", e);
+                    "FatalException.databaseReadError.message", e);
         }
 
-        ServerApplication.LOGGER.info("Server running on port " + serverPort);
+        LOGGER.info("Server running on port " + serverPort);
     }
 
     private String getRemoteBrokerServiceUrl() {

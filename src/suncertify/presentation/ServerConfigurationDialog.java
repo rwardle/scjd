@@ -18,8 +18,6 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
-import suncertify.ApplicationConstants;
-
 /**
  * Server mode configuration dialog.
  * 
@@ -38,7 +36,7 @@ public final class ServerConfigurationDialog extends
     public ServerConfigurationDialog() {
         setTitle(getResourceBundle().getString(
                 "ServerConfigurationDialog.title"));
-        this.browseButton.addActionListener(new ActionListener() {
+        browseButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 ServerConfigurationDialog.this.getPresenter()
                         .browseButtonActionPerformed();
@@ -52,7 +50,7 @@ public final class ServerConfigurationDialog extends
     @Override
     protected String getMessageText() {
         return getResourceBundle().getString(
-                "ServerConfigurationDialog.message.text");
+                "ServerConfigurationDialog.message");
     }
 
     /**
@@ -60,7 +58,7 @@ public final class ServerConfigurationDialog extends
      */
     @Override
     public String getDatabaseFilePath() {
-        return this.databaseFilePathField.getText();
+        return databaseFilePathField.getText();
     }
 
     /**
@@ -68,7 +66,7 @@ public final class ServerConfigurationDialog extends
      */
     @Override
     public void setDatabaseFilePath(String databaseFilePath) {
-        this.databaseFilePathField.setText(databaseFilePath);
+        databaseFilePathField.setText(databaseFilePath);
     }
 
     /**
@@ -76,7 +74,7 @@ public final class ServerConfigurationDialog extends
      */
     @Override
     public Integer getServerPort() {
-        return (Integer) this.serverPortSpinner.getValue();
+        return (Integer) serverPortSpinner.getValue();
     }
 
     /**
@@ -84,7 +82,7 @@ public final class ServerConfigurationDialog extends
      */
     @Override
     public void setServerPort(Integer serverPort) {
-        this.serverPortSpinner.setValue(serverPort);
+        serverPortSpinner.setValue(serverPort);
     }
 
     /**
@@ -99,7 +97,7 @@ public final class ServerConfigurationDialog extends
         constraints.anchor = GridBagConstraints.LINE_END;
         constraints.gridx = 0;
         constraints.gridy = 0;
-        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        constraints.insets = PresentationConstants.DEFAULT_INSETS;
         panel.add(new JLabel(getResourceBundle().getString(
                 "ServerConfigurationDialog.databaseFilePathLabel.text")),
                 constraints);
@@ -108,30 +106,28 @@ public final class ServerConfigurationDialog extends
         constraints.fill = GridBagConstraints.BOTH;
         constraints.gridx = 1;
         constraints.gridy = 0;
-        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        constraints.insets = PresentationConstants.DEFAULT_INSETS;
         constraints.weightx = 1;
-        this.databaseFilePathField = new JTextField();
-        this.databaseFilePathField.setEditable(false);
-        this.databaseFilePathField
-                .setToolTipText(getResourceBundle()
-                        .getString(
-                                "ServerConfigurationDialog.databaseFilePathField.tooltip"));
-        panel.add(this.databaseFilePathField, constraints);
+        databaseFilePathField = new JTextField();
+        databaseFilePathField.setEditable(false);
+        databaseFilePathField.setToolTipText(getResourceBundle().getString(
+                "ServerConfigurationDialog.databaseFilePathTextField.tooltip"));
+        panel.add(databaseFilePathField, constraints);
 
         constraints = new GridBagConstraints();
         constraints.gridx = 2;
         constraints.gridy = 0;
-        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
-        this.browseButton = new JButton(getResourceBundle().getString(
+        constraints.insets = PresentationConstants.DEFAULT_INSETS;
+        browseButton = new JButton(getResourceBundle().getString(
                 "ServerConfigurationDialog.browseButton.text"));
-        this.browseButton.setMnemonic(getResourceBundle().getString(
+        browseButton.setMnemonic(getResourceBundle().getString(
                 "ServerConfigurationDialog.browseButton.mnemonic").charAt(0));
-        panel.add(this.browseButton, constraints);
+        panel.add(browseButton, constraints);
 
         constraints = new GridBagConstraints();
         constraints.gridx = 0;
         constraints.gridy = 1;
-        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        constraints.insets = PresentationConstants.DEFAULT_INSETS;
         panel
                 .add(new JLabel(getResourceBundle().getString(
                         "ServerConfigurationDialog.serverPortLabel.text")),
@@ -141,23 +137,23 @@ public final class ServerConfigurationDialog extends
         constraints.anchor = GridBagConstraints.LINE_START;
         constraints.gridx = 1;
         constraints.gridy = 1;
-        constraints.insets = ApplicationConstants.DEFAULT_INSETS;
+        constraints.insets = PresentationConstants.DEFAULT_INSETS;
 
-        this.serverPortSpinner = new JSpinner(new SpinnerNumberModel(
+        serverPortSpinner = new JSpinner(new SpinnerNumberModel(
                 AbstractConfigurationDialog.SERVER_PORT_SPINNER_INITIAL_VALUE,
                 AbstractConfigurationDialog.SERVER_PORT_SPINNER_MINIMUM_VALUE,
                 AbstractConfigurationDialog.SERVER_PORT_SPINNER_MAXIMUM_VALUE,
                 AbstractConfigurationDialog.SERVER_PORT_SPINNER_STEP_SIZE));
-        this.serverPortSpinner.setFont(this.databaseFilePathField.getFont());
-        this.serverPortSpinner.setToolTipText(getResourceBundle().getString(
+        serverPortSpinner.setFont(databaseFilePathField.getFont());
+        serverPortSpinner.setToolTipText(getResourceBundle().getString(
                 "ServerConfigurationDialog.serverPortSpinner.tooltip"));
         JSpinner.DefaultEditor spinnerEditor = new JSpinner.NumberEditor(
-                this.serverPortSpinner,
+                serverPortSpinner,
                 AbstractConfigurationDialog.SERVER_PORT_SPINNER_FORMAT_PATTERN);
         spinnerEditor.getTextField().setColumns(
                 AbstractConfigurationDialog.SERVER_PORT_SPINNER_COLUMNS);
-        this.serverPortSpinner.setEditor(spinnerEditor);
-        panel.add(this.serverPortSpinner, constraints);
+        serverPortSpinner.setEditor(spinnerEditor);
+        panel.add(serverPortSpinner, constraints);
 
         return panel;
     }

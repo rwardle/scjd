@@ -64,22 +64,22 @@ public final class ClientApplication extends AbstractGuiApplication {
                 + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME;
 
         try {
-            return (BrokerService) this.rmiService.lookup(url);
+            return (BrokerService) rmiService.lookup(url);
         } catch (MalformedURLException e) {
             throw new FatalException(
                     "The URL used to lookup the remote broker service object "
                             + "is malformed: '" + url + "'",
-                    "FatalException.rmiClientError", e);
+                    "FatalException.rmiClientError.message", e);
         } catch (RemoteException e) {
             throw new FatalException(
                     "Error communicating with the remote server",
-                    "FatalException.rmiClientError", e);
+                    "FatalException.rmiClientError.message", e);
         } catch (NotBoundException e) {
             throw new FatalException(
                     "Attempted to lookup a name that has not been bound in the "
                             + "RMI registry: '"
                             + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME
-                            + "'", "FatalException.rmiClientError", e);
+                            + "'", "FatalException.rmiClientError.message", e);
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Conctractor.java
+ * Contractor.java
  *
  * 16 Oct 2007
  */
@@ -8,111 +8,171 @@ package suncertify.service;
 
 import java.io.Serializable;
 
-public class Contractor implements Serializable {
+/**
+ * A home improvement contractor.
+ * 
+ * @author Richard Wardle
+ */
+public final class Contractor implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Database record number of this contractor.
+     * 
+     * @serial
+     */
     private final int recordNumber;
+
+    /**
+     * Name of this contractor.
+     * 
+     * @serial
+     */
     private final String name;
+
+    /**
+     * Locality in which this contractor works.
+     * 
+     * @serial
+     */
     private final String location;
+
+    /**
+     * Comma separated list of the types of work this contractor can perform.
+     * 
+     * @serial
+     */
     private final String specialties;
+
+    /**
+     * The number of workers available for this contractor.
+     * 
+     * @serial
+     */
     private final String size;
+
+    /**
+     * Charge per hour of this contractor.
+     * 
+     * @serial
+     */
     private final String rate;
+
+    /**
+     * 8-digit ID of the customer who has booked this contractor.
+     * 
+     * @serial
+     */
     private final String owner;
 
+    /**
+     * Creates a new instance of <code>Contractor</code> with the specfied
+     * <code>recordNumber</code> and <code>data</code> array.
+     * 
+     * @param recordNumber
+     *                Database record number.
+     * @param data
+     *                Data array. Must be an array of length 6 containing
+     *                contractor data in the following order: name, location,
+     *                specialties, size, rate, owner.
+     */
     public Contractor(int recordNumber, String[] data) {
         if (recordNumber < 0) {
             throw new IllegalArgumentException(
                     "recordNumber must be a positive number");
         }
-        if (data == null || data.length != 6) {
-            throw new IllegalArgumentException(
-                    "data array must be non-null and of length 6");
+        if (data == null) {
+            throw new IllegalArgumentException("data array must be non-null");
         }
+
+        String[] clonedData = data.clone();
+        if (clonedData.length != ServiceConstants.FIELD_COUNT) {
+            throw new IllegalArgumentException("data array must be of length "
+                    + ServiceConstants.FIELD_COUNT);
+        }
+
         this.recordNumber = recordNumber;
-        this.name = data[0];
-        this.location = data[1];
-        this.specialties = data[2];
-        this.size = data[3];
-        this.rate = data[4];
-        this.owner = data[5];
+        name = clonedData[ServiceConstants.NAME_FIELD_INDEX];
+        location = clonedData[ServiceConstants.LOCATION_FIELD_INDEX];
+        specialties = clonedData[ServiceConstants.SPECIALTIES_FIELD_INDEX];
+        size = clonedData[ServiceConstants.SIZE_FIELD_INDEX];
+        rate = clonedData[ServiceConstants.RATE_FIELD_INDEX];
+        owner = clonedData[ServiceConstants.OWNER_FIELD_INDEX];
     }
 
+    /**
+     * Returns the database record number of this contractor.
+     * 
+     * @return The record number.
+     */
     public int getRecordNumber() {
-        return this.recordNumber;
+        return recordNumber;
     }
 
+    /**
+     * Returns the name of this contractor.
+     * 
+     * @return The name.
+     */
     public String getName() {
-        return this.name;
+        return name;
     }
 
+    /**
+     * Returns the locality in which this contractor works.
+     * 
+     * @return The location.
+     */
     public String getLocation() {
-        return this.location;
+        return location;
     }
 
+    /**
+     * Returns the types of work this contractor can perform.
+     * 
+     * @return A comma-separated list of the specialties.
+     */
     public String getSpecialties() {
-        return this.specialties;
+        return specialties;
     }
 
+    /**
+     * Returns the number of workers available for this contractor.
+     * 
+     * @return The size.
+     */
     public String getSize() {
-        return this.size;
+        return size;
     }
 
+    /**
+     * Returns the charge per hour of this contractor.
+     * 
+     * @return The rate.
+     */
     public String getRate() {
-        return this.rate;
+        return rate;
     }
 
+    /**
+     * Returns the ID of the customer who has booked this contractor.
+     * 
+     * @return The 8-digit customer ID.
+     */
     public String getOwner() {
-        return this.owner;
+        return owner;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Contractor)) {
-            return false;
-        }
-        Contractor contractor = (Contractor) obj;
-        return this.recordNumber == contractor.recordNumber
-                && this.name == null ? contractor.name == null
-                : this.name.equals(contractor.name) && this.location == null ? contractor.location == null
-                        : this.location.equals(contractor.location)
-                                && this.specialties == null ? contractor.specialties == null
-                                : this.specialties
-                                        .equals(contractor.specialties)
-                                        && this.size == null ? contractor.size == null
-                                        : this.size.equals(contractor.size)
-                                                && this.rate == null ? contractor.rate == null
-                                                : this.rate
-                                                        .equals(contractor.rate)
-                                                        && this.owner == null ? contractor.owner == null
-                                                        : this.owner
-                                                                .equals(contractor.owner);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = 17;
-        result = 37 * result + this.recordNumber;
-        result = 37 * result + (this.name == null ? 0 : this.name.hashCode());
-        result = 37 * result
-                + (this.location == null ? 0 : this.location.hashCode());
-        result = 37 * result
-                + (this.specialties == null ? 0 : this.specialties.hashCode());
-        result = 37 * result + (this.size == null ? 0 : this.size.hashCode());
-        result = 37 * result + (this.rate == null ? 0 : this.rate.hashCode());
-        result = 37 * result + (this.owner == null ? 0 : this.owner.hashCode());
-        return result;
-    }
-
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         return builder.append(super.toString()).append(": recordNumber=")
-                .append(this.recordNumber).append(": name=").append(this.name)
-                .append(", location=").append(this.location).append(
-                        ", specialties=").append(this.specialties).append(
-                        ", size=").append(this.size).append(", rate=").append(
-                        this.rate).append(", owner=").append(this.owner)
-                .toString();
+                .append(recordNumber).append(": name=").append(name).append(
+                        ", location=").append(location)
+                .append(", specialties=").append(specialties).append(", size=")
+                .append(size).append(", rate=").append(rate).append(", owner=")
+                .append(owner).toString();
     }
 }

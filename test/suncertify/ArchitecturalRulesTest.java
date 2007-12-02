@@ -1,5 +1,7 @@
 package suncertify;
 
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,7 +10,6 @@ import java.util.Iterator;
 import jdepend.framework.JDepend;
 import jdepend.framework.JavaPackage;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,40 +26,40 @@ public class ArchitecturalRulesTest {
 
     @Before
     public void setUp() throws IOException {
-        this.jdepend = new JDepend();
-        this.classesDir = System.getProperty("build.classes.dir",
-                ArchitecturalRulesTest.DEFAULT_CLASSES_DIR);
-        this.jdepend.addDirectory(this.classesDir);
+        jdepend = new JDepend();
+        classesDir = System.getProperty("build.classes.dir",
+                DEFAULT_CLASSES_DIR);
+        jdepend.addDirectory(classesDir);
     }
 
     @Test
     public void presentationLayer() {
         Collection<String> violations = new ArrayList<String>();
-        violations.add(ArchitecturalRulesTest.DATA_PACKAGE);
-        assertLayering(ArchitecturalRulesTest.PRESENTATION_PACKAGE, violations);
+        violations.add(DATA_PACKAGE);
+        assertLayering(PRESENTATION_PACKAGE, violations);
     }
 
     @Test
     public void serviceLayer() {
         Collection<String> violations = new ArrayList<String>();
-        violations.add(ArchitecturalRulesTest.APPLICATION_PACKAGE);
-        violations.add(ArchitecturalRulesTest.PRESENTATION_PACKAGE);
-        assertLayering(ArchitecturalRulesTest.SERVICE_PACKAGE, violations);
+        violations.add(APPLICATION_PACKAGE);
+        violations.add(PRESENTATION_PACKAGE);
+        assertLayering(SERVICE_PACKAGE, violations);
     }
 
     @Test
     public void dataLayer() {
         Collection<String> violations = new ArrayList<String>();
-        violations.add(ArchitecturalRulesTest.APPLICATION_PACKAGE);
-        violations.add(ArchitecturalRulesTest.PRESENTATION_PACKAGE);
-        violations.add(ArchitecturalRulesTest.SERVICE_PACKAGE);
-        assertLayering(ArchitecturalRulesTest.DATA_PACKAGE, violations);
+        violations.add(APPLICATION_PACKAGE);
+        violations.add(PRESENTATION_PACKAGE);
+        violations.add(SERVICE_PACKAGE);
+        assertLayering(DATA_PACKAGE, violations);
     }
 
     private void assertLayering(String layer, Collection<String> rules) {
         StringBuilder failureMessage = new StringBuilder();
         if (!isLayeringValid(layer, rules, failureMessage)) {
-            Assert.fail(failureMessage.toString());
+            fail(failureMessage.toString());
         }
     }
 
@@ -66,7 +67,7 @@ public class ArchitecturalRulesTest {
     private boolean isLayeringValid(String layer, Collection<String> rules,
             StringBuilder failureMessage) {
         boolean rulesCorrect = true;
-        Collection allPackages = this.jdepend.analyze();
+        Collection allPackages = jdepend.analyze();
         for (Iterator packIter = allPackages.iterator(); packIter.hasNext();) {
             JavaPackage jPackage = (JavaPackage) packIter.next();
             Collection efferents = jPackage.getEfferents();

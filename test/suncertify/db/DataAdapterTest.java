@@ -1,13 +1,14 @@
 package suncertify.db;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.io.IOException;
 
-import org.hamcrest.CoreMatchers;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,79 +25,69 @@ public class DataAdapterTest {
 
     @Before
     public void setUp() throws Exception {
-        this.mockData = this.context.mock(Data.class);
-        this.dataAdapter = new DataAdapter(this.mockData);
+        mockData = context.mock(Data.class);
+        dataAdapter = new DataAdapter(mockData);
     }
 
     @After
     public void tearDown() {
-        this.context.assertIsSatisfied();
+        context.assertIsSatisfied();
     }
 
     @Test(expected = IOException.class)
     public void readMapsDataAccessException() throws Exception {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(DataAdapterTest.this.mockData).read(
-                        with(Expectations.any(int.class)));
-                will(Expectations.throwException(new DataAccessException(
-                        new IOException())));
+                one(mockData).read(with(any(int.class)));
+                will(throwException(new DataAccessException(new IOException())));
             }
         });
-        this.dataAdapter.read(-1);
+        dataAdapter.read(-1);
     }
 
     @Test(expected = IOException.class)
     public void updateMapsDataAccessException() throws Exception {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(DataAdapterTest.this.mockData).update(
-                        with(Expectations.any(int.class)),
-                        with(Expectations.any(String[].class)));
-                will(Expectations.throwException(new DataAccessException(
-                        new IOException())));
+                one(mockData).update(with(any(int.class)),
+                        with(any(String[].class)));
+                will(throwException(new DataAccessException(new IOException())));
             }
         });
-        this.dataAdapter.update(-1, new String[0]);
+        dataAdapter.update(-1, new String[0]);
     }
 
     @Test(expected = IOException.class)
     public void deleteMapsDataAccessException() throws Exception {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(DataAdapterTest.this.mockData).delete(
-                        with(Expectations.any(int.class)));
-                will(Expectations.throwException(new DataAccessException(
-                        new IOException())));
+                one(mockData).delete(with(any(int.class)));
+                will(throwException(new DataAccessException(new IOException())));
             }
         });
-        this.dataAdapter.delete(-1);
+        dataAdapter.delete(-1);
     }
 
     @Test(expected = IOException.class)
     public void findMapsDataAccessException() throws Exception {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(DataAdapterTest.this.mockData).find(
-                        with(Expectations.any(String[].class)));
-                will(Expectations.throwException(new DataAccessException(
-                        new IOException())));
+                one(mockData).find(with(any(String[].class)));
+                will(throwException(new DataAccessException(new IOException())));
             }
         });
-        this.dataAdapter.find(new String[0]);
+        dataAdapter.find(new String[0]);
     }
 
     @Test(expected = IOException.class)
     public void createMapsDataAccessException() throws Exception {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(DataAdapterTest.this.mockData).create(
-                        with(Expectations.any(String[].class)));
-                will(Expectations.throwException(new DataAccessException(
-                        new IOException())));
+                one(mockData).create(with(any(String[].class)));
+                will(throwException(new DataAccessException(new IOException())));
             }
         });
-        this.dataAdapter.create(new String[0]);
+        dataAdapter.create(new String[0]);
     }
 
     @Test(expected = InterruptedException.class)
@@ -104,38 +95,33 @@ public class DataAdapterTest {
         final IllegalThreadStateException exception = new IllegalThreadStateException();
         exception.initCause(new InterruptedException());
 
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(DataAdapterTest.this.mockData).lock(
-                        with(Expectations.any(int.class)));
-                will(Expectations.throwException(exception));
+                one(mockData).lock(with(any(int.class)));
+                will(throwException(exception));
             }
         });
-        this.dataAdapter.lock(-1);
+        dataAdapter.lock(-1);
     }
 
     @Test
     public void unlockCallDelegates() throws Exception {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(DataAdapterTest.this.mockData).unlock(
-                        with(Expectations.any(int.class)));
+                one(mockData).unlock(with(any(int.class)));
             }
         });
-        this.dataAdapter.unlock(-1);
+        dataAdapter.unlock(-1);
     }
 
     @Test
     public void isLockedCallDelegates() throws Exception {
-        this.context.checking(new Expectations() {
+        context.checking(new Expectations() {
             {
-                one(DataAdapterTest.this.mockData).isLocked(
-                        with(Expectations.any(int.class)));
-                will(Expectations.returnValue(false));
+                one(mockData).isLocked(with(any(int.class)));
+                will(returnValue(false));
             }
         });
-        Assert
-                .assertThat(this.dataAdapter.isLocked(-1), CoreMatchers
-                        .is(false));
+        assertThat(dataAdapter.isLocked(-1), is(false));
     }
 }

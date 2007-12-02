@@ -10,22 +10,21 @@ public class TestConcurrency {
     private final Counter counter = new Counter();
 
     public TestConcurrency() throws Exception {
-        this.data = new Data(new DatabaseFileImpl("suncertify.db"));
+        data = new Data(new DatabaseFileImpl("suncertify.db"));
     }
 
     public void start() {
-        this.threads = new Thread[TestConcurrency.THREAD_COUNT];
-        for (int i = 0; i < this.threads.length; i++) {
-            this.threads[i] = new Thread(new RunTest());
-            this.threads[i].start();
+        threads = new Thread[THREAD_COUNT];
+        for (int i = 0; i < threads.length; i++) {
+            threads[i] = new Thread(new RunTest());
+            threads[i].start();
         }
 
-        for (Thread thread : this.threads) {
+        for (Thread thread : threads) {
             thread.interrupt();
         }
 
-        this.counter.check(TestConcurrency.THREAD_COUNT
-                * TestConcurrency.TXN_COUNT, null);
+        counter.check(THREAD_COUNT * TXN_COUNT, null);
     }
 
     public static void main(String[] args) throws Exception {
@@ -42,16 +41,14 @@ public class TestConcurrency {
         private RandomAction action;
 
         public void run() {
-            for (int i = 0; i < TestConcurrency.TXN_COUNT; i++) {
+            for (int i = 0; i < TXN_COUNT; i++) {
                 try {
-                    TestConcurrency.LOG("Performing action:" + i);
+                    LOG("Performing action:" + i);
                     runSingle();
-                    TestConcurrency.LOG("Completed action:" + i + " on recNo:"
-                            + this.action.index);
+                    LOG("Completed action:" + i + " on recNo:" + action.index);
 
                 } catch (IllegalThreadStateException e) {
-                    TestConcurrency.LOG("Interrupted action:" + i
-                            + ", will go again");
+                    LOG("Interrupted action:" + i + ", will go again");
                     i--;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -60,12 +57,11 @@ public class TestConcurrency {
         }
 
         private void runSingle() throws Exception {
-            this.action = new RandomAction();
-            TestConcurrency.LOG("    <I>Index:" + this.action.getIndex()
-                    + "</I>");
+            action = new RandomAction();
+            LOG("    <I>Index:" + action.getIndex() + "</I>");
 
             try {
-                switch (this.action.getMethodIndex()) {
+                switch (action.getMethodIndex()) {
                 case 0:
                     doCreate();
                     break;
@@ -83,65 +79,62 @@ public class TestConcurrency {
                     break;
                 }
             } catch (RecordNotFoundException ex) {
-                TestConcurrency.LOG("<I>    Record Index not Valid :"
-                        + this.action.getIndex() + "</I>");
+                LOG("<I>    Record Index not Valid :" + action.getIndex()
+                        + "</I>");
             } catch (IllegalStateException ex) {
                 TestConcurrency
                         .LOG("<I>    Thread does not hold lock on record :"
-                                + this.action.getIndex() + "</I>");
+                                + action.getIndex() + "</I>");
             }
 
-            TestConcurrency.this.counter.hit();
+            counter.hit();
         }
 
         private void doCreate() throws Exception {
-            TestConcurrency.LOG("    <I>Method: Create</I>");
-            String[] record = TestConcurrency.this.data.read(this.action
-                    .getIndex());
+            LOG("    <I>Method: Create</I>");
+            String[] record = data.read(action.getIndex());
             for (int i = 0; i < record.length; i++) {
                 // Some value
                 record[i] = "2";
             }
-            TestConcurrency.this.data.create(record);
+            data.create(record);
         }
 
         public void doRead() throws Exception {
-            TestConcurrency.LOG("    <I>Method: Read</I>");
-            TestConcurrency.this.data.read(this.action.getIndex());
+            LOG("    <I>Method: Read</I>");
+            data.read(action.getIndex());
         }
 
         public void doUpdate() throws Exception {
-            TestConcurrency.LOG("    <I>Method: Update</I>");
+            LOG("    <I>Method: Update</I>");
             try {
-                Thread.sleep(this.action.getExecutionTime());
+                Thread.sleep(action.getExecutionTime());
             } catch (InterruptedException e) {
                 // no-op
             }
-            String[] record = TestConcurrency.this.data.read(this.action
-                    .getIndex());
+            String[] record = data.read(action.getIndex());
             // Some updation
             record[record.length - 1] = "1";
-            TestConcurrency.this.data.lock(this.action.getIndex());
+            data.lock(action.getIndex());
             try {
-                TestConcurrency.this.data
-                        .update(this.action.getIndex(), record);
+                data.update(action.getIndex(), record);
             } finally {
-                TestConcurrency.this.data.unlock(this.action.getIndex());
+                data.unlock(action.getIndex());
             }
         }
 
         public void doDelete() throws Exception {
-            TestConcurrency.LOG("    <I>Method: Delete</I>");
-            TestConcurrency.this.data.lock(this.action.getIndex());
+            LOG("    <I>Method: Delete</I>");
+            data.lock(action.getIndex());
             try {
                 try {
-                    Thread.sleep(this.action.getExecutionTime());
+                    Thread.sleep(action.getExecutionTime());
                 } catch (InterruptedException e) {
                     // no-op
                 }
-                TestConcurrency.this.data.delete(this.action.getIndex());
+                data.delete(action.getIndex());
             } finally {
-                TestConcurrency.this.data.unlock(this.action.getIndex());
+                data.unlock(action.getIndex());
             }
 
             // No Unlocking that is taken care in the Delete method itself
@@ -156,21 +149,21 @@ public class TestConcurrency {
         private final int executionTime;
 
         public RandomAction() {
-            this.index = (int) (Math.random() * 100);
-            this.methodIndex = (int) (Math.random() * RandomAction.TEST_METHODS);
-            this.executionTime = (int) (Math.random() * 500);
+            index = (int) (Math.random() * 100);
+            methodIndex = (int) (Math.random() * RandomAction.TEST_METHODS);
+            executionTime = (int) (Math.random() * 500);
         }
 
         public int getIndex() {
-            return this.index;
+            return index;
         }
 
         public int getMethodIndex() {
-            return this.methodIndex;
+            return methodIndex;
         }
 
         public int getExecutionTime() {
-            return this.executionTime;
+            return executionTime;
         }
     }
 
@@ -194,7 +187,7 @@ public class TestConcurrency {
          * 
          */
         public synchronized void hit() {
-            this.hits++;
+            hits++;
         }
 
         /**
@@ -207,7 +200,7 @@ public class TestConcurrency {
          *         number of times.
          */
         private synchronized boolean isDone(int toTest) {
-            return this.hits == toTest;
+            return hits == toTest;
         }
 
         /**
@@ -274,7 +267,7 @@ public class TestConcurrency {
              */
             public void run() {
                 synchronized (Counter.this) {
-                    while (!isDone(this.must)) {
+                    while (!isDone(must)) {
                         try {
                             Counter.this.wait(100);
                         } catch (InterruptedException e) {
@@ -284,8 +277,8 @@ public class TestConcurrency {
                     }
                 }
 
-                if (this.toRun != null) {
-                    this.toRun.run();
+                if (toRun != null) {
+                    toRun.run();
                 }
 
                 System.out.println("Test succeed.");

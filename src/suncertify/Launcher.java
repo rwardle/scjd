@@ -52,18 +52,17 @@ public final class Launcher {
      * the AWT event dispatching thread.
      */
     public void launch() {
-        File propertiesFile = new File(Launcher.CONFIG_FILE_NAME);
-        Launcher.LOGGER.info("Using configuration file: "
+        File propertiesFile = new File(CONFIG_FILE_NAME);
+        LOGGER.info("Using configuration file: "
                 + propertiesFile.getAbsolutePath());
 
-        Application application = this.applicationFactory
+        Application application = applicationFactory
                 .createApplication(new PropertiesConfiguration(propertiesFile));
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            Launcher.LOGGER.log(Level.WARNING,
-                    "Couldn't set system look and feel", e);
+            LOGGER.log(Level.WARNING, "Couldn't set system look and feel", e);
         }
 
         if (application.initialise()) {
@@ -84,8 +83,8 @@ public final class Launcher {
     public static void main(String[] args) {
         Thread.setDefaultUncaughtExceptionHandler(new FatalExceptionHandler());
 
-        ApplicationMode applicationMode = Launcher.getApplicationMode(args);
-        Launcher.LOGGER.info("Running in application mode: " + applicationMode);
+        ApplicationMode applicationMode = getApplicationMode(args);
+        LOGGER.info("Running in application mode: " + applicationMode);
 
         AbstractApplicationFactory applicationFactory = AbstractApplicationFactory
                 .getApplicationFactory(applicationMode);

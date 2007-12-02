@@ -8,11 +8,10 @@ class DataTestConstants {
     static {
         int recordOffset = 0;
         for (int i = 0; i < DatabaseConstants.FIELD_COUNT; i++) {
-            DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[i] = new FieldDescription(
+            EXPECTED_FIELD_DESCRIPTIONS[i] = new FieldDescription(
                     DatabaseConstants.FIELD_NAMES[i],
                     DatabaseConstants.FIELD_LENGTHS[i], recordOffset);
-            recordOffset += DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[i]
-                    .getLength();
+            recordOffset += EXPECTED_FIELD_DESCRIPTIONS[i].getLength();
         }
     }
 
@@ -22,16 +21,14 @@ class DataTestConstants {
     static final String[] RECORD_VALUES_SPACE_PADDED,
             RECORD_VALUES_NULL_PADDED;
     static {
-        RECORD_VALUES_SPACE_PADDED = DataTestConstants.padRecord(
-                DataTestConstants.RECORD_VALUES, ' ');
-        RECORD_VALUES_NULL_PADDED = DataTestConstants.padRecord(
-                DataTestConstants.RECORD_VALUES, '\u0000');
+        RECORD_VALUES_SPACE_PADDED = padRecord(RECORD_VALUES, ' ');
+        RECORD_VALUES_NULL_PADDED = padRecord(RECORD_VALUES, '\u0000');
     }
 
     static String[] padRecord(String[] values, char padChar) {
         String[] paddedValues = new String[values.length];
         for (int i = 0; i < values.length; i++) {
-            paddedValues[i] = DataTestConstants.padField(values[i],
+            paddedValues[i] = padField(values[i],
                     DatabaseConstants.FIELD_LENGTHS[i], padChar);
         }
         return paddedValues;

@@ -15,29 +15,29 @@ class DatabaseSchema {
     private final FieldDescription[] fieldDescriptions;
 
     DatabaseSchema() {
-        this.recordLength = DatabaseConstants.RECORD_LENGTH;
-        this.fieldCount = DatabaseConstants.FIELD_COUNT;
+        recordLength = DatabaseConstants.RECORD_LENGTH;
+        fieldCount = DatabaseConstants.FIELD_COUNT;
 
-        this.fieldDescriptions = new FieldDescription[this.fieldCount];
+        fieldDescriptions = new FieldDescription[fieldCount];
         int recordOffset = 0;
-        for (int i = 0; i < this.fieldCount; i++) {
-            this.fieldDescriptions[i] = new FieldDescription(
+        for (int i = 0; i < fieldCount; i++) {
+            fieldDescriptions[i] = new FieldDescription(
                     DatabaseConstants.FIELD_NAMES[i],
                     DatabaseConstants.FIELD_LENGTHS[i], recordOffset);
-            recordOffset += this.fieldDescriptions[i].getLength();
+            recordOffset += fieldDescriptions[i].getLength();
         }
     }
 
     int getRecordLength() {
-        return this.recordLength;
+        return recordLength;
     }
 
     short getFieldCount() {
-        return this.fieldCount;
+        return fieldCount;
     }
 
     FieldDescription[] getFieldDescriptions() {
-        return this.fieldDescriptions;
+        return fieldDescriptions.clone();
     }
 
     static final class FieldDescription {
@@ -47,21 +47,21 @@ class DatabaseSchema {
         private final int recordOffset;
 
         FieldDescription(String fieldName, short fieldLength, int recordOffset) {
-            this.name = fieldName;
-            this.length = fieldLength;
+            name = fieldName;
+            length = fieldLength;
             this.recordOffset = recordOffset;
         }
 
         String getName() {
-            return this.name;
+            return name;
         }
 
         short getLength() {
-            return this.length;
+            return length;
         }
 
         int getRecordOffset() {
-            return this.recordOffset;
+            return recordOffset;
         }
     }
 }
