@@ -17,7 +17,8 @@ import suncertify.service.BrokerService;
 import suncertify.service.BrokerServiceImpl;
 
 /**
- * An application that runs in {@link ApplicationMode#STANDALONE} mode.
+ * An application that runs in {@link ApplicationMode#STANDALONE STANDALONE}
+ * mode.
  * 
  * @author Richard Wardle
  */

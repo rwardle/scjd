@@ -23,8 +23,8 @@ public enum ApplicationMode {
     SERVER,
 
     /**
-     * An application that runs locally (i.e. with no networking) and provides
-     * both user-interface and database management functionality.
+     * An application that runs locally (with no networking) and provides both
+     * user-interface and database management functionality.
      */
     STANDALONE
 }

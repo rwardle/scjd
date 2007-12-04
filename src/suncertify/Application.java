@@ -15,9 +15,9 @@ package suncertify;
 public interface Application {
 
     /**
-     * Initialises the application (e.g. obtaining and applying configuration)
-     * and returns a <code>boolean</code> flag indicating if the intialisation
-     * completed successfully or not.
+     * Initialises the application (obtaining and applying configuration, for
+     * example) and returns a <code>boolean</code> flag indicating if the
+     * initialisation completed successfully or not.
      * 
      * @return <code>true</code> if the initialisation completed successfully,
      *         <code>false</code> otherwise.

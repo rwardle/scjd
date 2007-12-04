@@ -9,7 +9,10 @@ package suncertify.db;
 import java.io.IOException;
 
 /**
- * Adapts {@link Data} to the {@link Database} interface.
+ * Adapts {@link Data} to the {@link Database} interface. The main purpose of
+ * this class is to map the <code>DataAccessException</code>s thrown from
+ * <code>Data</code> into the <code>IOException</code>s required by the
+ * <code>Database</code> interface.
  * 
  * @author Richard Wardle
  */

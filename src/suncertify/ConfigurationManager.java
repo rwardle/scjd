@@ -10,8 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Provides a simplified interface for <code>Configuration</code> (facade
- * pattern).
+ * Provides a simplified interface for {@link Configuration} (facade pattern).
  * 
  * @author Richard Wardle
  */

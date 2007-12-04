@@ -19,8 +19,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Implementation of <code>Configuration</code> that uses a properties file to
- * store application configuraiton.
+ * Implementation of {@link Configuration} that uses a properties file to store
+ * application configuration.
  * 
  * @author Richard Wardle
  */

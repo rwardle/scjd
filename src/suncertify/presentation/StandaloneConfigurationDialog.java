@@ -20,7 +20,7 @@ import suncertify.ApplicationMode;
 
 /**
  * Configuration dialog for applications running in
- * {@link ApplicationMode#STANDALONE} mode.
+ * {@link ApplicationMode#STANDALONE STANDALONE} mode.
  * 
  * @author Richard Wardle
  */

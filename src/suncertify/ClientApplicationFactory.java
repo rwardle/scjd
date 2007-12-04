@@ -9,7 +9,7 @@ package suncertify;
 import suncertify.service.RmiServiceImpl;
 
 /**
- * Creates client applications.
+ * Creates applications that run in {@link ApplicationMode#CLIENT CLIENT} mode.
  * 
  * @author Richard Wardle
  */

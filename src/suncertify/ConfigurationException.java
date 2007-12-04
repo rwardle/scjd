@@ -7,8 +7,7 @@
 package suncertify;
 
 /**
- * A configuration exception, i.e. an exception that arises as a result of
- * configuring the application.
+ * An exception that arises as a result of configuring the application.
  * 
  * @author Richard Wardle
  */

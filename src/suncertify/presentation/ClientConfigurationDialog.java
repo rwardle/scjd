@@ -18,7 +18,7 @@ import suncertify.ApplicationMode;
 
 /**
  * Configuration dialog for applications running in
- * {@link ApplicationMode#CLIENT} mode.
+ * {@link ApplicationMode#CLIENT CLIENT} mode.
  * 
  * @author Richard Wardle
  */

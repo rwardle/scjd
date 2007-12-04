@@ -91,7 +91,7 @@ public class DataTest {
         checkingMagicCookieRead(DatabaseConstants.MAGIC_COOKIE, sequence);
         int invalidRecordLength = -1;
         assertThat(invalidRecordLength,
-                is(not(DatabaseConstants.RECORD_LENGTH)));
+                is(not(DataTestConstants.EXPECTED_RECORD_LENGTH)));
         checkingRecordLengthRead(invalidRecordLength, sequence);
         data = new Data(mockDatabaseFile);
     }
@@ -112,9 +112,11 @@ public class DataTest {
             throws Exception {
         Sequence sequence = context.sequence("construction");
         checkingMagicCookieRead(DatabaseConstants.MAGIC_COOKIE, sequence);
-        checkingRecordLengthRead(DatabaseConstants.RECORD_LENGTH, sequence);
+        checkingRecordLengthRead(DataTestConstants.EXPECTED_RECORD_LENGTH,
+                sequence);
         short invalidFieldCount = -1;
-        assertThat(invalidFieldCount, is(not(DatabaseConstants.FIELD_COUNT)));
+        assertThat(invalidFieldCount,
+                is(not(DataTestConstants.EXPECTED_FIELD_COUNT)));
         checkingFieldCount(invalidFieldCount, sequence);
         data = new Data(mockDatabaseFile);
     }
@@ -135,8 +137,9 @@ public class DataTest {
             throws Exception {
         Sequence sequence = context.sequence("construction");
         checkingMagicCookieRead(DatabaseConstants.MAGIC_COOKIE, sequence);
-        checkingRecordLengthRead(DatabaseConstants.RECORD_LENGTH, sequence);
-        checkingFieldCount(DatabaseConstants.FIELD_COUNT, sequence);
+        checkingRecordLengthRead(DataTestConstants.EXPECTED_RECORD_LENGTH,
+                sequence);
+        checkingFieldCount(DataTestConstants.EXPECTED_FIELD_COUNT, sequence);
 
         short invalidFieldLength = -1;
         assertThat(invalidFieldLength,
@@ -178,8 +181,9 @@ public class DataTest {
             throws Exception {
         final Sequence sequence = context.sequence("construction");
         checkingMagicCookieRead(DatabaseConstants.MAGIC_COOKIE, sequence);
-        checkingRecordLengthRead(DatabaseConstants.RECORD_LENGTH, sequence);
-        checkingFieldCount(DatabaseConstants.FIELD_COUNT, sequence);
+        checkingRecordLengthRead(DataTestConstants.EXPECTED_RECORD_LENGTH,
+                sequence);
+        checkingFieldCount(DataTestConstants.EXPECTED_FIELD_COUNT, sequence);
         checkingFieldDescriptions(
                 DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS, sequence);
         checkingDataSectionOffset(sequence);
@@ -197,7 +201,7 @@ public class DataTest {
     private long getOffsetForRecord(int recNo) {
         return dataSectionOffset
                 + recNo
-                * (DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH + DatabaseConstants.RECORD_LENGTH);
+                * (DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH + DataTestConstants.EXPECTED_RECORD_LENGTH);
     }
 
     @Test
@@ -208,8 +212,9 @@ public class DataTest {
     private void standardSetup() throws Exception {
         Sequence sequence = context.sequence("construction");
         checkingMagicCookieRead(DatabaseConstants.MAGIC_COOKIE, sequence);
-        checkingRecordLengthRead(DatabaseConstants.RECORD_LENGTH, sequence);
-        checkingFieldCount(DatabaseConstants.FIELD_COUNT, sequence);
+        checkingRecordLengthRead(DataTestConstants.EXPECTED_RECORD_LENGTH,
+                sequence);
+        checkingFieldCount(DataTestConstants.EXPECTED_FIELD_COUNT, sequence);
         checkingFieldDescriptions(
                 DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS, sequence);
         checkingDataSectionOffset(sequence);
@@ -240,7 +245,7 @@ public class DataTest {
                 will(Expectations
                         .returnValue(dataSectionOffset
                                 + recordCount
-                                * (DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH + DatabaseConstants.RECORD_LENGTH)));
+                                * (DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH + DataTestConstants.EXPECTED_RECORD_LENGTH)));
                 inSequence(sequence);
             }
         });
@@ -270,8 +275,9 @@ public class DataTest {
     private void assertSchema() {
         DatabaseSchema schema = data.getDatabaseSchema();
         assertThat(schema.getRecordLength(),
-                is(DatabaseConstants.RECORD_LENGTH));
-        assertThat(schema.getFieldCount(), is(DatabaseConstants.FIELD_COUNT));
+                is(DataTestConstants.EXPECTED_RECORD_LENGTH));
+        assertThat(schema.getFieldCount(),
+                is(DataTestConstants.EXPECTED_FIELD_COUNT));
 
         FieldDescription[] fieldDescriptions = schema.getFieldDescriptions();
         assertThat(fieldDescriptions, is(notNullValue()));
@@ -398,7 +404,7 @@ public class DataTest {
         standardSetup();
         int recNo = 0;
         data.lock(recNo);
-        String[] recordValues = new String[DatabaseConstants.FIELD_COUNT + 1];
+        String[] recordValues = new String[DataTestConstants.EXPECTED_FIELD_COUNT + 1];
         System.arraycopy(DataTestConstants.RECORD_VALUES, recNo, recordValues,
                 recNo, DataTestConstants.RECORD_VALUES.length);
         data.update(recNo, recordValues);
@@ -636,7 +642,7 @@ public class DataTest {
     public void shouldThrowExceptionWhenCreateCalledWithInvalidDataArrayLength()
             throws Exception {
         standardSetup();
-        String[] recordValues = new String[DatabaseConstants.FIELD_COUNT + 1];
+        String[] recordValues = new String[DataTestConstants.EXPECTED_FIELD_COUNT + 1];
         System.arraycopy(DataTestConstants.RECORD_VALUES, 0, recordValues, 0,
                 DataTestConstants.RECORD_VALUES.length);
         data.create(recordValues);

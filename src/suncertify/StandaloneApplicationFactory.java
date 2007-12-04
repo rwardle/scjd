@@ -9,7 +9,8 @@ package suncertify;
 import suncertify.db.DatabaseFactoryImpl;
 
 /**
- * Creates standalone applications.
+ * Creates applications that run in
+ * {@link ApplicationMode#STANDALONE STANDALONE} mode.
  * 
  * @author Richard Wardle
  */

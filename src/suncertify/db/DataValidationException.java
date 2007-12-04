@@ -7,7 +7,7 @@
 package suncertify.db;
 
 /**
- * A database validation exception, i.e. indicates an invalid database file.
+ * An exception that indicates an invalid database file.
  * 
  * @author Richard Wardle
  */

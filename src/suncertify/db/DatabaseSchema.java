@@ -13,23 +13,23 @@ package suncertify.db;
  */
 public final class DatabaseSchema {
 
-    private final int recordLength;
-    private final short fieldCount;
+    private static final int RECORD_LENGTH = 182;
+    private static final short FIELD_COUNT = 6;
+    private static final String[] FIELD_NAMES = { "name", "location",
+            "specialties", "size", "rate", "owner" };
+    private static final short[] FIELD_LENGTHS = { 32, 64, 64, 6, 8, 8 };
+
     private final FieldDescription[] fieldDescriptions;
 
     /**
      * Creates a new instance of <code>DatabaseSchema</code>.
      */
     public DatabaseSchema() {
-        recordLength = DatabaseConstants.RECORD_LENGTH;
-        fieldCount = DatabaseConstants.FIELD_COUNT;
-
-        fieldDescriptions = new FieldDescription[fieldCount];
+        fieldDescriptions = new FieldDescription[FIELD_COUNT];
         int recordOffset = 0;
-        for (int i = 0; i < fieldCount; i++) {
-            fieldDescriptions[i] = new FieldDescription(
-                    DatabaseConstants.FIELD_NAMES[i],
-                    DatabaseConstants.FIELD_LENGTHS[i], recordOffset);
+        for (int i = 0; i < FIELD_COUNT; i++) {
+            fieldDescriptions[i] = new FieldDescription(FIELD_NAMES[i],
+                    FIELD_LENGTHS[i], recordOffset);
             recordOffset += fieldDescriptions[i].getLength();
         }
     }
@@ -40,7 +40,7 @@ public final class DatabaseSchema {
      * @return The record length.
      */
     public int getRecordLength() {
-        return recordLength;
+        return RECORD_LENGTH;
     }
 
     /**
@@ -49,7 +49,7 @@ public final class DatabaseSchema {
      * @return The field count.
      */
     public short getFieldCount() {
-        return fieldCount;
+        return FIELD_COUNT;
     }
 
     /**

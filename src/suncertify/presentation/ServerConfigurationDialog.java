@@ -21,7 +21,7 @@ import suncertify.ApplicationMode;
 
 /**
  * Configuration dialog for applications running in
- * {@link ApplicationMode#SERVER} mode.
+ * {@link ApplicationMode#SERVER SERVER} mode.
  * 
  * @author Richard Wardle
  */

@@ -7,9 +7,9 @@
 package suncertify;
 
 /**
- * A fatal exception, i.e. an exception that should end the execution of the
- * application. Can be created with a <code>messageKey</code> to use for
- * looking-up a user-friendly error message in a resource bundle.
+ * An exception that should end the execution of the application. Can be created
+ * with a <code>messageKey</code> to use for looking-up a user-friendly error
+ * message in a resource bundle.
  * 
  * @author Richard Wardle
  */

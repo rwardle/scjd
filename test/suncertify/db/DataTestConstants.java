@@ -4,13 +4,19 @@ import suncertify.db.DatabaseSchema.FieldDescription;
 
 public class DataTestConstants {
 
-    public static final FieldDescription[] EXPECTED_FIELD_DESCRIPTIONS = new FieldDescription[DatabaseConstants.FIELD_COUNT];
+    public static final int EXPECTED_RECORD_LENGTH = 182;
+    public static final short EXPECTED_FIELD_COUNT = 6;
+
+    private static final String[] FIELD_NAMES = { "name", "location",
+            "specialties", "size", "rate", "owner" };
+    private static final short[] FIELD_LENGTHS = { 32, 64, 64, 6, 8, 8 };
+
+    public static final FieldDescription[] EXPECTED_FIELD_DESCRIPTIONS = new FieldDescription[EXPECTED_FIELD_COUNT];
     static {
         int recordOffset = 0;
-        for (int i = 0; i < DatabaseConstants.FIELD_COUNT; i++) {
+        for (int i = 0; i < EXPECTED_FIELD_COUNT; i++) {
             EXPECTED_FIELD_DESCRIPTIONS[i] = new FieldDescription(
-                    DatabaseConstants.FIELD_NAMES[i],
-                    DatabaseConstants.FIELD_LENGTHS[i], recordOffset);
+                    FIELD_NAMES[i], FIELD_LENGTHS[i], recordOffset);
             recordOffset += EXPECTED_FIELD_DESCRIPTIONS[i].getLength();
         }
     }
@@ -28,8 +34,7 @@ public class DataTestConstants {
     public static String[] padRecord(String[] values, char padChar) {
         String[] paddedValues = new String[values.length];
         for (int i = 0; i < values.length; i++) {
-            paddedValues[i] = padField(values[i],
-                    DatabaseConstants.FIELD_LENGTHS[i], padChar);
+            paddedValues[i] = padField(values[i], FIELD_LENGTHS[i], padChar);
         }
         return paddedValues;
     }

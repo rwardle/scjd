@@ -10,7 +10,7 @@ import suncertify.db.DatabaseFactoryImpl;
 import suncertify.service.RmiServiceImpl;
 
 /**
- * Creates server applications.
+ * Creates applications that run in {@link ApplicationMode#SERVER SERVER} mode.
  * 
  * @author Richard Wardle
  */

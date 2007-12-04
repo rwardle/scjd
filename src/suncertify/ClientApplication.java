@@ -16,7 +16,7 @@ import suncertify.service.BrokerService;
 import suncertify.service.RmiService;
 
 /**
- * An application that runs in {@link ApplicationMode#CLIENT} mode.
+ * An application that runs in {@link ApplicationMode#CLIENT CLIENT} mode.
  * 
  * @author Richard Wardle
  */

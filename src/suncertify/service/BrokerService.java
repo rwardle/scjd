@@ -42,9 +42,9 @@ public interface BrokerService {
      *                 If the contractor does not exist anymore.
      * @throws ContractorModifiedException
      *                 If the current data stored on the contractor does not
-     *                 match the data supplied to this method, i.e. the
-     *                 contractor has been modified since the client last
-     *                 retrieved the data.
+     *                 match the data supplied to this method (likely to be
+     *                 because the contractor has been modified since the client
+     *                 last retrieved the data).
      */
     void book(String customerId, Contractor contractor) throws IOException,
             ContractorDeletedException, ContractorModifiedException;

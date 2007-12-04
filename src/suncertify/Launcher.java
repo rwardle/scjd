@@ -98,7 +98,7 @@ public final class Launcher {
     }
 
     /**
-     * Returns the application mode corresponding to the specified commmand line
+     * Returns the application mode corresponding to the specified command line
      * arguments.
      * 
      * @param args

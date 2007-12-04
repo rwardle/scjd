@@ -13,9 +13,9 @@ package suncertify;
  */
 public enum ReturnStatus {
 
-    /** Dialog was cancelled. */
+    /** Cancel was selected. */
     CANCEL,
 
-    /** Dialog was okayed. */
+    /** OK was selected. */
     OK
 }

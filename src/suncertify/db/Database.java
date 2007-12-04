@@ -9,12 +9,13 @@ package suncertify.db;
 import java.io.IOException;
 
 /**
- * Interface defining methods for interacting with the contractor database.
+ * Interface defining methods for interacting with a contractor database.
  * Defines the same methods as {@link DBMain} but methods that interact with the
  * database file are declared to throw {@link IOException}. Clients should code
  * to this interface in preference to <code>DBMain</code>.
  * 
- * TODO Mention lock/action/unlock on same thread, maybe also in DBMain.
+ * TODO Mention lock/action/unlock on same thread, maybe also in DBMain. Also
+ * mention which methods need to have had lock called before they can be called.
  * 
  * @author Richard Wardle
  */

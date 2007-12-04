@@ -7,7 +7,7 @@
 package suncertify.db;
 
 /**
- * Interface defining methods for interacting with the contractor database.
+ * Interface defining methods for interacting with a contractor database.
  * 
  * @author Richard Wardle
  */

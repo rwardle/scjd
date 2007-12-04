@@ -21,7 +21,7 @@ import suncertify.service.RemoteBrokerServiceImpl;
 import suncertify.service.RmiService;
 
 /**
- * An application that runs in {@link ApplicationMode#SERVER} mode.
+ * An application that runs in {@link ApplicationMode#SERVER SERVER} mode.
  * 
  * @author Richard Wardle
  */

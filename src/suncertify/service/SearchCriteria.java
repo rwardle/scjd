@@ -82,7 +82,7 @@ public final class SearchCriteria implements Serializable {
      * Sets the contractor name criteria.
      * 
      * @param name
-     *                Name critiera.
+     *                Name criteria.
      * @return This <code>SearchCriteria</code> object.
      */
     public SearchCriteria setName(String name) {
@@ -103,7 +103,7 @@ public final class SearchCriteria implements Serializable {
      * Sets the contractor location criteria.
      * 
      * @param location
-     *                Location critiera.
+     *                Location criteria.
      * @return This <code>SearchCriteria</code> object.
      */
     public SearchCriteria setLocation(String location) {
@@ -124,7 +124,7 @@ public final class SearchCriteria implements Serializable {
      * Sets the contractor specialties criteria.
      * 
      * @param specialties
-     *                Specialties critiera.
+     *                Specialties criteria.
      * @return This <code>SearchCriteria</code> object.
      */
     public SearchCriteria setSpecialties(String specialties) {
@@ -145,7 +145,7 @@ public final class SearchCriteria implements Serializable {
      * Sets the contractor size criteria.
      * 
      * @param size
-     *                Size critiera.
+     *                Size criteria.
      * @return This <code>SearchCriteria</code> object.
      */
     public SearchCriteria setSize(String size) {
@@ -166,7 +166,7 @@ public final class SearchCriteria implements Serializable {
      * Sets the contractor rate criteria.
      * 
      * @param rate
-     *                Rate critiera.
+     *                Rate criteria.
      * @return This <code>SearchCriteria</code> object.
      */
     public SearchCriteria setRate(String rate) {
@@ -187,7 +187,7 @@ public final class SearchCriteria implements Serializable {
      * Sets the contractor owner criteria.
      * 
      * @param owner
-     *                Owner critiera.
+     *                Owner criteria.
      * @return This <code>SearchCriteria</code> object.
      */
     public SearchCriteria setOwner(String owner) {
@@ -196,7 +196,7 @@ public final class SearchCriteria implements Serializable {
     }
 
     /**
-     * Returns the search critieria as an array of <code>String</code>s.
+     * Returns the search criteria as an array of <code>String</code>s.
      * 
      * @return An array of length 6 containing the search criteria in the
      *         following order: name, location, specialties, size, rate, owner.

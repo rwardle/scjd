@@ -12,7 +12,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 /**
- * Implementation of {@link DatabaseFile}.
+ * Implementation of {@link DatabaseFile} that delegates to
+ * {@link RandomAccessFile}.
  * 
  * @author Richard Wardle
  */

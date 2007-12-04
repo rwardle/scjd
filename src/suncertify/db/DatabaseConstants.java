@@ -22,19 +22,6 @@ public class DatabaseConstants {
     /** Magic cookie value used to identify a contractor database. */
     public static final int MAGIC_COOKIE = 513;
 
-    /** Length of a database record. */
-    public static final int RECORD_LENGTH = 182;
-
-    /** Number of fields in a database record. */
-    public static final short FIELD_COUNT = 6;
-
-    /** Database field names. */
-    public static final String[] FIELD_NAMES = { "name", "location",
-            "specialties", "size", "rate", "owner" };
-
-    /** Database field lengths. */
-    public static final short[] FIELD_LENGTHS = { 32, 64, 64, 6, 8, 8 };
-
     /** Length of the flag that indicates a valid record. */
     public static final int RECORD_VALIDITY_FLAG_LENGTH = 1;
 
