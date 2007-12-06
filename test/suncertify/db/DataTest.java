@@ -242,10 +242,9 @@ public class DataTest {
         context.checking(new Expectations() {
             {
                 one(mockDatabaseFile).length();
-                will(Expectations
-                        .returnValue(dataSectionOffset
-                                + recordCount
-                                * (DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH + DataTestConstants.EXPECTED_RECORD_LENGTH)));
+                will(returnValue(dataSectionOffset
+                        + recordCount
+                        * (DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH + DataTestConstants.EXPECTED_RECORD_LENGTH)));
                 inSequence(sequence);
             }
         });
@@ -256,16 +255,13 @@ public class DataTest {
         context.checking(new Expectations() {
             {
                 for (int recNo = 0; recNo < recordCount; recNo++) {
-                    one(mockDatabaseFile)
-                            .seek(
-                                    with(Expectations
-                                            .equal(getOffsetForRecord(recNo))));
+                    one(mockDatabaseFile).seek(
+                            with(equal(getOffsetForRecord(recNo))));
                     inSequence(sequence);
 
                     one(mockDatabaseFile).readByte();
-                    will(Expectations
-                            .returnValue(deletedRecNos.contains(recNo) ? DatabaseConstants.DELETED_RECORD_FLAG
-                                    : DatabaseConstants.VALID_RECORD_FLAG));
+                    will(returnValue(deletedRecNos.contains(recNo) ? DatabaseConstants.DELETED_RECORD_FLAG
+                            : DatabaseConstants.VALID_RECORD_FLAG));
                     inSequence(sequence);
                 }
             }
@@ -507,17 +503,15 @@ public class DataTest {
                     if (recordValues[i] != null) {
                         one(mockDatabaseFile)
                                 .seek(
-                                        with(Expectations
-                                                .equal(recordValuesStartPos
-                                                        + DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[i]
-                                                                .getRecordOffset())));
+                                        with(equal(recordValuesStartPos
+                                                + DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[i]
+                                                        .getRecordOffset())));
                         inSequence(sequence);
 
                         one(mockDatabaseFile)
                                 .write(
-                                        with(Expectations
-                                                .equal(recordValues[i]
-                                                        .getBytes(DatabaseConstants.CHARACTER_SET))));
+                                        with(equal(recordValues[i]
+                                                .getBytes(DatabaseConstants.CHARACTER_SET))));
                         inSequence(sequence);
                     }
                 }
@@ -697,10 +691,8 @@ public class DataTest {
 
         context.checking(new Expectations() {
             {
-                one(mockDatabaseFile)
-                        .writeByte(
-                                with(Expectations
-                                        .equal((int) DatabaseConstants.VALID_RECORD_FLAG)));
+                one(mockDatabaseFile).writeByte(
+                        with(equal((int) DatabaseConstants.VALID_RECORD_FLAG)));
                 inSequence(sequence);
 
                 one(mockDatabaseFile).write(

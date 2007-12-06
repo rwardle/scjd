@@ -119,51 +119,37 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
         dispose();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public final Component getComponent() {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getDatabaseFilePath() {
         return databaseFilePath;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void setDatabaseFilePath(String databaseFilePath) {
         this.databaseFilePath = databaseFilePath;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getServerAddress() {
         return serverAddress;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void setServerAddress(String serverAddress) {
         this.serverAddress = serverAddress;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Integer getServerPort() {
         return serverPort;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void setServerPort(Integer serverPort) {
         this.serverPort = serverPort;
     }

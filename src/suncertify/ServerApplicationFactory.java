@@ -24,9 +24,9 @@ public final class ServerApplicationFactory extends AbstractApplicationFactory {
     }
 
     /**
-     * This implementation creates a server application.
-     * <p>
      * {@inheritDoc}
+     * <p>
+     * This implementation creates a server application.
      */
     @Override
     public Application createApplication(Configuration configuration) {

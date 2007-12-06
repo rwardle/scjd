@@ -119,19 +119,15 @@ public class ConfigurationPresenterTest {
                 one(mockView).close();
                 one(mockConfiguration)
                         .setProperty(
-                                with(Expectations
-                                        .equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)),
+                                with(equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)),
                                 with(equal(newDatabaseFilePath)));
                 one(mockConfiguration)
                         .setProperty(
-                                with(Expectations
-                                        .equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)),
+                                with(equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)),
                                 with(equal(newServerAddress)));
-                one(mockConfiguration)
-                        .setProperty(
-                                with(Expectations
-                                        .equal(ApplicationConstants.SERVER_PORT_PROPERTY)),
-                                with(equal(newServerPort.toString())));
+                one(mockConfiguration).setProperty(
+                        with(equal(ApplicationConstants.SERVER_PORT_PROPERTY)),
+                        with(equal(newServerPort.toString())));
             }
         });
 

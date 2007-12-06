@@ -510,7 +510,7 @@ public final class MainFrame extends JFrame implements MainView {
         }
     }
 
-    // TODO Document use of GlassPane
+    // TODO Document use of GlassPane. Move to top-level class?
     private static final class GlassPane extends JComponent {
 
         public GlassPane() {

@@ -8,6 +8,29 @@ package suncertify.db;
 
 /**
  * Interface defining methods for interacting with a contractor database.
+ * Clients should code to the {@link Database} interface in preference to this
+ * one (see <code>suncertify.db</code> package documentation).
+ * <p>
+ * A logical record locking system is employed to ensure that clients cannot
+ * corrupt the database through simultaneous operations that modify the same
+ * record. The methods that modify the database are <code>update</code> and
+ * <code>delete</code>.
+ * <p>
+ * Clients that want to call the <code>update</code> method for a record must
+ * first call the <code>lock</code> method to prevent any other client from
+ * operating on this record. After the <code>update</code> method has
+ * completed the client must then call the <code>unlock</code> method to make
+ * this record available for modification by other clients. Note that the
+ * <code>lock</code>, <code>update</code>, <code>unlock</code> method
+ * call sequence must be made on the same thread of execution.
+ * <p>
+ * Clients that want to call the <code>delete</code> method for a record must
+ * first call the <code>lock</code> method to prevent any other client from
+ * operating on this record. Clients need NOT call the <code>unlock</code>
+ * method after the <code>delete</code> method has completed, doing so will
+ * throw a <code>RecordNotFoundException</code> since the record will have
+ * been deleted. Note that the <code>lock</code>, <code>delete</code>
+ * method call sequence must be made on the same thread of execution.
  * 
  * @author Richard Wardle
  */
@@ -28,7 +51,8 @@ public interface DBMain {
 
     /**
      * Modifies the fields of a record. The new value for field n appears in
-     * data[n].
+     * data[n]. The calling thread must hold the lock on the record to be
+     * updated.
      * 
      * @param recNo
      *                Database record number.
@@ -42,7 +66,9 @@ public interface DBMain {
 
     /**
      * Deletes a record, making the record number and associated disk storage
-     * available for reuse.
+     * available for reuse. The calling thread must hold the lock on the record
+     * to be deleted. It is not necessary to call <code>unlock</code> after
+     * calling this method.
      * 
      * @param recNo
      *                Database record number.
@@ -54,10 +80,12 @@ public interface DBMain {
 
     /**
      * Returns an array of record numbers that match the specified criteria.
-     * Field n in the database file is described by criteria[n]. A null value in
-     * criteria[n] matches any field value. A non-null value in criteria[n]
-     * matches any field value that begins with criteria[n]. (For example,
-     * "Fred" matches "Fred" or "Freddy".)
+     * Field <code>n</code> in the database file is described by
+     * <code>criteria[n]</code>. A <code>null</code> value in
+     * <code>criteria[n]</code> matches any field value. A non-<code>null</code>
+     * value in <code>criteria[n]</code> matches any field value that begins
+     * with <code>criteria[n]</code>. (For example, "Fred" matches "Fred" or
+     * "Freddy".)
      * 
      * @param criteria
      *                <code>String</code> array containing search criteria.
@@ -81,7 +109,7 @@ public interface DBMain {
     int create(String[] data) throws DuplicateKeyException;
 
     /**
-     * Locks a record so that it can only be updated or deleted by this client.
+     * Locks a record so that it can only be updated or deleted by this thread.
      * If the specified record is already locked, the current thread gives up
      * the CPU and consumes no CPU cycles until the record is unlocked.
      * 
@@ -94,7 +122,8 @@ public interface DBMain {
     void lock(int recNo) throws RecordNotFoundException;
 
     /**
-     * Releases the lock on a record.
+     * Releases the lock on a record. The calling thread must hold the lock on
+     * the record to be unlocked.
      * 
      * @param recNo
      *                Database record number.
@@ -105,8 +134,8 @@ public interface DBMain {
     void unlock(int recNo) throws RecordNotFoundException;
 
     /**
-     * Determines if a record is currently locked. Returns true if the record is
-     * locked, false otherwise.
+     * Determines if a record is currently locked. Returns <code>true</code>
+     * if the record is locked, <code>false</code> otherwise.
      * 
      * @param recNo
      *                Database record number.

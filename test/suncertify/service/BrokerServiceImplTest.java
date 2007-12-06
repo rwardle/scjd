@@ -79,14 +79,12 @@ public class BrokerServiceImplTest {
         context.checking(new Expectations() {
             {
                 one(mockDatabase).find(
-                        with(Expectations
-                                .equal(new String[DATABASE_FIELD_COUNT])));
+                        with(equal(new String[DATABASE_FIELD_COUNT])));
                 will(returnValue(recNos));
 
                 for (int recNo : recNos) {
                     one(mockDatabase).read(with(equal(recNo)));
-                    will(Expectations
-                            .returnValue(new String[DATABASE_FIELD_COUNT]));
+                    will(returnValue(new String[DATABASE_FIELD_COUNT]));
                 }
             }
         });
@@ -101,8 +99,7 @@ public class BrokerServiceImplTest {
         context.checking(new Expectations() {
             {
                 one(mockDatabase).find(
-                        with(Expectations
-                                .equal(new String[DATABASE_FIELD_COUNT])));
+                        with(equal(new String[DATABASE_FIELD_COUNT])));
                 will(returnValue(recNos));
 
                 one(mockDatabase).read(with(equal(recNos[0])));
@@ -119,15 +116,14 @@ public class BrokerServiceImplTest {
         context.checking(new Expectations() {
             {
                 one(mockDatabase).find(
-                        with(Expectations
-                                .equal(new String[DATABASE_FIELD_COUNT])));
+                        with(equal(new String[DATABASE_FIELD_COUNT])));
                 will(returnValue(recNos));
 
                 one(mockDatabase).read(with(equal(recNos[0])));
                 will(throwException(new RecordNotFoundException()));
 
                 one(mockDatabase).read(with(equal(recNos[1])));
-                will(Expectations.returnValue(new String[DATABASE_FIELD_COUNT]));
+                will(returnValue(new String[DATABASE_FIELD_COUNT]));
             }
         });
         assertThat(brokerService.search(new SearchCriteria()).size(), is(1));
@@ -142,8 +138,7 @@ public class BrokerServiceImplTest {
         context.checking(new Expectations() {
             {
                 one(mockDatabase).find(
-                        with(Expectations
-                                .equal(new String[DATABASE_FIELD_COUNT])));
+                        with(equal(new String[DATABASE_FIELD_COUNT])));
                 will(returnValue(recNos));
 
                 one(mockDatabase).read(with(equal(recNos[0])));
@@ -359,7 +354,7 @@ public class BrokerServiceImplTest {
                 one(mockDatabase).lock(with(equal(recNo)));
 
                 one(mockDatabase).read(recNo);
-                will(Expectations.returnValue(RECORD_DATA));
+                will(returnValue(RECORD_DATA));
 
                 allowing(mockDatabase).update(with(any(int.class)),
                         with(any(String[].class)));
@@ -382,7 +377,7 @@ public class BrokerServiceImplTest {
                 one(mockDatabase).lock(with(equal(recNo)));
 
                 one(mockDatabase).read(recNo);
-                will(Expectations.returnValue(RECORD_DATA));
+                will(returnValue(RECORD_DATA));
 
                 one(mockDatabase).update(with(is(recNo)), with(is(data)));
 

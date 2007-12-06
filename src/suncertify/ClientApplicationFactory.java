@@ -23,9 +23,9 @@ public final class ClientApplicationFactory extends AbstractApplicationFactory {
     }
 
     /**
-     * This implementation creates a client application.
-     * <p>
      * {@inheritDoc}
+     * <p>
+     * This implementation creates a client application.
      */
     @Override
     public Application createApplication(Configuration configuration) {

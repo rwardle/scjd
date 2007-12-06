@@ -9,6 +9,7 @@ package suncertify.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import suncertify.db.Database;
@@ -106,8 +107,6 @@ public final class BrokerServiceImpl implements BrokerService {
             validateRecord(recNo, contractor);
             updateRecord(recNo, customerId);
         } catch (RecordNotFoundException e) {
-            // TODO This shouldn't be possible since we've got the lock on the
-            // record??
             throw new ContractorDeletedException(e);
         } finally {
             unlockRecord(recNo);
@@ -128,9 +127,11 @@ public final class BrokerServiceImpl implements BrokerService {
         } catch (RecordNotFoundException e) {
             throw new ContractorDeletedException(e);
         } catch (InterruptedException e) {
-            // TODO Set cause?
-            throw new IOException(
-                    "Thread was interrupted while waiting for the lock");
+            IOException ioException = new IOException(
+                    "Thread was interrupted while waiting for the lock on recNo: "
+                            + recNo);
+            ioException.initCause(e);
+            throw ioException;
         }
     }
 
@@ -157,13 +158,15 @@ public final class BrokerServiceImpl implements BrokerService {
 
         /*
          * If the only field that does not match is the owner and the owner is
-         * an empty string then that implies that the record has been unbooked.
-         * Allow the booking to continue in this case.
+         * an empty string then that implies that the record has been unbooked
+         * by another user. Allow the booking to continue in this case (i.e.
+         * return from this method as unmodified).
          */
-        return modified
-                || !data[ServiceConstants.OWNER_FIELD_INDEX].equals("")
-                && !data[ServiceConstants.OWNER_FIELD_INDEX].equals(contractor
-                        .getOwner());
+        boolean ownerFieldEmpty = data[ServiceConstants.OWNER_FIELD_INDEX]
+                .equals("");
+        boolean ownerFieldModified = !data[ServiceConstants.OWNER_FIELD_INDEX]
+                .equals(contractor.getOwner());
+        return modified || !ownerFieldEmpty && ownerFieldModified;
     }
 
     private void updateRecord(int recNo, String customerId)
@@ -178,9 +181,7 @@ public final class BrokerServiceImpl implements BrokerService {
         try {
             database.unlock(recNo);
         } catch (RecordNotFoundException e) {
-            // TODO This shouldn't be possible since we've got the lock on
-            // the record??
-            LOGGER.warning(e.getMessage());
+            LOGGER.log(Level.WARNING, "Error unlocking recNo: " + recNo, e);
         }
     }
 }

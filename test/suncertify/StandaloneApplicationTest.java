@@ -49,19 +49,15 @@ public class StandaloneApplicationTest {
                 ignoring(mockConfiguration).exists();
                 ignoring(mockConfiguration)
                         .getProperty(
-                                with(Expectations
-                                        .equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)));
+                                with(equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)));
 
-                allowing(mockConfiguration)
-                        .getProperty(
-                                with(Expectations
-                                        .equal(ApplicationConstants.SERVER_PORT_PROPERTY)));
+                allowing(mockConfiguration).getProperty(
+                        with(equal(ApplicationConstants.SERVER_PORT_PROPERTY)));
                 will(returnValue("1199"));
 
                 allowing(mockConfiguration)
                         .getProperty(
-                                with(Expectations
-                                        .equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)));
+                                with(equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)));
                 will(returnValue(databaseFilePath));
             }
         });
@@ -120,8 +116,7 @@ public class StandaloneApplicationTest {
             {
                 one(mockDatabaseFactory).createDatabase(
                         with(equal(databaseFilePath)));
-                will(Expectations
-                        .throwException(new DataValidationException("")));
+                will(throwException(new DataValidationException("")));
             }
         });
         new StandaloneApplication(mockConfiguration, mockDatabaseFactory)

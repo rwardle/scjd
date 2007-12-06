@@ -25,9 +25,9 @@ public final class StandaloneApplicationFactory extends
     }
 
     /**
-     * This implementation creates a standalone application.
-     * <p>
      * {@inheritDoc}
+     * <p>
+     * This implementation creates a standalone application.
      */
     @Override
     public Application createApplication(Configuration configuration) {

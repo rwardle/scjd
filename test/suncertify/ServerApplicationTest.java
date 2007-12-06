@@ -58,22 +58,18 @@ public class ServerApplicationTest {
             {
                 ignoring(mockConfiguration).exists();
 
-                allowing(mockConfiguration)
-                        .getProperty(
-                                with(Expectations
-                                        .equal(ApplicationConstants.SERVER_PORT_PROPERTY)));
+                allowing(mockConfiguration).getProperty(
+                        with(equal(ApplicationConstants.SERVER_PORT_PROPERTY)));
                 will(returnValue(serverPort));
 
                 allowing(mockConfiguration)
                         .getProperty(
-                                with(Expectations
-                                        .equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)));
+                                with(equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)));
                 will(returnValue(databaseFilePath));
 
                 allowing(mockConfiguration)
                         .getProperty(
-                                with(Expectations
-                                        .equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)));
+                                with(equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)));
             }
         });
     }
@@ -159,8 +155,7 @@ public class ServerApplicationTest {
 
                 one(mockDatabaseFactory).createDatabase(
                         with(equal(databaseFilePath)));
-                will(Expectations
-                        .throwException(new DataValidationException("")));
+                will(throwException(new DataValidationException("")));
             }
         });
         new ServerApplication(mockConfiguration, mockRmiService,

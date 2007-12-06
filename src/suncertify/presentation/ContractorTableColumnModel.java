@@ -170,15 +170,8 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
             if ("".equals(value)) {
                 Border border;
                 if (hasFocus) {
-                    if (focusBorder == null) {
-                        // Get and store the default focus border for future use
-                        JComponent defaultRendererComponent = (JComponent) table
-                                .getDefaultRenderer(String.class)
-                                .getTableCellRendererComponent(table, value,
-                                        isSelected, hasFocus, row, column);
-                        focusBorder = defaultRendererComponent.getBorder();
-                    }
-                    border = focusBorder;
+                    border = getFocusBorder(table, value, isSelected, row,
+                            column);
                 } else {
                     border = EMPTY_BORDER;
                 }
@@ -205,6 +198,19 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
                 component.setToolTipText(null);
             }
             return component;
+        }
+
+        private Border getFocusBorder(JTable table, Object value,
+                boolean isSelected, int row, int column) {
+            if (focusBorder == null) {
+                // Get and store the default focus border for future use
+                JComponent defaultRendererComponent = (JComponent) table
+                        .getDefaultRenderer(String.class)
+                        .getTableCellRendererComponent(table, value,
+                                isSelected, true, row, column);
+                focusBorder = defaultRendererComponent.getBorder();
+            }
+            return focusBorder;
         }
     }
 
@@ -260,7 +266,8 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
         }
 
         public Object getCellEditorValue() {
-            // TODO
+            // Although the "owner" column is editable we aren't updating the
+            // cell value through the editor, so always return null here
             return null;
         }
     }

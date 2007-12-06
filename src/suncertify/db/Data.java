@@ -379,6 +379,8 @@ public class Data implements DBMain {
      *                 If there is an error accessing the database.
      */
     public int[] find(String[] criteria) {
+        // TODO Try to reduce nested block depth
+
         if (criteria == null) {
             throw new IllegalArgumentException("criteria cannot be null");
         }

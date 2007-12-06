@@ -351,8 +351,7 @@ public class MainPresenterTest {
 
                 one(mockBrokerService).book(with(any(String.class)),
                         with(any(Contractor.class)));
-                will(Expectations
-                        .throwException(new ContractorDeletedException()));
+                will(throwException(new ContractorDeletedException()));
 
                 one(mockView).enableControls(componentToFocus);
             }
@@ -372,8 +371,7 @@ public class MainPresenterTest {
 
                 one(mockBrokerService).book(with(any(String.class)),
                         with(any(Contractor.class)));
-                will(Expectations
-                        .throwException(new ContractorModifiedException()));
+                will(throwException(new ContractorModifiedException()));
 
                 one(mockView).enableControls(componentToFocus);
             }

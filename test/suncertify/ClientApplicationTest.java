@@ -56,19 +56,15 @@ public class ClientApplicationTest {
                 ignoring(mockConfiguration).exists();
                 ignoring(mockConfiguration)
                         .getProperty(
-                                with(Expectations
-                                        .equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)));
+                                with(equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)));
 
                 allowing(mockConfiguration)
                         .getProperty(
-                                with(Expectations
-                                        .equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)));
+                                with(equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)));
                 will(returnValue(serverAddress));
 
-                allowing(mockConfiguration)
-                        .getProperty(
-                                with(Expectations
-                                        .equal(ApplicationConstants.SERVER_PORT_PROPERTY)));
+                allowing(mockConfiguration).getProperty(
+                        with(equal(ApplicationConstants.SERVER_PORT_PROPERTY)));
                 will(returnValue(serverPort));
             }
         });

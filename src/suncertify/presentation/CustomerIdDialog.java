@@ -15,6 +15,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -23,6 +25,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.text.MaskFormatter;
 
@@ -33,11 +36,13 @@ import javax.swing.text.MaskFormatter;
  */
 public final class CustomerIdDialog extends JDialog {
 
+    private static final Logger LOGGER = Logger
+            .getLogger(CustomerIdDialog.class.getName());
     private static final String CUSTOMER_ID_MASK = "########";
     private static final int CUSTOMER_ID_LENGTH = 8;
 
     private final ResourceBundle resourceBundle;
-    private final JFormattedTextField customerIdTextField;
+    private final JTextField customerIdTextField;
     private final JButton okButton;
     private final JButton cancelButton;
     private String customerId;
@@ -58,10 +63,17 @@ public final class CustomerIdDialog extends JDialog {
         try {
             formatter = new MaskFormatter(CUSTOMER_ID_MASK);
         } catch (ParseException e) {
-            // TODO
-            throw new RuntimeException(e);
+            LOGGER.log(Level.WARNING,
+                    "Error setting customer ID formatter mask to: "
+                            + CUSTOMER_ID_MASK, e);
         }
-        customerIdTextField = new JFormattedTextField(formatter);
+
+        if (formatter == null) {
+            customerIdTextField = new JTextField();
+        } else {
+            customerIdTextField = new JFormattedTextField(formatter);
+        }
+
         customerIdTextField.setToolTipText(resourceBundle
                 .getString("CustomerIdDialog.customerIdTextField.toolTip"));
         customerIdTextField.addActionListener(new ActionListener() {
