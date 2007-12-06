@@ -110,8 +110,8 @@ public class MainPresenterTest {
                                 locationCriteria)));
                 will(returnValue(contractors));
 
-                one(mockView).setTableModel(
-                        with(aContractorTableModelContaining(contractors)));
+                one(mockView).setTableData(
+                        with(aContractorListContaining(contractors)));
 
                 one(mockView).setStatusLabelText(with(equal(statusLabelText)));
 
@@ -144,8 +144,8 @@ public class MainPresenterTest {
                         with(searchCriteriaMatching(nameCriteria, null)));
                 will(returnValue(contractors));
 
-                one(mockView).setTableModel(
-                        with(aContractorTableModelContaining(contractors)));
+                one(mockView).setTableData(
+                        with(aContractorListContaining(contractors)));
 
                 one(mockView).setStatusLabelText(with(equal(statusLabelText)));
 
@@ -178,8 +178,8 @@ public class MainPresenterTest {
                         with(searchCriteriaMatching(null, locationCriteria)));
                 will(returnValue(contractors));
 
-                one(mockView).setTableModel(
-                        with(aContractorTableModelContaining(contractors)));
+                one(mockView).setTableData(
+                        with(aContractorListContaining(contractors)));
 
                 one(mockView).setStatusLabelText(with(equal(statusLabelText)));
 
@@ -213,8 +213,8 @@ public class MainPresenterTest {
                         with(searchCriteriaMatching(null, null)));
                 will(returnValue(contractors));
 
-                one(mockView).setTableModel(
-                        with(aContractorTableModelContaining(contractors)));
+                one(mockView).setTableData(
+                        with(aContractorListContaining(contractors)));
 
                 one(mockView).setStatusLabelText(with(equal(statusLabelText)));
 
@@ -245,8 +245,8 @@ public class MainPresenterTest {
                         with(searchCriteriaMatching(null, null)));
                 will(returnValue(contractors));
 
-                one(mockView).setTableModel(
-                        with(aContractorTableModelContaining(contractors)));
+                one(mockView).setTableData(
+                        with(aContractorListContaining(contractors)));
 
                 one(mockView).setStatusLabelText(with(equal(statusLabelText)));
 
@@ -256,6 +256,7 @@ public class MainPresenterTest {
         presenter.searchActionPerformed(componentToFocus);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void shouldNotUpdateInterfaceIfSearchThrowsException()
             throws Exception {
@@ -270,8 +271,7 @@ public class MainPresenterTest {
                 one(mockBrokerService).search(with(any(SearchCriteria.class)));
                 will(throwException(new IOException()));
 
-                never(mockView).setTableModel(
-                        with(any(ContractorTableModel.class)));
+                never(mockView).setTableData(with(any(List.class)));
 
                 never(mockView).setStatusLabelText(with(any(String.class)));
 
@@ -379,37 +379,38 @@ public class MainPresenterTest {
         presenter.bookActionPerformed(rowNo, componentToFocus);
     }
 
-    private Matcher<ContractorTableModel> aContractorTableModelContaining(
+    private Matcher<List<Contractor>> aContractorListContaining(
             List<Contractor> contractors) {
-        return new ContractorTableModelContaining(contractors);
+        return new ContractorListContaining(contractors);
     }
 
-    private static final class ContractorTableModelContaining extends
-            BaseMatcher<ContractorTableModel> {
+    private static final class ContractorListContaining extends
+            BaseMatcher<List<Contractor>> {
 
-        private final List<Contractor> contractors;
+        private final List<Contractor> expectedContractors;
 
-        public ContractorTableModelContaining(List<Contractor> contractors) {
-            this.contractors = contractors;
+        public ContractorListContaining(List<Contractor> contractors) {
+            expectedContractors = contractors;
         }
 
+        @SuppressWarnings("unchecked")
         public boolean matches(Object item) {
-            ContractorTableModel tableModel = (ContractorTableModel) item;
-            if (contractors.size() != tableModel.getRowCount()) {
+            List<Contractor> actualContractors = (List<Contractor>) item;
+            if (expectedContractors.size() != actualContractors.size()) {
                 return false;
             }
 
             boolean match = true;
-            for (int i = 0; i < contractors.size(); i++) {
-                match = new ContractorMatching(contractors.get(i))
-                        .matches(tableModel.getContractorAtRow(i));
+            for (int i = 0; i < expectedContractors.size(); i++) {
+                match = new ContractorMatching(expectedContractors.get(i))
+                        .matches(actualContractors.get(i));
             }
             return match;
         }
 
         public void describeTo(Description description) {
             description.appendValueList("a table model containing: ", " & ",
-                    "", contractors);
+                    "", expectedContractors);
         }
     }
 

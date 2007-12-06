@@ -30,27 +30,49 @@ import suncertify.db.DatabaseSchema.FieldDescription;
  */
 public class Data implements DBMain {
 
-    // TODO Use a lock manager class?
-
     private static final Logger LOGGER = Logger.getLogger(Data.class.getName());
 
     private final DatabaseFile databaseFile;
     private final DatabaseSchema databaseSchema;
+
+    /**
+     * Offset of the data section (where the records start) in the database
+     * file.
+     */
     private final long dataSectionOffset;
 
-    // TODO Make these collections volatile and update them using this technique
-    // http://www.ibm.com/developerworks/java/library/j-hashmap.html?ca=drs-
+    /**
+     * Sorted set of the record numbers in the database that have been marked as
+     * deleted.
+     */
     private final SortedSet<Integer> deletedRecNos = Collections
             .synchronizedSortedSet(new TreeSet<Integer>());
+
+    /**
+     * Mutual exclusion lock used for acquiring the logical record lock on
+     * database records. Multiple <code>Condition</code>objects are used with
+     * this lock, one for each record in the database. This allows fine-grained
+     * signal operations when unlocking a record, i.e. only waking up threads
+     * that are waiting for the lock on that particular record.
+     */
+    private final ReentrantLock lock = new ReentrantLock();
+
+    /** Map of record numbers and <code>Condition</code> objects. */
+    private final Map<Integer, Condition> conditionsMap = new HashMap<Integer, Condition>();
+
+    /**
+     * Map of record numbers and the corresponding IDs of the threads that
+     * currently hold the lock on those records.
+     */
     private final Map<Integer, Long> lockedRecords = Collections
             .synchronizedMap(new HashMap<Integer, Long>());
 
-    private final ReentrantLock lock = new ReentrantLock();
-    private final Map<Integer, Condition> conditionsMap = new HashMap<Integer, Condition>();
-
-    // TODO This is the count of all records including deleted ones - consider
-    // renaming this to make it clearer. Hard for a junior programmer to
-    // understand volatile?
+    /**
+     * Number of records in the database, including deleted records.
+     * Modification to this field is synchronized on <code>databaseFile</code>.
+     * Reads are not synchronized but the field is marked <code>volatile</code>
+     * to ensure that threads see the most up-to-date data for the field.
+     */
     private volatile int recordCount;
 
     /**
@@ -75,91 +97,13 @@ public class Data implements DBMain {
         this.databaseFile = databaseFile;
         databaseSchema = new DatabaseSchema();
 
-        // TODO Move validation to a separate class?
-        validateMagicCookie();
-        validateSchema();
-        dataSectionOffset = this.databaseFile.getFilePointer();
-        recordCount = validateRecordCount();
+        DatabaseFileValidator validator = new DatabaseFileValidator(
+                this.databaseFile, databaseSchema);
+        validator.validate();
+        dataSectionOffset = validator.getDataSectionOffset();
+        recordCount = validator.getRecordCount();
+
         cacheDeletedRecordNumbers();
-    }
-
-    private void validateMagicCookie() throws IOException,
-            DataValidationException {
-        int magicCookie = databaseFile.readInt();
-        if (magicCookie != DatabaseConstants.MAGIC_COOKIE) {
-            throw new DataValidationException("Invalid magic cookie: "
-                    + magicCookie);
-        }
-    }
-
-    private void validateSchema() throws IOException, DataValidationException {
-        validateRecordLength();
-        validateFieldCount();
-        validateFieldDescriptions();
-    }
-
-    private void validateRecordLength() throws IOException,
-            DataValidationException {
-        int recordLength = databaseFile.readInt();
-        if (recordLength != databaseSchema.getRecordLength()) {
-            throw new DataValidationException("Invalid record length: "
-                    + recordLength);
-        }
-    }
-
-    private void validateFieldCount() throws IOException,
-            DataValidationException {
-        short fieldCount = databaseFile.readShort();
-        if (fieldCount != databaseSchema.getFieldCount()) {
-            throw new DataValidationException("Invalid field count: "
-                    + fieldCount);
-        }
-    }
-
-    private void validateFieldDescriptions() throws IOException,
-            DataValidationException {
-        FieldDescription[] fieldDescriptions = databaseSchema
-                .getFieldDescriptions();
-        for (FieldDescription fieldDescription : fieldDescriptions) {
-            short fieldNameLength = databaseFile.readShort();
-            if (fieldNameLength != fieldDescription.getName().length()) {
-                throw new DataValidationException("Invalid field name length: "
-                        + fieldNameLength + ", for field: "
-                        + fieldDescription.getName());
-            }
-
-            byte[] bytes = new byte[fieldNameLength];
-            databaseFile.readFully(bytes);
-            String fieldName = new String(bytes,
-                    DatabaseConstants.CHARACTER_SET);
-            if (!fieldName.equals(fieldDescription.getName())) {
-                throw new DataValidationException("Invalid field name: "
-                        + fieldName + ", for field: "
-                        + fieldDescription.getName());
-            }
-
-            short fieldLength = databaseFile.readShort();
-            if (fieldLength != fieldDescription.getLength()) {
-                throw new DataValidationException("Invalid field length: "
-                        + fieldLength + ", for field: "
-                        + fieldDescription.getName());
-            }
-        }
-    }
-
-    private int validateRecordCount() throws IOException,
-            DataValidationException {
-        long dataSectionLength = databaseFile.length() - dataSectionOffset;
-        if (dataSectionLength
-                % (DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH + databaseSchema
-                        .getRecordLength()) != 0) {
-            throw new DataValidationException(
-                    "Data section length cannot contain a whole number of records: "
-                            + dataSectionLength);
-        }
-        // TODO Record count should not be larger than max int
-        return (int) (dataSectionLength / (DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH + databaseSchema
-                .getRecordLength()));
     }
 
     private void cacheDeletedRecordNumbers() throws IOException {
@@ -315,8 +259,6 @@ public class Data implements DBMain {
     }
 
     private String padOrTruncateData(String data, short fieldLength) {
-        // TODO Start with a string of record length and then use StringBuilder
-        // to replace the fields in
         String sizedData;
         if (data.length() < fieldLength) {
             StringBuilder builder = new StringBuilder(data);
@@ -379,8 +321,6 @@ public class Data implements DBMain {
      *                 If there is an error accessing the database.
      */
     public int[] find(String[] criteria) {
-        // TODO Try to reduce nested block depth
-
         if (criteria == null) {
             throw new IllegalArgumentException("criteria cannot be null");
         }
@@ -406,22 +346,8 @@ public class Data implements DBMain {
 
                     String record = new String(bytes,
                             DatabaseConstants.CHARACTER_SET);
-                    FieldDescription[] fieldDescriptions = databaseSchema
-                            .getFieldDescriptions();
-                    for (int i = 0; i < fieldDescriptions.length; i++) {
-                        if (criteria[i] != null) {
-                            String recordValue = record.substring(
-                                    fieldDescriptions[i].getRecordOffset(),
-                                    fieldDescriptions[i].getRecordOffset()
-                                            + fieldDescriptions[i].getLength());
-                            if (!recordValue.startsWith(criteria[i])) {
-                                break;
-                            }
-                        }
-
-                        if (i == fieldDescriptions.length - 1) {
-                            matchingRecNos.add(recNo);
-                        }
+                    if (isMatchingRecord(criteria, record)) {
+                        matchingRecNos.add(recNo);
                     }
                 }
             } catch (IOException e) {
@@ -436,6 +362,32 @@ public class Data implements DBMain {
             index++;
         }
         return recNosArray;
+    }
+
+    private boolean isMatchingRecord(String[] criteria, String record) {
+        boolean match = false;
+
+        FieldDescription[] fieldDescriptions = databaseSchema
+                .getFieldDescriptions();
+        for (int i = 0; i < fieldDescriptions.length; i++) {
+            if (criteria[i] != null) {
+                String recordValue = record.substring(fieldDescriptions[i]
+                        .getRecordOffset(), fieldDescriptions[i]
+                        .getRecordOffset()
+                        + fieldDescriptions[i].getLength());
+                if (!recordValue.startsWith(criteria[i])) {
+                    // Criteria element doesn't match so break out of the loop
+                    break;
+                }
+            }
+
+            if (i == fieldDescriptions.length - 1) {
+                // Reached the last criteria element so we must have a match
+                match = true;
+            }
+        }
+
+        return match;
     }
 
     /**
@@ -577,8 +529,7 @@ public class Data implements DBMain {
         lock.lock();
         try {
             lockedRecords.remove(recNo);
-            // TODO Could use signalAll here and still meet the spec
-            // requirements
+            // Wake a thread that is waiting for the lock on this record
             conditionsMap.get(recNo).signal();
         } finally {
             lock.unlock();

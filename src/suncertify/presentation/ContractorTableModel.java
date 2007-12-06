@@ -7,6 +7,7 @@
 package suncertify.presentation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
@@ -78,6 +79,22 @@ public final class ContractorTableModel extends AbstractTableModel {
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return columnIndex == PresentationConstants.TABLE_OWNER_COLUMN_INDEX
                 && "".equals(contractors.get(rowIndex).getOwner());
+    }
+
+    /**
+     * Replaces the current contractors in the model with the specified
+     * contractors.
+     * 
+     * @param newContractors
+     *                List of new contractors.
+     */
+    public void replaceContractors(List<Contractor> newContractors) {
+        // Remove all the old contractors from the list and add all the new ones
+        // (making sure the list they are added from cannot be modified while
+        // this operation is performed)
+        contractors.clear();
+        contractors.addAll(Collections.unmodifiableList(newContractors));
+        fireTableDataChanged();
     }
 
     /**

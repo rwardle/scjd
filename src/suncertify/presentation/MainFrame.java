@@ -7,7 +7,6 @@
 package suncertify.presentation;
 
 import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -16,23 +15,18 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -74,8 +68,8 @@ public final class MainFrame extends JFrame implements MainView {
     private final SearchAction searchAction;
     private final ClearCriteriaAction clearCriteriaAction;
     private final Component glassPane;
+    private final ContractorTableModel tableModel;
     private MainPresenter presenter;
-    private ContractorTableModel tableModel;
 
     /**
      * Creates a new instance of <code>MainFrame</code>.
@@ -114,7 +108,7 @@ public final class MainFrame extends JFrame implements MainView {
         searchAction = new SearchAction(this);
         clearCriteriaAction = new ClearCriteriaAction(this);
 
-        glassPane = new GlassPane();
+        glassPane = new BlockingGlassPane();
         setGlassPane(glassPane);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -183,14 +177,14 @@ public final class MainFrame extends JFrame implements MainView {
     }
 
     /** {@inheritDoc} */
-    public void setTableModel(ContractorTableModel tableModel) {
-        this.tableModel = tableModel;
+    public void setTableData(List<Contractor> contractors) {
+        tableModel.replaceContractors(contractors);
+
         /*
-         * Don't want an edit from the previous table model to continue once the
-         * new one has been set
+         * Don't want to continue any editing operation now that the table data
+         * has been updated.
          */
         resultsTable.removeEditor();
-        resultsTable.setModel(this.tableModel);
     }
 
     /** {@inheritDoc} */
@@ -215,7 +209,6 @@ public final class MainFrame extends JFrame implements MainView {
         glassPane.setVisible(false);
         searchAction.setEnabled(true);
         contractorTableColumnModel.enableRendererBookButton();
-        resultsTable.requestFocus();
         if (componentToFocus != null) {
             componentToFocus.requestFocus();
         }
@@ -507,46 +500,6 @@ public final class MainFrame extends JFrame implements MainView {
 
         public void actionPerformed(ActionEvent e) {
             System.exit(0);
-        }
-    }
-
-    // TODO Document use of GlassPane. Move to top-level class?
-    private static final class GlassPane extends JComponent {
-
-        public GlassPane() {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            addMouseListener(new MouseAdapter() {
-                // Blocking all mouse events
-            });
-            addMouseMotionListener(new MouseMotionAdapter() {
-                // Blocking all mouse motion events
-            });
-            addKeyListener(new KeyAdapter() {
-                // Blocking all key events
-            });
-
-            // Don't let the focus leave the glasspane if it's visible
-            addFocusListener(new FocusListener() {
-                public void focusGained(FocusEvent e) {
-                    // no-op
-                }
-
-                public void focusLost(FocusEvent e) {
-                    if (isVisible()) {
-                        requestFocus();
-                    }
-                }
-            });
-        }
-
-        @Override
-        public void setVisible(boolean visible) {
-            super.setVisible(visible);
-
-            // Get the focus if we're showing the glasspane
-            if (visible) {
-                requestFocus();
-            }
         }
     }
 }

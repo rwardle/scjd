@@ -7,6 +7,7 @@
 package suncertify.presentation;
 
 import java.awt.Component;
+import java.util.List;
 
 import javax.swing.JFrame;
 
@@ -47,12 +48,12 @@ public interface MainView {
     String getLocationCriteria();
 
     /**
-     * Sets the table model.
+     * Sets the contractor data for the results table.
      * 
-     * @param tableModel
-     *                Contractor table model to set.
+     * @param contractors
+     *                List of contractors.
      */
-    void setTableModel(ContractorTableModel tableModel);
+    void setTableData(List<Contractor> contractors);
 
     /**
      * Sets the status label text.

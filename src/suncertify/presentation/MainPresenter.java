@@ -153,8 +153,6 @@ public class MainPresenter {
                 messageType);
     }
 
-    // TODO Document SwingWorkers
-
     private static final class SearchWorker extends
             SwingWorker<List<Contractor>, Void> {
 
@@ -176,11 +174,11 @@ public class MainPresenter {
 
         @Override
         protected void done() {
+            // This method is executed on the Event Dispatch Thread
+
             try {
                 List<Contractor> contractors = get();
-                ContractorTableModel tableModel = new ContractorTableModel(
-                        contractors);
-                presenter.view.setTableModel(tableModel);
+                presenter.view.setTableData(contractors);
                 presenter.view
                         .setStatusLabelText(buildStatusLabelText(contractors
                                 .size()));
@@ -274,6 +272,8 @@ public class MainPresenter {
 
         @Override
         protected void done() {
+            // This method is executed on the Event Dispatch Thread
+
             try {
                 // Although we don't need to call "get" to retrieve a
                 // result, we do need to know if any exceptions were thrown

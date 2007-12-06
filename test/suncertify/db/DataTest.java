@@ -77,6 +77,8 @@ public class DataTest {
             final Sequence sequence) throws Exception {
         context.checking(new Expectations() {
             {
+                one(mockDatabaseFile).seek(with(equal(0L)));
+
                 one(mockDatabaseFile).readInt();
                 will(returnValue(magicCookie));
                 inSequence(sequence);
