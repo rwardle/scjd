@@ -44,6 +44,7 @@ public final class Launcher {
             throw new IllegalArgumentException(
                     "applicationFactory cannot be null");
         }
+
         this.applicationFactory = applicationFactory;
     }
 
@@ -65,6 +66,11 @@ public final class Launcher {
             LOGGER.log(Level.WARNING, "Couldn't set system look and feel", e);
         }
 
+        /*
+         * Start the application if it can be initialised successfully. If
+         * starting the application throws a FatalException it will be handled
+         * and the application will exit.
+         */
         if (application.initialise()) {
             try {
                 application.startup();
@@ -81,6 +87,11 @@ public final class Launcher {
      *                Command line arguments.
      */
     public static void main(String[] args) {
+        /*
+         * Set an uncaught exception handler for all threads in the application.
+         * Allows the user to be informed before that there has been an error
+         * before the application shuts-down.
+         */
         Thread.setDefaultUncaughtExceptionHandler(new FatalExceptionHandler());
 
         ApplicationMode applicationMode = getApplicationMode(args);
@@ -90,6 +101,7 @@ public final class Launcher {
                 .getApplicationFactory(applicationMode);
         final Launcher launcher = new Launcher(applicationFactory);
 
+        // Launch the application on the AWT event dispatching thread
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 launcher.launch();
@@ -126,6 +138,7 @@ public final class Launcher {
                     "Invalid application mode flag: " + args[0]
                             + ". Flag must be either 'server' or 'alone'");
         }
+
         return mode;
     }
 }

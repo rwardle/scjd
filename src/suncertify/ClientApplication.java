@@ -33,10 +33,14 @@ public final class ClientApplication extends AbstractGuiApplication {
      *                RMI service.
      * @throws IllegalArgumentException
      *                 If <code>configuration</code> or
-     *                 <code>rmiService</code> are <code>null</code>.
+     *                 <code>rmiService</code> is <code>null</code>.
      */
     public ClientApplication(Configuration configuration, RmiService rmiService) {
         super(configuration);
+
+        if (rmiService == null) {
+            throw new IllegalArgumentException("rmiService cannot be null");
+        }
         this.rmiService = rmiService;
     }
 
@@ -59,6 +63,7 @@ public final class ClientApplication extends AbstractGuiApplication {
      */
     @Override
     protected BrokerService createBrokerService() throws FatalException {
+        // Lookup the broker server remote object at the configured URL
         String url = "//" + getConfigurationManager().getServerAddress() + ":"
                 + getConfigurationManager().getServerPort() + "/"
                 + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME;

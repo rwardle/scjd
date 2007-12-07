@@ -43,9 +43,12 @@ public class ConfigurationPresenter {
      */
     public ConfigurationPresenter(ConfigurationManager configurationManager,
             ConfigurationView view) {
-        if (configurationManager == null || view == null) {
+        if (configurationManager == null) {
             throw new IllegalArgumentException(
-                    "configurationManager and view must be non-null");
+                    "configurationManager cannot be null");
+        }
+        if (view == null) {
+            throw new IllegalArgumentException("view cannot be null");
         }
 
         this.configurationManager = configurationManager;
@@ -71,9 +74,17 @@ public class ConfigurationPresenter {
     }
 
     private void loadViewFromModel() {
-        view.setDatabaseFilePath(configurationManager.getDatabaseFilePath());
-        view.setServerAddress(configurationManager.getServerAddress());
-        view.setServerPort(configurationManager.getServerPort());
+        String databaseFilePath = configurationManager.getDatabaseFilePath();
+        String serverAddress = configurationManager.getServerAddress();
+        Integer serverPort = configurationManager.getServerPort();
+
+        LOGGER.info("Initial configuration: databaseFilePath="
+                + databaseFilePath + ", serverAddress=" + serverAddress
+                + ", serverPort=" + serverPort);
+
+        view.setDatabaseFilePath(databaseFilePath);
+        view.setServerAddress(serverAddress);
+        view.setServerPort(serverPort);
     }
 
     /**
@@ -90,9 +101,9 @@ public class ConfigurationPresenter {
         String serverAddress = view.getServerAddress();
         Integer serverPort = view.getServerPort();
 
-        LOGGER.info("Application configured with: databaseFilePath="
-                + databaseFilePath + ", serverAddress=" + serverAddress
-                + ", serverPort=" + serverPort);
+        LOGGER.info("Final configuration: databaseFilePath=" + databaseFilePath
+                + ", serverAddress=" + serverAddress + ", serverPort="
+                + serverPort);
 
         configurationManager.setDatabaseFilePath(databaseFilePath);
         configurationManager.setServerAddress(serverAddress);

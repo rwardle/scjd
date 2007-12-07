@@ -59,6 +59,7 @@ public final class CustomerIdDialog extends JDialog {
         resourceBundle = ResourceBundle
                 .getBundle("suncertify/presentation/Bundle");
 
+        // Enforcing customer ID to be 8 digits using a mask formatter
         MaskFormatter formatter = null;
         try {
             formatter = new MaskFormatter(CUSTOMER_ID_MASK);
@@ -146,7 +147,6 @@ public final class CustomerIdDialog extends JDialog {
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.gridx = 1;
         constraints.gridy = 3;
-        // TODO Stops window resize icon overlaying button on Mac
         constraints.insets = new Insets(4, 4, 15, 4);
         add(initialiseButtonPanel(), constraints);
     }
@@ -202,13 +202,33 @@ public final class CustomerIdDialog extends JDialog {
 
     private void okButtonActionPerformed() {
         String text = customerIdTextField.getText().trim();
-        if (text.length() == CUSTOMER_ID_LENGTH) {
+        if (isValidCustomerId(text)) {
+            // Customer ID has been entered, store it and close the dialog
             customerId = text;
             setVisible(false);
         } else {
+            /*
+             * Invalid customer ID, clear the text field and give it focus so
+             * the user can try again.
+             */
             customerIdTextField.setText(null);
             customerIdTextField.requestFocus();
         }
+    }
+
+    private boolean isValidCustomerId(String customerIdText) {
+        // Must be the correct length
+        boolean valid = customerIdText.length() == CUSTOMER_ID_LENGTH;
+
+        /*
+         * Must only be digits. Formatted text field should enforce this but
+         * check here just in case it couldn't be created for some reason.
+         */
+        for (int i = 0; valid && i < CUSTOMER_ID_LENGTH; i++) {
+            valid = Character.isDigit(customerIdText.charAt(i));
+        }
+
+        return valid;
     }
 
     private void cancelButtonActionPerformed() {

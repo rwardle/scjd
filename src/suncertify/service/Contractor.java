@@ -76,6 +76,11 @@ public final class Contractor implements Serializable {
      *                Data array. Must be an array of length 6 containing
      *                contractor data in the following order: name, location,
      *                specialties, size, rate, owner.
+     * @throws IllegalArgumentException
+     *                 If <code>recordNumber</code> is negative or
+     *                 <code>data</code> is <code>null</code> or the length
+     *                 of <code>data</code> does not match
+     *                 {@link ServiceConstants#FIELD_COUNT}.
      */
     public Contractor(int recordNumber, String[] data) {
         if (recordNumber < 0) {
@@ -83,7 +88,7 @@ public final class Contractor implements Serializable {
                     "recordNumber must be a positive number");
         }
         if (data == null) {
-            throw new IllegalArgumentException("data array must be non-null");
+            throw new IllegalArgumentException("data cannot be null");
         }
 
         String[] clonedData = data.clone();

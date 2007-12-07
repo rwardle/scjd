@@ -413,7 +413,7 @@ public class Data implements DBMain {
         for (String element : data) {
             if (element == null) {
                 throw new IllegalArgumentException(
-                        "record values must be non-null");
+                        "record values cannot be null");
             }
         }
 

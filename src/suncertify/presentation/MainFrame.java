@@ -23,6 +23,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -51,12 +53,14 @@ import suncertify.service.Contractor;
  */
 public final class MainFrame extends JFrame implements MainView {
 
-    private static final String INITIAL_STATUS_LABEL = " ";
-    private static final Dimension PREFERRED_SIZE = new Dimension(640, 480);
+    private static final Logger LOGGER = Logger.getLogger(MainFrame.class
+            .getName());
+    private static final String BLANK_STATUS_LABEL = " ";
     private static final Dimension MINIMUM_SIZE = new Dimension(320, 240);
+    private static final Dimension PREFERRED_SIZE = new Dimension(640, 480);
+    private static final int TABLE_ROW_HEIGHT = 18;
     private static final Dimension TEXT_FIELD_PREFERRED_SIZE = new Dimension(
             100, 25);
-    private static final int TABLE_ROW_HEIGHT = 18;
     private static final String USER_GUIDE_PATH = "suncertify/presentation/userguide.html";
 
     private final ResourceBundle resourceBundle;
@@ -77,10 +81,16 @@ public final class MainFrame extends JFrame implements MainView {
     public MainFrame() {
         resourceBundle = ResourceBundle
                 .getBundle("suncertify/presentation/Bundle");
-        statusLabel = new JLabel(INITIAL_STATUS_LABEL);
+
+        /*
+         * Set a blank status label initially to ensure that it does not have
+         * zero height in the layout.
+         */
+        statusLabel = new JLabel(BLANK_STATUS_LABEL);
 
         // Display an empty table initially
         tableModel = new ContractorTableModel(new ArrayList<Contractor>());
+
         contractorTableColumnModel = new ContractorTableColumnModel();
         resultsTable = createResultsTable();
         resultsTable.setRowHeight(TABLE_ROW_HEIGHT);
@@ -116,11 +126,16 @@ public final class MainFrame extends JFrame implements MainView {
         setMinimumSize(MINIMUM_SIZE);
         setPreferredSize(PREFERRED_SIZE);
         setTitle(resourceBundle.getString("MainFrame.title"));
+
         setLayout(new GridBagLayout());
         initialiseComponents();
     }
 
     private JTable createResultsTable() {
+        /*
+         * Extend JTable override methods that allow tooltips to be set on the
+         * column headers.
+         */
         return new JTable(tableModel, contractorTableColumnModel) {
 
             @Override
@@ -129,6 +144,10 @@ public final class MainFrame extends JFrame implements MainView {
 
                     @Override
                     public String getToolTipText(MouseEvent e) {
+                        /*
+                         * Get the mouse pointer location, find the column under
+                         * it and lookup the tooltip in the model.
+                         */
                         Point point = e.getPoint();
                         int columnIndex = columnModel
                                 .getColumnIndexAtX(point.x);
@@ -152,6 +171,9 @@ public final class MainFrame extends JFrame implements MainView {
 
     /** {@inheritDoc} */
     public void setPresenter(MainPresenter presenter) {
+        if (presenter == null) {
+            throw new IllegalArgumentException("presenter cannot be null");
+        }
         this.presenter = presenter;
         contractorTableColumnModel.setPresenter(presenter);
     }
@@ -159,10 +181,13 @@ public final class MainFrame extends JFrame implements MainView {
     /** {@inheritDoc} */
     public void realise() {
         pack();
+
+        // Centre the frame on screen
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension frameSize = getSize();
         setLocation((screenSize.width - frameSize.width) / 2,
                 (screenSize.height - frameSize.height) / 2);
+
         setVisible(true);
     }
 
@@ -178,6 +203,9 @@ public final class MainFrame extends JFrame implements MainView {
 
     /** {@inheritDoc} */
     public void setTableData(List<Contractor> contractors) {
+        if (contractors == null) {
+            throw new IllegalArgumentException("contractors cannot be null");
+        }
         tableModel.replaceContractors(contractors);
 
         /*
@@ -350,8 +378,6 @@ public final class MainFrame extends JFrame implements MainView {
         constraints.gridy = 2;
         constraints.insets = insetsZeroTop;
         JButton searchButton = new JButton(searchAction);
-        // TODO Mac VM bug?
-        searchButton.setOpaque(false);
         searchButton.setToolTipText(resourceBundle
                 .getString("MainFrame.searchButton.tooltip"));
         panel.add(searchButton, constraints);
@@ -458,10 +484,14 @@ public final class MainFrame extends JFrame implements MainView {
         public void actionPerformed(ActionEvent evt) {
             URL helpContentsUrl = ClassLoader
                     .getSystemResource(USER_GUIDE_PATH);
+
             if (helpContentsUrl == null) {
+                LOGGER.warning("Help contents resource not found: "
+                        + helpContentsUrl);
                 showErrorDialog();
             } else {
                 try {
+                    // Display the help HTML page in a new frame
                     JEditorPane editorPane = new JEditorPane(helpContentsUrl);
                     JFrame frame = new JFrame(mainFrame.resourceBundle
                             .getString("MainFrame.helpContents.title"));
@@ -470,6 +500,9 @@ public final class MainFrame extends JFrame implements MainView {
                     frame.setLocationRelativeTo(mainFrame);
                     frame.setVisible(true);
                 } catch (IOException e) {
+                    LOGGER.log(Level.WARNING,
+                            "Error creating help contents editor pane for URL: "
+                                    + helpContentsUrl, e);
                     showErrorDialog();
                 }
             }
@@ -499,6 +532,7 @@ public final class MainFrame extends JFrame implements MainView {
         }
 
         public void actionPerformed(ActionEvent e) {
+            LOGGER.info("Exiting application from menu bar option");
             System.exit(0);
         }
     }

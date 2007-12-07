@@ -39,17 +39,18 @@ public class BrokerServiceImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void createWithNullDatabaseThrowsException() {
+    public void shouldThrowExceptionWhenCreatedWithNullDatabase() {
         new BrokerServiceImpl(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void searchWithNullCriteriaObjectThrowsException() throws Exception {
+    public void shouldThrowExceptionWhenSearchingWithNullCriteriaObject()
+            throws Exception {
         brokerService.search(null);
     }
 
     @Test(expected = IOException.class)
-    public void searchThrowsIOExceptionWhenFindThrowsIOException()
+    public void shouldThrowIOExceptionWhenSearchingAndFindThrowsIOException()
             throws Exception {
         context.checking(new Expectations() {
             {
@@ -61,7 +62,7 @@ public class BrokerServiceImplTest {
     }
 
     @Test
-    public void searchReturnsEmptyListWhenFindReturnsNoRecords()
+    public void shouldReturnEmptyListWhenSearchingAndFindReturnsNoRecords()
             throws Exception {
         context.checking(new Expectations() {
             {
@@ -73,7 +74,7 @@ public class BrokerServiceImplTest {
     }
 
     @Test
-    public void searchReturnsAllContractorsWhenCriteriaAreNull()
+    public void shouldReturnAllContractorsWhenSearchingWithNullCriteria()
             throws Exception {
         final int[] recNos = { 0, 2 };
         context.checking(new Expectations() {
@@ -93,7 +94,7 @@ public class BrokerServiceImplTest {
     }
 
     @Test(expected = IOException.class)
-    public void searchThrowsIOExceptionWhenReadThrowsIOException()
+    public void shouldThrowIOExceptionWhenSearchingAndReadThrowsIOException()
             throws Exception {
         final int[] recNos = { 0, 2 };
         context.checking(new Expectations() {
@@ -110,7 +111,7 @@ public class BrokerServiceImplTest {
     }
 
     @Test
-    public void searchDoesNotReturnContractorForWhichReadThrowsRecordNotFoundException()
+    public void shouldNotReturnContractorForWhichReadThrowsRecordNotFoundExceptionWhenSearching()
             throws Exception {
         final int[] recNos = { 0, 2 };
         context.checking(new Expectations() {
@@ -130,7 +131,8 @@ public class BrokerServiceImplTest {
     }
 
     @Test
-    public void searchMapsRecordValuesIntoContractor() throws Exception {
+    public void shouldMapRecordValuesIntoContractorWhenSearching()
+            throws Exception {
         final int[] recNos = { 0 };
         final String[] recordData = { "Buonarotti & Company", "Smallville",
                 "Air Conditioning, Painting, Painting", "10", "$40.00",
@@ -163,7 +165,8 @@ public class BrokerServiceImplTest {
     }
 
     @Test
-    public void searchMapsSearchCriteriaToFindCriteria() throws Exception {
+    public void shouldMapSearchCriteriaToFindCriteriaWhenSearching()
+            throws Exception {
         final SearchCriteria criteria = new SearchCriteria().setName("name")
                 .setLocation("location").setSpecialties("specialties").setSize(
                         "size").setRate("rate").setOwner("owner");
@@ -181,7 +184,7 @@ public class BrokerServiceImplTest {
     }
 
     @Test
-    public void searchOnlyReturnsExactMatches() throws Exception {
+    public void shouldOnlyReturnsExactMatchesWhenSearching() throws Exception {
         final int[] recNos = { 0, 1, 2, 3, 4, 5, 6 };
         final String[] matchingData = RECORD_DATA.clone();
         matchingData[5] = "12345678";
@@ -219,29 +222,45 @@ public class BrokerServiceImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void bookWithNullCustomerIdThrowsException() throws Exception {
+    public void shouldThrowExceptionWhenBookingWithNullCustomerId()
+            throws Exception {
         brokerService.book(null, new Contractor(0, RECORD_DATA));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void bookWithNullContractorThrowsException() throws Exception {
-        brokerService.book("1234678", null);
+    public void shouldThrowExceptionWhenBookingWithNullContractor()
+            throws Exception {
+        brokerService.book("12345678", null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void bookWithNullContractorFieldThrowsException() throws Exception {
+    public void shouldThrowExceptionWhenBookingWithNullContractorField()
+            throws Exception {
         String[] data = RECORD_DATA.clone();
         data[5] = null;
         brokerService.book("12345678", new Contractor(0, data));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void bookWithInvalidCustomerIdThrowsException() throws Exception {
+    public void shouldThrowExceptionWhenBookingWithTooLongCustomerId()
+            throws Exception {
         brokerService.book("123456789", new Contractor(0, RECORD_DATA));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionWhenBookingWithTooShortCustomerId()
+            throws Exception {
+        brokerService.book("1234567", new Contractor(0, RECORD_DATA));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionWhenBookingWithCustomerIdContainingNonDigits()
+            throws Exception {
+        brokerService.book("12a45678", new Contractor(0, RECORD_DATA));
+    }
+
     @Test(expected = ContractorDeletedException.class)
-    public void bookContractorThatHasBeenDeletedThrowsException()
+    public void shouldThrowExceptionWhenBookingContractorThatHasBeenDeleted()
             throws Exception {
         final int recNo = 0;
         context.checking(new Expectations() {
@@ -254,7 +273,7 @@ public class BrokerServiceImplTest {
     }
 
     @Test(expected = IOException.class)
-    public void bookThrowsExceptionIfLockThrowsInterruptedException()
+    public void shouldThrowExceptionWhenBookingIfLockThrowsInterruptedException()
             throws Exception {
         final int recNo = 0;
         context.checking(new Expectations() {
@@ -267,7 +286,7 @@ public class BrokerServiceImplTest {
     }
 
     @Test(expected = ContractorDeletedException.class)
-    public void bookThrowsExceptionIfReadThrowsRecordNotFoundException()
+    public void shouldThrowExceptionIfReadThrowsRecordNotFoundExceptionWhenBooking()
             throws Exception {
         final int recNo = 0;
         context.checking(new Expectations() {
@@ -284,7 +303,7 @@ public class BrokerServiceImplTest {
     }
 
     @Test(expected = ContractorModifiedException.class)
-    public void bookContractorThatHasBeenModifiedThrowsException()
+    public void shouldThrowExceptionWhenBookingContractorThatHasBeenModified()
             throws Exception {
         final int recNo = 0;
         final String[] modifiedData = RECORD_DATA.clone();
@@ -303,7 +322,7 @@ public class BrokerServiceImplTest {
     }
 
     @Test(expected = ContractorModifiedException.class)
-    public void bookContractorThatHasAlreadyBeenBookedThrowsException()
+    public void shouldThrowExceptionWhenBookingContractorThatHasAlreadyBeenBooked()
             throws Exception {
         final int recNo = 0;
         final String[] modifiedData = RECORD_DATA.clone();
@@ -322,7 +341,7 @@ public class BrokerServiceImplTest {
     }
 
     @Test
-    public void bookContractorThatHasBeenUnbookedDoesNotThrowException()
+    public void shouldNotThrowExceptionWhenBookingContractorThatHasBeenUnbooked()
             throws Exception {
         final int recNo = 0;
         String[] data = RECORD_DATA.clone();
@@ -346,7 +365,7 @@ public class BrokerServiceImplTest {
     }
 
     @Test
-    public void bookDoesNotThrowExceptionIfUnlockThrowsException()
+    public void shouldNotThrowExceptionIfUnlockThrowsExceptionWhenBooking()
             throws Exception {
         final int recNo = 0;
         context.checking(new Expectations() {
@@ -367,7 +386,7 @@ public class BrokerServiceImplTest {
     }
 
     @Test
-    public void bookHappyPath() throws Exception {
+    public void shouldBookContractor() throws Exception {
         final int recNo = 0;
         String customerId = "12345678";
         final String[] data = new String[DATABASE_FIELD_COUNT];
@@ -388,24 +407,29 @@ public class BrokerServiceImplTest {
     }
 
     @Test
-    public void unbookHappyPath() throws Exception {
+    public void shouldOverwriteBooking() throws Exception {
         final int recNo = 0;
-        final String[] data = RECORD_DATA.clone();
-        data[DATABASE_FIELD_COUNT - 1] = "12345678";
+
+        String existingCustomerId = "87654321";
+        final String[] existingData = RECORD_DATA.clone();
+        existingData[DATABASE_FIELD_COUNT - 1] = existingCustomerId;
+
+        String newCustomerId = "12345678";
         final String[] updateData = new String[DATABASE_FIELD_COUNT];
-        updateData[DATABASE_FIELD_COUNT - 1] = "";
+        updateData[DATABASE_FIELD_COUNT - 1] = newCustomerId;
+
         context.checking(new Expectations() {
             {
                 one(mockDatabase).lock(with(equal(recNo)));
 
                 one(mockDatabase).read(recNo);
-                will(returnValue(data));
+                will(returnValue(existingData));
 
                 one(mockDatabase).update(with(is(recNo)), with(is(updateData)));
 
                 one(mockDatabase).unlock(recNo);
             }
         });
-        brokerService.book("", new Contractor(recNo, data));
+        brokerService.book(newCustomerId, new Contractor(recNo, existingData));
     }
 }

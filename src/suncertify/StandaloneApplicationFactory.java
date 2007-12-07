@@ -31,6 +31,10 @@ public final class StandaloneApplicationFactory extends
      */
     @Override
     public Application createApplication(Configuration configuration) {
+        if (configuration == null) {
+            throw new IllegalArgumentException("configuration cannot be null");
+        }
+
         return new StandaloneApplication(configuration,
                 new DatabaseFactoryImpl());
     }

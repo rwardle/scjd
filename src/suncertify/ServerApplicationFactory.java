@@ -30,6 +30,10 @@ public final class ServerApplicationFactory extends AbstractApplicationFactory {
      */
     @Override
     public Application createApplication(Configuration configuration) {
+        if (configuration == null) {
+            throw new IllegalArgumentException("configuration cannot be null");
+        }
+
         return new ServerApplication(configuration, new RmiServiceImpl(),
                 new DatabaseFactoryImpl());
     }

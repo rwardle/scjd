@@ -29,8 +29,13 @@ public final class ContractorTableModel extends AbstractTableModel {
      * 
      * @param contractors
      *                List of contractors.
+     * @throws IllegalArgumentException
+     *                 If <code>contractors</code> is <code>null</code>.
      */
     public ContractorTableModel(List<Contractor> contractors) {
+        if (contractors == null) {
+            throw new IllegalArgumentException("contractors cannot be null");
+        }
         this.contractors = new ArrayList<Contractor>(contractors);
     }
 
@@ -47,6 +52,7 @@ public final class ContractorTableModel extends AbstractTableModel {
     /** {@inheritDoc} */
     public Object getValueAt(int rowIndex, int columnIndex) {
         Contractor contractor = contractors.get(rowIndex);
+
         String value;
         switch (columnIndex) {
         case PresentationConstants.TABLE_NAME_COLUMN_INDEX:
@@ -71,12 +77,14 @@ public final class ContractorTableModel extends AbstractTableModel {
             throw new IllegalArgumentException("invalid column index: "
                     + columnIndex);
         }
+
         return value;
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
+        // "owner" column is editable but only if it is empty
         return columnIndex == PresentationConstants.TABLE_OWNER_COLUMN_INDEX
                 && "".equals(contractors.get(rowIndex).getOwner());
     }
@@ -89,9 +97,11 @@ public final class ContractorTableModel extends AbstractTableModel {
      *                List of new contractors.
      */
     public void replaceContractors(List<Contractor> newContractors) {
-        // Remove all the old contractors from the list and add all the new ones
-        // (making sure the list they are added from cannot be modified while
-        // this operation is performed)
+        /*
+         * Remove all the old contractors from the list and add all the new ones
+         * (making sure the list they are added from cannot be modified while
+         * this operation is performed).
+         */
         contractors.clear();
         contractors.addAll(Collections.unmodifiableList(newContractors));
         fireTableDataChanged();
@@ -103,6 +113,9 @@ public final class ContractorTableModel extends AbstractTableModel {
      * @param rowNo
      *                Table row number.
      * @return The contractor.
+     * @throws IndexOutOfBoundsException
+     *                 If <code>rowNo</code> is less than 0 or greater than
+     *                 the number of rows in the table.
      */
     public Contractor getContractorAtRow(int rowNo) {
         return contractors.get(rowNo);
@@ -115,8 +128,17 @@ public final class ContractorTableModel extends AbstractTableModel {
      *                Table row number.
      * @param contractor
      *                Updated contractor data.
+     * @throws IndexOutOfBoundsException
+     *                 If <code>rowNo</code> is less than 0 or greater than
+     *                 the number of rows in the table.
+     * @throws IllegalArgumentException
+     *                 If <code>contractor</code> is <code>null</code>.
      */
     public void updateContractorAtRow(int rowNo, Contractor contractor) {
+        if (contractor == null) {
+            throw new IllegalArgumentException("contractor cannot be null");
+        }
+
         contractors.remove(rowNo);
         contractors.add(rowNo, contractor);
         fireTableRowsUpdated(rowNo, rowNo);

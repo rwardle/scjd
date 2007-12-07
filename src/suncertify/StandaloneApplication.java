@@ -35,11 +35,15 @@ public final class StandaloneApplication extends AbstractGuiApplication {
      *                Database factory.
      * @throws IllegalArgumentException
      *                 If <code>configuration</code> or
-     *                 <code>databaseFactory</code> are <code>null</code>.
+     *                 <code>databaseFactory</code> is <code>null</code>.
      */
     public StandaloneApplication(Configuration configuration,
             DatabaseFactory databaseFactory) {
         super(configuration);
+
+        if (databaseFactory == null) {
+            throw new IllegalArgumentException("databaseFactory cannot be null");
+        }
         this.databaseFactory = databaseFactory;
     }
 

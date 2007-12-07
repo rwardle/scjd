@@ -29,6 +29,10 @@ public final class ClientApplicationFactory extends AbstractApplicationFactory {
      */
     @Override
     public Application createApplication(Configuration configuration) {
+        if (configuration == null) {
+            throw new IllegalArgumentException("configuration cannot be null");
+        }
+
         return new ClientApplication(configuration, new RmiServiceImpl());
     }
 }

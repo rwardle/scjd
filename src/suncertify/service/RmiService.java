@@ -43,6 +43,9 @@ public interface RmiService {
      *                 If the registry could not be contacted.
      * @throws MalformedURLException
      *                 If <code>name</code> is malformed.
+     * @throws IllegalArgumentException
+     *                 If <code>name</code> or <code>obj</code> is
+     *                 <code>null</code>.
      * @see Naming#rebind(String, Remote)
      */
     void rebind(String name, Remote obj) throws RemoteException,
@@ -55,14 +58,16 @@ public interface RmiService {
      * @param name
      *                Name of the remote object in URL form.
      * @return The remote object reference.
+     * @throws NotBoundException
+     *                 If <code>name</code> is not currently bound.
      * @throws RemoteException
      *                 If the registry could not be contacted.
      * @throws MalformedURLException
      *                 If <code>name</code> is malformed.
-     * @throws NotBoundException
-     *                 If <code>name</code> is not currently bound.
+     * @throws IllegalArgumentException
+     *                 If <code>name</code> is <code>null</code>.
      * @see Naming#lookup(String)
      */
-    Remote lookup(String name) throws RemoteException, MalformedURLException,
-            NotBoundException;
+    Remote lookup(String name) throws NotBoundException, RemoteException,
+            MalformedURLException;
 }

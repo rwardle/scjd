@@ -47,6 +47,24 @@ public class ApplicationFactoryTest {
                 .getApplicationFactory(ApplicationMode.STANDALONE) instanceof StandaloneApplicationFactory);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionIfNullConfigurationPassedToClientFactory() {
+        ignoringConfiguration();
+        new ClientApplicationFactory().createApplication(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionIfNullConfigurationPassedToServerFactory() {
+        ignoringConfiguration();
+        new ServerApplicationFactory().createApplication(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionIfNullConfigurationPassedToStandaloneFactory() {
+        ignoringConfiguration();
+        new StandaloneApplicationFactory().createApplication(null);
+    }
+
     @Test
     public void shouldCreateClientApplicationUsingClientFactory() {
         ignoringConfiguration();

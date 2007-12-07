@@ -39,6 +39,8 @@ public interface Application {
      * 
      * @param exception
      *                Fatal exception to handle.
+     * @throws IllegalArgumentException
+     *                 If <code>exception</code> is <code>null</code>.
      */
     void handleFatalException(FatalException exception);
 }

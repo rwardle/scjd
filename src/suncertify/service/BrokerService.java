@@ -25,15 +25,19 @@ public interface BrokerService {
      *         search criteria.
      * @throws IOException
      *                 If there is an error executing the search.
+     * @throws IllegalArgumentException
+     *                 If <code>searchCriteria</code> is <code>null</code>.
      */
     List<Contractor> search(SearchCriteria searchCriteria) throws IOException;
 
     /**
      * Books the specified contractor for the customer with the specified ID
-     * number.
+     * number. Note that it is possible to overwrite an existing booking - no
+     * warning will be given if the contractor data supplied to the method
+     * matches the data stored in the database.
      * 
      * @param customerId
-     *                ID number of the customer making the booking.
+     *                8-digit ID number of the customer making the booking.
      * @param contractor
      *                Contractor to be booked.
      * @throws IOException
@@ -45,6 +49,12 @@ public interface BrokerService {
      *                 match the data supplied to this method (likely to be
      *                 because the contractor has been modified since the client
      *                 last retrieved the data).
+     * @throws IllegalArgumentException
+     *                 If <code>customerId</code> is <code>null</code>,
+     *                 <code>customerId</code> does not consist of 8 digits,
+     *                 <code>contractor</code> is <code>null</code>, or any
+     *                 of the fields of <code>contractor</code> are
+     *                 <code>null</code>.
      */
     void book(String customerId, Contractor contractor) throws IOException,
             ContractorDeletedException, ContractorModifiedException;

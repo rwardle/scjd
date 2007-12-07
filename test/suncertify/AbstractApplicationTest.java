@@ -105,6 +105,22 @@ public class AbstractApplicationTest {
         assertThat(application.initialise(), is(true));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionIfFatalExceptionIsNull() throws Exception {
+        context.checking(new Expectations() {
+            {
+                ignoring(mockConfiguration).exists();
+                ignoring(mockConfiguration)
+                        .getProperty(with(any(String.class)));
+                ignoring(mockConfiguration).setProperty(
+                        with(any(String.class)), with(any(String.class)));
+            }
+        });
+
+        new StubAbstractApplication(mockConfiguration)
+                .handleFatalException(null);
+    }
+
     private class StubAbstractApplication extends AbstractApplication {
         StubAbstractApplication(Configuration configuration) {
             super(configuration);

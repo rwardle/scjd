@@ -20,6 +20,8 @@ public abstract class AbstractApplicationFactory {
      * @param configuration
      *                Application configuration.
      * @return The application that is created.
+     * @throws IllegalArgumentException
+     *                 If <code>configuration</code> is <code>null</code>.
      */
     public abstract Application createApplication(Configuration configuration);
 
@@ -54,6 +56,7 @@ public abstract class AbstractApplicationFactory {
             assert false : applicationMode;
             break;
         }
+
         return applicationFactory;
     }
 }

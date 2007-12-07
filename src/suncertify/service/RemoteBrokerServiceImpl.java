@@ -52,7 +52,10 @@ public final class RemoteBrokerServiceImpl extends UnicastRemoteObject
     public List<Contractor> search(SearchCriteria searchCriteria)
             throws IOException {
         try {
-            return service.search(searchCriteria);
+            List<Contractor> contractors = service.search(searchCriteria);
+            LOGGER.info("Found " + contractors.size()
+                    + " contractors matching criteria: " + searchCriteria);
+            return contractors;
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE,
                     "IO error while searching for contractors with criteria: "
@@ -67,6 +70,8 @@ public final class RemoteBrokerServiceImpl extends UnicastRemoteObject
             ContractorModifiedException {
         try {
             service.book(customerId, contractor);
+            LOGGER.info("Customer with ID=" + customerId
+                    + " has booked contractor: " + contractor);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "IO error while booking contractor", e);
             throw e;

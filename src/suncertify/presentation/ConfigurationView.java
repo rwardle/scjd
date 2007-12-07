@@ -20,6 +20,8 @@ public interface ConfigurationView {
      * 
      * @param presenter
      *                Presenter to set.
+     * @throws IllegalArgumentException
+     *                 If <code>presenter</code> is <code>null</code>.
      */
     void setPresenter(ConfigurationPresenter presenter);
 
@@ -75,6 +77,8 @@ public interface ConfigurationView {
      * 
      * @param serverPort
      *                Server port to set.
+     * @throws IllegalArgumentException
+     *                 If <code>serverPort</code> is <code>null</code>.
      */
     void setServerPort(Integer serverPort);
 

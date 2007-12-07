@@ -99,16 +99,22 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
 
     /** {@inheritDoc} */
     public final void setPresenter(ConfigurationPresenter presenter) {
+        if (presenter == null) {
+            throw new IllegalArgumentException("presenter cannot be null");
+        }
         this.presenter = presenter;
     }
 
     /** {@inheritDoc} */
     public final void realise() {
         pack();
+
+        // Centre dialog on screen
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension dialogSize = getSize();
         setLocation((screenSize.width - dialogSize.width) / 2,
                 (screenSize.height - dialogSize.height) / 2);
+
         okButton.requestFocus();
         setVisible(true);
     }
@@ -151,6 +157,9 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
 
     /** {@inheritDoc} */
     public void setServerPort(Integer serverPort) {
+        if (serverPort == null) {
+            throw new IllegalArgumentException("serverPort cannot be null");
+        }
         this.serverPort = serverPort;
     }
 
@@ -194,7 +203,6 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
         constraints.gridx = 1;
         constraints.gridy = 3;
         constraints.ipadx = 25;
-        // TODO Stops window resize icon overlaying button on Mac
         constraints.insets = new Insets(4, 4, 15, 4);
         add(initialiseButtonPanel(), constraints);
     }

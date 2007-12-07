@@ -39,9 +39,9 @@ import javax.swing.table.TableColumn;
  */
 public final class ContractorTableColumnModel extends DefaultTableColumnModel {
 
-    private static final int BOOK_BUTTON_FONT_SIZE = 10;
     private static final Dimension BOOK_BUTTON_DIMENSIONS = new Dimension(65,
             15);
+    private static final int BOOK_BUTTON_FONT_SIZE = 10;
 
     private final String bookButtonText;
     private final String[] columnHeaderToolTips;
@@ -54,13 +54,17 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
     public ContractorTableColumnModel() {
         ResourceBundle resourceBundle = ResourceBundle
                 .getBundle("suncertify/presentation/Bundle");
+        bookButtonText = resourceBundle.getString("MainFrame.bookButton.text");
+        rendererBookButton = createBookButton();
 
+        // Get the column names
         String[] tableColumnNames = new String[PresentationConstants.TABLE_COLUMN_COUNT];
         for (int i = 0; i < tableColumnNames.length; i++) {
             tableColumnNames[i] = resourceBundle
                     .getString("MainFrame.resultsTable.column" + i + ".text");
         }
 
+        // Add the columns
         for (int i = 0; i < PresentationConstants.TABLE_COLUMN_COUNT; i++) {
             TableColumn column = new TableColumn(i,
                     PresentationConstants.TABLE_COLUMN_WIDTHS.get(i));
@@ -68,16 +72,15 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
             addColumn(column);
         }
 
-        bookButtonText = resourceBundle.getString("MainFrame.bookButton.text");
-
+        // Get the column header tool tips
         columnHeaderToolTips = new String[PresentationConstants.TABLE_COLUMN_COUNT];
         for (int i = 0; i < tableColumnNames.length; i++) {
             columnHeaderToolTips[i] = resourceBundle
                     .getString("MainFrame.resultsTable.column" + i + ".tooltip");
         }
 
+        // Setup the renderer and editor for the owner column
         TableColumn ownerColumn = getColumn(PresentationConstants.TABLE_OWNER_COLUMN_INDEX);
-        rendererBookButton = createBookButton();
         String bookButtonTooltip = resourceBundle
                 .getString("MainFrame.bookButton.tooltip");
         ownerColumn.setCellRenderer(new OwnerTableCellRenderer(this,
@@ -146,11 +149,13 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
         return panel;
     }
 
+    // Owner column is rendered as a book button if there is no owner
     private static final class OwnerTableCellRenderer implements
             TableCellRenderer {
 
         private static final EmptyBorder EMPTY_BORDER = new EmptyBorder(1, 1,
                 1, 1);
+
         private final JPanel bookButtonPanel;
         private final String bookButtonTooltip;
         private Border focusBorder;
@@ -158,9 +163,9 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
         public OwnerTableCellRenderer(
                 ContractorTableColumnModel contractorTableColumnModel,
                 String bookButtonTooltip) {
-            this.bookButtonTooltip = bookButtonTooltip;
             bookButtonPanel = contractorTableColumnModel
                     .createBookButtonPanel(contractorTableColumnModel.rendererBookButton);
+            this.bookButtonTooltip = bookButtonTooltip;
         }
 
         public Component getTableCellRendererComponent(JTable table,
@@ -168,6 +173,7 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
                 int column) {
             JComponent component;
             if ("".equals(value)) {
+                // Owner column is empty, renderer the book button
                 Border border;
                 if (hasFocus) {
                     border = getFocusBorder(table, value, isSelected, row,
@@ -257,8 +263,18 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
 
         public Component getTableCellEditorComponent(JTable table,
                 Object value, boolean isSelected, int row, int column) {
+            /*
+             * Editor always shows the book button since it can only be invoked
+             * when there is no owner.
+             */
+
+            /*
+             * Store the table and the current row so they are available to the
+             * actionPerformed method if the user clicks the button.
+             */
             resultsTable = table;
             currentRow = row;
+
             bookButtonPanel.setBackground(table.getSelectionBackground());
             bookButtonPanel.setBorder(UIManager
                     .getBorder("Table.focusCellHighlightBorder"));
@@ -266,8 +282,10 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
         }
 
         public Object getCellEditorValue() {
-            // Although the "owner" column is editable we aren't updating the
-            // cell value through the editor, so always return null here
+            /*
+             * Although the "owner" column is editable, the cell value is not
+             * updated through the editor, so always return null here.
+             */
             return null;
         }
     }

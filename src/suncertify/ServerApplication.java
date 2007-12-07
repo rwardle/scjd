@@ -10,7 +10,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
-import java.util.logging.Logger;
 
 import suncertify.db.DataValidationException;
 import suncertify.db.DatabaseFactory;
@@ -27,9 +26,6 @@ import suncertify.service.RmiService;
  */
 public final class ServerApplication extends AbstractApplication {
 
-    private static final Logger LOGGER = Logger
-            .getLogger(ServerApplication.class.getName());
-
     private final RmiService rmiService;
     private final DatabaseFactory databaseFactory;
 
@@ -44,11 +40,18 @@ public final class ServerApplication extends AbstractApplication {
      *                Database factory.
      * @throws IllegalArgumentException
      *                 If <code>configuration</code>, <code>rmiService</code>
-     *                 or <code>databaseFactory</code> are <code>null</code>.
+     *                 or <code>databaseFactory</code> is <code>null</code>.
      */
     public ServerApplication(Configuration configuration,
             RmiService rmiService, DatabaseFactory databaseFactory) {
         super(configuration);
+
+        if (rmiService == null) {
+            throw new IllegalArgumentException("rmiService cannot be null");
+        }
+        if (databaseFactory == null) {
+            throw new IllegalArgumentException("databaseFactory cannot be null");
+        }
         this.rmiService = rmiService;
         this.databaseFactory = databaseFactory;
     }
@@ -71,9 +74,11 @@ public final class ServerApplication extends AbstractApplication {
      */
     public void startup() throws FatalException {
         Integer serverPort = getConfigurationManager().getServerPort();
+        String url = "//" + ApplicationConstants.LOCALHOST_ADDRESS + ":"
+                + serverPort + "/"
+                + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME;
         String databaseFilePath = getConfigurationManager()
                 .getDatabaseFilePath();
-        String url = getRemoteBrokerServiceUrl();
 
         try {
             rmiService.createRegistry(serverPort);
@@ -99,13 +104,5 @@ public final class ServerApplication extends AbstractApplication {
                     "Could not create database: error reading database file",
                     "FatalException.databaseReadError.message", e);
         }
-
-        LOGGER.info("Server running on port " + serverPort);
-    }
-
-    private String getRemoteBrokerServiceUrl() {
-        return "//" + ApplicationConstants.LOCALHOST_ADDRESS + ":"
-                + getConfigurationManager().getServerPort() + "/"
-                + ApplicationConstants.REMOTE_BROKER_SERVICE_NAME;
     }
 }

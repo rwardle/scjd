@@ -43,8 +43,7 @@ public final class PropertiesConfiguration implements Configuration {
      */
     public PropertiesConfiguration(File propertiesFile) {
         if (propertiesFile == null) {
-            throw new IllegalArgumentException(
-                    "propertiesFile must be non-null");
+            throw new IllegalArgumentException("propertiesFile cannot be null");
         }
 
         this.propertiesFile = propertiesFile;
@@ -96,11 +95,20 @@ public final class PropertiesConfiguration implements Configuration {
 
     /** {@inheritDoc} */
     public String getProperty(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("name cannot be null");
+        }
         return properties.getProperty(name);
     }
 
     /** {@inheritDoc} */
     public void setProperty(String name, String value) {
+        if (name == null) {
+            throw new IllegalArgumentException("name cannot be null");
+        }
+        if (value == null) {
+            throw new IllegalArgumentException("value cannot be null");
+        }
         properties.setProperty(name, value);
     }
 }

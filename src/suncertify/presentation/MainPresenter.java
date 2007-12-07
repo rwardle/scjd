@@ -60,6 +60,7 @@ public class MainPresenter {
         if (view == null) {
             throw new IllegalArgumentException("view cannot be null");
         }
+
         this.service = service;
         this.view = view;
         resourceBundle = ResourceBundle
@@ -83,10 +84,16 @@ public class MainPresenter {
      *                successfully.
      */
     public final void searchActionPerformed(Component componentToFocus) {
+        /*
+         * View returns an empty string if a criteria field is empty, map this
+         * to null criteria field to indicate that the field should not be
+         * searched on.
+         */
         String nameCriteria = substituteNullForEmptyString(view
                 .getNameCriteria().trim());
         String locationCriteria = substituteNullForEmptyString(view
                 .getLocationCriteria().trim());
+
         final SearchCriteria searchCriteria = new SearchCriteria().setName(
                 nameCriteria).setLocation(locationCriteria);
 
@@ -125,7 +132,7 @@ public class MainPresenter {
     public final void bookActionPerformed(int rowNo, Component componentToFocus) {
         String customerId = showCustomerIdDialog();
         if (customerId == null) {
-            // Dialog cancelled - return the focus to where it was previously
+            // Dialog cancelled, return the focus to where it was previously
             componentToFocus.requestFocus();
         } else {
             Contractor contractor = view.getContractorAtRow(rowNo);
@@ -160,24 +167,35 @@ public class MainPresenter {
         private final SearchCriteria searchCriteria;
         private final Component componentToFocus;
 
-        public SearchWorker(MainPresenter mainPresenter,
+        public SearchWorker(MainPresenter presenter,
                 SearchCriteria searchCriteria, Component componentToFocus) {
-            presenter = mainPresenter;
+            this.presenter = presenter;
             this.searchCriteria = searchCriteria;
             this.componentToFocus = componentToFocus;
         }
 
+        // This method is executed on a background thread
         @Override
         protected List<Contractor> doInBackground() throws IOException {
             return presenter.service.search(searchCriteria);
         }
 
+        // This method is executed on the Event Dispatch Thread
         @Override
         protected void done() {
-            // This method is executed on the Event Dispatch Thread
-
             try {
+                /*
+                 * Get the search results. The call to the get method will block
+                 * the EDT but since we are in the done method we already know
+                 * that doInBackground has finished and the search results are
+                 * available.
+                 */
                 List<Contractor> contractors = get();
+
+                LOGGER.info("Found " + contractors.size()
+                        + " contractors matching criteria: " + searchCriteria);
+
+                // Update the view
                 presenter.view.setTableData(contractors);
                 presenter.view
                         .setStatusLabelText(buildStatusLabelText(contractors
@@ -204,6 +222,8 @@ public class MainPresenter {
                     .getString("MainPresenter.statusLabel.oneContractor.text");
             String manyContractorsFormat = presenter.resourceBundle
                     .getString("MainPresenter.statusLabel.manyContractors.text");
+
+            // Use a choice format to get the correct pluralisation
             double[] limits = { 0, 1, ChoiceFormat.nextDouble(1) };
             String[] formats = { manyContractorsFormat, oneContractorFormat,
                     manyContractorsFormat };
@@ -254,15 +274,16 @@ public class MainPresenter {
         private final int rowNo;
         private final Component componentToFocus;
 
-        public BookWorker(MainPresenter mainPresenter, String customerId,
+        public BookWorker(MainPresenter presenter, String customerId,
                 Contractor contractor, int rowNo, Component componentToFocus) {
-            presenter = mainPresenter;
+            this.presenter = presenter;
             this.customerId = customerId;
             this.contractor = contractor;
             this.rowNo = rowNo;
             this.componentToFocus = componentToFocus;
         }
 
+        // This method is executed on a background thread
         @Override
         protected Void doInBackground() throws IOException,
                 ContractorDeletedException, ContractorModifiedException {
@@ -270,19 +291,30 @@ public class MainPresenter {
             return null;
         }
 
+        // This method is executed on the Event Dispatch Thread
         @Override
         protected void done() {
-            // This method is executed on the Event Dispatch Thread
-
             try {
-                // Although we don't need to call "get" to retrieve a
-                // result, we do need to know if any exceptions were thrown
+                /*
+                 * Calling the get method to determine if any exceptions were
+                 * thrown in the background thread. No result to retrieve.
+                 */
                 get();
+
+                /*
+                 * Booking has succeeded, set the customer ID as the owner in
+                 * the contractor.
+                 */
                 Contractor updatedContractor = new Contractor(contractor
                         .getRecordNumber(), new String[] {
                         contractor.getName(), contractor.getLocation(),
                         contractor.getSpecialties(), contractor.getSize(),
                         contractor.getRate(), customerId });
+
+                LOGGER.info("Customer with ID=" + customerId
+                        + " has booked contractor: " + updatedContractor);
+
+                // Now update the table row containing this contractor
                 presenter.view.updateContractorAtRow(rowNo, updatedContractor);
             } catch (InterruptedException e) {
                 LOGGER

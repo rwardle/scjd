@@ -25,6 +25,8 @@ public interface MainView {
      * 
      * @param presenter
      *                Presenter to set.
+     * @throws IllegalArgumentException
+     *                 If <code>presenter</code> is <code>null</code>.
      */
     void setPresenter(MainPresenter presenter);
 
@@ -52,6 +54,8 @@ public interface MainView {
      * 
      * @param contractors
      *                List of contractors.
+     * @throws IllegalArgumentException
+     *                 If <code>contractors</code> is <code>null</code>.
      */
     void setTableData(List<Contractor> contractors);
 
@@ -90,6 +94,9 @@ public interface MainView {
      * @param rowNo
      *                Table row number.
      * @return The contractor.
+     * @throws IndexOutOfBoundsException
+     *                 If <code>rowNo</code> is less than 0 or greater than
+     *                 the number of rows in the table.
      */
     Contractor getContractorAtRow(int rowNo);
 
@@ -100,6 +107,11 @@ public interface MainView {
      *                Table row number.
      * @param contractor
      *                The updated contractor data.
+     * @throws IndexOutOfBoundsException
+     *                 If <code>rowNo</code> is less than 0 or greater than
+     *                 the number of rows in the table.
+     * @throws IllegalArgumentException
+     *                 If <code>contractor</code> is <code>null</code>.
      */
     void updateContractorAtRow(int rowNo, Contractor contractor);
 }

@@ -25,7 +25,7 @@ public final class BrokerServiceImpl implements BrokerService {
 
     private static final Logger LOGGER = Logger
             .getLogger(BrokerServiceImpl.class.getName());
-    private static final int CUSTOMER_ID_MAXIMUM_LENGTH = 8;
+    private static final int CUSTOMER_ID_LENGTH = 8;
 
     private final Database database;
 
@@ -55,6 +55,11 @@ public final class BrokerServiceImpl implements BrokerService {
         String[] findCriteria = searchCriteria.toArray();
         int[] recNos = database.find(findCriteria);
 
+        /*
+         * Database find does "starts-with" matches, so read each record from
+         * the database and only include the ones that still exist and are exact
+         * matches.
+         */
         List<Contractor> contractors = new ArrayList<Contractor>();
         for (int recNo : recNos) {
             try {
@@ -88,14 +93,23 @@ public final class BrokerServiceImpl implements BrokerService {
         if (customerId == null) {
             throw new IllegalArgumentException("customeId cannot be null");
         }
-        if (customerId.length() > CUSTOMER_ID_MAXIMUM_LENGTH) {
-            throw new IllegalArgumentException(
-                    "customerId cannot be longer than "
-                            + CUSTOMER_ID_MAXIMUM_LENGTH + " characters");
+        if (customerId.length() != CUSTOMER_ID_LENGTH) {
+            throw new IllegalArgumentException("customerId must be of length "
+                    + CUSTOMER_ID_LENGTH);
         }
+        if (!containsOnlyDigits(customerId)) {
+            throw new IllegalArgumentException(
+                    "customerId must only contain digits");
+        }
+
         if (contractor == null) {
             throw new IllegalArgumentException("contractor cannot be null");
         }
+
+        /*
+         * Contractor should not have any null fields - empty record values are
+         * represented by an empty string.
+         */
         if (hasNullField(contractor)) {
             throw new IllegalArgumentException(
                     "contractor cannot have a null field");
@@ -111,6 +125,14 @@ public final class BrokerServiceImpl implements BrokerService {
         } finally {
             unlockRecord(recNo);
         }
+    }
+
+    private boolean containsOnlyDigits(String customerId) {
+        boolean digitsOnly = true;
+        for (int i = 0; digitsOnly && i < CUSTOMER_ID_LENGTH; i++) {
+            digitsOnly = Character.isDigit(customerId.charAt(i));
+        }
+        return digitsOnly;
     }
 
     private boolean hasNullField(Contractor contractor) {
@@ -138,6 +160,7 @@ public final class BrokerServiceImpl implements BrokerService {
     private void validateRecord(int recNo, Contractor contractor)
             throws ContractorModifiedException, RecordNotFoundException,
             IOException {
+        // Read the record from the database and check it hasn't been modified
         String[] data = database.read(recNo);
         if (isModified(contractor, data)) {
             throw new ContractorModifiedException("Contractor has been modifed");
@@ -160,7 +183,7 @@ public final class BrokerServiceImpl implements BrokerService {
          * If the only field that does not match is the owner and the owner is
          * an empty string then that implies that the record has been unbooked
          * by another user. Allow the booking to continue in this case (i.e.
-         * return from this method as unmodified).
+         * return false from this method).
          */
         boolean ownerFieldEmpty = data[ServiceConstants.OWNER_FIELD_INDEX]
                 .equals("");
@@ -171,7 +194,10 @@ public final class BrokerServiceImpl implements BrokerService {
 
     private void updateRecord(int recNo, String customerId)
             throws RecordNotFoundException, IOException {
-        // Only need to update the owner
+        /*
+         * Only need to update the owner field, all other fields are null to
+         * signify that they should not be updated.
+         */
         String[] updateData = new String[ServiceConstants.FIELD_COUNT];
         updateData[ServiceConstants.OWNER_FIELD_INDEX] = customerId;
         database.update(recNo, updateData);

@@ -74,6 +74,9 @@ public final class ServerConfigurationDialog extends
     /** {@inheritDoc} */
     @Override
     public void setServerPort(Integer serverPort) {
+        if (serverPort == null) {
+            throw new IllegalArgumentException("serverPort cannot be null");
+        }
         serverPortSpinner.setValue(serverPort);
     }
 

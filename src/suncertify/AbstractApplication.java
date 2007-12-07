@@ -39,7 +39,7 @@ public abstract class AbstractApplication implements Application {
      */
     public AbstractApplication(Configuration configuration) {
         if (configuration == null) {
-            throw new IllegalArgumentException("configuration must be non-null");
+            throw new IllegalArgumentException("configuration cannot be null");
         }
 
         configurationManager = new ConfigurationManager(configuration);
@@ -75,13 +75,14 @@ public abstract class AbstractApplication implements Application {
                 LOGGER.info("Saving configuration to disk");
                 getConfigurationManager().save();
             } catch (ConfigurationException e) {
+                // Couldn't save configuration, application will continue but
+                // any new configuration will be lost at shutdown
                 LOGGER.log(Level.WARNING,
                         "Could not save configuration to disk", e);
                 showSaveWarningDialog();
             }
         } else {
             initialised = false;
-            LOGGER.info("Configuration cancelled by user, exiting application");
         }
 
         return initialised;
@@ -126,6 +127,9 @@ public abstract class AbstractApplication implements Application {
 
     /** {@inheritDoc} */
     public final void handleFatalException(FatalException exception) {
+        if (exception == null) {
+            throw new IllegalArgumentException("exception cannot be null");
+        }
         exceptionHandler.handleException(exception);
     }
 }

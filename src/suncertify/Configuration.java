@@ -43,6 +43,8 @@ public interface Configuration {
      * @param name
      *                Property name.
      * @return The property.
+     * @throws IllegalArgumentException
+     *                 If <code>name</code> is <code>null</code>.
      */
     String getProperty(String name);
 
@@ -53,6 +55,9 @@ public interface Configuration {
      *                Property name.
      * @param value
      *                Property value.
+     * @throws IllegalArgumentException
+     *                 If <code>name</code> or <code>value</code> are
+     *                 <code>null</code>.
      */
     void setProperty(String name, String value);
 }

@@ -32,32 +32,43 @@ public final class ConfigurationManager {
      */
     public ConfigurationManager(Configuration configuration) {
         if (configuration == null) {
-            throw new IllegalArgumentException("configuration must be non-null");
+            throw new IllegalArgumentException("configuration cannot be null");
         }
         this.configuration = configuration;
 
+        // Load any existing configuration
         if (this.configuration.exists()) {
             try {
+                LOGGER.info("Loading existing configuration");
                 this.configuration.load();
             } catch (ConfigurationException e) {
                 LOGGER.log(Level.WARNING,
                         "Error loading configuration, using default values", e);
             }
         }
+
         verifyConfiguration();
     }
 
     private void verifyConfiguration() {
+        /*
+         * Verify that the configuration is complete and valid, use default
+         * values if not.
+         */
+
         if (getDatabaseFilePath() == null) {
+            LOGGER.info("Using default database file path");
             setDatabaseFilePath(ApplicationConstants.DEFAULT_DATABASE_FILE_PATH);
         }
         if (getServerAddress() == null) {
+            LOGGER.info("Using default server address");
             setServerAddress(ApplicationConstants.DEFAULT_SERVER_ADDRESS);
         }
 
         try {
             getServerPort();
         } catch (NumberFormatException e) {
+            LOGGER.info("Using default server port");
             setServerPort(ApplicationConstants.DEFAULT_SERVER_PORT);
         }
     }
@@ -93,7 +104,7 @@ public final class ConfigurationManager {
     public void setDatabaseFilePath(String databaseFilePath) {
         if (databaseFilePath == null) {
             throw new IllegalArgumentException(
-                    "databaseFilePath must be non-null");
+                    "databaseFilePath cannot be null");
         }
         configuration.setProperty(
                 ApplicationConstants.DATABASE_FILE_PATH_PROPERTY,
@@ -120,7 +131,7 @@ public final class ConfigurationManager {
      */
     public void setServerAddress(String serverAddress) {
         if (serverAddress == null) {
-            throw new IllegalArgumentException("serverAddress must be non-null");
+            throw new IllegalArgumentException("serverAddress cannot be null");
         }
         configuration.setProperty(ApplicationConstants.SERVER_ADDRESS_PROPERTY,
                 serverAddress);
@@ -131,7 +142,8 @@ public final class ConfigurationManager {
      * 
      * @return The server port.
      * @throws NumberFormatException
-     *                 If the server port property is not a number.
+     *                 If the server port property is <code>null</code> or is
+     *                 not a number.
      */
     public Integer getServerPort() {
         return Integer.valueOf(configuration
@@ -148,7 +160,7 @@ public final class ConfigurationManager {
      */
     public void setServerPort(Integer serverPort) {
         if (serverPort == null) {
-            throw new IllegalArgumentException("serverPort must be non-null");
+            throw new IllegalArgumentException("serverPort cannot be null");
         }
         configuration.setProperty(ApplicationConstants.SERVER_PORT_PROPERTY,
                 serverPort.toString());
