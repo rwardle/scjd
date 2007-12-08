@@ -41,3 +41,5 @@ But this gives us 2 possibilites: a) concurrent requests are routed to separate 
 39. Interpreted from spec that customerId must be 8 digits. Enforcing that in UI and at business service layer but not at database since that just deals with generic strings and pads or trims appropriately.
 40. Not allowing unbooking at business layer, i.e. can't pass in empty string for customerId to book method. Not requirement for this. Allowing bookings to overwrite as long as data passed in matches data in database, i.e. the client has seen that the record is already booked. No support in user interface since no requirement for it.
 41. Document that Data.find does not throw RecordNotFoundException.
+42. "Class suncertify.service.RemoteBrokerServiceImpl defines non-transient non-serializable instance field service" - mention that this does not actually get serialized in RMI.
+43. Specify in userguide that can search for all records by leaving criteria fields blank.
