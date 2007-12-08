@@ -38,23 +38,23 @@ public class Data implements DBMain {
 
     private static final Logger LOGGER = Logger.getLogger(Data.class.getName());
 
-    /**
+    /*
      * Methods called on this <code>databaseFile</code> should be synchronized
      * on the <code>databaseFile</code> instance to prevent multiple threads
      * from modifying the file pointer concurrently.
      */
     private final DatabaseFile databaseFile;
 
-    /** Describes the structure of the database. */
+    // Describes the structure of the database
     private final DatabaseSchema databaseSchema;
 
-    /**
+    /*
      * Offset of the data section (where the records start) in the database
      * file.
      */
     private final long dataSectionOffset;
 
-    /**
+    /*
      * Sorted set of the record numbers in the database that have been marked as
      * deleted. Modification of the set is synchronized on databaseFile but
      * reads may happen concurrently, so the set is created as synchronized to
@@ -63,7 +63,7 @@ public class Data implements DBMain {
     private final SortedSet<Integer> deletedRecNos = Collections
             .synchronizedSortedSet(new TreeSet<Integer>());
 
-    /**
+    /*
      * Mutual exclusion lock used for acquiring the logical record lock on
      * database records. Multiple <code>Condition</code>objects are used with
      * this lock, one for each record in the database. This allows fine-grained
@@ -72,10 +72,10 @@ public class Data implements DBMain {
      */
     private final ReentrantLock lock = new ReentrantLock();
 
-    /** Map of record numbers and <code>Condition</code> objects. */
+    // Map of record numbers and <code>Condition</code> objects
     private final Map<Integer, Condition> conditionsMap = new HashMap<Integer, Condition>();
 
-    /**
+    /*
      * Map of record numbers and the corresponding IDs of the threads that
      * currently hold the lock on those records. Modification of the map is
      * synchronized on the ReentrantLock lock but reads may happen concurrently,
@@ -84,7 +84,7 @@ public class Data implements DBMain {
     private final Map<Integer, Long> lockedRecords = Collections
             .synchronizedMap(new HashMap<Integer, Long>());
 
-    /**
+    /*
      * Number of records in the database, including deleted records.
      * Modification to this field is synchronized on <code>databaseFile</code>.
      * Reads are not synchronized but the field is marked <code>volatile</code>

@@ -39,17 +39,34 @@ public final class ContractorTableModel extends AbstractTableModel {
         this.contractors = new ArrayList<Contractor>(contractors);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns the number of rows in the model.
+     * 
+     * @return The number of rows in the model
+     */
     public int getRowCount() {
         return contractors.size();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns the number of columns in the model.
+     * 
+     * @return The number of columns in the model
+     */
     public int getColumnCount() {
         return PresentationConstants.TABLE_COLUMN_COUNT;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns the value for the cell at <code>columnIndex</code> and
+     * <code>rowIndex</code>.
+     * 
+     * @param rowIndex
+     *                Row whose value is to be queried.
+     * @param columnIndex
+     *                Column whose value is to be queried.
+     * @return The value at the specified cell.
+     */
     public Object getValueAt(int rowIndex, int columnIndex) {
         Contractor contractor = contractors.get(rowIndex);
 
@@ -81,7 +98,17 @@ public final class ContractorTableModel extends AbstractTableModel {
         return value;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns a boolean flag indicating if the cell at the specified row and
+     * column is editable.
+     * 
+     * @param rowIndex
+     *                Row being queried.
+     * @param columnIndex
+     *                Column being queried.
+     * @return <code>true</code> if the cell is editable, <code>false</code>
+     *         otherwise.
+     */
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         // "owner" column is editable but only if it is empty

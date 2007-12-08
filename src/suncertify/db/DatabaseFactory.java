@@ -10,7 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
- * Creates databases.
+ * Creates contractor databases.
  * 
  * @author Richard Wardle
  */

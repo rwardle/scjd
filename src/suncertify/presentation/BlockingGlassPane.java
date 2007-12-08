@@ -61,7 +61,14 @@ public final class BlockingGlassPane extends JComponent {
         });
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Makes the glasspane visible or invisible. Making the glasspane visible
+     * will also make it request the focus.
+     * 
+     * @param visible
+     *                <code>true</code> to make the component visible;
+     *                <code>false</code> to make it invisible.
+     */
     @Override
     public void setVisible(boolean visible) {
         super.setVisible(visible);

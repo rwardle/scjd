@@ -169,7 +169,11 @@ public final class Contractor implements Serializable {
         return owner;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns a string representation of the <code>Contractor</code>.
+     * 
+     * @return A string representation of the <code>Contractor</code>.
+     */
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

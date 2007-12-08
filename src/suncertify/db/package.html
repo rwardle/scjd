@@ -10,7 +10,7 @@ Provides classes for performing operations on a contractor database.
 <p>
 The <code>Database</code> interface defines the same methods as <code>DBMain</code> but methods that interact with the database file are declared to throw an <code>IOException</code>. The <code>DataAdapter</code> class is used to map the unchecked exceptions thrown from <code>Data</code> into the checked exceptions declared in the <code>Database</code> interface. 
 <p>
-Clients of this package are encouraged to user the well-defined <code>Database</code> interface for performing database operations rather than <code>DBMain</code>.
+Clients of this package are encouraged to user the well-defined <code>Database</code> interface for performing database operations rather than <code>DBMain</code>. The database should be created by calling the <code>createDatabase</code> method on an implementation of <code>DatabaseFactory</code> passing in the path to the database file. In order to prevent database file corruption, only one database should be created per database file path.  
 
 </body>
 </html>

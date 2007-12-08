@@ -25,16 +25,16 @@ public final class FatalExceptionHandler implements
     private static final Logger LOGGER = Logger
             .getLogger(FatalExceptionHandler.class.getName());
 
-    /** Resource bundle for looking-up user-friendly error messages. */
+    // Resource bundle for looking-up user-friendly error messages
     private final ResourceBundle resourceBundle;
 
-    /** Error dialog title. */
+    // Error dialog title
     private final String title;
 
-    /** Error dialog message pattern. */
+    // Error dialog message pattern
     private final String pattern;
 
-    /** Error dialog default message. */
+    // Error dialog default message
     private final String defaultMessage;
 
     /**

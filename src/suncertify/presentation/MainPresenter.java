@@ -160,6 +160,7 @@ public class MainPresenter {
                 messageType);
     }
 
+    // Extension of SwingWorker that performs a search for contractors
     private static final class SearchWorker extends
             SwingWorker<List<Contractor>, Void> {
 
@@ -267,6 +268,7 @@ public class MainPresenter {
         }
     }
 
+    // Extension of SwingWorker that books a contractor
     private static final class BookWorker extends SwingWorker<Void, Void> {
 
         private final MainPresenter presenter;

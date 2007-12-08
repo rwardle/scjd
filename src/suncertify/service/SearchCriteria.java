@@ -205,7 +205,11 @@ public final class SearchCriteria implements Serializable {
         return new String[] { name, location, specialties, size, rate, owner };
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns a string representation of the <code>SearchCriteria</code>.
+     * 
+     * @return A string representation of the <code>SearchCriteria</code>.
+     */
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

@@ -27,16 +27,16 @@ public final class DatabaseFileValidator {
     private final DatabaseFile databaseFile;
     private final DatabaseSchema databaseSchema;
 
-    /** Boolean flag to indicate if the database file has been validated or not. */
+    // Boolean flag to indicate if the database file has been validated or not
     private boolean validated;
 
-    /**
+    /*
      * Offset of the data section (where the records start) in the database
      * file.
      */
     private long dataSectionOffset;
 
-    /** Number of records in the database. */
+    // Number of records in the database
     private int recordCount;
 
     /**

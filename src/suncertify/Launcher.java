@@ -24,10 +24,10 @@ public final class Launcher {
     private static final Logger LOGGER = Logger.getLogger(Launcher.class
             .getName());
 
-    /** The name of the file holding the application configuration. */
+    // The name of the file holding the application configuration
     private static final String CONFIG_FILE_NAME = "suncertify.properties";
 
-    /** The factory used to create the application. */
+    // The factory used to create the application
     private final AbstractApplicationFactory applicationFactory;
 
     /**
@@ -109,17 +109,9 @@ public final class Launcher {
         });
     }
 
-    /**
+    /*
      * Returns the application mode corresponding to the specified command line
      * arguments.
-     * 
-     * @param args
-     *                Command line arguments.
-     * @return The application mode.
-     * @throws IllegalArgumentException
-     *                 If <code>args</code> is <code>null</code>, or
-     *                 <code>args</code> contains an invalid application mode
-     *                 flag.
      */
     static ApplicationMode getApplicationMode(String[] args) {
         if (args == null) {

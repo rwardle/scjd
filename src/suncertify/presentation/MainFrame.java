@@ -133,7 +133,7 @@ public final class MainFrame extends JFrame implements MainView {
 
     private JTable createResultsTable() {
         /*
-         * Extend JTable override methods that allow tooltips to be set on the
+         * Extend JTable to override method that allow tooltips to be set on the
          * column headers.
          */
         return new JTable(tableModel, contractorTableColumnModel) {
@@ -430,6 +430,7 @@ public final class MainFrame extends JFrame implements MainView {
         locationTextField.setText(null);
     }
 
+    // Performs the search action
     private static final class SearchAction extends AbstractAction {
 
         private final MainFrame mainFrame;
@@ -448,6 +449,7 @@ public final class MainFrame extends JFrame implements MainView {
         }
     }
 
+    // Clears the search criteria text fields
     private static final class ClearCriteriaAction extends AbstractAction {
 
         private final MainFrame mainFrame;
@@ -468,6 +470,7 @@ public final class MainFrame extends JFrame implements MainView {
         }
     }
 
+    // Displays the help contents frame
     private static final class HelpContentsAction extends AbstractAction {
 
         private final MainFrame mainFrame;
@@ -518,6 +521,7 @@ public final class MainFrame extends JFrame implements MainView {
         }
     }
 
+    // Exits the application
     private static final class ExitAction extends AbstractAction {
 
         private final MainFrame mainFrame;

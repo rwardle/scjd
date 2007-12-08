@@ -33,7 +33,14 @@ public final class JGradientPanel extends JPanel {
         this.bottomColor = bottomColor;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Paints a gradient paint using the <code>topColor</code> and
+     * <code>bottomColor</code> in the rectangle that makes up the bounds of
+     * this panel.
+     * 
+     * @param g
+     *                <code>Graphics</code> object.
+     */
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;

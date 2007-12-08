@@ -149,7 +149,7 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
         return panel;
     }
 
-    // Owner column is rendered as a book button if there is no owner
+    // Renders the owner column as a book button if there is no owner
     private static final class OwnerTableCellRenderer implements
             TableCellRenderer {
 
@@ -220,6 +220,7 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
         }
     }
 
+    // Owner column editor is a book button
     private static final class OwnerTableCellEditor extends AbstractCellEditor
             implements TableCellEditor, ActionListener {
 
