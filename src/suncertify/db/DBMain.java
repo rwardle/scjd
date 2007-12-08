@@ -46,6 +46,8 @@ public interface DBMain {
      * @throws RecordNotFoundException
      *                 If the specified record does not exist or is marked as
      *                 deleted in the database.
+     * @throws DataAccessException
+     *                 If there is an error accessing the database.
      */
     String[] read(int recNo) throws RecordNotFoundException;
 
@@ -58,9 +60,19 @@ public interface DBMain {
      *                Database record number.
      * @param data
      *                <code>String</code> array containing new record values.
+     *                If <code>data[n]</code> is <code>null</code> field
+     *                <code>n</code> will not be updated.
      * @throws RecordNotFoundException
      *                 If the specified record does not exist or is marked as
      *                 deleted in the database.
+     * @throws IllegalArgumentException
+     *                 If <code>data</code> is <code>null</code> or is of
+     *                 length not equal to the database schema field count.
+     * @throws IllegalStateException
+     *                 If the calling thread does not hold the lock on the
+     *                 record to be updated.
+     * @throws DataAccessException
+     *                 If there is an error accessing the database.
      */
     void update(int recNo, String[] data) throws RecordNotFoundException;
 
@@ -75,6 +87,11 @@ public interface DBMain {
      * @throws RecordNotFoundException
      *                 If the specified record does not exist or is marked as
      *                 deleted in the database.
+     * @throws IllegalStateException
+     *                 If the calling thread does not hold the lock on the
+     *                 record to be updated.
+     * @throws DataAccessException
+     *                 If there is an error accessing the database.
      */
     void delete(int recNo) throws RecordNotFoundException;
 
@@ -93,6 +110,11 @@ public interface DBMain {
      * @throws RecordNotFoundException
      *                 If the specified record does not exist or is marked as
      *                 deleted in the database.
+     * @throws IllegalArgumentException
+     *                 If <code>criteria</code> is <code>null</code> or is
+     *                 of length not equal to the database schema field count.
+     * @throws DataAccessException
+     *                 If there is an error accessing the database.
      */
     int[] find(String[] criteria) throws RecordNotFoundException;
 
@@ -105,6 +127,12 @@ public interface DBMain {
      * @return The record number of the new record.
      * @throws DuplicateKeyException
      *                 If there is a duplicate key.
+     * @throws IllegalArgumentException
+     *                 If <code>data</code> is <code>null</code> or is of
+     *                 length not equal to the database schema field count or
+     *                 contains a <code>null</code> value.
+     * @throws DataAccessException
+     *                 If there is an error accessing the database.
      */
     int create(String[] data) throws DuplicateKeyException;
 
@@ -118,6 +146,9 @@ public interface DBMain {
      * @throws RecordNotFoundException
      *                 If the specified record does not exist or is marked as
      *                 deleted in the database.
+     * @throws IllegalThreadStateException
+     *                 If the calling thread is interrupted while waiting to
+     *                 acquire the lock.
      */
     void lock(int recNo) throws RecordNotFoundException;
 
@@ -130,6 +161,9 @@ public interface DBMain {
      * @throws RecordNotFoundException
      *                 If the specified record does not exist or is marked as
      *                 deleted in the database.
+     * @throws IllegalStateException
+     *                 If the calling thread does not hold the lock on the
+     *                 record to be unlocked.
      */
     void unlock(int recNo) throws RecordNotFoundException;
 

@@ -7,6 +7,7 @@
 package suncertify.db;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import suncertify.db.DatabaseSchema.FieldDescription;
 
@@ -20,10 +21,22 @@ import suncertify.db.DatabaseSchema.FieldDescription;
  */
 public final class DatabaseFileValidator {
 
+    private static final Logger LOGGER = Logger
+            .getLogger(DatabaseFileValidator.class.getName());
+
     private final DatabaseFile databaseFile;
     private final DatabaseSchema databaseSchema;
+
+    /** Boolean flag to indicate if the database file has been validated or not. */
     private boolean validated;
+
+    /**
+     * Offset of the data section (where the records start) in the database
+     * file.
+     */
     private long dataSectionOffset;
+
+    /** Number of records in the database. */
     private int recordCount;
 
     /**
@@ -34,15 +47,28 @@ public final class DatabaseFileValidator {
      *                Database file to validate.
      * @param databaseSchema
      *                Database schema to validate against.
+     * @throws IllegalArgumentException
+     *                 If <code>databaseFile</code> or
+     *                 <code>databaseSchema</code> is <code>null</code>.
      */
     public DatabaseFileValidator(DatabaseFile databaseFile,
             DatabaseSchema databaseSchema) {
+        if (databaseFile == null) {
+            throw new IllegalArgumentException("databaseFile cannot be null");
+        }
+        if (databaseSchema == null) {
+            throw new IllegalArgumentException("databaseSchema cannot be null");
+        }
+
         this.databaseFile = databaseFile;
         this.databaseSchema = databaseSchema;
     }
 
     /**
-     * Validates the database file.
+     * Validates the database file. In the process of validating the database
+     * file, the data section offset and record count are stored. They can be
+     * accessed using the <code>getDataSectionOffset</code> and
+     * <code>getRecordCount</code> after this method has completed.
      * 
      * @throws IOException
      *                 If there is an error accessing the database file.
@@ -59,6 +85,8 @@ public final class DatabaseFileValidator {
 
         dataSectionOffset = databaseFile.getFilePointer();
         recordCount = validateRecordCount();
+
+        LOGGER.info("Database file is valid, record count is: " + recordCount);
 
         validated = true;
     }

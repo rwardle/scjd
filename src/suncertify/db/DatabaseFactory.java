@@ -28,6 +28,8 @@ public interface DatabaseFactory {
      *                 If the database file is invalid.
      * @throws IOException
      *                 If there is an error accessing the database file.
+     * @throws IllegalArgumentException
+     *                 If <code>databaseFilePath</code> is <code>null</code>.
      */
     Database createDatabase(String databaseFilePath)
             throws FileNotFoundException, DataValidationException, IOException;

@@ -95,7 +95,7 @@ public class TestConcurrency {
             String[] record = data.read(action.getIndex());
             for (int i = 0; i < record.length; i++) {
                 // Some value
-                record[i] = "2";
+                record[i] = "abcdefghijklmnopqrstuvwxyz";
             }
             data.create(record);
         }
@@ -114,7 +114,7 @@ public class TestConcurrency {
             }
             String[] record = data.read(action.getIndex());
             // Some updation
-            record[record.length - 1] = "1";
+            record[record.length - 1] = "abcdefghijklmnopqrstuvwxyz";
             data.lock(action.getIndex());
             try {
                 data.update(action.getIndex(), record);
@@ -134,10 +134,10 @@ public class TestConcurrency {
                 }
                 data.delete(action.getIndex());
             } finally {
-                data.unlock(action.getIndex());
+                // No Unlocking that is taken care in the Delete method itself
+                // data.unlock(action.getIndex());
             }
 
-            // No Unlocking that is taken care in the Delete method itself
         }
     }
 

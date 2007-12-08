@@ -143,7 +143,7 @@ public class DataTest {
                 sequence);
         checkingFieldCount(DataTestConstants.EXPECTED_FIELD_COUNT, sequence);
 
-        short invalidFieldLength = -1;
+        short invalidFieldLength = 999;
         assertThat(invalidFieldLength,
                 is(not((short) DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[0]
                         .getName().length())));

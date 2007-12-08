@@ -35,7 +35,9 @@ public final class DatabaseSchema {
     }
 
     /**
-     * Returns the record length.
+     * Returns the record length. This does not include the length of the flag
+     * used to indicate the validity of the record (defined in
+     * {@link DatabaseConstants#RECORD_VALIDITY_FLAG_LENGTH}.
      * 
      * @return The record length.
      */
@@ -81,9 +83,25 @@ public final class DatabaseSchema {
          *                Field length.
          * @param recordOffset
          *                Offset within the database record.
+         * @throws IllegalArgumentException
+         *                 If <code>fieldName</code> is <code>null</code>,
+         *                 <code>fieldLength</code> is less than or equal to
+         *                 0, or <code>recordOffset</code> is less than 0.
          */
         public FieldDescription(String fieldName, short fieldLength,
                 int recordOffset) {
+            if (fieldName == null) {
+                throw new IllegalArgumentException("fieldName must be non-null");
+            }
+            if (fieldLength <= 0) {
+                throw new IllegalArgumentException(
+                        "fieldLength must be greater than zero");
+            }
+            if (recordOffset < 0) {
+                throw new IllegalArgumentException(
+                        "recordOffset must be greater than or equal to 0");
+            }
+
             name = fieldName;
             length = fieldLength;
             this.recordOffset = recordOffset;

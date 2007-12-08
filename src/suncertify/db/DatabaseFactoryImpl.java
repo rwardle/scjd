@@ -30,7 +30,12 @@ public final class DatabaseFactoryImpl implements DatabaseFactory {
     /** {@inheritDoc} */
     public Database createDatabase(String databaseFilePath)
             throws FileNotFoundException, DataValidationException, IOException {
-        LOGGER.info("Creating database for database file: " + databaseFilePath);
+        if (databaseFilePath == null) {
+            throw new IllegalArgumentException(
+                    "databaseFilePath cannot be null");
+        }
+
+        LOGGER.info("Creating database for file: " + databaseFilePath);
         return new DataAdapter(new Data(new DatabaseFileImpl(databaseFilePath)));
     }
 }

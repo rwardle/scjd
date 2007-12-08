@@ -193,7 +193,8 @@ public class MainPresenter {
                 List<Contractor> contractors = get();
 
                 LOGGER.info("Found " + contractors.size()
-                        + " contractors matching criteria: " + searchCriteria);
+                        + " contractors exactly matching criteria: "
+                        + searchCriteria);
 
                 // Update the view
                 presenter.view.setTableData(contractors);

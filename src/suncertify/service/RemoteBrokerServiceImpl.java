@@ -54,7 +54,8 @@ public final class RemoteBrokerServiceImpl extends UnicastRemoteObject
         try {
             List<Contractor> contractors = service.search(searchCriteria);
             LOGGER.info("Found " + contractors.size()
-                    + " contractors matching criteria: " + searchCriteria);
+                    + " contractors exactly matching criteria: "
+                    + searchCriteria);
             return contractors;
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE,

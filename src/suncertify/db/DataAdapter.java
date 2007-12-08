@@ -25,8 +25,13 @@ public final class DataAdapter implements Database {
      * 
      * @param data
      *                Data instance.
+     * @throws IllegalArgumentException
+     *                 If <code>data</code> is <code>null</code>.
      */
     public DataAdapter(Data data) {
+        if (data == null) {
+            throw new IllegalArgumentException("data cannot be null");
+        }
         this.data = data;
     }
 
