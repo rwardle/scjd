@@ -1,0 +1,2 @@
+JDK version: 1.6.0_03 (build 1.6.0_03-b05)
+Host platform: Microsoft Windows XP Service Pack 2
