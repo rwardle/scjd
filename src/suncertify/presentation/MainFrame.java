@@ -18,24 +18,19 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -61,8 +56,6 @@ public final class MainFrame extends JFrame implements MainView {
     private static final int TABLE_ROW_HEIGHT = 18;
     private static final Dimension TEXT_FIELD_PREFERRED_SIZE = new Dimension(
             100, 25);
-    private static final String USER_GUIDE_PATH = "suncertify/presentation/userguide.html";
-
     private final ResourceBundle resourceBundle;
     private final JLabel statusLabel;
     private final ContractorTableColumnModel contractorTableColumnModel;
@@ -277,21 +270,9 @@ public final class MainFrame extends JFrame implements MainView {
         editMenu.add(searchMenuItem);
         editMenu.add(clearCriteriaMenuItem);
 
-        JMenuItem helpContentsMenuItem = new JMenuItem();
-        helpContentsMenuItem.setAction(new HelpContentsAction(this));
-        helpContentsMenuItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_F1, 0));
-
-        JMenu helpMenu = new JMenu();
-        helpMenu.setText(resourceBundle.getString("MainFrame.helpMenu.text"));
-        helpMenu.setMnemonic(resourceBundle.getString(
-                "MainFrame.helpMenu.mnemonic").charAt(0));
-        helpMenu.add(helpContentsMenuItem);
-
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
-        menuBar.add(helpMenu);
 
         return menuBar;
     }
@@ -467,57 +448,6 @@ public final class MainFrame extends JFrame implements MainView {
 
         public void actionPerformed(ActionEvent e) {
             mainFrame.clearCriteriaActionPerformed();
-        }
-    }
-
-    // Displays the help contents frame
-    private static final class HelpContentsAction extends AbstractAction {
-
-        private final MainFrame mainFrame;
-
-        public HelpContentsAction(MainFrame mainFrame) {
-            super(mainFrame.resourceBundle
-                    .getString("MainFrame.helpContentsAction.text"));
-            this.mainFrame = mainFrame;
-            putValue(Action.MNEMONIC_KEY, Integer
-                    .valueOf(this.mainFrame.resourceBundle.getString(
-                            "MainFrame.helpContentsAction.mnemonic").charAt(0)));
-        }
-
-        public void actionPerformed(ActionEvent evt) {
-            URL helpContentsUrl = ClassLoader
-                    .getSystemResource(USER_GUIDE_PATH);
-
-            if (helpContentsUrl == null) {
-                LOGGER.warning("Help contents resource not found: "
-                        + helpContentsUrl);
-                showErrorDialog();
-            } else {
-                try {
-                    // Display the help HTML page in a new frame
-                    JEditorPane editorPane = new JEditorPane(helpContentsUrl);
-                    JFrame frame = new JFrame(mainFrame.resourceBundle
-                            .getString("MainFrame.helpContents.title"));
-                    frame.add(editorPane);
-                    frame.pack();
-                    frame.setLocationRelativeTo(mainFrame);
-                    frame.setVisible(true);
-                } catch (IOException e) {
-                    LOGGER.log(Level.WARNING,
-                            "Error creating help contents editor pane for URL: "
-                                    + helpContentsUrl, e);
-                    showErrorDialog();
-                }
-            }
-        }
-
-        private void showErrorDialog() {
-            String message = mainFrame.resourceBundle
-                    .getString("MainFrame.helpContentsErrorDialog.message");
-            String title = mainFrame.resourceBundle
-                    .getString("MainFrame.helpContentsErrorDialog.title");
-            JOptionPane.showMessageDialog(mainFrame, message, title,
-                    JOptionPane.ERROR_MESSAGE);
         }
     }
 

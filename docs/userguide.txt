@@ -1,0 +1,144 @@
+Starting the application 
+------------------------
+
+The application is delivered as an executable JAR file called runme.jar. It
+can be started from the command line using the command:
+
+java -jar <path_to_runme.jar> [<mode>]
+
+where "mode" is an optional command line flag specifying the mode the
+application is to run in. The valid modes are:
+
+* "server" - indicates that the database server will run (in the rest of this
+  document this will be referred to as server mode);
+* "alone" - indicates that the GUI client will run and use a local database
+  (in the rest of this document this will be referred to as standalone mode);
+* if no mode flag is specified the GUI client will run and connect to a
+  database server over the network (in the rest of this document this will be
+  referred to as client mode).
+
+Examples of starting the application:
+
+1. If the runme.jar file is located at C:\applications\runme.jar on a Windows
+machine, this command will run the application in server mode:
+
+java -jar C:\applications\runme.jar server
+
+2. If the runme.jar file is located at /home/applications/runme.jar on a Unix
+machine, this command will run the application in standalone mode:
+
+java -jar /home/applications/runme.jar alone
+
+3. If the runme.jar file is located in the current working directory, this
+command will run the application in client mode:
+
+java -jar runme.jar
+
+
+Configuring and launching the application
+-----------------------------------------
+
+The first screen that appears when the application is run is the Launcher
+window. This window is used for configuring and launching the application. Its
+contents differ depending on the application mode:
+
+Server mode: 
+In server mode the location of the database file and the port on which to
+publish the database server must be selected.
+
+Standalone mode: 
+In standalone mode the location of the database file must be selected.
+
+Client mode: 
+In client mode the address and port of the database server to connect to must
+be selected.
+
+After making these selections clicking the OK button will save the
+configuration and launch the application. The application configuration is
+saved to a file called "suncertify.properties" in the current working
+directory. The next time the application is started the Launcher window will
+be pre-populated with the configuration saved in this file.
+
+What happens next depends on the application mode:
+
+Server mode: 
+In server mode the application does not display a GUI after the configuration
+stage, rather it waits to service remote connections from clients. The server
+application will remain running as long as the console window from which the
+application was started is not closed or the server application process
+terminated in some other way (by pressing Crtl-C in the console window, for
+example).
+
+Standalone and client modes: 
+In standalone and client modes the main application window will now be
+displayed. The features of this window are described in the following
+sections.
+
+
+Searching for contractors 
+-------------------------
+
+The main application window is entitled Search Contractors and it presents two
+text fields to enter search criteria: one to match on contractor name and the
+other to match on contractor location. A search is performed by clicking on
+the Search button, selecting Search from the Edit menu or pressing the Ctrl-G
+keyboard shortcut. The following types of search are available:
+
+* leaving both criteria fields empty will return all the contractors in the
+  database;
+* entering a name and leaving the location empty will search for contractors
+  exactly matching the name criteria (regardless of location);
+* entering a location and leaving the name empty will search for contractors
+  exactly matching the location criteria (regardless of name);
+* entering both a name and a location will search for contractors where both
+  the name and location criteria are matched exactly.
+
+The search results are displayed in a table underneath the criteria fields.
+The number of matching contractors and the search criteria of the last search
+are displayed in the status bar at the bottom of the main window.
+
+The search criteria can be cleared by selecting Clear Criteria from the Edit
+menu or using the Ctrl-L keyboard shortcut.
+
+
+Booking a contractor 
+--------------------
+
+The owner column in the search results table is displayed differently
+depending on whether that contractor is available for booking or not. If the
+contractor has already been booked the ID of the customer who made the booking
+will be displayed. If the contractor is available for booking a button marked
+Book will be displayed.
+
+To book a contractor, click the Book button in the row for that contractor. A
+window entitled Book Contractor is shown prompting for the entry of the
+8-digit ID of the customer making the booking. Only digits may be entered and
+the full 8 digits must be entered to make the booking. After entering the
+customer ID click OK to make the booking or click Cancel to cancel the
+booking. When the booking has completed successfully the owner column of the
+row in the table will be updated with the customer's ID number.
+
+It is possible that the booking process may fail because the contractor has
+been modified or deleted in the database by another user. In either of these
+cases, a warning dialog will be shown prompting the user to refresh the search
+results to see the latest contractor information.
+
+
+Error reporting 
+---------------
+
+If the application encounters any errors, an error dialog will be shown giving
+information about the error where possible. If the error cannot be recovered
+from, the error dialog will inform the user of this and the application will
+exit when the error dialog is closed. Any errors are logged to the console
+window from which the application was started.
+
+
+Shutting-down the application 
+-----------------------------
+
+The recommended way of shutting-down the an application running in server mode
+is by pressing Crtl-C in the console window from which the application was
+started. An application running in standalone or client mode can be shutdown
+by clicking the standard operating system close window button or by selecting
+Exit from the File menu.

@@ -1,45 +1,61 @@
-1. Updated UI creation for new version of Swing EDT rule.
-2. Used MVC pattern for UI with controller as mediator to facilitate testing.
-3. Adding a new line after if,else,catch,finally statements to improve readability.
-4. ConfigurationPresenter is not final to facilitate testing.
-5. Using a static method to look up the correct application factory based on the application mode. If this needed to be dynamic then we could have stored application factory instances against applicatin mode tokens in a hashmap enabling to add extra ones dynamically.
-6. Use of readFully method in Data class.
-7. Decided to trim strings when reading in from DB file - works but for padding with spaces and padding with null-terminator (although not for null-terminated and then junk data in rest of field).
-8 When writing out will pad with spaces for consistency with data file.
-9. Using a single Data instance since no performance requirements and creating a new RAF for each client would be a bottleneck. Could have used a RAF pool but would be overkill.
-10. Use of runtime exception in Data.java - instead of wrapping in RecordNotFoundException.
-11. update method of Data.java - allowing empty string in data array but not nulls. Empty string so a record can be updated with an empty owner id to "unbook".
-12. Didn't throw DuplicateKeyException from create method cos there is no primary key defined and didn't want to guess.
-13. invalidRecNo check and incrementing of the recordCount after creating a record at the end of the file take place outside the sync blocks. There is potential for one thread doing a read/udpate/delete to check the rec no and get a recordnotfoundexception even though the record does exist because it has just been added in the create method but the record count has not been updated. Happy with this approach since the client doing the read/update/delete shouldn't be operating on that recordNumber if it is only just being created at the same time. Other option would be to move the validateRecNo and recordCount incrementation into the sync blocks but then that would mean that they would have to obtain the file lock to do a non-file operation which may return from the method straight away if the validation check fails.
-14. When deleting the last record in the database the file length is not decreased - which means that the database will never get smaller in size. Shouldn't be an issue since deleted records can be overwritten as long as a load of records aren't added and then deleted straigth away.
-15. Using thread ID to identify client locks. Because server is implemented using RMI and all lock/unlock operations take place on a single RMI call and hence a single thread of execution this is OK. RMI spec makes no guarantees with threads, see:
+APP
+---
+
+- Using a static method to look up the correct application factory based on the application mode. If this needed to be dynamic then we could have stored application factory instances against applicatin mode tokens in a hashmap enabling to add extra ones dynamically.
+- Not doing any cleanup on application shutdown. No point unbinding RMI object from registry since registry will die with the application. Put something in userguide to say that server can be shutdown with Ctrl-C. Not waiting for threads that are currently working to finish their task. Clients that are waiting on an RMI call will get a RemoteException - up to them to connect to server later and see if their operation was successful. Potential for corrupt database file if a write is happening when the JVM is killed. Also potential for non-corrupt but partly written record update if JVM is killed between first and last field being written. Could reduce this risk by writing all record in one operation but since the only update we do in this application is of the owner field this would be inefficent.
+- Some methods have package access to enable them to be overridden in tests.
+- Use of interfaces to allow mocks, mention test-first.
+
+
+UI
+--
+
+- Updated UI creation for new version of Swing EDT rule.
+- Used MVC pattern for UI with controller as mediator to facilitate testing.
+- Some classes are not final to facilitate testing with mocks.
+- Not having paging of search results in client because DB is unlikely to grow massively in size.
+- Long-running calls from the GUI are put on SwingWorker and show a busy cursor and a semi-transparent glasspane to block user input and visiually indicate that the app is busy. There is no way for a user to cancel the operation - considered beyond scope. If the server goes down - presuming that RemoteException will be thrown - is this correct? Note that the GlassPane will not block the menubar but it does enough to block casual interactions with the UI. You can't search (search action is disabled) or book through the menubar so shouldn't be a problem.
+
+
+BL
+__
+
+- If a client disconnects during a call to the server then the RMI call will complete and the client will see the results of it when they next load the app.
+- Instructions state that for the UI search must be exact - DB searches user startsWith so business layer will do filtering. BL only offer exact searches - no requirement for flexible search at UI level, just at DB level.
+- BrokerServiceImpl book method swallows RNF expection from unlock method - shouldn't happen.
+- Catching and rethrowing errors in RemoteBrokerServiceImpl so that they can be logged in the VM that they originated. Also with method params and return values for book and search.
+- If the client dies in the middle of an RMI call this will not be a problem since all locking is done on the server side. The server operation will complete and unlock the record.
+- Only defining serialVersionUID in classes that will be going over the network. Not defined it in classes that extend Swing components since they will not go over the network and are not designed to be saved to disk using serialization. Using a serialverisonUID of 1 to make verisoning explicit and obvious.
+- Explain choice of service package structure, i.e. RemoteBrokerService extends BrokerService and delegating.
+- RmiService groups together all RMI operations into a single interface to allow mocking in tests.
+- Interpreted from spec that customerId must be 8 digits. Enforcing that in UI and at business service layer but not at database since that just deals with generic strings and pads or trims appropriately.
+- Not allowing unbooking at business layer, i.e. can't pass in empty string for customerId to book method. Not requirement for this. Allowing bookings to overwrite as long as data passed in matches data in database, i.e. the client has seen that the record is already booked. No support in user interface since no requirement for it.
+- "Class suncertify.service.RemoteBrokerServiceImpl defines non-transient non-serializable instance field service" - mention that this does not actually get serialized in RMI.
+
+
+DB
+--
+
+- Use of readFully method in Data class.
+- Decided to trim strings when reading in from DB file - works but for padding with spaces and padding with null-terminator (although not for null-terminated and then junk data in rest of field).
+- When writing out will pad with spaces for consistency with data file.
+- Using a single Data instance since no performance requirements and creating a new RAF for each client would be a bottleneck. Could have used a RAF pool but would be overkill.
+- Use of runtime exception in Data.java - instead of wrapping in RecordNotFoundException.
+- update method of Data.java - allowing empty string in data array but not nulls. Empty string so a record can be updated with an empty owner id to "unbook".
+- Didn't throw DuplicateKeyException from create method cos there is no primary key defined and didn't want to guess.
+- invalidRecNo check and incrementing of the recordCount after creating a record at the end of the file take place outside the sync blocks. There is potential for one thread doing a read/udpate/delete to check the rec no and get a recordnotfoundexception even though the record does exist because it has just been added in the create method but the record count has not been updated. Happy with this approach since the client doing the read/update/delete shouldn't be operating on that recordNumber if it is only just being created at the same time. Other option would be to move the validateRecNo and recordCount incrementation into the sync blocks but then that would mean that they would have to obtain the file lock to do a non-file operation which may return from the method straight away if the validation check fails.
+- When deleting the last record in the database the file length is not decreased - which means that the database will never get smaller in size. Shouldn't be an issue since deleted records can be overwritten as long as a load of records aren't added and then deleted straigth away.
+- Using thread ID to identify client locks. Because server is implemented using RMI and all lock/unlock operations take place on a single RMI call and hence a single thread of execution this is OK. RMI spec makes no guarantees with threads, see:
 http://java.sun.com/j2se/1.5.0/docs/guide/rmi/spec/rmi-arch3.html
 But this gives us 2 possibilites: a) concurrent requests are routed to separate threads and then locking with the thread ID will be OK given the lock/unlock on same thread contract. Or b) the requests will be handled concurrently on the same thread in which case the lock from the first request will have been released before the second lock request occurs and there will be no contention. Recognise that if a client was calling lock on one thread and operation/unlock on another then this implementation would not work but this is not possible in my app and I'm not coding fall all possibilities.
-16. Use of thread ID - it is unique in lifetime of a thread (from javadoc) so even in a thread pool situation this is OK since if a thread is waiting or using the lock the thread is busy and is not in the pool for another reuqest to use.
-17. Ensure recordCount is only incremented inside sync block on RAF. Also find loops over recordCount inside RAF sync block so this is OK. Reads to check that recNo is not beyond EOF are not synced on RAF - make recordCount volatile to ensure that latest recordCount is always seen?
-18. read and find isRecordDeleted calls need to be inside RAF sync block because no logical record locking for these method calls whereas we know that a record cannot become deleted part way through an upate or delete method call because of logical record locking.
-19. Mention that to convert this to a web application in future would be really easy -  just stick a web front-end as a client of the BrokerServicesImpl.
-20. If a client disconnects during a call to the server then the RMI call will complete and the client will see the results of it when they next load the app.
-21. find method reads in the whole record since one medium-sized file op is thought to be quicker than 6 small ones. Also reading it in one go means that the time to lock the DB is shorter. The other option would be to lock/unlock around the read of each field - this could mean that the record is changed between reading the first field and the last. At least the record is a consistent whole if it is read is one go, although it may have changed before the find method returns.
-22. Made delete method unlock the record, so that can maintain the contract of the unlock method to throw RNF exception if record is deleted. Note that if unlock throws RNF and the recNo is still in the lock map then it won't get removed. But the only way for a record to be locked and then for the unlock to throw RNF exception is if it's deleted via the delete method which will unlock the record anyway - so this is not a problem. Any other situation is a violation of the programming contract or something has modified the database externally which is a viloation of the spec.
-23. Made Data.java package private since I did not want to expose it to other layers of the application when it throws runtime exceptions. Introduced a Database interface that uses checked exceptions - this is for use by the business layer. DataAdapter adapts Data to the Database interface by unwrapping runtime exceptions and rethrowing checked exceptions. Since Data cannot be instantiated outside of the db package I introducted a DatabaseFactory to create an implementation of Database - the only one in this case is Data (and its wrappings) so no need to make this a full-blown abstract factory.
-24. Made the find method in Data.java case sensitive because the Javadoc mentions that: "Fred" matches "Fred" or "Freddy" but it does not say it matches "fred".
-25. Instructions state that for the UI search must be exact - DB searches user startsWith so business layer will do filtering. BL only offer exact searches - no requirement for flexible search at UI level, just at DB level.
-26. Not having paging of search results in client because DB is unlikely to grow massively in size.
-27. BrokerServiceImpl book method swallows RNF expection from unlock method - shouldn't happen.
-28. Long-running calls from the GUI are put on SwingWorker and show a busy cursor and a semi-transparent glasspane to block user input and visiually indicate that the app is busy. There is no way for a user to cancel the operation - considered beyond scope. If the server goes down - presuming that RemoteException will be thrown - is this correct? Note that the GlassPane will not block the menubar but it does enough to block casual interactions with the UI. You can't search (search action is disabled) or book through the menubar so shouldn't be a problem.
-29. Not doing any cleanup on application shutdown. No point unbinding RMI object from registry since registry will die with the application. Put something in userguide to say that server can be shutdown with Ctrl-C. Not waiting for threads that are currently working to finish their task. Clients that are waiting on an RMI call will get a RemoteException - up to them to connect to server later and see if their operation was successful. Potential for corrupt database file if a write is happening when the JVM is killed. Also potential for non-corrupt but partly written record update if JVM is killed between first and last field being written. Could reduce this risk by writing all record in one operation but since the only update we do in this application is of the owner field this would be inefficent.
-30. Mention in the userguide that any errors will be logged to the log.
-31. Catching and rethrowing errors in RemoteBrokerServiceImpl so that they can be logged in the VM that they originated. Also with method params and return values for book and search.
-32. If the client dies in the middle of an RMI call this will not be a problem since all locking is done on the server side. The server operation will complete and unlock the record.
-33. Some methods have package access to enable them to be overridden in tests.
-34. Only defining serialVersionUID in classes that will be going over the network. Not defined it in classes that extend Swing components since they will not go over the network and are not designed to be saved to disk using serialization. Using a serialverisonUID of 1 to make verisoning explicit and obvious.
-35. Explain choice of service package structure, i.e. RemoteBrokerService extends BrokerService and delegating.
-36. RmiService groups together all RMI operations into a single interface to allow mocking in tests.
-37. Database interface throws IOExceptions - clients encouraged to use it in preference to DBMain.
-38. Using signal to wake up waiting threads rather than signalAll. Could have used signalAll and still met the spec in DBMain.lock javadoc "the current thread gives up the CPU and consumes no CPU cycles until the record is unlocked" since all threads waiting on a condition are waiting for one record to be unlocked.
-39. Interpreted from spec that customerId must be 8 digits. Enforcing that in UI and at business service layer but not at database since that just deals with generic strings and pads or trims appropriately.
-40. Not allowing unbooking at business layer, i.e. can't pass in empty string for customerId to book method. Not requirement for this. Allowing bookings to overwrite as long as data passed in matches data in database, i.e. the client has seen that the record is already booked. No support in user interface since no requirement for it.
-41. Document that Data.find does not throw RecordNotFoundException.
-42. "Class suncertify.service.RemoteBrokerServiceImpl defines non-transient non-serializable instance field service" - mention that this does not actually get serialized in RMI.
-43. Specify in userguide that can search for all records by leaving criteria fields blank.
+- Use of thread ID - it is unique in lifetime of a thread (from javadoc) so even in a thread pool situation this is OK since if a thread is waiting or using the lock the thread is busy and is not in the pool for another reuqest to use.
+- Ensure recordCount is only incremented inside sync block on RAF. Also find loops over recordCount inside RAF sync block so this is OK. Reads to check that recNo is not beyond EOF are not synced on RAF - make recordCount volatile to ensure that latest recordCount is always seen?
+- read and find isRecordDeleted calls need to be inside RAF sync block because no logical record locking for these method calls whereas we know that a record cannot become deleted part way through an upate or delete method call because of logical record locking.
+- Mention that to convert this to a web application in future would be really easy -  just stick a web front-end as a client of the BrokerServicesImpl.
+- find method reads in the whole record since one medium-sized file op is thought to be quicker than 6 small ones. Also reading it in one go means that the time to lock the DB is shorter. The other option would be to lock/unlock around the read of each field - this could mean that the record is changed between reading the first field and the last. At least the record is a consistent whole if it is read is one go, although it may have changed before the find method returns.
+- Made delete method unlock the record, so that can maintain the contract of the unlock method to throw RNF exception if record is deleted. Note that if unlock throws RNF and the recNo is still in the lock map then it won't get removed. But the only way for a record to be locked and then for the unlock to throw RNF exception is if it's deleted via the delete method which will unlock the record anyway - so this is not a problem. Any other situation is a violation of the programming contract or something has modified the database externally which is a viloation of the spec.
+- Introduced a Database interface that uses checked exceptions - this is for use by the business layer. DataAdapter adapts Data to the Database interface by unwrapping runtime exceptions and rethrowing checked exceptions. Since Data cannot be instantiated outside of the db package I introducted a DatabaseFactory to create an implementation of Database - the only one in this case is Data (and its wrappings) so no need to make this a full-blown abstract factory.
+- Made the find method in Data.java case sensitive because the Javadoc mentions that: "Fred" matches "Fred" or "Freddy" but it does not say it matches "fred".
+- Database interface throws IOExceptions - clients encouraged to use it in preference to DBMain.
+- Using signal to wake up waiting threads rather than signalAll. Could have used signalAll and still met the spec in DBMain.lock javadoc "the current thread gives up the CPU and consumes no CPU cycles until the record is unlocked" since all threads waiting on a condition are waiting for one record to be unlocked.
+- Document that Data.find does not throw RecordNotFoundException.
