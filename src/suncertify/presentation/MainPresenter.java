@@ -203,11 +203,8 @@ public class MainPresenter {
                         .setStatusLabelText(buildStatusLabelText(contractors
                                 .size()));
             } catch (InterruptedException e) {
-                LOGGER
-                        .log(
-                                Level.WARNING,
-                                "Thread was interruped while waiting for result of search SwingWorker",
-                                e);
+                String message = "Thread was interruped while waiting for result of search SwingWorker";
+                LOGGER.log(Level.WARNING, message, e);
                 showSearchErrorDialog();
             } catch (ExecutionException e) {
                 LOGGER.log(Level.SEVERE,
@@ -320,11 +317,8 @@ public class MainPresenter {
                 // Now update the table row containing this contractor
                 presenter.view.updateContractorAtRow(rowNo, updatedContractor);
             } catch (InterruptedException e) {
-                LOGGER
-                        .log(
-                                Level.WARNING,
-                                "Thread was interruped while waiting for result of book SwingWorker",
-                                e);
+                String message = "Thread was interruped while waiting for result of book SwingWorker";
+                LOGGER.log(Level.WARNING, message, e);
                 showBookErrorDialog();
             } catch (ExecutionException e) {
                 handleBookException(e);
@@ -343,23 +337,19 @@ public class MainPresenter {
 
         private void handleBookException(ExecutionException e) {
             if (e.getCause() instanceof ContractorDeletedException) {
-                LOGGER
-                        .log(
-                                Level.WARNING,
-                                "Customer "
-                                        + customerId
-                                        + " attempted to book a contractor that has been deleted: "
-                                        + contractor, e);
+                String message = "Customer "
+                        + customerId
+                        + " attempted to book a contractor that has been deleted: "
+                        + contractor;
+                LOGGER.log(Level.WARNING, message, e);
                 showBookWarningDialog(presenter.resourceBundle
                         .getString("MainPresenter.bookWarningDialog.contractorDeleted.message"));
             } else if (e.getCause() instanceof ContractorModifiedException) {
-                LOGGER
-                        .log(
-                                Level.WARNING,
-                                "Customer "
-                                        + customerId
-                                        + " attempted to book a contractor that has been modified: "
-                                        + contractor, e);
+                String message = "Customer "
+                        + customerId
+                        + " attempted to book a contractor that has been modified: "
+                        + contractor;
+                LOGGER.log(Level.WARNING, message, e);
                 showBookWarningDialog(presenter.resourceBundle
                         .getString("MainPresenter.bookWarningDialog.contractorModified.message"));
             } else {

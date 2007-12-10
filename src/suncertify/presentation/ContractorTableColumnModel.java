@@ -149,7 +149,10 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
         return panel;
     }
 
-    // Renders the owner column as a book button if there is no owner
+    /*
+     * Renders the owner column as a book button if there is no owner. Using the
+     * flyweight pattern for the bookButtonPanel renderer component.
+     */
     private static final class OwnerTableCellRenderer implements
             TableCellRenderer {
 
@@ -173,7 +176,7 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
                 int column) {
             JComponent component;
             if ("".equals(value)) {
-                // Owner column is empty, renderer the book button
+                // Owner column is empty, render the book button
                 Border border;
                 if (hasFocus) {
                     border = getFocusBorder(table, value, isSelected, row,

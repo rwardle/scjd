@@ -1,63 +1,343 @@
-http://saloon.javaranch.com/cgi-bin/ubb/ultimatebb.cgi?ubb=get_topic&f=25&t=004977
+Overview 
+--------
 
-APP
----
+A three-layer architecture was chosen for the application. The three layers
+are:
 
-- Using a static method to look up the correct application factory based on the application mode. If this needed to be dynamic then we could have stored application factory instances against applicatin mode tokens in a hashmap enabling to add extra ones dynamically.
-- Not doing any cleanup on application shutdown. No point unbinding RMI object from registry since registry will die with the application. Put something in userguide to say that server can be shutdown with Ctrl-C. Not waiting for threads that are currently working to finish their task. Clients that are waiting on an RMI call will get a RemoteException - up to them to connect to server later and see if their operation was successful. Potential for corrupt database file if a write is happening when the JVM is killed. Also potential for non-corrupt but partly written record update if JVM is killed between first and last field being written. Could reduce this risk by writing all record in one operation but since the only update we do in this application is of the owner field this would be inefficent.
-- Some methods have package access to enable them to be overridden in tests.
-- Use of interfaces to allow mocks, mention test-first.
+* The database layer consists of the classes in the suncertify.db package.
+  This layer is responsible for providing access to the physical database file
+  and for providing the record locking system. This layer has no dependencies
+  on other layers in the system.
+* The business service layer consists of the classes in the suncertify.service
+  package. This layer defines the business level operations that will be
+  visible to the application/presentation layer. It also provides the
+  networking code that will make the business level operations available to
+  remote clients. This layer has a dependency on the database layer.
+* The application/presentation layer consists of the classes in the suncertify
+  and suncertify.presentation packages. This layer is responsible for
+  creating, configuring and launching the application and for presenting the
+  user interface (UI) to the user. This layer has dependencies on the business
+  service layer and the database layer.
+
+The addition of a middle layer between the UI and the database provides a
+number of benefits including:
+
+* A thin-client that uses a well-defined business layer provides a clean
+  separation between the business-level operations and their presentation.
+  This means that in the future it would be relatively simple to create a
+  web-based front-end that uses the same business service layer as the current
+  Swing client.
+* The presentation layer does not interact directly with the locking
+  operations of the database. This is important when you consider the
+  application running in client-server mode. If the client were to call the
+  lock method on the database remotely, and then the client JVM was terminated
+  without releasing the lock, the record in the database would stay locked
+  indefinitely. It is possible for database to be coded to alleviate this
+  problem (e.g. by timing-out inactive locks or tracking the state of clients)
+  but these solutions would lead to a more complicated design. When all
+  locking operations originate from the business service layer and this is
+  located in the same JVM as the database, there is no potential for this
+  problem to occur.
+* Having a business service layer also reduces the number of network calls
+  needed to complete a book operation, for example. In my design this would
+  involve just one remote method call from the client to the book method in
+  the remote business service layer. In a design where the presentation layer
+  calls the database operations directly, it would require at least three
+  remote method calls: one to lock the record, one to update the record and
+  one to unlock the record.
 
 
-UI
---
+Testability 
+-----------
 
-- Updated UI creation for new version of Swing EDT rule.
-- Used MVC pattern for UI with controller as mediator to facilitate testing.
-- Some classes are not final to facilitate testing with mocks.
-- Not having paging of search results in client because DB is unlikely to grow massively in size.
-- Long-running calls from the GUI are put on SwingWorker and show a busy cursor and a semi-transparent glasspane to block user input and visiually indicate that the app is busy. There is no way for a user to cancel the operation - considered beyond scope. If the server goes down - presuming that RemoteException will be thrown - is this correct? Note that the GlassPane will not block the menubar but it does enough to block casual interactions with the UI. You can't search (search action is disabled) or book through the menubar so shouldn't be a problem.
+The application was developed using test-driven development with JUnit and
+JMock. Some of the design decisions were made to facilitate this style of
+development, in particular:
+
+* Frequent use of interfaces and abstract classes. Interfaces can easily be
+  mocked; this allows testing to concentrate on small areas of the application
+  in isolation. For example, the RmiService interface groups together the
+  operations that interact with an RMI registry; unit tests can be setup with
+  a mock RmiService, removing the need to start a real RMI registry when
+  running unit tests. Similarly for the DatabaseFile interface.
+* An object's dependencies are provided as parameters to its constructor where
+  possible, making it easy to supply a mock implementation in a test. 
+* Use of package-private visibility factory methods. These can be overridden
+  in stub test classes to return a mock implementation. For example, the
+  createFileChooser method of ConfigurationPresenter can be overridden to
+  prevent UI elements from being created in the unit tests for
+  ConfigurationPresenter.
+* No use of the singleton pattern since it is hard to mock out or inject a
+  test-instance of a singleton.
+* Use of the Passive View pattern for the UI view objects. Here the view logic
+  is placed in the controller/presenter rather than the view, and the
+  presenter is also responsible for updating the view. Since the view logic is
+  in the presenter it can be tested in unit tests independently of the view
+  itself. This avoids the overhead and complication of creating UI components
+  in unit tests but still allows for good test coverage of the UI logic.
+
+For more information see: 
+Test-driven development: http://en.wikipedia.org/wiki/Test-driven_development
+JUnit: http://www.junit.org 
+JMock: http://www.jmock.org 
+Passive View pattern: http://martinfowler.com/eaaDev/PassiveScreen.html
 
 
-BL
-__
+Networking 
+----------
 
-- If a client disconnects during a call to the server then the RMI call will complete and the client will see the results of it when they next load the app.
-- Instructions state that for the UI search must be exact - DB searches user startsWith so business layer will do filtering. BL only offer exact searches - no requirement for flexible search at UI level, just at DB level.
-- BrokerServiceImpl book method swallows RNF expection from unlock method - shouldn't happen.
-- Catching and rethrowing errors in RemoteBrokerServiceImpl so that they can be logged in the VM that they originated. Also with method params and return values for book and search.
-- If the client dies in the middle of an RMI call this will not be a problem since all locking is done on the server side. The server operation will complete and unlock the record.
-- Only defining serialVersionUID in classes that will be going over the network. Not defined it in classes that extend Swing components since they will not go over the network and are not designed to be saved to disk using serialization. Using a serialverisonUID of 1 to make verisoning explicit and obvious.
-- Explain choice of service package structure, i.e. RemoteBrokerService extends BrokerService and delegating.
-- RmiService groups together all RMI operations into a single interface to allow mocking in tests.
-- Interpreted from spec that customerId must be 8 digits. Enforcing that in UI and at business service layer but not at database since that just deals with generic strings and pads or trims appropriately.
-- Not allowing unbooking at business layer, i.e. can't pass in empty string for customerId to book method. Not requirement for this. Allowing bookings to overwrite as long as data passed in matches data in database, i.e. the client has seen that the record is already booked. No support in user interface since no requirement for it.
-- "Class suncertify.service.RemoteBrokerServiceImpl defines non-transient non-serializable instance field service" - mention that this does not actually get serialized in RMI.
+I decided to use Remote Method Invocation (RMI) for the networking rather than
+Sockets. Programming with RMI uses higher-level APIs than when using Sockets
+directly; I think this would be easier for a junior programmer to understand.
+
+RMI defines the protocol to be used and performs the serializing/deserializing
+of the objects as they pass from client to server. If Sockets were used this
+would all have to be hand-coded by the programmer with the potential for
+introducing bugs in what is relatively low-level and technical code.
+
+The downside of RMI is that it can be slower than using Sockets directly.
+However, there is no requirement specifying that maximum performance is a high
+priority for this application.
+
+Also because RMI is relatively transparent to the programmer, it can also be
+abused if the remote interface provides methods that operate at too
+fine-grained a level. This can result in a programmer making a large number of
+RMI calls that will degrade network performance. This situation is avoided in
+my application by only defining two coarse-grained methods in the
+RemoteBrokerService interface.
 
 
-DB
---
+Application layer 
+-----------------
 
-- Use of readFully method in Data class.
-- Decided to trim strings when reading in from DB file - works but for padding with spaces and padding with null-terminator (although not for null-terminated and then junk data in rest of field).
-- When writing out will pad with spaces for consistency with data file.
-- Using a single Data instance since no performance requirements and creating a new RAF for each client would be a bottleneck. Could have used a RAF pool but would be overkill.
-- Use of runtime exception in Data.java - instead of wrapping in RecordNotFoundException.
-- update method of Data.java - allowing empty string in data array but not nulls. Empty string so a record can be updated with an empty owner id to "unbook".
-- Didn't throw DuplicateKeyException from create method cos there is no primary key defined and didn't want to guess.
-- invalidRecNo check and incrementing of the recordCount after creating a record at the end of the file take place outside the sync blocks. There is potential for one thread doing a read/udpate/delete to check the rec no and get a recordnotfoundexception even though the record does exist because it has just been added in the create method but the record count has not been updated. Happy with this approach since the client doing the read/update/delete shouldn't be operating on that recordNumber if it is only just being created at the same time. Other option would be to move the validateRecNo and recordCount incrementation into the sync blocks but then that would mean that they would have to obtain the file lock to do a non-file operation which may return from the method straight away if the validation check fails.
-- When deleting the last record in the database the file length is not decreased - which means that the database will never get smaller in size. Shouldn't be an issue since deleted records can be overwritten as long as a load of records aren't added and then deleted straigth away.
-- Using thread ID to identify client locks. Because server is implemented using RMI and all lock/unlock operations take place on a single RMI call and hence a single thread of execution this is OK. RMI spec makes no guarantees with threads, see:
-http://java.sun.com/j2se/1.5.0/docs/guide/rmi/spec/rmi-arch3.html
-But this gives us 2 possibilites: a) concurrent requests are routed to separate threads and then locking with the thread ID will be OK given the lock/unlock on same thread contract. Or b) the requests will be handled concurrently on the same thread in which case the lock from the first request will have been released before the second lock request occurs and there will be no contention. Recognise that if a client was calling lock on one thread and operation/unlock on another then this implementation would not work but this is not possible in my app and I'm not coding fall all possibilities.
-- Use of thread ID - it is unique in lifetime of a thread (from javadoc) so even in a thread pool situation this is OK since if a thread is waiting or using the lock the thread is busy and is not in the pool for another reuqest to use.
-- Ensure recordCount is only incremented inside sync block on RAF. Also find loops over recordCount inside RAF sync block so this is OK. Reads to check that recNo is not beyond EOF are not synced on RAF - make recordCount volatile to ensure that latest recordCount is always seen?
-- read and find isRecordDeleted calls need to be inside RAF sync block because no logical record locking for these method calls whereas we know that a record cannot become deleted part way through an upate or delete method call because of logical record locking.
-- Mention that to convert this to a web application in future would be really easy -  just stick a web front-end as a client of the BrokerServicesImpl.
-- find method reads in the whole record since one medium-sized file op is thought to be quicker than 6 small ones. Also reading it in one go means that the time to lock the DB is shorter. The other option would be to lock/unlock around the read of each field - this could mean that the record is changed between reading the first field and the last. At least the record is a consistent whole if it is read is one go, although it may have changed before the find method returns.
-- Made delete method unlock the record, so that can maintain the contract of the unlock method to throw RNF exception if record is deleted. Note that if unlock throws RNF and the recNo is still in the lock map then it won't get removed. But the only way for a record to be locked and then for the unlock to throw RNF exception is if it's deleted via the delete method which will unlock the record anyway - so this is not a problem. Any other situation is a violation of the programming contract or something has modified the database externally which is a viloation of the spec.
-- Introduced a Database interface that uses checked exceptions - this is for use by the business layer. DataAdapter adapts Data to the Database interface by unwrapping runtime exceptions and rethrowing checked exceptions. Since Data cannot be instantiated outside of the db package I introducted a DatabaseFactory to create an implementation of Database - the only one in this case is Data (and its wrappings) so no need to make this a full-blown abstract factory.
-- Made the find method in Data.java case sensitive because the Javadoc mentions that: "Fred" matches "Fred" or "Freddy" but it does not say it matches "fred".
-- Database interface throws IOExceptions - clients encouraged to use it in preference to DBMain.
-- Using signal to wake up waiting threads rather than signalAll. Could have used signalAll and still met the spec in DBMain.lock javadoc "the current thread gives up the CPU and consumes no CPU cycles until the record is unlocked" since all threads waiting on a condition are waiting for one record to be unlocked.
-- Document that Data.find does not throw RecordNotFoundException.
+I chose not to make the application attempt any cleanup operations when it is
+shut-down. For the server application there is no point in unbinding the
+remote object from the RMI registry because the RMI registry is started
+internally to the application and therefore will exit when the application
+shuts-down. Also, no attempt is made to wait for any currently active threads
+to finish executing before the server shuts-down. Clients that are currently
+executing an RMI call should be notified with a RemoteException if the server
+is shutdown - it is up to them to reconnect to the server at a later time and
+see if their operation was successful or not.
+
+If a client application is shut-down during an RMI call to the server, then
+the operation on the server will run to completion and the client will see the
+results of it when they next start-up the application.
+
+There could be potential for a corrupting the database file if a write is
+happening when the Java Virtual Machine (JVM) is killed. There could also be
+potential for a partly written record update if the JVM is killed in-between
+writing the first and last fields of a record. This risk could have been
+reduced by updating the whole record in one file operation. However, I decided
+not to do this since the only update operation that the current GUI client
+does is an update to the owner field, so writing the whole record out in this
+case would have been more inefficient.
+
+
+Presentation layer 
+------------------
+
+The presentation layer makes use of the Model View Presenter pattern (a
+variant of MVC) with passive views as described in the section on testability.
+Here the presenter object (i.e. MainPresenter in the case of the main window)
+acts as a mediating controller between the view and the model (the view and
+model have no dependencies on each other). The view delegates user events to
+the presenter and the presenter is responsible for updating the model. Unlike
+in the classic MVC, the presenter is also responsible for updating the view
+when a property of the model changes its value.
+
+The contractor search results are presented in a JTable. I chose to create my
+own table model that extends AbstractTableModel rather than using
+DefaultTableModel. I did this because I wanted to keep the table data in its
+native form as a list of Contractor objects. This makes it easier to provide
+methods such as getContractorAtRow and updateContractorAtRow which are used in
+the book contractor operation.
+
+I also provided by own table column model so that I could set a custom
+renderer and editor on the owner column. The renderer and editor display a
+Book button inside the owner cell if the contractor is available for booking.
+I thought this was a more natural way of presenting the data rather than
+having a single Book button outside of the table. The renderer for the owner
+column uses the flyweight pattern to reduce the memory resources needed to
+display a table with a large number of Book buttons in it.
+
+The two main UI operations, search and book, are performed on SwingWorker
+threads. In the client-server application modes these operations involve
+remote method calls which could potentially take a non-trivial amount of time
+to complete, depending on the size of the database and the speed of the
+network. By putting these operations onto a SwingWorker thread, it means that
+the AWT Event Dispatch Thread will not be blocked while they are in progress
+and they UI will remain responsive. I did not provide a way to cancel these
+operations if they are taking too long - this was considered beyond the scope
+of this assignment.
+
+The UI does not allow a contractor to be un-booked and it does not allow a
+booking to be overwritten. There was no requirement to implement this
+functionality.
+
+
+Business service layer 
+----------------------
+
+The business service layer has been designed in such a way that it is possible
+for the GUI client to call methods on the BrokerService interface without
+needing to know whether the underlying implementation is a local or a remote
+object. I decided to make the methods of BrokerService throw IOException; it
+is then possible to have the remote interface RemoteBrokerService declare that
+it extends BrokerService. The methods of RemoteBrokerService must declare that
+they throw RemoteException but that is OK since RemoteException extends
+IOException, as declared in the super-interface BrokerService.
+
+RemoteBrokerServiceImpl user the Delegate pattern: all its method calls are
+delegated to BrokerServiceImpl. However it does catch, log and re-throw
+exceptions to ensure that they get logged in the server JVM. It also logs
+parameter and return values, again to ensure that they get logged in the
+server JVM.
+
+Contractor, SearchCriteria, ContractorDeletedException and
+ContractorModifiedException are the only classes that are serialized in the
+application. These classes have a serialVersionUID field defined to control
+versioning. There are other classes in the application that implement
+Serializable but they are not serialized in this application, so for clarity
+they have not got a serialVersionUID defined.
+
+The database schema specification mentions that the owner field must be an 8
+digit number. This rule is enforced both in the UI (via the use of a
+JFormattedTextField) and in the business service layer validation. The
+database does not enforce this rule since it aims to be generic and should not
+be concerned with business rules.
+
+Un-booking of contractors is not allowed in the business service layer because
+all customer IDs passed to the book method must be 8-digits. There is nothing
+to stop a booking being overwritten (i.e. booking a contractor that is already
+booked by another customer) in the business service layer as long as the
+contractor data passed in to the method matches the data in the database, i.e.
+implying that the client has seen that the contractor is already booked to
+another customer.
+
+Since the database does "startsWith" searches and the UI requires exact
+searches, the database search results are filtered in the business service
+layer to ensure that only exact matches are returned to the client.
+
+
+Database layer 
+--------------
+
+The DBMain interface has a very restricted API in terms of the exceptions that
+can be thrown from its methods. In particular, IOExceptions cannot be thrown
+and this is problematic for clients of DBMain since all database file
+operations have the potential to generate IOExceptions. I decided against
+creating a sub-class of RecordNotFoundException to represent IO exceptions
+since there was no "IS-A" relationship in this case. Instead I decided to
+throw the IOExceptions wrapped in a new runtime exception called
+DataAccessException.
+
+Unfortunately, runtime exceptions are not always obvious to users of a class
+and I wanted a more type-safe interface for users of the suncertify.db package
+to interact with. So I created an interface called Database that defines the
+same methods as DBMain but declares that IOExceptions can be thrown from its
+methods. I then created an adapter class call DataAdapter to adapt the Data
+class to the Database interface, by unwrapping the DataAccessExceptions and
+re-throwing the root cause IOExceptions. The business service layer of my
+application uses the Database interface to access the database in preference
+to DBMain, but legacy applications could still make use of DBMain if required.
+
+My application uses a single instance of RandomAccessFile to access the
+database file. It provides a good solution for this application since
+individual records are read from the database rather than the whole file being
+read in one go. Record data is read using the readFully method since this will
+block until the requested number of bytes have been read. All operations
+called on the RandomAccessFile are synchronized on the instance of the
+RandomAccessFile to prevent crossover of seek and read/write operations
+between threads.
+
+Strings that are read from and written to the database use the ISO-8859-1
+character set encoding since the instructions specify an 8-bit character
+encoding. This encoding is a superset of the US-ASCII encoding mentioned in
+the instructions (US-ASCII is a 7-bit encoding).
+
+The format of the supplied database file suggested that any record values that
+are less than the specified field length should be padded with spaces. This
+contradicts the instructions which state that they should be null-terminated.
+I considered this to be a mistake in the instructions and decided to space-pad
+the fields. I thought it was likely that the data in the example database had
+been extracted from a real database and therefore should be correct. Similarly
+I decided to truncate any data supplied to the Data class that was too long to
+fit in the maximum field lengths.
+
+Since the instructions for the find method state that "Fred" matches "Fred" or
+"Freddy" I decided to implement my search algorithm using the "startsWith"
+method of the String class. Also, since the instructions did NOT state that
+"Fred" matches "fred" I decided to implement case-sensitive searching. My
+implementation of the find method does not throw RecordNotFoundException since
+there is no value to the client in throwing this exception - if a record is
+deleted in-between searching for matching records and reading each of the
+matching records from the database, the deleted record is just excluded from
+the search results.
+
+My implementation of the create method did not throw DuplicateKeyException
+because the section in the instructions describing the database schema did not
+define a primary key for the database. Without a primary key it is not
+possible to work out what a duplicate is.
+
+The database file will never reduce in size because my implementation never
+reduces the record count of the database, even if the record at the end of the
+database file is deleted. However, I don't think this will be a problem
+because new records are written into the space that deleted records used to
+occupy.
+
+
+Locking 
+-------
+
+Since the lock method of the DBMain interface does not provide a cookie value
+to identify a client, I decided to use the thread ID of the client for
+identification. The thread ID is unique in the lifetime of a thread. It is
+essential that all lock->operation->unlock method call sequences on the Data
+class are executed on the same thread. This contract is clearly documented in
+the Javadoc of the Database and DBMain interfaces and enforced in the
+implementation of Data.
+
+My network server is implemented using RMI and the single remote method call
+to "book" in RemoteBrokerServiceImpl performs the lock->update->unlock
+operations. Since a single RMI call is guaranteed to have a single thread of
+execution this meets the contract of the Data class. If the book operation was
+split across multiple RMI calls then this guarantee would not hold, but I have
+deliberately coded my application such that this is not the case.
+
+I am using an instance of ReentrantLock in the Data class to implement the
+logical record locking system. I create multiple Condition objects for this
+ReentrantLock: one for each record to be locked. This allows fine-grained
+signal operations when unlocking a record, i.e. only waking up threads that
+are waiting for the lock on that particular record.
+
+I decided that the recordCount variable of the Data class should be declared
+as volatile. The value of the recordCount will change whenever a new record is
+created. It is incremented in the create method, inside a block that is
+synchronized on the instance of the RandomAccessFile since increment
+operations are not atomic. The recordCount variable is read whenever the recNo
+argument to a method is validated. It would be inefficient to require
+synchronization on the RandomAccessFile instance whenever we needed to access
+the recordCount. Since read operations are atomic it is sufficient to declare
+the recordCount as volatile to ensure that the latest version of the data is
+always visible to all threads. I am aware that the volatile keyword was not
+implemented correctly in early JVMs, but it does work correctly in the JVM
+that I am submitting on (as defined in version.txt).
+
+I made the delete method of the Data class unlock the record that has been
+deleted before returning. This is because the contract of the unlock method in
+DBMain states that it must throw a RecordNotFoundException if the record has
+been deleted. Therefore it is not possible for clients to call unlock after
+calling delete without getting an exception. I have specified in the Javadoc
+of the delete method that clients do not need to call unlock after calling
+delete.
+
+
+Code conventions and Javadoc 
+---------------------------
+
+I have to adhered to the coding conventions recommended by Sun Microsystems.
+
+I wrote and generated Javadoc for all public and protected methods. I did not
+write Javadoc for private nested classes since these would not be visible in
+the generated Javadoc.
