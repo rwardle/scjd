@@ -50,6 +50,6 @@
         </copy>
         <copy file="docs/choices.txt" todir="${package.dir}/docs"/>
         <copy file="docs/userguide.txt" todir="${package.dir}/docs"/>        
-        <jar destfile="${dist.dir}/scjda_sr1500298.jar" basedir="${package.dir}"/>
+        <jar destfile="${dist.dir}/scjda-sr1500298.jar" basedir="${package.dir}"/>
     </target>
 </project>

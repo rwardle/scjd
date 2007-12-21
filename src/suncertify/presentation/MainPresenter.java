@@ -17,8 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
-
-import org.jdesktop.swingworker.SwingWorker;
+import javax.swing.SwingWorker;
 
 import suncertify.service.BrokerService;
 import suncertify.service.Contractor;
