@@ -1,6 +1,3 @@
-syntax:glob
-.svn
-
 syntax:regexp
 ^.classpath
 ^.project
