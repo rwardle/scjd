@@ -1,0 +1,13 @@
+syntax:glob
+.svn
+
+syntax:regexp
+^.classpath
+^.project
+^build
+^dist
+^nbproject/genfiles.properties
+^nbproject/private
+^nbproject/project.xml
+^suncertify.db
+^suncertify.properties
