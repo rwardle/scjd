@@ -2,6 +2,7 @@ syntax:regexp
 ^.classpath
 ^.idea
 ^.project
+^bin
 ^build
 ^dist
 ^nbproject/genfiles.properties
