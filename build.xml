@@ -4,14 +4,6 @@
     <description>Builds, tests, and runs the project scjdAssignment.</description>
     <import file="nbproject/build-impl.xml"/>
 
-    <property name="ant.common.home" value="../ant"/>
-    <import file="${ant.common.home}/build-checkstyle.xml"/>
-    <import file="${ant.common.home}/build-cobertura.xml"/>
-    <import file="${ant.common.home}/build-findbugs.xml"/>
-    <import file="${ant.common.home}/build-jdepend.xml"/>
-    <import file="${ant.common.home}/build-junit.xml"/>
-    <import file="${ant.common.home}/build-pmd.xml"/>
-
     <target name="-post-init" depends="-map-includes">
         <property file="build.properties"/>
     </target>
@@ -30,12 +22,7 @@
         <rmic base="${build.classes.dir}" classname="suncertify.service.RemoteBrokerServiceImpl"
             stubversion="1.2"/>
     </target>
-
-    <target name="report"
-            depends="checkstyle-report,findbugs-report,pmd-report,jdepend-report,junit-report,cobertura-report"/>
-    <target name="report-single"
-            depends="checkstyle-single-report,findbugs-single-report,pmd-single-report"/>
-            
+    
     <target name="package" depends="jar,javadoc">
         <delete dir="${package.dir}"/>
         <copy file="${dist.jar}" tofile="${package.dir}/runme.jar"/>
