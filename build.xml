@@ -4,7 +4,8 @@
     <description>Builds, tests, and runs the project scjdAssignment.</description>
     <import file="nbproject/build-impl.xml"/>
 
-    <target name="-post-init" depends="-map-includes">
+    <target name="-pre-init" depends="-map-includes">
+        <property environment="env"/>
         <property file="build.properties"/>
     </target>
 
