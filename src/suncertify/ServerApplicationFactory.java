@@ -11,7 +11,7 @@ import suncertify.service.RmiServiceImpl;
 
 /**
  * Creates applications that run in {@link ApplicationMode#SERVER SERVER} mode.
- * 
+ *
  * @author Richard Wardle
  */
 public final class ServerApplicationFactory extends AbstractApplicationFactory {
@@ -25,7 +25,7 @@ public final class ServerApplicationFactory extends AbstractApplicationFactory {
 
     /**
      * {@inheritDoc}
-     * <p>
+     * <p/>
      * This implementation creates a server application.
      */
     @Override

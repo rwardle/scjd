@@ -6,6 +6,8 @@
 
 package suncertify.service;
 
+import suncertify.db.Database;
+
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -13,13 +15,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import suncertify.db.Database;
-
 /**
  * Remote object implementation of {@link RemoteBrokerService} that uses a
  * {@link Database} object to obtain and store contractor data. All method calls
  * are delegated to an instance of {@link BrokerServiceImpl}.
- * 
+ *
  * @author Richard Wardle
  */
 public final class RemoteBrokerServiceImpl extends UnicastRemoteObject
@@ -33,13 +33,10 @@ public final class RemoteBrokerServiceImpl extends UnicastRemoteObject
     /**
      * Creates and exports a new instance of
      * <code>RemoteBrokerServiceImpl</code> using the specified database.
-     * 
-     * @param database
-     *                Database of contractors.
-     * @throws RemoteException
-     *                 If the export failed.
-     * @throws IllegalArgumentException
-     *                 If <code>database</code> is <code>null</code>.
+     *
+     * @param database Database of contractors.
+     * @throws RemoteException          If the export failed.
+     * @throws IllegalArgumentException If <code>database</code> is <code>null</code>.
      */
     public RemoteBrokerServiceImpl(Database database) throws RemoteException {
         if (database == null) {
@@ -48,7 +45,9 @@ public final class RemoteBrokerServiceImpl extends UnicastRemoteObject
         service = new BrokerServiceImpl(database);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public List<Contractor> search(SearchCriteria searchCriteria)
             throws IOException {
         try {
@@ -65,7 +64,9 @@ public final class RemoteBrokerServiceImpl extends UnicastRemoteObject
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void book(String customerId, Contractor contractor)
             throws IOException, ContractorDeletedException,
             ContractorModifiedException {

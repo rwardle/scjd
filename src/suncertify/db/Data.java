@@ -6,32 +6,25 @@
 
 package suncertify.db;
 
+import suncertify.db.DatabaseSchema.FieldDescription;
+
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
-
-import suncertify.db.DatabaseSchema.FieldDescription;
 
 /**
  * Implementation of {@link DBMain} that obtains contractor data using an
  * implementation of {@link DatabaseFile}. Any <code>DataAccessException</code>s
  * thrown by the methods of this class will have an <code>IOException</code>
  * as their root cause.
- * <p>
+ * <p/>
  * This class synchronizes access to the supplied <code>databaseFile</code> to
  * prevent corruption by concurrent operations from multiple threads. To ensure
  * database integrity, users of the class must ensure that no operations are
  * called on the supplied <code>databaseFile</code> externally to this class.
- * 
+ *
  * @author Richard Wardle
  */
 public class Data implements DBMain {
@@ -95,15 +88,11 @@ public class Data implements DBMain {
     /**
      * Creates a new instance of <code>Data</code> using the specified
      * database file.
-     * 
-     * @param databaseFile
-     *                Database file.
-     * @throws DataValidationException
-     *                 If the database is invalid.
-     * @throws IOException
-     *                 If there is an error accessing the database.
-     * @throws IllegalArgumentException
-     *                 If the <code>databaseFile</code> is <code>null</code>.
+     *
+     * @param databaseFile Database file.
+     * @throws DataValidationException  If the database is invalid.
+     * @throws IOException              If there is an error accessing the database.
+     * @throws IllegalArgumentException If the <code>databaseFile</code> is <code>null</code>.
      */
     public Data(DatabaseFile databaseFile) throws DataValidationException,
             IOException {
@@ -154,7 +143,9 @@ public class Data implements DBMain {
         return recordCount;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String[] read(int recNo) throws RecordNotFoundException {
         validateRecordNumber(recNo);
 
@@ -209,7 +200,9 @@ public class Data implements DBMain {
         return recordValues;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void update(int recNo, String[] data) throws RecordNotFoundException {
         validateRecordNumber(recNo);
         if (isRecordDeleted(recNo)) {
@@ -280,7 +273,9 @@ public class Data implements DBMain {
         return sizedData;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void delete(int recNo) throws RecordNotFoundException {
         validateRecordNumber(recNo);
         if (isRecordDeleted(recNo)) {
@@ -313,7 +308,7 @@ public class Data implements DBMain {
 
     /**
      * {@inheritDoc}
-     * <p>
+     * <p/>
      * This implementation does not throw <code>RecordNotFoundException</code>.
      */
     public int[] find(String[] criteria) {
@@ -397,7 +392,7 @@ public class Data implements DBMain {
 
     /**
      * {@inheritDoc}
-     * <p>
+     * <p/>
      * This implementation does not throw <code>DuplicateKeyException</code>.
      */
     public int create(String[] data) {
@@ -470,7 +465,7 @@ public class Data implements DBMain {
 
     /**
      * {@inheritDoc}
-     * <p>
+     * <p/>
      * The cause of the <code>IllegalThreadStateException</code> thrown from
      * this method will be the original <code>InterruptedException</code>
      * which can be accessed via the <code>getCause</code> method.
@@ -535,7 +530,9 @@ public class Data implements DBMain {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void unlock(int recNo) throws RecordNotFoundException {
         validateRecordNumber(recNo);
         if (isRecordDeleted(recNo)) {
@@ -567,7 +564,9 @@ public class Data implements DBMain {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public boolean isLocked(int recNo) throws RecordNotFoundException {
         validateRecordNumber(recNo);
         if (isRecordDeleted(recNo)) {

@@ -6,7 +6,10 @@
 
 package suncertify.presentation;
 
-import java.awt.Component;
+import suncertify.service.*;
+
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.text.ChoiceFormat;
 import java.text.MessageFormat;
@@ -16,20 +19,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
-
-import suncertify.service.BrokerService;
-import suncertify.service.Contractor;
-import suncertify.service.ContractorDeletedException;
-import suncertify.service.ContractorModifiedException;
-import suncertify.service.SearchCriteria;
-
 /**
  * A controller that is responsible for handling user events delegated to it
  * from the {@link MainView} and for updating the view based on data obtained
  * from the {@link BrokerService}.
- * 
+ *
  * @author Richard Wardle
  */
 public class MainPresenter {
@@ -43,14 +37,11 @@ public class MainPresenter {
 
     /**
      * Creates a new instance of <code>MainPresenter</code>.
-     * 
-     * @param service
-     *                Broker service.
-     * @param view
-     *                Main view.
-     * @throws IllegalArgumentException
-     *                 If <code>service</code> or <code>view</code> is
-     *                 <code>null</code>.
+     *
+     * @param service Broker service.
+     * @param view    Main view.
+     * @throws IllegalArgumentException If <code>service</code> or <code>view</code> is
+     *                                  <code>null</code>.
      */
     public MainPresenter(BrokerService service, MainView view) {
         if (service == null) {
@@ -77,10 +68,9 @@ public class MainPresenter {
      * Performs the search action. The work of the search action is performed on
      * a {@link SwingWorker} thread and the user interface controls are disabled
      * until the search action completes.
-     * 
-     * @param componentToFocus
-     *                Component to focus when the search action has completed
-     *                successfully.
+     *
+     * @param componentToFocus Component to focus when the search action has completed
+     *                         successfully.
      */
     public final void searchActionPerformed(Component componentToFocus) {
         /*
@@ -120,13 +110,11 @@ public class MainPresenter {
      * ID of the customer making the booking. The work of the book action is
      * performed on a {@link SwingWorker} thread and the user interface controls
      * are disabled until the book action completes.
-     * 
-     * @param rowNo
-     *                Table row number that contains the contractor to be
-     *                booked.
-     * @param componentToFocus
-     *                Component to focus when the search action has completed
-     *                successfully.
+     *
+     * @param rowNo            Table row number that contains the contractor to be
+     *                         booked.
+     * @param componentToFocus Component to focus when the search action has completed
+     *                         successfully.
      */
     public final void bookActionPerformed(int rowNo, Component componentToFocus) {
         String customerId = showCustomerIdDialog();
@@ -149,7 +137,7 @@ public class MainPresenter {
     }
 
     SwingWorker<Void, Void> createBookWorker(String customerId,
-            Contractor contractor, int rowNo, Component componentToFocus) {
+                                             Contractor contractor, int rowNo, Component componentToFocus) {
         return new BookWorker(this, customerId, contractor, rowNo,
                 componentToFocus);
     }
@@ -168,7 +156,7 @@ public class MainPresenter {
         private final Component componentToFocus;
 
         public SearchWorker(MainPresenter presenter,
-                SearchCriteria searchCriteria, Component componentToFocus) {
+                            SearchCriteria searchCriteria, Component componentToFocus) {
             this.presenter = presenter;
             this.searchCriteria = searchCriteria;
             this.componentToFocus = componentToFocus;
@@ -274,7 +262,7 @@ public class MainPresenter {
         private final Component componentToFocus;
 
         public BookWorker(MainPresenter presenter, String customerId,
-                Contractor contractor, int rowNo, Component componentToFocus) {
+                          Contractor contractor, int rowNo, Component componentToFocus) {
             this.presenter = presenter;
             this.customerId = customerId;
             this.contractor = contractor;

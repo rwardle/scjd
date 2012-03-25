@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 /**
  * Implementation of {@link RmiService} that delegates to {@link LocateRegistry}
  * and {@link Naming}.
- * 
+ *
  * @author Richard Wardle
  */
 public final class RmiServiceImpl implements RmiService {
@@ -32,13 +32,17 @@ public final class RmiServiceImpl implements RmiService {
         super();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void createRegistry(int port) throws RemoteException {
         LOGGER.info("Creating RMI registry on port: " + port);
         LocateRegistry.createRegistry(port);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void rebind(String name, Remote obj) throws RemoteException,
             MalformedURLException {
         if (name == null) {
@@ -52,7 +56,9 @@ public final class RmiServiceImpl implements RmiService {
         Naming.rebind(name, obj);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public Remote lookup(String name) throws NotBoundException,
             MalformedURLException, RemoteException {
         if (name == null) {

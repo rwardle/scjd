@@ -8,12 +8,14 @@ package suncertify;
 
 /**
  * A mode that the application runs in.
- * 
+ *
  * @author Richard Wardle
  */
 public enum ApplicationMode {
 
-    /** An application that provides a user-interface to a remote server. */
+    /**
+     * An application that provides a user-interface to a remote server.
+     */
     CLIENT,
 
     /**

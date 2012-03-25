@@ -14,7 +14,7 @@ import java.io.RandomAccessFile;
 /**
  * Implementation of {@link DatabaseFile} that delegates to
  * {@link RandomAccessFile}.
- * 
+ *
  * @author Richard Wardle
  */
 public final class DatabaseFileImpl implements DatabaseFile {
@@ -23,13 +23,10 @@ public final class DatabaseFileImpl implements DatabaseFile {
 
     /**
      * Creates a new instance of <code>DatabaseFileImpl</code>.
-     * 
-     * @param databaseFilePath
-     *                Path to the database file.
-     * @throws IllegalArgumentException
-     *                 If <code>databaseFilePath</code> is <code>null</code>.
-     * @throws FileNotFoundException
-     *                 If the database file cannot be found.
+     *
+     * @param databaseFilePath Path to the database file.
+     * @throws IllegalArgumentException If <code>databaseFilePath</code> is <code>null</code>.
+     * @throws FileNotFoundException    If the database file cannot be found.
      */
     public DatabaseFileImpl(String databaseFilePath)
             throws FileNotFoundException {
@@ -47,7 +44,7 @@ public final class DatabaseFileImpl implements DatabaseFile {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see RandomAccessFile#getFilePointer()
      */
     public long getFilePointer() throws IOException {
@@ -56,7 +53,7 @@ public final class DatabaseFileImpl implements DatabaseFile {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see RandomAccessFile#length()
      */
     public long length() throws IOException {
@@ -65,7 +62,7 @@ public final class DatabaseFileImpl implements DatabaseFile {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see RandomAccessFile#seek(long)
      */
     public void seek(long pos) throws IOException {
@@ -74,7 +71,7 @@ public final class DatabaseFileImpl implements DatabaseFile {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see RandomAccessFile#readByte()
      */
     public byte readByte() throws IOException {
@@ -83,7 +80,7 @@ public final class DatabaseFileImpl implements DatabaseFile {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see RandomAccessFile#readShort()
      */
     public short readShort() throws IOException {
@@ -92,7 +89,7 @@ public final class DatabaseFileImpl implements DatabaseFile {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see RandomAccessFile#readInt()
      */
     public int readInt() throws IOException {
@@ -101,7 +98,7 @@ public final class DatabaseFileImpl implements DatabaseFile {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see RandomAccessFile#readFully(byte[])
      */
     public void readFully(byte[] b) throws IOException {
@@ -110,7 +107,7 @@ public final class DatabaseFileImpl implements DatabaseFile {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see RandomAccessFile#write(byte[])
      */
     public void write(byte[] b) throws IOException {
@@ -119,7 +116,7 @@ public final class DatabaseFileImpl implements DatabaseFile {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see RandomAccessFile#writeByte(int)
      */
     public void writeByte(int v) throws IOException {

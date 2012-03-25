@@ -6,14 +6,7 @@
 
 package suncertify;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,7 +14,7 @@ import java.util.logging.Logger;
 /**
  * Implementation of {@link Configuration} that uses a properties file to store
  * application configuration.
- * 
+ *
  * @author Richard Wardle
  */
 public final class PropertiesConfiguration implements Configuration {
@@ -35,11 +28,9 @@ public final class PropertiesConfiguration implements Configuration {
     /**
      * Creates a new instance of <code>PropertiesConfiguration</code> using
      * the specified properties file.
-     * 
-     * @param propertiesFile
-     *                Properties file.
-     * @throws IllegalArgumentException
-     *                 If the <code>propertiesFile</code> is <code>null</code>.
+     *
+     * @param propertiesFile Properties file.
+     * @throws IllegalArgumentException If the <code>propertiesFile</code> is <code>null</code>.
      */
     public PropertiesConfiguration(File propertiesFile) {
         if (propertiesFile == null) {
@@ -50,12 +41,16 @@ public final class PropertiesConfiguration implements Configuration {
         properties = new Properties();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public boolean exists() {
         return propertiesFile.exists();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void load() throws ConfigurationException {
         InputStream in = null;
         try {
@@ -74,7 +69,9 @@ public final class PropertiesConfiguration implements Configuration {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void save() throws ConfigurationException {
         OutputStream out = null;
         try {
@@ -93,7 +90,9 @@ public final class PropertiesConfiguration implements Configuration {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getProperty(String name) {
         if (name == null) {
             throw new IllegalArgumentException("name cannot be null");
@@ -101,7 +100,9 @@ public final class PropertiesConfiguration implements Configuration {
         return properties.getProperty(name);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void setProperty(String name, String value) {
         if (name == null) {
             throw new IllegalArgumentException("name cannot be null");

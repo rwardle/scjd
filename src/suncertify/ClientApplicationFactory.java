@@ -10,7 +10,7 @@ import suncertify.service.RmiServiceImpl;
 
 /**
  * Creates applications that run in {@link ApplicationMode#CLIENT CLIENT} mode.
- * 
+ *
  * @author Richard Wardle
  */
 public final class ClientApplicationFactory extends AbstractApplicationFactory {
@@ -24,7 +24,7 @@ public final class ClientApplicationFactory extends AbstractApplicationFactory {
 
     /**
      * {@inheritDoc}
-     * <p>
+     * <p/>
      * This implementation creates a client application.
      */
     @Override

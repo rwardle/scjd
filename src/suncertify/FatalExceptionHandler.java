@@ -6,17 +6,16 @@
 
 package suncertify;
 
+import javax.swing.*;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.JOptionPane;
-
 /**
  * An exception handler for handling fatal and uncaught exceptions. Displays an
  * error dialog to the user and logs the exception.
- * 
+ *
  * @author Richard Wardle
  */
 public final class FatalExceptionHandler implements
@@ -50,9 +49,8 @@ public final class FatalExceptionHandler implements
 
     /**
      * Handles the specified fatal exception.
-     * 
-     * @param exception
-     *                Fatal exception.
+     *
+     * @param exception Fatal exception.
      */
     public void handleException(FatalException exception) {
         LOGGER.log(Level.SEVERE, "Handling fatal exception", exception);
@@ -68,7 +66,9 @@ public final class FatalExceptionHandler implements
         showDialog(message);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void uncaughtException(Thread thread, Throwable exception) {
         LOGGER.log(Level.SEVERE, "Handling uncaught exception", exception);
         showDialog(defaultMessage);

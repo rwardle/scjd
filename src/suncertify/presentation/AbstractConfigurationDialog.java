@@ -6,30 +6,15 @@
 
 package suncertify.presentation;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.Toolkit;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
-
 /**
  * Abstract base class for application configuration dialogs.
- * 
+ *
  * @author Richard Wardle
  */
 public abstract class AbstractConfigurationDialog extends JDialog implements
@@ -81,7 +66,7 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
 
     /**
      * Returns the resource bundle.
-     * 
+     *
      * @return The resource bundle.
      */
     protected final ResourceBundle getResourceBundle() {
@@ -90,14 +75,16 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
 
     /**
      * Returns the configuration presenter.
-     * 
+     *
      * @return The configuration presenter.
      */
     protected final ConfigurationPresenter getPresenter() {
         return presenter;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public final void setPresenter(ConfigurationPresenter presenter) {
         if (presenter == null) {
             throw new IllegalArgumentException("presenter cannot be null");
@@ -105,7 +92,9 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
         this.presenter = presenter;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public final void realise() {
         pack();
 
@@ -119,43 +108,59 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
         setVisible(true);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public final void close() {
         setVisible(false);
         dispose();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public final Component getComponent() {
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getDatabaseFilePath() {
         return databaseFilePath;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void setDatabaseFilePath(String databaseFilePath) {
         this.databaseFilePath = databaseFilePath;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getServerAddress() {
         return serverAddress;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void setServerAddress(String serverAddress) {
         this.serverAddress = serverAddress;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public Integer getServerPort() {
         return serverPort;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void setServerPort(Integer serverPort) {
         if (serverPort == null) {
             throw new IllegalArgumentException("serverPort cannot be null");
@@ -234,23 +239,22 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
 
     /**
      * Returns the message text to display.
-     * 
+     *
      * @return The message text.
      */
     protected abstract String getMessageText();
 
     /**
      * Initialises the input panel.
-     * 
+     *
      * @return The input panel.
      */
     protected abstract JPanel initialiseInputPanel();
 
     /**
      * Creates a server port spinner with the specified font.
-     * 
-     * @param font
-     *                Server port spinner font.
+     *
+     * @param font Server port spinner font.
      * @return The server port spinner.
      */
     protected final JSpinner createServerPortSpinner(Font font) {

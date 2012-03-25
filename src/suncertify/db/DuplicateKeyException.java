@@ -8,7 +8,7 @@ package suncertify.db;
 
 /**
  * Exception thrown if there is a duplicate key.
- * 
+ *
  * @author Richard Wardle
  */
 public final class DuplicateKeyException extends Exception {
@@ -26,9 +26,8 @@ public final class DuplicateKeyException extends Exception {
      * Creates a new instance of <code>DuplicateKeyException</code> with the
      * specified <code>message</code>, and with <code>cause</code>
      * initialised to <code>null</code>.
-     * 
-     * @param message
-     *                Error message.
+     *
+     * @param message Error message.
      */
     public DuplicateKeyException(String message) {
         super(message);

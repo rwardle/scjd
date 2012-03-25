@@ -6,20 +6,15 @@
 
 package suncertify.presentation;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-
 import suncertify.ApplicationMode;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Configuration dialog for applications running in
  * {@link ApplicationMode#CLIENT CLIENT} mode.
- * 
+ *
  * @author Richard Wardle
  */
 public final class ClientConfigurationDialog extends
@@ -36,32 +31,42 @@ public final class ClientConfigurationDialog extends
                 "ClientConfigurationDialog.title"));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected String getMessageText() {
         return getResourceBundle().getString(
                 "ClientConfigurationDialog.message");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getServerAddress() {
         return serverAddressField.getText();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setServerAddress(String serverAddress) {
         serverAddressField.setText(serverAddress);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Integer getServerPort() {
         return (Integer) serverPortSpinner.getValue();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setServerPort(Integer serverPort) {
         if (serverPort == null) {
@@ -70,7 +75,9 @@ public final class ClientConfigurationDialog extends
         serverPortSpinner.setValue(serverPort);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected JPanel initialiseInputPanel() {
         JPanel panel = new JPanel();

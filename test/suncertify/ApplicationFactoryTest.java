@@ -1,12 +1,12 @@
 package suncertify;
 
-import static org.junit.Assert.assertTrue;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 public class ApplicationFactoryTest {
 

@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 /**
  * Implementation of {@link DatabaseFactory} that creates contractor databases.
- * 
+ *
  * @author Richard Wardle
  */
 public final class DatabaseFactoryImpl implements DatabaseFactory {
@@ -27,7 +27,9 @@ public final class DatabaseFactoryImpl implements DatabaseFactory {
         super();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public Database createDatabase(String databaseFilePath)
             throws FileNotFoundException, DataValidationException, IOException {
         if (databaseFilePath == null) {

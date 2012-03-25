@@ -6,23 +6,17 @@
 
 package suncertify.presentation;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import suncertify.ApplicationMode;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-
-import suncertify.ApplicationMode;
 
 /**
  * Configuration dialog for applications running in
  * {@link ApplicationMode#SERVER SERVER} mode.
- * 
+ *
  * @author Richard Wardle
  */
 public final class ServerConfigurationDialog extends
@@ -46,32 +40,42 @@ public final class ServerConfigurationDialog extends
         });
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected String getMessageText() {
         return getResourceBundle().getString(
                 "ServerConfigurationDialog.message");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getDatabaseFilePath() {
         return databaseFilePathField.getText();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setDatabaseFilePath(String databaseFilePath) {
         databaseFilePathField.setText(databaseFilePath);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Integer getServerPort() {
         return (Integer) serverPortSpinner.getValue();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setServerPort(Integer serverPort) {
         if (serverPort == null) {
@@ -80,7 +84,9 @@ public final class ServerConfigurationDialog extends
         serverPortSpinner.setValue(serverPort);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected JPanel initialiseInputPanel() {
         JPanel panel = new JPanel();

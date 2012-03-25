@@ -8,7 +8,7 @@ package suncertify.db;
 
 /**
  * Represents the schema of the contractor database.
- * 
+ *
  * @author Richard Wardle
  */
 public final class DatabaseSchema {
@@ -38,7 +38,7 @@ public final class DatabaseSchema {
      * Returns the record length. This does not include the length of the flag
      * used to indicate the validity of the record (defined in
      * {@link DatabaseConstants#RECORD_VALIDITY_FLAG_LENGTH}.
-     * 
+     *
      * @return The record length.
      */
     public int getRecordLength() {
@@ -47,7 +47,7 @@ public final class DatabaseSchema {
 
     /**
      * Returns the field count.
-     * 
+     *
      * @return The field count.
      */
     public short getFieldCount() {
@@ -56,7 +56,7 @@ public final class DatabaseSchema {
 
     /**
      * Returns the field descriptions.
-     * 
+     *
      * @return An array of field descriptions.
      */
     public FieldDescription[] getFieldDescriptions() {
@@ -65,7 +65,7 @@ public final class DatabaseSchema {
 
     /**
      * Describes a database field.
-     * 
+     *
      * @author Richard Wardle
      */
     public static final class FieldDescription {
@@ -76,20 +76,16 @@ public final class DatabaseSchema {
 
         /**
          * Creates a new instance of <code>FieldDescription</code>.
-         * 
-         * @param fieldName
-         *                Field name.
-         * @param fieldLength
-         *                Field length.
-         * @param recordOffset
-         *                Offset within the database record.
-         * @throws IllegalArgumentException
-         *                 If <code>fieldName</code> is <code>null</code>,
-         *                 <code>fieldLength</code> is less than or equal to
-         *                 0, or <code>recordOffset</code> is less than 0.
+         *
+         * @param fieldName    Field name.
+         * @param fieldLength  Field length.
+         * @param recordOffset Offset within the database record.
+         * @throws IllegalArgumentException If <code>fieldName</code> is <code>null</code>,
+         *                                  <code>fieldLength</code> is less than or equal to
+         *                                  0, or <code>recordOffset</code> is less than 0.
          */
         public FieldDescription(String fieldName, short fieldLength,
-                int recordOffset) {
+                                int recordOffset) {
             if (fieldName == null) {
                 throw new IllegalArgumentException("fieldName must be non-null");
             }
@@ -109,7 +105,7 @@ public final class DatabaseSchema {
 
         /**
          * Returns the field name.
-         * 
+         *
          * @return The name.
          */
         public String getName() {
@@ -118,7 +114,7 @@ public final class DatabaseSchema {
 
         /**
          * Returns the field length.
-         * 
+         *
          * @return The length.
          */
         public short getLength() {
@@ -127,7 +123,7 @@ public final class DatabaseSchema {
 
         /**
          * Returns the offset with the database record.
-         * 
+         *
          * @return The record offset.
          */
         public int getRecordOffset() {

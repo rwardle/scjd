@@ -6,18 +6,17 @@
 
 package suncertify;
 
+import suncertify.presentation.ConfigurationPresenter;
+import suncertify.presentation.ConfigurationView;
+
+import javax.swing.*;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.JOptionPane;
-
-import suncertify.presentation.ConfigurationPresenter;
-import suncertify.presentation.ConfigurationView;
-
 /**
  * An abstract base class for applications.
- * 
+ *
  * @author Richard Wardle
  */
 public abstract class AbstractApplication implements Application {
@@ -31,11 +30,9 @@ public abstract class AbstractApplication implements Application {
 
     /**
      * Creates a new instance of <code>AbstractApplication</code>.
-     * 
-     * @param configuration
-     *                Application configuration.
-     * @throws IllegalArgumentException
-     *                 If <code>configuration</code> is <code>null</code>.
+     *
+     * @param configuration Application configuration.
+     * @throws IllegalArgumentException If <code>configuration</code> is <code>null</code>.
      */
     public AbstractApplication(Configuration configuration) {
         if (configuration == null) {
@@ -49,7 +46,7 @@ public abstract class AbstractApplication implements Application {
 
     /**
      * Returns the configuration manager.
-     * 
+     *
      * @return The configuration manager.
      */
     protected final ConfigurationManager getConfigurationManager() {
@@ -58,9 +55,9 @@ public abstract class AbstractApplication implements Application {
 
     /**
      * {@inheritDoc}
-     * <p>
+     * <p/>
      * Displays a configuration dialog.
-     * <p>
+     * <p/>
      * This implementation calls the <code>createConfigurationView</code>
      * method.
      */
@@ -107,11 +104,11 @@ public abstract class AbstractApplication implements Application {
 
     /**
      * Returns a new configuration view.
-     * <p>
+     * <p/>
      * This method is called by the <code>initialise</code> method. Subclasses
      * should implement this method to return a configuration view that is
      * application-specific.
-     * 
+     *
      * @return The configuration view.
      */
     protected abstract ConfigurationView createConfigurationView();
@@ -125,7 +122,9 @@ public abstract class AbstractApplication implements Application {
                 JOptionPane.WARNING_MESSAGE);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public final void handleFatalException(FatalException exception) {
         if (exception == null) {
             throw new IllegalArgumentException("exception cannot be null");

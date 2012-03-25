@@ -13,7 +13,7 @@ import java.io.IOException;
  * this class is to map the <code>DataAccessException</code>s thrown from
  * <code>Data</code> into the <code>IOException</code>s required by the
  * <code>Database</code> interface.
- * 
+ *
  * @author Richard Wardle
  */
 public final class DataAdapter implements Database {
@@ -22,11 +22,9 @@ public final class DataAdapter implements Database {
 
     /**
      * Creates a new instance of <code>DataAdapter</code>.
-     * 
-     * @param data
-     *                Data instance.
-     * @throws IllegalArgumentException
-     *                 If <code>data</code> is <code>null</code>.
+     *
+     * @param data Data instance.
+     * @throws IllegalArgumentException If <code>data</code> is <code>null</code>.
      */
     public DataAdapter(Data data) {
         if (data == null) {
@@ -37,7 +35,7 @@ public final class DataAdapter implements Database {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see Data#read(int)
      */
     public String[] read(int recNo) throws RecordNotFoundException, IOException {
@@ -50,7 +48,7 @@ public final class DataAdapter implements Database {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see Data#update(int, String[])
      */
     public void update(int recNo, String[] recordData)
@@ -64,7 +62,7 @@ public final class DataAdapter implements Database {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see Data#delete(int)
      */
     public void delete(int recNo) throws RecordNotFoundException, IOException {
@@ -77,7 +75,7 @@ public final class DataAdapter implements Database {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see Data#find(String[])
      */
     public int[] find(String[] criteria) throws IOException {
@@ -90,7 +88,7 @@ public final class DataAdapter implements Database {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see Data#create(String[])
      */
     public int create(String[] recordData) throws IOException {
@@ -103,7 +101,7 @@ public final class DataAdapter implements Database {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see Data#lock(int)
      */
     public void lock(int recNo) throws RecordNotFoundException,
@@ -117,7 +115,7 @@ public final class DataAdapter implements Database {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see Data#unlock(int)
      */
     public void unlock(int recNo) throws RecordNotFoundException {
@@ -126,7 +124,7 @@ public final class DataAdapter implements Database {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see Data#isLocked(int)
      */
     public boolean isLocked(int recNo) throws RecordNotFoundException {

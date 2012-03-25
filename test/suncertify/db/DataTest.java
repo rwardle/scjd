@@ -1,16 +1,5 @@
 package suncertify.db;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 import org.hamcrest.Description;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -20,8 +9,13 @@ import org.jmock.api.Invocation;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import suncertify.db.DatabaseSchema.FieldDescription;
+
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
 public class DataTest {
 
@@ -74,7 +68,7 @@ public class DataTest {
     }
 
     private void checkingMagicCookieRead(final int magicCookie,
-            final Sequence sequence) throws Exception {
+                                         final Sequence sequence) throws Exception {
         context.checking(new Expectations() {
             {
                 one(mockDatabaseFile).seek(with(equal(0L)));
@@ -99,7 +93,7 @@ public class DataTest {
     }
 
     private void checkingRecordLengthRead(final int recordLength,
-            final Sequence sequence) throws Exception {
+                                          final Sequence sequence) throws Exception {
         context.checking(new Expectations() {
             {
                 one(mockDatabaseFile).readInt();
@@ -124,7 +118,7 @@ public class DataTest {
     }
 
     private void checkingFieldCount(final short fieldCount,
-            final Sequence sequence) throws Exception {
+                                    final Sequence sequence) throws Exception {
         context.checking(new Expectations() {
             {
                 one(mockDatabaseFile).readShort();
@@ -290,8 +284,8 @@ public class DataTest {
                             .getLength()));
             assertThat(fieldDescriptions[i].getRecordOffset(),
 
-            is(DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[i]
-                    .getRecordOffset()));
+                    is(DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[i]
+                            .getRecordOffset()));
         }
     }
 
@@ -330,7 +324,7 @@ public class DataTest {
     }
 
     private void read(final int recordNumber,
-            final String[] recordValuesToRead, String[] expectedRecordValues)
+                      final String[] recordValuesToRead, String[] expectedRecordValues)
             throws Exception {
         final Sequence sequence = context.sequence("read");
         checkingSeek(getOffsetForRecord(recordNumber)
@@ -496,7 +490,7 @@ public class DataTest {
     }
 
     private void checkingUpdateRecord(int recNo, final String[] recordValues,
-            final Sequence sequence) throws Exception {
+                                      final Sequence sequence) throws Exception {
         final long recordValuesStartPos = getOffsetForRecord(recNo)
                 + DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH;
         context.checking(new Expectations() {
@@ -507,7 +501,7 @@ public class DataTest {
                                 .seek(
                                         with(equal(recordValuesStartPos
                                                 + DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[i]
-                                                        .getRecordOffset())));
+                                                .getRecordOffset())));
                         inSequence(sequence);
 
                         one(mockDatabaseFile)
@@ -682,7 +676,7 @@ public class DataTest {
     }
 
     private void checkingCreateRecord(final int firstAvailableRecNo,
-            final String[] recordValues, final Sequence sequence)
+                                      final String[] recordValues, final Sequence sequence)
             throws Exception {
         checkingSeek(getOffsetForRecord(firstAvailableRecNo), sequence);
 
@@ -770,7 +764,7 @@ public class DataTest {
     }
 
     private void checkingFindRecords(final String[][] allRecordValues,
-            final Sequence sequence) throws Exception {
+                                     final Sequence sequence) throws Exception {
         for (int recNo = 0; recNo < recordCount; recNo++) {
             if (!deletedRecNos.contains(recNo)) {
                 final long recValuesStartPos = getOffsetForRecord(recNo)

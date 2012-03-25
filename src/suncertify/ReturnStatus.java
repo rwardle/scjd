@@ -8,14 +8,18 @@ package suncertify;
 
 /**
  * A dialog return status.
- * 
+ *
  * @author Richard Wardle
  */
 public enum ReturnStatus {
 
-    /** Cancel was selected. */
+    /**
+     * Cancel was selected.
+     */
     CANCEL,
 
-    /** OK was selected. */
+    /**
+     * OK was selected.
+     */
     OK
 }

@@ -6,19 +6,19 @@
 
 package suncertify.service;
 
+import suncertify.db.Database;
+import suncertify.db.RecordNotFoundException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import suncertify.db.Database;
-import suncertify.db.RecordNotFoundException;
-
 /**
  * Implementation of {@link BrokerService} that uses a {@link Database} object
  * to obtain and store contractor data.
- * 
+ *
  * @author Richard Wardle
  */
 public final class BrokerServiceImpl implements BrokerService {
@@ -32,11 +32,9 @@ public final class BrokerServiceImpl implements BrokerService {
     /**
      * Creates a new instance of <code>BrokerServiceImpl</code> using the
      * specified database.
-     * 
-     * @param database
-     *                Database of contractors.
-     * @throws IllegalArgumentException
-     *                 If <code>database</code> is <code>null</code>.
+     *
+     * @param database Database of contractors.
+     * @throws IllegalArgumentException If <code>database</code> is <code>null</code>.
      */
     public BrokerServiceImpl(Database database) {
         if (database == null) {
@@ -45,7 +43,9 @@ public final class BrokerServiceImpl implements BrokerService {
         this.database = database;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public List<Contractor> search(SearchCriteria searchCriteria)
             throws IOException {
         if (searchCriteria == null) {
@@ -86,7 +86,9 @@ public final class BrokerServiceImpl implements BrokerService {
         return matching;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void book(String customerId, Contractor contractor)
             throws IOException, ContractorDeletedException,
             ContractorModifiedException {
@@ -171,13 +173,13 @@ public final class BrokerServiceImpl implements BrokerService {
         boolean modified = !data[ServiceConstants.NAME_FIELD_INDEX]
                 .equals(contractor.getName())
                 || !data[ServiceConstants.LOCATION_FIELD_INDEX]
-                        .equals(contractor.getLocation())
+                .equals(contractor.getLocation())
                 || !data[ServiceConstants.SPECIALTIES_FIELD_INDEX]
-                        .equals(contractor.getSpecialties())
+                .equals(contractor.getSpecialties())
                 || !data[ServiceConstants.SIZE_FIELD_INDEX].equals(contractor
-                        .getSize())
+                .getSize())
                 || !data[ServiceConstants.RATE_FIELD_INDEX].equals(contractor
-                        .getRate());
+                .getRate());
 
         /*
          * If the only field that does not match is the owner and the owner is

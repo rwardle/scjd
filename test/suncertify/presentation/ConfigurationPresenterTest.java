@@ -1,24 +1,22 @@
 package suncertify.presentation;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
-import java.awt.Component;
-import java.io.File;
-
-import javax.swing.JFileChooser;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import suncertify.ApplicationConstants;
 import suncertify.Configuration;
 import suncertify.ConfigurationManager;
 import suncertify.ReturnStatus;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class ConfigurationPresenterTest {
 

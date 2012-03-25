@@ -6,44 +6,20 @@
 
 package suncertify.presentation;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
+import suncertify.service.Contractor;
+
+import javax.swing.*;
+import javax.swing.table.JTableHeader;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.JTableHeader;
-
-import suncertify.service.Contractor;
-
 /**
  * An application main frame.
- * 
+ *
  * @author Richard Wardle
  */
 public final class MainFrame extends JFrame implements MainView {
@@ -162,7 +138,9 @@ public final class MainFrame extends JFrame implements MainView {
         presenter.searchActionPerformed(componentToFocus);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void setPresenter(MainPresenter presenter) {
         if (presenter == null) {
             throw new IllegalArgumentException("presenter cannot be null");
@@ -171,7 +149,9 @@ public final class MainFrame extends JFrame implements MainView {
         contractorTableColumnModel.setPresenter(presenter);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void realise() {
         pack();
 
@@ -184,17 +164,23 @@ public final class MainFrame extends JFrame implements MainView {
         setVisible(true);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getNameCriteria() {
         return nameTextField.getText();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getLocationCriteria() {
         return locationTextField.getText();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void setTableData(List<Contractor> contractors) {
         if (contractors == null) {
             throw new IllegalArgumentException("contractors cannot be null");
@@ -208,24 +194,32 @@ public final class MainFrame extends JFrame implements MainView {
         resultsTable.removeEditor();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void setStatusLabelText(String text) {
         statusLabel.setText(text);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public JFrame getFrame() {
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void disableControls() {
         glassPane.setVisible(true);
         searchAction.setEnabled(false);
         contractorTableColumnModel.disableRendererBookButton();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void enableControls(Component componentToFocus) {
         glassPane.setVisible(false);
         searchAction.setEnabled(true);
@@ -235,12 +229,16 @@ public final class MainFrame extends JFrame implements MainView {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public Contractor getContractorAtRow(int rowNo) {
         return tableModel.getContractorAtRow(rowNo);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void updateContractorAtRow(int rowNo, Contractor contractor) {
         tableModel.updateContractorAtRow(rowNo, contractor);
     }

@@ -1,19 +1,18 @@
 package suncertify.service;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
-import java.util.List;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import suncertify.db.Database;
 import suncertify.db.RecordNotFoundException;
+
+import java.io.IOException;
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class BrokerServiceImplTest {
 
@@ -154,7 +153,7 @@ public class BrokerServiceImplTest {
     }
 
     private void assertContractor(int recNo, String[] recordData,
-            Contractor contractor) {
+                                  Contractor contractor) {
         assertThat(contractor.getRecordNumber(), is(recNo));
         assertThat(contractor.getName(), is(recordData[0]));
         assertThat(contractor.getLocation(), is(recordData[1]));

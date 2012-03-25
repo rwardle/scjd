@@ -1,16 +1,5 @@
 package suncertify.presentation;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.SwingWorker;
-import javax.swing.SwingWorker.StateValue;
-
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -20,12 +9,16 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import suncertify.service.*;
 
-import suncertify.service.BrokerService;
-import suncertify.service.Contractor;
-import suncertify.service.ContractorDeletedException;
-import suncertify.service.ContractorModifiedException;
-import suncertify.service.SearchCriteria;
+import javax.swing.*;
+import javax.swing.SwingWorker.StateValue;
+import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainPresenterTest {
 
@@ -416,7 +409,7 @@ public class MainPresenterTest {
     }
 
     private Matcher<SearchCriteria> searchCriteriaMatching(String nameCriteria,
-            String locationCriteria) {
+                                                           String locationCriteria) {
         return new SearchCriteriaMatching(nameCriteria, locationCriteria);
     }
 
@@ -427,7 +420,7 @@ public class MainPresenterTest {
         private final String locationCriteria;
 
         public SearchCriteriaMatching(String nameCriteria,
-                String locationCriteria) {
+                                      String locationCriteria) {
             this.nameCriteria = nameCriteria;
             this.locationCriteria = locationCriteria;
         }
@@ -436,9 +429,9 @@ public class MainPresenterTest {
             SearchCriteria searchCriteria = (SearchCriteria) item;
             return nameCriteria == null ? searchCriteria.getName() == null
                     : nameCriteria.equals(searchCriteria.getName())
-                            && locationCriteria == null ? searchCriteria
-                            .getLocation() == null : locationCriteria
-                            .equals(searchCriteria.getLocation());
+                    && locationCriteria == null ? searchCriteria
+                    .getLocation() == null : locationCriteria
+                    .equals(searchCriteria.getLocation());
         }
 
         public void describeTo(Description description) {
@@ -468,39 +461,39 @@ public class MainPresenterTest {
                     && expectedContractor.getName() == null ? actualContractor
                     .getName() == null
                     : expectedContractor.getName().equals(
-                            actualContractor.getName())
-                            && expectedContractor.getLocation() == null ? actualContractor
-                            .getLocation() == null
-                            : expectedContractor.getLocation().equals(
-                                    actualContractor.getLocation())
-                                    && expectedContractor.getSpecialties() == null ? actualContractor
-                                    .getSpecialties() == null
-                                    : expectedContractor.getSpecialties()
-                                            .equals(
-                                                    actualContractor
-                                                            .getSpecialties())
-                                            && expectedContractor.getSize() == null ? actualContractor
-                                            .getSize() == null
-                                            : expectedContractor.getSize()
-                                                    .equals(
-                                                            actualContractor
-                                                                    .getSize())
-                                                    && expectedContractor
-                                                            .getRate() == null ? actualContractor
-                                                    .getRate() == null
-                                                    : expectedContractor
-                                                            .getRate()
-                                                            .equals(
-                                                                    actualContractor
-                                                                            .getRate())
-                                                            && expectedContractor
-                                                                    .getOwner() == null ? actualContractor
-                                                            .getOwner() == null
-                                                            : expectedContractor
-                                                                    .getOwner()
-                                                                    .equals(
-                                                                            actualContractor
-                                                                                    .getOwner());
+                    actualContractor.getName())
+                    && expectedContractor.getLocation() == null ? actualContractor
+                    .getLocation() == null
+                    : expectedContractor.getLocation().equals(
+                    actualContractor.getLocation())
+                    && expectedContractor.getSpecialties() == null ? actualContractor
+                    .getSpecialties() == null
+                    : expectedContractor.getSpecialties()
+                    .equals(
+                            actualContractor
+                                    .getSpecialties())
+                    && expectedContractor.getSize() == null ? actualContractor
+                    .getSize() == null
+                    : expectedContractor.getSize()
+                    .equals(
+                            actualContractor
+                                    .getSize())
+                    && expectedContractor
+                    .getRate() == null ? actualContractor
+                    .getRate() == null
+                    : expectedContractor
+                    .getRate()
+                    .equals(
+                            actualContractor
+                                    .getRate())
+                    && expectedContractor
+                    .getOwner() == null ? actualContractor
+                    .getOwner() == null
+                    : expectedContractor
+                    .getOwner()
+                    .equals(
+                            actualContractor
+                                    .getOwner());
         }
 
         public void describeTo(Description description) {
@@ -531,7 +524,7 @@ public class MainPresenterTest {
 
         @Override
         SwingWorker<Void, Void> createBookWorker(String id,
-                Contractor contractor, int rowNo, Component component) {
+                                                 Contractor contractor, int rowNo, Component component) {
             SwingWorker<Void, Void> worker = super.createBookWorker(id,
                     contractor, rowNo, component);
             addWorkerPropertyChangeListener(worker);

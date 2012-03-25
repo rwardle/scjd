@@ -12,6 +12,7 @@ public class DataTestConstants {
     private static final short[] FIELD_LENGTHS = { 32, 64, 64, 6, 8, 8 };
 
     public static final FieldDescription[] EXPECTED_FIELD_DESCRIPTIONS = new FieldDescription[EXPECTED_FIELD_COUNT];
+
     static {
         int recordOffset = 0;
         for (int i = 0; i < EXPECTED_FIELD_COUNT; i++) {
@@ -26,6 +27,7 @@ public class DataTestConstants {
             "$40.00", "1245678" };
     public static final String[] RECORD_VALUES_SPACE_PADDED,
             RECORD_VALUES_NULL_PADDED;
+
     static {
         RECORD_VALUES_SPACE_PADDED = padRecord(RECORD_VALUES, ' ');
         RECORD_VALUES_NULL_PADDED = padRecord(RECORD_VALUES, '\u0000');
