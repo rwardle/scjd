@@ -1,14 +1,16 @@
+syntax: glob
+*.iml
+
 syntax:regexp
 ^.classpath
 ^.idea
 ^.project
+^.settings
 ^bin
 ^build
 ^dist
 ^nbproject/genfiles.properties
 ^nbproject/private
 ^nbproject/project.xml
-^out
-^scjdAssignment.iml
 ^suncertify.db
 ^suncertify.properties
