@@ -15,9 +15,9 @@ public final class DatabaseSchema {
 
     private static final int RECORD_LENGTH = 182;
     private static final short FIELD_COUNT = 6;
-    private static final String[] FIELD_NAMES = { "name", "location",
-            "specialties", "size", "rate", "owner" };
-    private static final short[] FIELD_LENGTHS = { 32, 64, 64, 6, 8, 8 };
+    private static final String[] FIELD_NAMES = {"name", "location",
+            "specialties", "size", "rate", "owner"};
+    private static final short[] FIELD_LENGTHS = {32, 64, 64, 6, 8, 8};
 
     private final FieldDescription[] fieldDescriptions;
 

@@ -210,18 +210,18 @@ public class MainPresenter {
                     .getString("MainPresenter.statusLabel.manyContractors.text");
 
             // Use a choice format to get the correct pluralisation
-            double[] limits = { 0, 1, ChoiceFormat.nextDouble(1) };
-            String[] formats = { manyContractorsFormat, oneContractorFormat,
-                    manyContractorsFormat };
+            double[] limits = {0, 1, ChoiceFormat.nextDouble(1)};
+            String[] formats = {manyContractorsFormat, oneContractorFormat,
+                    manyContractorsFormat};
             ChoiceFormat choiceFormat = new ChoiceFormat(limits, formats);
 
             MessageFormat messageFormat = new MessageFormat(
                     getMessageFormatPattern());
             messageFormat.setFormatByArgumentIndex(0, choiceFormat);
 
-            return messageFormat.format(new Object[] { contractorsCount,
+            return messageFormat.format(new Object[] {contractorsCount,
                     contractorsCount, searchCriteria.getName(),
-                    searchCriteria.getLocation() });
+                    searchCriteria.getLocation()});
         }
 
         private String getMessageFormatPattern() {
@@ -296,7 +296,7 @@ public class MainPresenter {
                         .getRecordNumber(), new String[] {
                         contractor.getName(), contractor.getLocation(),
                         contractor.getSpecialties(), contractor.getSize(),
-                        contractor.getRate(), customerId });
+                        contractor.getRate(), customerId});
 
                 LOGGER.info("Customer with ID=" + customerId
                         + " has booked contractor: " + updatedContractor);

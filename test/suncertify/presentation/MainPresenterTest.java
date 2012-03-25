@@ -82,10 +82,10 @@ public class MainPresenterTest {
         final String nameCriteria = "name";
         final String locationCriteria = "location";
         final List<Contractor> contractors = new ArrayList<Contractor>();
-        contractors.add(new Contractor(1, new String[] { "name", "location",
-                "spec1", "size1", "rate1", "owner1" }));
-        contractors.add(new Contractor(2, new String[] { "name", "location",
-                "spec2", "size2", "rate2", "owner2" }));
+        contractors.add(new Contractor(1, new String[] {"name", "location",
+                "spec1", "size1", "rate1", "owner1"}));
+        contractors.add(new Contractor(2, new String[] {"name", "location",
+                "spec2", "size2", "rate2", "owner2"}));
         final String statusLabelText = "<html>Viewing <b>" + contractors.size()
                 + " contractors</b> where Name is <b>" + nameCriteria
                 + "</b> and Location is <b>" + locationCriteria + "</b></html>";
@@ -189,8 +189,8 @@ public class MainPresenterTest {
         final String nameCriteria = "";
         final String locationCriteria = "";
         final List<Contractor> contractors = new ArrayList<Contractor>();
-        contractors.add(new Contractor(1, new String[] { "name", "location",
-                "spec1", "size1", "rate1", "owner1" }));
+        contractors.add(new Contractor(1, new String[] {"name", "location",
+                "spec1", "size1", "rate1", "owner1"}));
         final String statusLabelText = "<html>Viewing all <b>"
                 + contractors.size() + " contractor</b></html>";
         context.checking(new Expectations() {
@@ -278,8 +278,8 @@ public class MainPresenterTest {
     @Test
     public void shouldPerformBookAction() throws Exception {
         final int rowNo = 1;
-        String[] preBookingContractorData = new String[] { "name", "location",
-                "spec", "size", "rate", "owner" };
+        String[] preBookingContractorData = new String[] {"name", "location",
+                "spec", "size", "rate", "owner"};
         final Contractor preBookingContractor = new Contractor(rowNo,
                 preBookingContractorData);
         String[] postBookingContractorData = preBookingContractorData.clone();

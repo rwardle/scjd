@@ -196,7 +196,7 @@ public final class SearchCriteria implements Serializable {
      *         following order: name, location, specialties, size, rate, owner.
      */
     public String[] toArray() {
-        return new String[] { name, location, specialties, size, rate, owner };
+        return new String[] {name, location, specialties, size, rate, owner};
     }
 
     /**

@@ -33,7 +33,7 @@ public class LauncherTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfCommandLineArgumentIsInvalid() {
-        Launcher.getApplicationMode(new String[] { "invalid-mode" });
+        Launcher.getApplicationMode(new String[] {"invalid-mode"});
     }
 
     @Test
@@ -44,13 +44,13 @@ public class LauncherTest {
 
     @Test
     public void shouldUseServerApplicationModeIfCommandLineArgumentIsServer() {
-        assertThat(Launcher.getApplicationMode(new String[] { "server" }),
+        assertThat(Launcher.getApplicationMode(new String[] {"server"}),
                 is(ApplicationMode.SERVER));
     }
 
     @Test
     public void shouldUseStandaloneApplicationModeIfCommandLineArgumentIsAlone() {
-        assertThat(Launcher.getApplicationMode(new String[] { "alone" }),
+        assertThat(Launcher.getApplicationMode(new String[] {"alone"}),
                 is(ApplicationMode.STANDALONE));
     }
 

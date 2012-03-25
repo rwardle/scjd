@@ -145,7 +145,7 @@ public class DataTest {
                 DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[0].getName(),
                 invalidFieldLength, 0);
         checkingFieldDescriptions(
-                new FieldDescription[] { invalidFieldDescription }, sequence);
+                new FieldDescription[] {invalidFieldDescription}, sequence);
 
         data = new Data(mockDatabaseFile);
     }
@@ -717,21 +717,21 @@ public class DataTest {
     @Test
     public void shouldFindContractors() throws Exception {
         standardSetup();
-        int[] matchingRecNos = { 1, 2 };
-        String[] criteria = { "Buonarotti", null, "", null, null, "12345678" };
+        int[] matchingRecNos = {1, 2};
+        String[] criteria = {"Buonarotti", null, "", null, null, "12345678"};
         String[][] allRecordValues = {
-                DataTestConstants.padRecord(new String[] { "nm", "m", "", "m",
-                        "m", "12345678" }, ' '),
-                DataTestConstants.padRecord(new String[] { "Buonarotti", "m",
-                        "", "m", "m", "12345678" }, ' '),
+                DataTestConstants.padRecord(new String[] {"nm", "m", "", "m",
+                        "m", "12345678"}, ' '),
+                DataTestConstants.padRecord(new String[] {"Buonarotti", "m",
+                        "", "m", "m", "12345678"}, ' '),
                 DataTestConstants.padRecord(new String[] {
-                        "Buonarotti & Family", "m", "", "m", "m", "12345678" },
+                        "Buonarotti & Family", "m", "", "m", "m", "12345678"},
                         ' '),
                 DataTestConstants.padRecord(
-                        new String[] { "Family of Buonarotti", "m", "", "m",
-                                "m", "12345678" }, ' '),
-                DataTestConstants.padRecord(new String[] { "Buonarotti", "m",
-                        "", "m", "m", "nm" }, ' ') };
+                        new String[] {"Family of Buonarotti", "m", "", "m",
+                                "m", "12345678"}, ' '),
+                DataTestConstants.padRecord(new String[] {"Buonarotti", "m",
+                        "", "m", "m", "nm"}, ' ')};
         Sequence sequence = context.sequence("find");
         checkingFindRecords(allRecordValues, sequence);
         int[] recNos = data.find(criteria);
@@ -742,21 +742,21 @@ public class DataTest {
     public void shouldReturnAllRecordsWhenFindCalledWithAllCriteriaNull()
             throws Exception {
         standardSetup();
-        int[] matchingRecNos = { 0, 1, 2, 3, 4 };
-        String[] criteria = { null, null, null, null, null, null };
+        int[] matchingRecNos = {0, 1, 2, 3, 4};
+        String[] criteria = {null, null, null, null, null, null};
         String[][] allRecordValues = {
-                DataTestConstants.padRecord(new String[] { "nm", "m", "", "m",
-                        "m", "12345678" }, ' '),
-                DataTestConstants.padRecord(new String[] { "Buonarotti", "m",
-                        "", "m", "m", "12345678" }, ' '),
+                DataTestConstants.padRecord(new String[] {"nm", "m", "", "m",
+                        "m", "12345678"}, ' '),
+                DataTestConstants.padRecord(new String[] {"Buonarotti", "m",
+                        "", "m", "m", "12345678"}, ' '),
                 DataTestConstants.padRecord(new String[] {
-                        "Buonarotti & Family", "m", "", "m", "m", "12345678" },
+                        "Buonarotti & Family", "m", "", "m", "m", "12345678"},
                         ' '),
                 DataTestConstants.padRecord(
-                        new String[] { "Family of Buonarotti", "m", "", "m",
-                                "m", "12345678" }, ' '),
-                DataTestConstants.padRecord(new String[] { "Buonarotti", "m",
-                        "", "m", "m", "nm" }, ' ') };
+                        new String[] {"Family of Buonarotti", "m", "", "m",
+                                "m", "12345678"}, ' '),
+                DataTestConstants.padRecord(new String[] {"Buonarotti", "m",
+                        "", "m", "m", "nm"}, ' ')};
         Sequence sequence = context.sequence("find");
         checkingFindRecords(allRecordValues, sequence);
         int[] recNos = data.find(criteria);
