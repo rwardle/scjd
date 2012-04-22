@@ -1,16 +1,17 @@
 package suncertify;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import suncertify.presentation.ConfigurationPresenter;
 import suncertify.presentation.ConfigurationView;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 
 public class AbstractApplicationTest {
 
@@ -39,15 +40,13 @@ public class AbstractApplicationTest {
     }
 
     @Test
-    public void shouldReturnTrueFromInitialiseWhenConfigurationIsOkayed()
-            throws Exception {
+    public void shouldReturnTrueFromInitialiseWhenConfigurationIsOkayed() throws Exception {
         context.checking(new Expectations() {
             {
                 ignoring(mockConfiguration).exists();
-                ignoring(mockConfiguration)
-                        .getProperty(with(any(String.class)));
-                ignoring(mockConfiguration).setProperty(
-                        with(any(String.class)), with(any(String.class)));
+                ignoring(mockConfiguration).getProperty(with(any(String.class)));
+                ignoring(mockConfiguration).setProperty(with(any(String.class)),
+                        with(any(String.class)));
                 one(mockPresenter).realiseView();
 
                 allowing(mockPresenter).getReturnStatus();
@@ -56,14 +55,12 @@ public class AbstractApplicationTest {
                 one(mockConfiguration).save();
             }
         });
-        StubAbstractApplication application = new StubAbstractApplication(
-                mockConfiguration);
+        StubAbstractApplication application = new StubAbstractApplication(mockConfiguration);
         assertThat(application.initialise(), is(true));
     }
 
     @Test
-    public void shouldReturnFalseFromInitialiseWhenConfigurationIsCancelled()
-            throws Exception {
+    public void shouldReturnFalseFromInitialiseWhenConfigurationIsCancelled() throws Exception {
         context.checking(new Expectations() {
             {
                 ignoring(mockConfiguration);
@@ -74,21 +71,18 @@ public class AbstractApplicationTest {
             }
         });
 
-        StubAbstractApplication application = new StubAbstractApplication(
-                mockConfiguration);
+        StubAbstractApplication application = new StubAbstractApplication(mockConfiguration);
         assertThat(application.initialise(), is(false));
     }
 
     @Test
-    public void shouldReturnTrueFromInitialiseWhenConfigurationCannotBeSaved()
-            throws Exception {
+    public void shouldReturnTrueFromInitialiseWhenConfigurationCannotBeSaved() throws Exception {
         context.checking(new Expectations() {
             {
                 ignoring(mockConfiguration).exists();
-                ignoring(mockConfiguration)
-                        .getProperty(with(any(String.class)));
-                ignoring(mockConfiguration).setProperty(
-                        with(any(String.class)), with(any(String.class)));
+                ignoring(mockConfiguration).getProperty(with(any(String.class)));
+                ignoring(mockConfiguration).setProperty(with(any(String.class)),
+                        with(any(String.class)));
                 one(mockPresenter).realiseView();
 
                 allowing(mockPresenter).getReturnStatus();
@@ -99,8 +93,7 @@ public class AbstractApplicationTest {
             }
         });
 
-        StubAbstractApplication application = new StubAbstractApplication(
-                mockConfiguration);
+        StubAbstractApplication application = new StubAbstractApplication(mockConfiguration);
         assertThat(application.initialise(), is(true));
     }
 
@@ -109,15 +102,13 @@ public class AbstractApplicationTest {
         context.checking(new Expectations() {
             {
                 ignoring(mockConfiguration).exists();
-                ignoring(mockConfiguration)
-                        .getProperty(with(any(String.class)));
-                ignoring(mockConfiguration).setProperty(
-                        with(any(String.class)), with(any(String.class)));
+                ignoring(mockConfiguration).getProperty(with(any(String.class)));
+                ignoring(mockConfiguration).setProperty(with(any(String.class)),
+                        with(any(String.class)));
             }
         });
 
-        new StubAbstractApplication(mockConfiguration)
-                .handleFatalException(null);
+        new StubAbstractApplication(mockConfiguration).handleFatalException(null);
     }
 
     private class StubAbstractApplication extends AbstractApplication {
@@ -132,8 +123,7 @@ public class AbstractApplicationTest {
 
         @Override
         protected ConfigurationView createConfigurationView() {
-            throw new UnsupportedOperationException(
-                    "createConfigurationView() not implemented");
+            throw new UnsupportedOperationException("createConfigurationView() not implemented");
         }
 
         public void startup() {

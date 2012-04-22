@@ -8,7 +8,7 @@ package suncertify;
 
 /**
  * A dialog return status.
- *
+ * 
  * @author Richard Wardle
  */
 public enum ReturnStatus {

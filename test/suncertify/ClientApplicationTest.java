@@ -1,19 +1,20 @@
 package suncertify;
 
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import suncertify.presentation.ClientConfigurationDialog;
-import suncertify.service.RemoteBrokerService;
-import suncertify.service.RmiService;
+import static org.junit.Assert.assertTrue;
 
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
-import static org.junit.Assert.assertTrue;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import suncertify.presentation.ClientConfigurationDialog;
+import suncertify.service.RemoteBrokerService;
+import suncertify.service.RmiService;
 
 public class ClientApplicationTest {
 
@@ -44,8 +45,7 @@ public class ClientApplicationTest {
     @Test
     public void shouldCreateClientConfigurationDialog() throws Exception {
         checkingConfiguration();
-        ClientApplication application = new ClientApplication(
-                mockConfiguration, mockRmiService);
+        ClientApplication application = new ClientApplication(mockConfiguration, mockRmiService);
         assertTrue(application.createConfigurationView() instanceof ClientConfigurationDialog);
     }
 
@@ -53,13 +53,11 @@ public class ClientApplicationTest {
         context.checking(new Expectations() {
             {
                 ignoring(mockConfiguration).exists();
-                ignoring(mockConfiguration)
-                        .getProperty(
-                                with(equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)));
+                ignoring(mockConfiguration).getProperty(
+                        with(equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)));
 
-                allowing(mockConfiguration)
-                        .getProperty(
-                                with(equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)));
+                allowing(mockConfiguration).getProperty(
+                        with(equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)));
                 will(returnValue(serverAddress));
 
                 allowing(mockConfiguration).getProperty(
@@ -79,8 +77,7 @@ public class ClientApplicationTest {
             }
         });
 
-        ClientApplication application = new ClientApplication(
-                mockConfiguration, mockRmiService);
+        ClientApplication application = new ClientApplication(mockConfiguration, mockRmiService);
         assertTrue(application.createBrokerService() instanceof RemoteBrokerService);
     }
 
@@ -93,13 +90,11 @@ public class ClientApplicationTest {
                 will(throwException(new MalformedURLException()));
             }
         });
-        new ClientApplication(mockConfiguration, mockRmiService)
-                .createBrokerService();
+        new ClientApplication(mockConfiguration, mockRmiService).createBrokerService();
     }
 
     @Test(expected = FatalException.class)
-    public void shouldThrowFatalExceptionWhenServerCannotBeCommunicatedWith()
-            throws Exception {
+    public void shouldThrowFatalExceptionWhenServerCannotBeCommunicatedWith() throws Exception {
         checkingConfiguration();
         context.checking(new Expectations() {
             {
@@ -107,13 +102,11 @@ public class ClientApplicationTest {
                 will(throwException(new RemoteException()));
             }
         });
-        new ClientApplication(mockConfiguration, mockRmiService)
-                .createBrokerService();
+        new ClientApplication(mockConfiguration, mockRmiService).createBrokerService();
     }
 
     @Test(expected = FatalException.class)
-    public void shouldThrowFatalExceptionWhenRemoveObjectIsNotBound()
-            throws Exception {
+    public void shouldThrowFatalExceptionWhenRemoveObjectIsNotBound() throws Exception {
         checkingConfiguration();
         context.checking(new Expectations() {
             {
@@ -121,7 +114,6 @@ public class ClientApplicationTest {
                 will(throwException(new NotBoundException()));
             }
         });
-        new ClientApplication(mockConfiguration, mockRmiService)
-                .createBrokerService();
+        new ClientApplication(mockConfiguration, mockRmiService).createBrokerService();
     }
 }

@@ -6,19 +6,34 @@
 
 package suncertify.presentation;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
+
+
 /**
  * Abstract base class for application configuration dialogs.
- *
+ * 
  * @author Richard Wardle
  */
-public abstract class AbstractConfigurationDialog extends JDialog implements
-        ConfigurationView {
+public abstract class AbstractConfigurationDialog extends JDialog implements ConfigurationView {
 
     private static final int SERVER_PORT_SPINNER_INITIAL_VALUE = 1;
     private static final int SERVER_PORT_SPINNER_MINIMUM_VALUE = 1;
@@ -39,19 +54,18 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
      * Creates a new instance of <code>AbstractConfigurationDialog</code>.
      */
     protected AbstractConfigurationDialog() {
-        resourceBundle = ResourceBundle
-                .getBundle("suncertify/presentation/Bundle");
+        resourceBundle = ResourceBundle.getBundle("suncertify/presentation/Bundle");
 
-        okButton = new JButton(resourceBundle
-                .getString("AbstractConfigurationDialog.okButton.text"));
+        okButton = new JButton(
+                resourceBundle.getString("AbstractConfigurationDialog.okButton.text"));
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 presenter.okButtonActionPerformed();
             }
         });
 
-        cancelButton = new JButton(resourceBundle
-                .getString("AbstractConfigurationDialog.cancelButton.text"));
+        cancelButton = new JButton(
+                resourceBundle.getString("AbstractConfigurationDialog.cancelButton.text"));
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 presenter.cancelButtonActionPerformed();
@@ -66,7 +80,7 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
 
     /**
      * Returns the resource bundle.
-     *
+     * 
      * @return The resource bundle.
      */
     protected final ResourceBundle getResourceBundle() {
@@ -75,7 +89,7 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
 
     /**
      * Returns the configuration presenter.
-     *
+     * 
      * @return The configuration presenter.
      */
     protected final ConfigurationPresenter getPresenter() {
@@ -221,8 +235,7 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
     }
 
     private JPanel initialiseMessagePanel() {
-        JGradientPanel panel = new JGradientPanel(
-                PresentationConstants.DARK_BLUE,
+        JGradientPanel panel = new JGradientPanel(PresentationConstants.DARK_BLUE,
                 PresentationConstants.LIGHT_BLUE);
         panel.setLayout(new GridBagLayout());
 
@@ -239,22 +252,23 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
 
     /**
      * Returns the message text to display.
-     *
+     * 
      * @return The message text.
      */
     protected abstract String getMessageText();
 
     /**
      * Initialises the input panel.
-     *
+     * 
      * @return The input panel.
      */
     protected abstract JPanel initialiseInputPanel();
 
     /**
      * Creates a server port spinner with the specified font.
-     *
-     * @param font Server port spinner font.
+     * 
+     * @param font
+     *            Server port spinner font.
      * @return The server port spinner.
      */
     protected final JSpinner createServerPortSpinner(Font font) {
@@ -266,8 +280,7 @@ public abstract class AbstractConfigurationDialog extends JDialog implements
         serverPortSpinner.setFont(font);
         serverPortSpinner.setToolTipText(getResourceBundle().getString(
                 "ServerConfigurationDialog.serverPortSpinner.tooltip"));
-        JSpinner.DefaultEditor spinnerEditor = new JSpinner.NumberEditor(
-                serverPortSpinner,
+        JSpinner.DefaultEditor spinnerEditor = new JSpinner.NumberEditor(serverPortSpinner,
                 AbstractConfigurationDialog.SERVER_PORT_SPINNER_FORMAT_PATTERN);
         spinnerEditor.getTextField().setColumns(
                 AbstractConfigurationDialog.SERVER_PORT_SPINNER_COLUMN_COUNT);

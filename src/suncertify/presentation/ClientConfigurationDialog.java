@@ -6,19 +6,22 @@
 
 package suncertify.presentation;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+
 import suncertify.ApplicationMode;
 
-import javax.swing.*;
-import java.awt.*;
-
 /**
- * Configuration dialog for applications running in
- * {@link ApplicationMode#CLIENT CLIENT} mode.
- *
+ * Configuration dialog for applications running in {@link ApplicationMode#CLIENT CLIENT} mode.
+ * 
  * @author Richard Wardle
  */
-public final class ClientConfigurationDialog extends
-        AbstractConfigurationDialog {
+public final class ClientConfigurationDialog extends AbstractConfigurationDialog {
 
     private JTextField serverAddressField;
     private JSpinner serverPortSpinner;
@@ -27,8 +30,7 @@ public final class ClientConfigurationDialog extends
      * Creates a new instance of <code>ClientConfigurationDialog</code>.
      */
     public ClientConfigurationDialog() {
-        setTitle(getResourceBundle().getString(
-                "ClientConfigurationDialog.title"));
+        setTitle(getResourceBundle().getString("ClientConfigurationDialog.title"));
     }
 
     /**
@@ -36,8 +38,7 @@ public final class ClientConfigurationDialog extends
      */
     @Override
     protected String getMessageText() {
-        return getResourceBundle().getString(
-                "ClientConfigurationDialog.message");
+        return getResourceBundle().getString("ClientConfigurationDialog.message");
     }
 
     /**
@@ -88,9 +89,9 @@ public final class ClientConfigurationDialog extends
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.insets = PresentationConstants.DEFAULT_INSETS;
-        panel.add(new JLabel(getResourceBundle().getString(
-                "ClientConfigurationDialog.serverAddressLabel.text")),
-                constraints);
+        panel.add(
+                new JLabel(getResourceBundle().getString(
+                        "ClientConfigurationDialog.serverAddressLabel.text")), constraints);
 
         constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.LINE_START;
@@ -114,10 +115,9 @@ public final class ClientConfigurationDialog extends
         constraints.gridx = 0;
         constraints.gridy = 1;
         constraints.insets = PresentationConstants.DEFAULT_INSETS;
-        panel
-                .add(new JLabel(getResourceBundle().getString(
-                        "ClientConfigurationDialog.serverPortLabel.text")),
-                        constraints);
+        panel.add(
+                new JLabel(getResourceBundle().getString(
+                        "ClientConfigurationDialog.serverPortLabel.text")), constraints);
 
         constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.LINE_START;
@@ -126,8 +126,7 @@ public final class ClientConfigurationDialog extends
         constraints.gridy = 1;
         constraints.insets = PresentationConstants.DEFAULT_INSETS;
 
-        serverPortSpinner = createServerPortSpinner(serverAddressField
-                .getFont());
+        serverPortSpinner = createServerPortSpinner(serverAddressField.getFont());
         panel.add(serverPortSpinner, constraints);
 
         constraints = new GridBagConstraints();

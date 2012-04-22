@@ -6,9 +6,11 @@
 
 package suncertify.presentation;
 
-import javax.swing.*;
-import javax.swing.text.MaskFormatter;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
@@ -16,15 +18,26 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.text.MaskFormatter;
+
+
 /**
  * A dialog for entering the customer ID when making a booking.
- *
+ * 
  * @author Richard Wardle
  */
 public final class CustomerIdDialog extends JDialog {
 
-    private static final Logger LOGGER = Logger
-            .getLogger(CustomerIdDialog.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CustomerIdDialog.class.getName());
     private static final String CUSTOMER_ID_MASK = "########";
     private static final int CUSTOMER_ID_LENGTH = 8;
 
@@ -35,24 +48,22 @@ public final class CustomerIdDialog extends JDialog {
     private String customerId;
 
     /**
-     * Creates a new <code>CustomerIdDialog</code> with the specified parent
-     * frame.
-     *
-     * @param parentFrame Parent frame.
+     * Creates a new <code>CustomerIdDialog</code> with the specified parent frame.
+     * 
+     * @param parentFrame
+     *            Parent frame.
      */
     public CustomerIdDialog(JFrame parentFrame) {
         super(parentFrame);
-        resourceBundle = ResourceBundle
-                .getBundle("suncertify/presentation/Bundle");
+        resourceBundle = ResourceBundle.getBundle("suncertify/presentation/Bundle");
 
         // Enforcing customer ID to be 8 digits using a mask formatter
         MaskFormatter formatter = null;
         try {
             formatter = new MaskFormatter(CUSTOMER_ID_MASK);
         } catch (ParseException e) {
-            LOGGER.log(Level.WARNING,
-                    "Error setting customer ID formatter mask to: "
-                            + CUSTOMER_ID_MASK, e);
+            LOGGER.log(Level.WARNING, "Error setting customer ID formatter mask to: "
+                    + CUSTOMER_ID_MASK, e);
         }
 
         if (formatter == null) {
@@ -69,16 +80,14 @@ public final class CustomerIdDialog extends JDialog {
             }
         });
 
-        okButton = new JButton(resourceBundle
-                .getString("CustomerIdDialog.okButton.text"));
+        okButton = new JButton(resourceBundle.getString("CustomerIdDialog.okButton.text"));
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 okButtonActionPerformed();
             }
         });
 
-        cancelButton = new JButton(resourceBundle
-                .getString("CustomerIdDialog.cancelButton.text"));
+        cancelButton = new JButton(resourceBundle.getString("CustomerIdDialog.cancelButton.text"));
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cancelButtonActionPerformed();
@@ -138,8 +147,7 @@ public final class CustomerIdDialog extends JDialog {
     }
 
     private JPanel initialiseMessagePanel() {
-        JGradientPanel panel = new JGradientPanel(
-                PresentationConstants.DARK_BLUE,
+        JGradientPanel panel = new JGradientPanel(PresentationConstants.DARK_BLUE,
                 PresentationConstants.LIGHT_BLUE);
         panel.setLayout(new GridBagLayout());
 
@@ -150,8 +158,7 @@ public final class CustomerIdDialog extends JDialog {
         constraints.gridy = 0;
         constraints.insets = PresentationConstants.DEFAULT_INSETS;
         constraints.weightx = 1;
-        panel.add(new JLabel(resourceBundle
-                .getString("CustomerIdDialog.message")), constraints);
+        panel.add(new JLabel(resourceBundle.getString("CustomerIdDialog.message")), constraints);
         return panel;
     }
 
@@ -163,8 +170,7 @@ public final class CustomerIdDialog extends JDialog {
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.insets = PresentationConstants.DEFAULT_INSETS;
-        panel.add(new JLabel(resourceBundle
-                .getString("CustomerIdDialog.customerIdLabel.text")),
+        panel.add(new JLabel(resourceBundle.getString("CustomerIdDialog.customerIdLabel.text")),
                 constraints);
 
         constraints = new GridBagConstraints();
@@ -194,8 +200,8 @@ public final class CustomerIdDialog extends JDialog {
             setVisible(false);
         } else {
             /*
-             * Invalid customer ID, clear the text field and give it focus so
-             * the user can try again.
+             * Invalid customer ID, clear the text field and give it focus so the user can try
+             * again.
              */
             customerIdTextField.setText(null);
             customerIdTextField.requestFocus();
@@ -207,8 +213,8 @@ public final class CustomerIdDialog extends JDialog {
         boolean valid = customerIdText.length() == CUSTOMER_ID_LENGTH;
 
         /*
-         * Must only be digits. Formatted text field should enforce this but
-         * check here just in case it couldn't be created for some reason.
+         * Must only be digits. Formatted text field should enforce this but check here just in case
+         * it couldn't be created for some reason.
          */
         for (int i = 0; valid && i < CUSTOMER_ID_LENGTH; i++) {
             valid = Character.isDigit(customerIdText.charAt(i));
@@ -223,9 +229,9 @@ public final class CustomerIdDialog extends JDialog {
 
     /**
      * Returns the customer ID.
-     *
-     * @return The customer ID entered in the dialog, or <code>null</code> if
-     *         the dialog was cancelled.
+     * 
+     * @return The customer ID entered in the dialog, or <code>null</code> if the dialog was
+     *         cancelled.
      */
     public String getCustomerId() {
         return customerId;

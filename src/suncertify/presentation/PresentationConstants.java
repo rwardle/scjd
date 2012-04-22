@@ -6,14 +6,16 @@
 
 package suncertify.presentation;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Insets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+
 /**
  * Constants for the presentation layer.
- *
+ * 
  * @author Richard Wardle
  */
 public class PresentationConstants {
@@ -80,8 +82,7 @@ public class PresentationConstants {
     static {
         WIDTHS.put(TABLE_NAME_COLUMN_INDEX, TABLE_NAME_COLUMN_WIDTH);
         WIDTHS.put(TABLE_LOCATION_COLUMN_INDEX, TABLE_LOCATION_COLUMN_WIDTH);
-        WIDTHS.put(TABLE_SPECIALTIES_COLUMN_INDEX,
-                TABLE_SPECIALTIES_COLUMN_WIDTH);
+        WIDTHS.put(TABLE_SPECIALTIES_COLUMN_INDEX, TABLE_SPECIALTIES_COLUMN_WIDTH);
         WIDTHS.put(TABLE_SIZE_COLUMN_INDEX, TABLE_SIZE_COLUMN_WIDTH);
         WIDTHS.put(TABLE_RATE_COLUMN_INDEX, TABLE_RATE_COLUMN_WIDTH);
         WIDTHS.put(TABLE_OWNER_COLUMN_INDEX, TABLE_OWNER_COLUMN_WIDTH);

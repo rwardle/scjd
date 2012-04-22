@@ -14,16 +14,15 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.util.logging.Logger;
 
+
 /**
- * Implementation of {@link RmiService} that delegates to {@link LocateRegistry}
- * and {@link Naming}.
- *
+ * Implementation of {@link RmiService} that delegates to {@link LocateRegistry} and {@link Naming}.
+ * 
  * @author Richard Wardle
  */
 public final class RmiServiceImpl implements RmiService {
 
-    private static final Logger LOGGER = Logger.getLogger(RmiServiceImpl.class
-            .getName());
+    private static final Logger LOGGER = Logger.getLogger(RmiServiceImpl.class.getName());
 
     /**
      * Creates a new instance of <code>RmiServiceImpl</code>.
@@ -43,8 +42,7 @@ public final class RmiServiceImpl implements RmiService {
     /**
      * {@inheritDoc}
      */
-    public void rebind(String name, Remote obj) throws RemoteException,
-            MalformedURLException {
+    public void rebind(String name, Remote obj) throws RemoteException, MalformedURLException {
         if (name == null) {
             throw new IllegalArgumentException("name cannot be null");
         }
@@ -59,8 +57,8 @@ public final class RmiServiceImpl implements RmiService {
     /**
      * {@inheritDoc}
      */
-    public Remote lookup(String name) throws NotBoundException,
-            MalformedURLException, RemoteException {
+    public Remote lookup(String name) throws NotBoundException, MalformedURLException,
+            RemoteException {
         if (name == null) {
             throw new IllegalArgumentException("name cannot be null");
         }

@@ -6,6 +6,7 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import suncertify.presentation.ConfigurationView;
 import suncertify.presentation.MainPresenter;
 import suncertify.service.BrokerService;
@@ -52,14 +53,12 @@ public class AbstractGuiApplicationTest {
 
         @Override
         protected ConfigurationView createConfigurationView() {
-            throw new UnsupportedOperationException(
-                    "createConfigurationView() not implemented");
+            throw new UnsupportedOperationException("createConfigurationView() not implemented");
         }
 
         @Override
         protected BrokerService createBrokerService() {
-            throw new UnsupportedOperationException(
-                    "getBrokerService() not implemented");
+            throw new UnsupportedOperationException("getBrokerService() not implemented");
         }
 
         @Override

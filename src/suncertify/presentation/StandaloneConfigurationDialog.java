@@ -6,21 +6,25 @@
 
 package suncertify.presentation;
 
-import suncertify.ApplicationMode;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import suncertify.ApplicationMode;
+
 /**
- * Configuration dialog for applications running in
- * {@link ApplicationMode#STANDALONE STANDALONE} mode.
- *
+ * Configuration dialog for applications running in {@link ApplicationMode#STANDALONE STANDALONE}
+ * mode.
+ * 
  * @author Richard Wardle
  */
-public final class StandaloneConfigurationDialog extends
-        AbstractConfigurationDialog {
+public final class StandaloneConfigurationDialog extends AbstractConfigurationDialog {
 
     private JTextField databaseFilePathField;
     private JButton browseButton;
@@ -29,12 +33,10 @@ public final class StandaloneConfigurationDialog extends
      * Creates a new instance of <code>StandaloneConfigurationDialog</code>.
      */
     public StandaloneConfigurationDialog() {
-        setTitle(getResourceBundle().getString(
-                "StandaloneConfigurationDialog.title"));
+        setTitle(getResourceBundle().getString("StandaloneConfigurationDialog.title"));
         browseButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                StandaloneConfigurationDialog.this.getPresenter()
-                        .browseButtonActionPerformed();
+                StandaloneConfigurationDialog.this.getPresenter().browseButtonActionPerformed();
             }
         });
     }
@@ -44,8 +46,7 @@ public final class StandaloneConfigurationDialog extends
      */
     @Override
     protected String getMessageText() {
-        return getResourceBundle().getString(
-                "StandaloneConfigurationDialog.message");
+        return getResourceBundle().getString("StandaloneConfigurationDialog.message");
     }
 
     /**
@@ -76,9 +77,9 @@ public final class StandaloneConfigurationDialog extends
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.insets = PresentationConstants.DEFAULT_INSETS;
-        panel.add(new JLabel(getResourceBundle().getString(
-                "StandaloneConfigurationDialog.databaseFilePathLabel.text")),
-                constraints);
+        panel.add(
+                new JLabel(getResourceBundle().getString(
+                        "StandaloneConfigurationDialog.databaseFilePathLabel.text")), constraints);
 
         constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.BOTH;
@@ -88,10 +89,8 @@ public final class StandaloneConfigurationDialog extends
         constraints.weightx = 1;
         databaseFilePathField = new JTextField();
         databaseFilePathField.setEditable(false);
-        databaseFilePathField
-                .setToolTipText(getResourceBundle()
-                        .getString(
-                                "StandaloneConfigurationDialog.databaseFilePathTextField.tooltip"));
+        databaseFilePathField.setToolTipText(getResourceBundle().getString(
+                "StandaloneConfigurationDialog.databaseFilePathTextField.tooltip"));
         panel.add(databaseFilePathField, constraints);
 
         constraints = new GridBagConstraints();
@@ -101,8 +100,7 @@ public final class StandaloneConfigurationDialog extends
         browseButton = new JButton(getResourceBundle().getString(
                 "StandaloneConfigurationDialog.browseButton.text"));
         browseButton.setMnemonic(getResourceBundle().getString(
-                "StandaloneConfigurationDialog.browseButton.mnemonic")
-                .charAt(0));
+                "StandaloneConfigurationDialog.browseButton.mnemonic").charAt(0));
         panel.add(browseButton, constraints);
 
         return panel;

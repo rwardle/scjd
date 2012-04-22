@@ -6,21 +6,25 @@
 
 package suncertify.presentation;
 
-import suncertify.ApplicationMode;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+
+import suncertify.ApplicationMode;
+
 /**
- * Configuration dialog for applications running in
- * {@link ApplicationMode#SERVER SERVER} mode.
- *
+ * Configuration dialog for applications running in {@link ApplicationMode#SERVER SERVER} mode.
+ * 
  * @author Richard Wardle
  */
-public final class ServerConfigurationDialog extends
-        AbstractConfigurationDialog {
+public final class ServerConfigurationDialog extends AbstractConfigurationDialog {
 
     private JTextField databaseFilePathField;
     private JSpinner serverPortSpinner;
@@ -30,12 +34,10 @@ public final class ServerConfigurationDialog extends
      * Creates a new instance of <code>ServerConfigurationDialog</code>.
      */
     public ServerConfigurationDialog() {
-        setTitle(getResourceBundle().getString(
-                "ServerConfigurationDialog.title"));
+        setTitle(getResourceBundle().getString("ServerConfigurationDialog.title"));
         browseButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                ServerConfigurationDialog.this.getPresenter()
-                        .browseButtonActionPerformed();
+                ServerConfigurationDialog.this.getPresenter().browseButtonActionPerformed();
             }
         });
     }
@@ -45,8 +47,7 @@ public final class ServerConfigurationDialog extends
      */
     @Override
     protected String getMessageText() {
-        return getResourceBundle().getString(
-                "ServerConfigurationDialog.message");
+        return getResourceBundle().getString("ServerConfigurationDialog.message");
     }
 
     /**
@@ -97,9 +98,9 @@ public final class ServerConfigurationDialog extends
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.insets = PresentationConstants.DEFAULT_INSETS;
-        panel.add(new JLabel(getResourceBundle().getString(
-                "ServerConfigurationDialog.databaseFilePathLabel.text")),
-                constraints);
+        panel.add(
+                new JLabel(getResourceBundle().getString(
+                        "ServerConfigurationDialog.databaseFilePathLabel.text")), constraints);
 
         constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.BOTH;
@@ -127,10 +128,9 @@ public final class ServerConfigurationDialog extends
         constraints.gridx = 0;
         constraints.gridy = 1;
         constraints.insets = PresentationConstants.DEFAULT_INSETS;
-        panel
-                .add(new JLabel(getResourceBundle().getString(
-                        "ServerConfigurationDialog.serverPortLabel.text")),
-                        constraints);
+        panel.add(
+                new JLabel(getResourceBundle().getString(
+                        "ServerConfigurationDialog.serverPortLabel.text")), constraints);
 
         constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.LINE_START;
@@ -138,8 +138,7 @@ public final class ServerConfigurationDialog extends
         constraints.gridy = 1;
         constraints.insets = PresentationConstants.DEFAULT_INSETS;
 
-        serverPortSpinner = createServerPortSpinner(databaseFilePathField
-                .getFont());
+        serverPortSpinner = createServerPortSpinner(databaseFilePathField.getFont());
         panel.add(serverPortSpinner, constraints);
 
         return panel;

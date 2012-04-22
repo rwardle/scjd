@@ -8,7 +8,7 @@ package suncertify;
 
 /**
  * A mode that the application runs in.
- *
+ * 
  * @author Richard Wardle
  */
 public enum ApplicationMode {
@@ -19,14 +19,14 @@ public enum ApplicationMode {
     CLIENT,
 
     /**
-     * An application that manages a database and publishes a server that
-     * applications running in CLIENT mode can connect to remotely.
+     * An application that manages a database and publishes a server that applications running in
+     * CLIENT mode can connect to remotely.
      */
     SERVER,
 
     /**
-     * An application that runs locally (with no networking) and provides both
-     * user-interface and database management functionality.
+     * An application that runs locally (with no networking) and provides both user-interface and
+     * database management functionality.
      */
     STANDALONE
 }

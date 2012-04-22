@@ -9,13 +9,11 @@ package suncertify;
 import suncertify.db.DatabaseFactoryImpl;
 
 /**
- * Creates applications that run in
- * {@link ApplicationMode#STANDALONE STANDALONE} mode.
- *
+ * Creates applications that run in {@link ApplicationMode#STANDALONE STANDALONE} mode.
+ * 
  * @author Richard Wardle
  */
-public final class StandaloneApplicationFactory extends
-        AbstractApplicationFactory {
+public final class StandaloneApplicationFactory extends AbstractApplicationFactory {
 
     /**
      * Creates a new instance of <code>StandaloneApplicationFactory</code>.
@@ -35,7 +33,6 @@ public final class StandaloneApplicationFactory extends
             throw new IllegalArgumentException("configuration cannot be null");
         }
 
-        return new StandaloneApplication(configuration,
-                new DatabaseFactoryImpl());
+        return new StandaloneApplication(configuration, new DatabaseFactoryImpl());
     }
 }

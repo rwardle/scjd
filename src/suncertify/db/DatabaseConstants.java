@@ -8,7 +8,7 @@ package suncertify.db;
 
 /**
  * Constants for the database layer.
- *
+ * 
  * @author Richard Wardle
  */
 public class DatabaseConstants {

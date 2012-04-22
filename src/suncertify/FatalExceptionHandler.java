@@ -6,23 +6,23 @@
 
 package suncertify;
 
-import javax.swing.*;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JOptionPane;
+
+
 /**
- * An exception handler for handling fatal and uncaught exceptions. Displays an
- * error dialog to the user and logs the exception.
- *
+ * An exception handler for handling fatal and uncaught exceptions. Displays an error dialog to the
+ * user and logs the exception.
+ * 
  * @author Richard Wardle
  */
-public final class FatalExceptionHandler implements
-        Thread.UncaughtExceptionHandler {
+public final class FatalExceptionHandler implements Thread.UncaughtExceptionHandler {
 
-    private static final Logger LOGGER = Logger
-            .getLogger(FatalExceptionHandler.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(FatalExceptionHandler.class.getName());
 
     // Resource bundle for looking-up user-friendly error messages
     private final ResourceBundle resourceBundle;
@@ -43,14 +43,14 @@ public final class FatalExceptionHandler implements
         resourceBundle = ResourceBundle.getBundle("suncertify/Bundle");
         title = resourceBundle.getString("FatalExceptionHandler.title");
         pattern = resourceBundle.getString("FatalExceptionHandler.pattern");
-        defaultMessage = resourceBundle
-                .getString("FatalExceptionHandler.defaultMessage");
+        defaultMessage = resourceBundle.getString("FatalExceptionHandler.defaultMessage");
     }
 
     /**
      * Handles the specified fatal exception.
-     *
-     * @param exception Fatal exception.
+     * 
+     * @param exception
+     *            Fatal exception.
      */
     public void handleException(FatalException exception) {
         LOGGER.log(Level.SEVERE, "Handling fatal exception", exception);
@@ -75,7 +75,7 @@ public final class FatalExceptionHandler implements
     }
 
     private void showDialog(String message) {
-        JOptionPane.showMessageDialog(null, MessageFormat.format(pattern,
-                message), title, JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, MessageFormat.format(pattern, message), title,
+                JOptionPane.ERROR_MESSAGE);
     }
 }

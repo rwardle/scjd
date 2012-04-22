@@ -1,16 +1,16 @@
 package suncertify.db;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.io.IOException;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 
 public class DataAdapterTest {
 
@@ -49,8 +49,7 @@ public class DataAdapterTest {
     public void shouldMapDataAccessExceptionInUpdateMethod() throws Exception {
         context.checking(new Expectations() {
             {
-                one(mockData).update(with(any(int.class)),
-                        with(any(String[].class)));
+                one(mockData).update(with(any(int.class)), with(any(String[].class)));
                 will(throwException(new DataAccessException(new IOException())));
             }
         });
@@ -91,8 +90,7 @@ public class DataAdapterTest {
     }
 
     @Test(expected = InterruptedException.class)
-    public void shouldMapIllegalThreadStateExceptionInLockMethod()
-            throws Exception {
+    public void shouldMapIllegalThreadStateExceptionInLockMethod() throws Exception {
         final IllegalThreadStateException exception = new IllegalThreadStateException();
         exception.initCause(new InterruptedException());
 

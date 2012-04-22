@@ -6,25 +6,31 @@
 
 package suncertify.db;
 
-import suncertify.db.DatabaseSchema.FieldDescription;
-
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
+import suncertify.db.DatabaseSchema.FieldDescription;
+
 /**
- * Implementation of {@link DBMain} that obtains contractor data using an
- * implementation of {@link DatabaseFile}. Any <code>DataAccessException</code>s
- * thrown by the methods of this class will have an <code>IOException</code>
- * as their root cause.
+ * Implementation of {@link DBMain} that obtains contractor data using an implementation of
+ * {@link DatabaseFile}. Any <code>DataAccessException</code>s thrown by the methods of this class
+ * will have an <code>IOException</code> as their root cause.
  * <p/>
- * This class synchronizes access to the supplied <code>databaseFile</code> to
- * prevent corruption by concurrent operations from multiple threads. To ensure
- * database integrity, users of the class must ensure that no operations are
- * called on the supplied <code>databaseFile</code> externally to this class.
- *
+ * This class synchronizes access to the supplied <code>databaseFile</code> to prevent corruption by
+ * concurrent operations from multiple threads. To ensure database integrity, users of the class
+ * must ensure that no operations are called on the supplied <code>databaseFile</code> externally to
+ * this class.
+ * 
  * @author Richard Wardle
  */
 public class Data implements DBMain {
@@ -32,9 +38,9 @@ public class Data implements DBMain {
     private static final Logger LOGGER = Logger.getLogger(Data.class.getName());
 
     /*
-     * Methods called on this <code>databaseFile</code> should be synchronized
-     * on the <code>databaseFile</code> instance to prevent multiple threads
-     * from modifying the file pointer concurrently.
+     * Methods called on this <code>databaseFile</code> should be synchronized on the
+     * <code>databaseFile</code> instance to prevent multiple threads from modifying the file
+     * pointer concurrently.
      */
     private final DatabaseFile databaseFile;
 
@@ -42,26 +48,23 @@ public class Data implements DBMain {
     private final DatabaseSchema databaseSchema;
 
     /*
-     * Offset of the data section (where the records start) in the database
-     * file.
+     * Offset of the data section (where the records start) in the database file.
      */
     private final long dataSectionOffset;
 
     /*
-     * Sorted set of the record numbers in the database that have been marked as
-     * deleted. Modification of the set is synchronized on databaseFile but
-     * reads may happen concurrently, so the set is created as synchronized to
-     * prevent corrupted reads.
+     * Sorted set of the record numbers in the database that have been marked as deleted.
+     * Modification of the set is synchronized on databaseFile but reads may happen concurrently, so
+     * the set is created as synchronized to prevent corrupted reads.
      */
     private final SortedSet<Integer> deletedRecNos = Collections
             .synchronizedSortedSet(new TreeSet<Integer>());
 
     /*
-     * Mutual exclusion lock used for acquiring the logical record lock on
-     * database records. Multiple <code>Condition</code>objects are used with
-     * this lock, one for each record in the database. This allows fine-grained
-     * signal operations when unlocking a record, i.e. only waking up threads
-     * that are waiting for the lock on that particular record.
+     * Mutual exclusion lock used for acquiring the logical record lock on database records.
+     * Multiple <code>Condition</code>objects are used with this lock, one for each record in the
+     * database. This allows fine-grained signal operations when unlocking a record, i.e. only
+     * waking up threads that are waiting for the lock on that particular record.
      */
     private final ReentrantLock lock = new ReentrantLock();
 
@@ -69,33 +72,33 @@ public class Data implements DBMain {
     private final Map<Integer, Condition> conditionsMap = new HashMap<Integer, Condition>();
 
     /*
-     * Map of record numbers and the corresponding IDs of the threads that
-     * currently hold the lock on those records. Modification of the map is
-     * synchronized on the ReentrantLock lock but reads may happen concurrently,
-     * so the map is created as synchronized to prevent corrupted reads.
+     * Map of record numbers and the corresponding IDs of the threads that currently hold the lock
+     * on those records. Modification of the map is synchronized on the ReentrantLock lock but reads
+     * may happen concurrently, so the map is created as synchronized to prevent corrupted reads.
      */
     private final Map<Integer, Long> lockedRecords = Collections
             .synchronizedMap(new HashMap<Integer, Long>());
 
     /*
-     * Number of records in the database, including deleted records.
-     * Modification to this field is synchronized on <code>databaseFile</code>.
-     * Reads are not synchronized but the field is marked <code>volatile</code>
-     * to ensure that threads see the most up-to-date data for the field.
+     * Number of records in the database, including deleted records. Modification to this field is
+     * synchronized on <code>databaseFile</code>. Reads are not synchronized but the field is marked
+     * <code>volatile</code> to ensure that threads see the most up-to-date data for the field.
      */
     private volatile int recordCount;
 
     /**
-     * Creates a new instance of <code>Data</code> using the specified
-     * database file.
-     *
-     * @param databaseFile Database file.
-     * @throws DataValidationException  If the database is invalid.
-     * @throws IOException              If there is an error accessing the database.
-     * @throws IllegalArgumentException If the <code>databaseFile</code> is <code>null</code>.
+     * Creates a new instance of <code>Data</code> using the specified database file.
+     * 
+     * @param databaseFile
+     *            Database file.
+     * @throws DataValidationException
+     *             If the database is invalid.
+     * @throws IOException
+     *             If there is an error accessing the database.
+     * @throws IllegalArgumentException
+     *             If the <code>databaseFile</code> is <code>null</code>.
      */
-    public Data(DatabaseFile databaseFile) throws DataValidationException,
-            IOException {
+    public Data(DatabaseFile databaseFile) throws DataValidationException, IOException {
         if (databaseFile == null) {
             throw new IllegalArgumentException("databaseFile cannot be null");
         }
@@ -103,15 +106,15 @@ public class Data implements DBMain {
         this.databaseFile = databaseFile;
         databaseSchema = new DatabaseSchema();
 
-        DatabaseFileValidator validator = new DatabaseFileValidator(
-                this.databaseFile, databaseSchema);
+        DatabaseFileValidator validator = new DatabaseFileValidator(this.databaseFile,
+                databaseSchema);
         validator.validate();
         dataSectionOffset = validator.getDataSectionOffset();
         recordCount = validator.getRecordCount();
 
         /*
-         * Store a set of the deleted record numbers - allows checking if a
-         * record is deleted without accessing the database file.
+         * Store a set of the deleted record numbers - allows checking if a record is deleted
+         * without accessing the database file.
          */
         cacheDeletedRecordNumbers();
     }
@@ -123,8 +126,7 @@ public class Data implements DBMain {
                 deletedRecNos.add(recNo);
             }
         }
-        LOGGER.info("Database contains " + deletedRecNos.size()
-                + " deleted records");
+        LOGGER.info("Database contains " + deletedRecNos.size() + " deleted records");
     }
 
     final boolean isRecordDeleted(int recNo) {
@@ -152,8 +154,7 @@ public class Data implements DBMain {
         String record;
         synchronized (databaseFile) {
             if (isRecordDeleted(recNo)) {
-                throw new RecordNotFoundException("Record " + recNo
-                        + " has been deleted");
+                throw new RecordNotFoundException("Record " + recNo + " has been deleted");
             }
 
             try {
@@ -184,18 +185,16 @@ public class Data implements DBMain {
     }
 
     /*
-     * Splits a record into its separate field values. Any whitespace at the end
-     * of a field value is trimmed.
+     * Splits a record into its separate field values. Any whitespace at the end of a field value is
+     * trimmed.
      */
     private String[] splitRecord(String record) {
         String[] recordValues = new String[databaseSchema.getFieldCount()];
-        FieldDescription[] fieldDescriptions = databaseSchema
-                .getFieldDescriptions();
+        FieldDescription[] fieldDescriptions = databaseSchema.getFieldDescriptions();
         for (int i = 0; i < fieldDescriptions.length; i++) {
-            recordValues[i] = record.substring(
-                    fieldDescriptions[i].getRecordOffset(),
-                    fieldDescriptions[i].getRecordOffset()
-                            + fieldDescriptions[i].getLength()).trim();
+            recordValues[i] = record.substring(fieldDescriptions[i].getRecordOffset(),
+                    fieldDescriptions[i].getRecordOffset() + fieldDescriptions[i].getLength())
+                    .trim();
         }
         return recordValues;
     }
@@ -206,8 +205,7 @@ public class Data implements DBMain {
     public void update(int recNo, String[] data) throws RecordNotFoundException {
         validateRecordNumber(recNo);
         if (isRecordDeleted(recNo)) {
-            throw new RecordNotFoundException("Record " + recNo
-                    + " has been deleted");
+            throw new RecordNotFoundException("Record " + recNo + " has been deleted");
         }
         if (data == null) {
             throw new IllegalArgumentException("data cannot be null");
@@ -217,15 +215,14 @@ public class Data implements DBMain {
                     + databaseSchema.getFieldCount());
         }
         if (!isCurrentThreadHoldingLock(recNo)) {
-            throw new IllegalStateException(
-                    "Calling thread does not hold the lock on record " + recNo);
+            throw new IllegalStateException("Calling thread does not hold the lock on record "
+                    + recNo);
         }
 
         synchronized (databaseFile) {
             try {
                 updateRecord(recNo, data);
-                LOGGER.info("Updated record " + recNo + " with: "
-                        + Arrays.toString(data));
+                LOGGER.info("Updated record " + recNo + " with: " + Arrays.toString(data));
             } catch (IOException e) {
                 throw new DataAccessException(e);
             }
@@ -241,18 +238,15 @@ public class Data implements DBMain {
     private void updateRecord(int recNo, String[] data) throws IOException {
         long recValuesStartPos = getOffsetForRecord(recNo)
                 + DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH;
-        FieldDescription[] fieldDescriptions = databaseSchema
-                .getFieldDescriptions();
+        FieldDescription[] fieldDescriptions = databaseSchema.getFieldDescriptions();
         for (int i = 0; i < fieldDescriptions.length; i++) {
             // Don't update fields where the data element is null
             if (data[i] != null) {
-                databaseFile.seek(recValuesStartPos
-                        + fieldDescriptions[i].getRecordOffset());
+                databaseFile.seek(recValuesStartPos + fieldDescriptions[i].getRecordOffset());
 
                 // Pad or truncate the data to fit the field
-                databaseFile.write(padOrTruncateData(data[i],
-                        fieldDescriptions[i].getLength()).getBytes(
-                        DatabaseConstants.CHARACTER_SET));
+                databaseFile.write(padOrTruncateData(data[i], fieldDescriptions[i].getLength())
+                        .getBytes(DatabaseConstants.CHARACTER_SET));
             }
         }
     }
@@ -279,12 +273,11 @@ public class Data implements DBMain {
     public void delete(int recNo) throws RecordNotFoundException {
         validateRecordNumber(recNo);
         if (isRecordDeleted(recNo)) {
-            throw new RecordNotFoundException("Record " + recNo
-                    + " has been deleted");
+            throw new RecordNotFoundException("Record " + recNo + " has been deleted");
         }
         if (!isCurrentThreadHoldingLock(recNo)) {
-            throw new IllegalStateException(
-                    "Calling thread does not hold the lock on record " + recNo);
+            throw new IllegalStateException("Calling thread does not hold the lock on record "
+                    + recNo);
         }
 
         // The record is deleted just by writing the deleted record flag
@@ -300,8 +293,8 @@ public class Data implements DBMain {
         }
 
         /*
-         * Now the record is deleted it needs to be unlocked since an external
-         * call to the unlock method will now throw RecordNotFoundException..
+         * Now the record is deleted it needs to be unlocked since an external call to the unlock
+         * method will now throw RecordNotFoundException..
          */
         unlockRecord(recNo);
     }
@@ -316,9 +309,8 @@ public class Data implements DBMain {
             throw new IllegalArgumentException("criteria cannot be null");
         }
         if (criteria.length != databaseSchema.getFieldCount()) {
-            throw new IllegalArgumentException(
-                    "criteria array must be of length: "
-                            + databaseSchema.getFieldCount());
+            throw new IllegalArgumentException("criteria array must be of length: "
+                    + databaseSchema.getFieldCount());
         }
 
         // Loop over all the database records to find matches
@@ -338,8 +330,7 @@ public class Data implements DBMain {
                         databaseFile.readFully(bytes);
                     }
 
-                    String record = new String(bytes,
-                            DatabaseConstants.CHARACTER_SET);
+                    String record = new String(bytes, DatabaseConstants.CHARACTER_SET);
                     if (isMatchingRecord(criteria, record)) {
                         // If the record matches add it to the list
                         matchingRecNos.add(recNo);
@@ -358,8 +349,8 @@ public class Data implements DBMain {
             index++;
         }
 
-        LOGGER.info("Found " + recNosArray.length
-                + " records matching criteria: " + Arrays.toString(criteria));
+        LOGGER.info("Found " + recNosArray.length + " records matching criteria: "
+                + Arrays.toString(criteria));
         return recNosArray;
     }
 
@@ -367,14 +358,11 @@ public class Data implements DBMain {
         boolean match = false;
 
         // Check each field against the criteria using a "startsWith" comparison
-        FieldDescription[] fieldDescriptions = databaseSchema
-                .getFieldDescriptions();
+        FieldDescription[] fieldDescriptions = databaseSchema.getFieldDescriptions();
         for (int i = 0; i < fieldDescriptions.length; i++) {
             if (criteria[i] != null) {
-                String recordValue = record.substring(fieldDescriptions[i]
-                        .getRecordOffset(), fieldDescriptions[i]
-                        .getRecordOffset()
-                        + fieldDescriptions[i].getLength());
+                String recordValue = record.substring(fieldDescriptions[i].getRecordOffset(),
+                        fieldDescriptions[i].getRecordOffset() + fieldDescriptions[i].getLength());
                 if (!recordValue.startsWith(criteria[i])) {
                     // Criteria element doesn't match so break out of the loop
                     break;
@@ -405,17 +393,15 @@ public class Data implements DBMain {
         }
         for (String element : data) {
             if (element == null) {
-                throw new IllegalArgumentException(
-                        "record values cannot be null");
+                throw new IllegalArgumentException("record values cannot be null");
             }
         }
 
         int recNoToWrite;
         synchronized (databaseFile) {
             /*
-             * If there are any deleted records, use the first available as the
-             * location to write the new record to. If not, write it to the end
-             * of the file.
+             * If there are any deleted records, use the first available as the location to write
+             * the new record to. If not, write it to the end of the file.
              */
             if (deletedRecNos.isEmpty()) {
                 recNoToWrite = recordCount;
@@ -431,9 +417,8 @@ public class Data implements DBMain {
             }
 
             /*
-             * If the record was written to the end of the file, increment the
-             * record count. If not, remove the record number of the new record
-             * from the set of deleted record numbers.
+             * If the record was written to the end of the file, increment the record count. If not,
+             * remove the record number of the new record from the set of deleted record numbers.
              */
             if (recNoToWrite == recordCount) {
                 recordCount++;
@@ -442,8 +427,8 @@ public class Data implements DBMain {
             }
         }
 
-        LOGGER.info("Created record at recNo: " + recNoToWrite
-                + ", with data: " + Arrays.toString(data));
+        LOGGER.info("Created record at recNo: " + recNoToWrite + ", with data: "
+                + Arrays.toString(data));
         return recNoToWrite;
     }
 
@@ -451,24 +436,23 @@ public class Data implements DBMain {
         databaseFile.writeByte(DatabaseConstants.VALID_RECORD_FLAG);
 
         /*
-         * Build up the complete record as a string and write it out in one
-         * operation. Each field is padded or truncated as appropriate.
+         * Build up the complete record as a string and write it out in one operation. Each field is
+         * padded or truncated as appropriate.
          */
         StringBuilder recordBuilder = new StringBuilder();
         for (int i = 0; i < data.length; i++) {
-            recordBuilder.append(padOrTruncateData(data[i], databaseSchema
-                    .getFieldDescriptions()[i].getLength()));
+            recordBuilder.append(padOrTruncateData(data[i],
+                    databaseSchema.getFieldDescriptions()[i].getLength()));
         }
-        databaseFile.write(recordBuilder.toString().getBytes(
-                DatabaseConstants.CHARACTER_SET));
+        databaseFile.write(recordBuilder.toString().getBytes(DatabaseConstants.CHARACTER_SET));
     }
 
     /**
      * {@inheritDoc}
      * <p/>
-     * The cause of the <code>IllegalThreadStateException</code> thrown from
-     * this method will be the original <code>InterruptedException</code>
-     * which can be accessed via the <code>getCause</code> method.
+     * The cause of the <code>IllegalThreadStateException</code> thrown from this method will be the
+     * original <code>InterruptedException</code> which can be accessed via the
+     * <code>getCause</code> method.
      */
     public void lock(int recNo) throws RecordNotFoundException {
         validateRecordNumber(recNo);
@@ -490,20 +474,16 @@ public class Data implements DBMain {
             try {
                 while (lockedRecords.containsKey(recNo)) {
                     // If the record is currently locked, wait on the condition
-                    LOGGER.info("Thread with ID="
-                            + Thread.currentThread().getId()
+                    LOGGER.info("Thread with ID=" + Thread.currentThread().getId()
                             + " waiting for lock on record: " + recNo);
                     condition.await();
                 }
             } catch (InterruptedException e) {
                 // Thread has been interrupted, throw a runtime exception
-                String message = "Thread with ID="
-                        + Thread.currentThread().getId()
-                        + " has been interrupted while waiting for lock on record: "
-                        + recNo;
+                String message = "Thread with ID=" + Thread.currentThread().getId()
+                        + " has been interrupted while waiting for lock on record: " + recNo;
                 LOGGER.info(message);
-                IllegalThreadStateException exception = new IllegalThreadStateException(
-                        message);
+                IllegalThreadStateException exception = new IllegalThreadStateException(message);
                 exception.initCause(e);
                 throw exception;
             }
@@ -513,11 +493,10 @@ public class Data implements DBMain {
 
             if (isRecordDeleted(recNo)) {
                 /*
-                 * Record is deleted, wake another thread waiting on the
-                 * condition for this record and throw an exception.
+                 * Record is deleted, wake another thread waiting on the condition for this record
+                 * and throw an exception.
                  */
-                LOGGER.info(deletedMessage + ", thread with ID="
-                        + Thread.currentThread().getId()
+                LOGGER.info(deletedMessage + ", thread with ID=" + Thread.currentThread().getId()
                         + " released lock on record: " + recNo);
                 condition.signal();
                 throw new RecordNotFoundException(deletedMessage);
@@ -536,16 +515,15 @@ public class Data implements DBMain {
     public void unlock(int recNo) throws RecordNotFoundException {
         validateRecordNumber(recNo);
         if (isRecordDeleted(recNo)) {
-            throw new RecordNotFoundException("Record " + recNo
-                    + " has been deleted");
+            throw new RecordNotFoundException("Record " + recNo + " has been deleted");
         }
 
         // Can't unlock unless the thread is currently holding the lock
         if (isCurrentThreadHoldingLock(recNo)) {
             unlockRecord(recNo);
         } else {
-            throw new IllegalStateException(
-                    "Calling thread does not hold the lock on record " + recNo);
+            throw new IllegalStateException("Calling thread does not hold the lock on record "
+                    + recNo);
         }
     }
 
@@ -570,8 +548,7 @@ public class Data implements DBMain {
     public boolean isLocked(int recNo) throws RecordNotFoundException {
         validateRecordNumber(recNo);
         if (isRecordDeleted(recNo)) {
-            throw new RecordNotFoundException("Record " + recNo
-                    + " has been deleted");
+            throw new RecordNotFoundException("Record " + recNo + " has been deleted");
         }
         return lockedRecords.containsKey(recNo);
     }

@@ -1,22 +1,24 @@
 package suncertify.presentation;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.awt.Component;
+import java.io.File;
+
+import javax.swing.JFileChooser;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import suncertify.ApplicationConstants;
 import suncertify.Configuration;
 import suncertify.ConfigurationManager;
 import suncertify.ReturnStatus;
-
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 
 public class ConfigurationPresenterTest {
 
@@ -52,13 +54,12 @@ public class ConfigurationPresenterTest {
                         ApplicationConstants.SERVER_ADDRESS_PROPERTY);
                 will(returnValue(serverAddress));
 
-                ignoring(mockConfiguration).getProperty(
-                        ApplicationConstants.SERVER_PORT_PROPERTY);
+                ignoring(mockConfiguration).getProperty(ApplicationConstants.SERVER_PORT_PROPERTY);
                 will(returnValue(serverPort));
             }
         });
-        presenter = new StubConfigurationPresenter(new ConfigurationManager(
-                mockConfiguration), mockView);
+        presenter = new StubConfigurationPresenter(new ConfigurationManager(mockConfiguration),
+                mockView);
     }
 
     @After
@@ -73,8 +74,7 @@ public class ConfigurationPresenterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfViewIsNull() {
-        new ConfigurationPresenter(new ConfigurationManager(mockConfiguration),
-                null);
+        new ConfigurationPresenter(new ConfigurationManager(mockConfiguration), null);
     }
 
     @Test
@@ -86,11 +86,9 @@ public class ConfigurationPresenterTest {
     public void shouldRealiseView() {
         context.checking(new Expectations() {
             {
-                one(mockView)
-                        .setDatabaseFilePath(with(equal(databaseFilePath)));
+                one(mockView).setDatabaseFilePath(with(equal(databaseFilePath)));
                 one(mockView).setServerAddress(with(equal(serverAddress)));
-                one(mockView).setServerPort(
-                        with(equal(Integer.valueOf(serverPort))));
+                one(mockView).setServerPort(with(equal(Integer.valueOf(serverPort))));
                 one(mockView).realise();
             }
         });
@@ -115,14 +113,12 @@ public class ConfigurationPresenterTest {
                 will(returnValue(newServerPort));
 
                 one(mockView).close();
-                one(mockConfiguration)
-                        .setProperty(
-                                with(equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)),
-                                with(equal(newDatabaseFilePath)));
-                one(mockConfiguration)
-                        .setProperty(
-                                with(equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)),
-                                with(equal(newServerAddress)));
+                one(mockConfiguration).setProperty(
+                        with(equal(ApplicationConstants.DATABASE_FILE_PATH_PROPERTY)),
+                        with(equal(newDatabaseFilePath)));
+                one(mockConfiguration).setProperty(
+                        with(equal(ApplicationConstants.SERVER_ADDRESS_PROPERTY)),
+                        with(equal(newServerAddress)));
                 one(mockConfiguration).setProperty(
                         with(equal(ApplicationConstants.SERVER_PORT_PROPERTY)),
                         with(equal(newServerPort.toString())));
@@ -154,8 +150,8 @@ public class ConfigurationPresenterTest {
                 allowing(mockView).getComponent();
                 will(returnValue(null));
 
-                one(mockFileChooser).showDialog(with(any(Component.class)),
-                        with(any(String.class)));
+                one(mockFileChooser)
+                        .showDialog(with(any(Component.class)), with(any(String.class)));
                 will(returnValue(JFileChooser.ERROR_OPTION));
 
                 never(mockFileChooser).getSelectedFile();
@@ -175,8 +171,8 @@ public class ConfigurationPresenterTest {
                 allowing(mockView).getComponent();
                 will(returnValue(null));
 
-                one(mockFileChooser).showDialog(with(any(Component.class)),
-                        with(any(String.class)));
+                one(mockFileChooser)
+                        .showDialog(with(any(Component.class)), with(any(String.class)));
                 will(returnValue(JFileChooser.CANCEL_OPTION));
 
                 never(mockFileChooser).getSelectedFile();
@@ -197,15 +193,14 @@ public class ConfigurationPresenterTest {
                 allowing(mockView).getComponent();
                 will(returnValue(null));
 
-                one(mockFileChooser).showDialog(with(any(Component.class)),
-                        with(any(String.class)));
+                one(mockFileChooser)
+                        .showDialog(with(any(Component.class)), with(any(String.class)));
                 will(returnValue(JFileChooser.APPROVE_OPTION));
 
                 one(mockFileChooser).getSelectedFile();
                 will(returnValue(newDatabaseFile));
 
-                one(mockView).setDatabaseFilePath(
-                        with(equal(newDatabaseFile.getAbsolutePath())));
+                one(mockView).setDatabaseFilePath(with(equal(newDatabaseFile.getAbsolutePath())));
             }
         });
         presenter.browseButtonActionPerformed();
@@ -213,8 +208,7 @@ public class ConfigurationPresenterTest {
 
     private class StubConfigurationPresenter extends ConfigurationPresenter {
 
-        public StubConfigurationPresenter(
-                ConfigurationManager configurationManager,
+        public StubConfigurationPresenter(ConfigurationManager configurationManager,
                 ConfigurationView view) {
             super(configurationManager, view);
         }

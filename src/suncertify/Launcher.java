@@ -6,21 +6,23 @@
 
 package suncertify;
 
-import javax.swing.*;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
+
 /**
- * An application launcher. Contains the <code>main</code> method which is the
- * entry point to the application.
- *
+ * An application launcher. Contains the <code>main</code> method which is the entry point to the
+ * application.
+ * 
  * @author Richard Wardle
  */
 public final class Launcher {
 
-    private static final Logger LOGGER = Logger.getLogger(Launcher.class
-            .getName());
+    private static final Logger LOGGER = Logger.getLogger(Launcher.class.getName());
 
     // The name of the file holding the application configuration
     private static final String CONFIG_FILE_NAME = "suncertify.properties";
@@ -30,31 +32,30 @@ public final class Launcher {
 
     /**
      * Creates a new instance of <code>Launcher</code>.
-     *
-     * @param applicationFactory Application factory to be used for creating the
-     *                           application.
-     * @throws IllegalArgumentException If <code>applicationFactory</code> is <code>null</code>.
+     * 
+     * @param applicationFactory
+     *            Application factory to be used for creating the application.
+     * @throws IllegalArgumentException
+     *             If <code>applicationFactory</code> is <code>null</code>.
      */
     public Launcher(AbstractApplicationFactory applicationFactory) {
         if (null == applicationFactory) {
-            throw new IllegalArgumentException(
-                    "applicationFactory cannot be null");
+            throw new IllegalArgumentException("applicationFactory cannot be null");
         }
 
         this.applicationFactory = applicationFactory;
     }
 
     /**
-     * Creates and launches an application. NOTE: This method must be called on
-     * the AWT event dispatching thread.
+     * Creates and launches an application. NOTE: This method must be called on the AWT event
+     * dispatching thread.
      */
     public void launch() {
         File propertiesFile = new File(CONFIG_FILE_NAME);
-        LOGGER.info("Using configuration file: "
-                + propertiesFile.getAbsolutePath());
+        LOGGER.info("Using configuration file: " + propertiesFile.getAbsolutePath());
 
-        Application application = applicationFactory
-                .createApplication(new PropertiesConfiguration(propertiesFile));
+        Application application = applicationFactory.createApplication(new PropertiesConfiguration(
+                propertiesFile));
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -63,9 +64,8 @@ public final class Launcher {
         }
 
         /*
-         * Start the application if it can be initialised successfully. If
-         * starting the application throws a FatalException it will be handled
-         * and the application will exit.
+         * Start the application if it can be initialised successfully. If starting the application
+         * throws a FatalException it will be handled and the application will exit.
          */
         if (application.initialise()) {
             try {
@@ -78,14 +78,14 @@ public final class Launcher {
 
     /**
      * Entry point to the application.
-     *
-     * @param args Command line arguments.
+     * 
+     * @param args
+     *            Command line arguments.
      */
     public static void main(String[] args) {
         /*
-         * Set an uncaught exception handler for all threads in the application.
-         * Allows the user to be informed before that there has been an error
-         * before the application shuts-down.
+         * Set an uncaught exception handler for all threads in the application. Allows the user to
+         * be informed before that there has been an error before the application shuts-down.
          */
         Thread.setDefaultUncaughtExceptionHandler(new FatalExceptionHandler());
 
@@ -105,8 +105,7 @@ public final class Launcher {
     }
 
     /*
-     * Returns the application mode corresponding to the specified command line
-     * arguments.
+     * Returns the application mode corresponding to the specified command line arguments.
      */
     static ApplicationMode getApplicationMode(String[] args) {
         if (args == null) {
@@ -121,9 +120,8 @@ public final class Launcher {
         } else if (args[0].equals("alone")) {
             mode = ApplicationMode.STANDALONE;
         } else {
-            throw new IllegalArgumentException(
-                    "Invalid application mode flag: " + args[0]
-                            + ". Flag must be either 'server' or 'alone'");
+            throw new IllegalArgumentException("Invalid application mode flag: " + args[0]
+                    + ". Flag must be either 'server' or 'alone'");
         }
 
         return mode;

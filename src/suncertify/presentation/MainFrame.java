@@ -6,32 +6,54 @@
 
 package suncertify.presentation;
 
-import suncertify.service.Contractor;
-
-import javax.swing.*;
-import javax.swing.table.JTableHeader;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.JTableHeader;
+
+import suncertify.service.Contractor;
+
 /**
  * An application main frame.
- *
+ * 
  * @author Richard Wardle
  */
 public final class MainFrame extends JFrame implements MainView {
 
-    private static final Logger LOGGER = Logger.getLogger(MainFrame.class
-            .getName());
+    private static final Logger LOGGER = Logger.getLogger(MainFrame.class.getName());
     private static final String BLANK_STATUS_LABEL = " ";
     private static final Dimension MINIMUM_SIZE = new Dimension(320, 240);
     private static final Dimension PREFERRED_SIZE = new Dimension(640, 480);
     private static final int TABLE_ROW_HEIGHT = 18;
-    private static final Dimension TEXT_FIELD_PREFERRED_SIZE = new Dimension(
-            100, 25);
+    private static final Dimension TEXT_FIELD_PREFERRED_SIZE = new Dimension(100, 25);
     private final ResourceBundle resourceBundle;
     private final JLabel statusLabel;
     private final ContractorTableColumnModel contractorTableColumnModel;
@@ -48,12 +70,11 @@ public final class MainFrame extends JFrame implements MainView {
      * Creates a new instance of <code>MainFrame</code>.
      */
     public MainFrame() {
-        resourceBundle = ResourceBundle
-                .getBundle("suncertify/presentation/Bundle");
+        resourceBundle = ResourceBundle.getBundle("suncertify/presentation/Bundle");
 
         /*
-         * Set a blank status label initially to ensure that it does not have
-         * zero height in the layout.
+         * Set a blank status label initially to ensure that it does not have zero height in the
+         * layout.
          */
         statusLabel = new JLabel(BLANK_STATUS_LABEL);
 
@@ -67,8 +88,7 @@ public final class MainFrame extends JFrame implements MainView {
         resultsTable.setSurrendersFocusOnKeystroke(true);
 
         nameTextField = new JTextField();
-        nameTextField.setToolTipText(resourceBundle
-                .getString("MainFrame.nameTextField.tooltip"));
+        nameTextField.setToolTipText(resourceBundle.getString("MainFrame.nameTextField.tooltip"));
         nameTextField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 MainFrame.this.searchActionPerformed(e);
@@ -102,8 +122,7 @@ public final class MainFrame extends JFrame implements MainView {
 
     private JTable createResultsTable() {
         /*
-         * Extend JTable to override method that allow tooltips to be set on the
-         * column headers.
+         * Extend JTable to override method that allow tooltips to be set on the column headers.
          */
         return new JTable(tableModel, contractorTableColumnModel) {
 
@@ -114,14 +133,12 @@ public final class MainFrame extends JFrame implements MainView {
                     @Override
                     public String getToolTipText(MouseEvent e) {
                         /*
-                         * Get the mouse pointer location, find the column under
-                         * it and lookup the tooltip in the model.
+                         * Get the mouse pointer location, find the column under it and lookup the
+                         * tooltip in the model.
                          */
                         Point point = e.getPoint();
-                        int columnIndex = columnModel
-                                .getColumnIndexAtX(point.x);
-                        int modelIndex = columnModel.getColumn(columnIndex)
-                                .getModelIndex();
+                        int columnIndex = columnModel.getColumnIndexAtX(point.x);
+                        int modelIndex = columnModel.getColumn(columnIndex).getModelIndex();
                         return ((ContractorTableColumnModel) columnModel)
                                 .getColumnHeaderToolTipText(modelIndex);
                     }
@@ -188,8 +205,7 @@ public final class MainFrame extends JFrame implements MainView {
         tableModel.replaceContractors(contractors);
 
         /*
-         * Don't want to continue any editing operation now that the table data
-         * has been updated.
+         * Don't want to continue any editing operation now that the table data has been updated.
          */
         resultsTable.removeEditor();
     }
@@ -249,8 +265,7 @@ public final class MainFrame extends JFrame implements MainView {
 
         JMenu fileMenu = new JMenu();
         fileMenu.setText(resourceBundle.getString("MainFrame.fileMenu.text"));
-        fileMenu.setMnemonic(resourceBundle.getString(
-                "MainFrame.fileMenu.mnemonic").charAt(0));
+        fileMenu.setMnemonic(resourceBundle.getString("MainFrame.fileMenu.mnemonic").charAt(0));
         fileMenu.add(exitMenuItem);
 
         JMenuItem searchMenuItem = new JMenuItem(searchAction);
@@ -258,13 +273,12 @@ public final class MainFrame extends JFrame implements MainView {
                 InputEvent.CTRL_DOWN_MASK));
 
         JMenuItem clearCriteriaMenuItem = new JMenuItem(clearCriteriaAction);
-        clearCriteriaMenuItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_L, InputEvent.CTRL_DOWN_MASK));
+        clearCriteriaMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L,
+                InputEvent.CTRL_DOWN_MASK));
 
         JMenu editMenu = new JMenu();
         editMenu.setText(resourceBundle.getString("MainFrame.editMenu.text"));
-        editMenu.setMnemonic(resourceBundle.getString(
-                "MainFrame.editMenu.mnemonic").charAt(0));
+        editMenu.setMnemonic(resourceBundle.getString("MainFrame.editMenu.mnemonic").charAt(0));
         editMenu.add(searchMenuItem);
         editMenu.add(clearCriteriaMenuItem);
 
@@ -298,8 +312,7 @@ public final class MainFrame extends JFrame implements MainView {
     }
 
     private JPanel initialiseSearchPanel() {
-        JGradientPanel panel = new JGradientPanel(
-                PresentationConstants.DARK_BLUE,
+        JGradientPanel panel = new JGradientPanel(PresentationConstants.DARK_BLUE,
                 PresentationConstants.LIGHT_BLUE);
         panel.setLayout(new GridBagLayout());
 
@@ -310,8 +323,7 @@ public final class MainFrame extends JFrame implements MainView {
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.insets = new Insets(0, 6, 0, 4);
-        panel.add(new JLabel(resourceBundle
-                .getString("MainFrame.preambleLabel.text")), constraints);
+        panel.add(new JLabel(resourceBundle.getString("MainFrame.preambleLabel.text")), constraints);
 
         Insets criteriaLabelInsets = new Insets(0, 6, 0, 4);
 
@@ -320,16 +332,14 @@ public final class MainFrame extends JFrame implements MainView {
         constraints.gridx = 0;
         constraints.gridy = 1;
         constraints.insets = criteriaLabelInsets;
-        panel.add(new JLabel(resourceBundle
-                .getString("MainFrame.nameLabel.text")), constraints);
+        panel.add(new JLabel(resourceBundle.getString("MainFrame.nameLabel.text")), constraints);
 
         constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.LINE_START;
         constraints.gridx = 1;
         constraints.gridy = 1;
         constraints.insets = criteriaLabelInsets;
-        panel.add(new JLabel(resourceBundle
-                .getString("MainFrame.locationLabel.text")), constraints);
+        panel.add(new JLabel(resourceBundle.getString("MainFrame.locationLabel.text")), constraints);
 
         Insets insetsZeroTop = new Insets(0, 4, 15, 4);
 
@@ -357,8 +367,7 @@ public final class MainFrame extends JFrame implements MainView {
         constraints.gridy = 2;
         constraints.insets = insetsZeroTop;
         JButton searchButton = new JButton(searchAction);
-        searchButton.setToolTipText(resourceBundle
-                .getString("MainFrame.searchButton.tooltip"));
+        searchButton.setToolTipText(resourceBundle.getString("MainFrame.searchButton.tooltip"));
         panel.add(searchButton, constraints);
 
         return panel;
@@ -370,8 +379,7 @@ public final class MainFrame extends JFrame implements MainView {
         panel.setLayout(new GridBagLayout());
 
         JScrollPane scrollPane = new JScrollPane();
-        scrollPane.getViewport()
-                .setBackground(PresentationConstants.LIGHT_BLUE);
+        scrollPane.getViewport().setBackground(PresentationConstants.LIGHT_BLUE);
         scrollPane.setViewportView(resultsTable);
 
         GridBagConstraints constraints = new GridBagConstraints();
@@ -387,8 +395,7 @@ public final class MainFrame extends JFrame implements MainView {
     }
 
     private JPanel initialiseStatusPanel() {
-        JGradientPanel panel = new JGradientPanel(
-                PresentationConstants.LIGHT_BLUE,
+        JGradientPanel panel = new JGradientPanel(PresentationConstants.LIGHT_BLUE,
                 PresentationConstants.DARK_BLUE);
         panel.setLayout(new GridBagLayout());
 
@@ -415,11 +422,11 @@ public final class MainFrame extends JFrame implements MainView {
         private final MainFrame mainFrame;
 
         public SearchAction(MainFrame mainFrame) {
-            super(mainFrame.resourceBundle
-                    .getString("MainFrame.searchAction.text"));
+            super(mainFrame.resourceBundle.getString("MainFrame.searchAction.text"));
             this.mainFrame = mainFrame;
-            putValue(Action.MNEMONIC_KEY, Integer
-                    .valueOf(this.mainFrame.resourceBundle.getString(
+            putValue(
+                    Action.MNEMONIC_KEY,
+                    Integer.valueOf(this.mainFrame.resourceBundle.getString(
                             "MainFrame.searchAction.mnemonic").charAt(0)));
         }
 
@@ -434,14 +441,12 @@ public final class MainFrame extends JFrame implements MainView {
         private final MainFrame mainFrame;
 
         public ClearCriteriaAction(MainFrame mainFrame) {
-            super(mainFrame.resourceBundle
-                    .getString("MainFrame.clearCriteriaAction.text"));
+            super(mainFrame.resourceBundle.getString("MainFrame.clearCriteriaAction.text"));
             this.mainFrame = mainFrame;
-            putValue(Action.MNEMONIC_KEY,
-                    Integer
-                            .valueOf(this.mainFrame.resourceBundle.getString(
-                                    "MainFrame.clearCriteriaAction.mnemonic")
-                                    .charAt(0)));
+            putValue(
+                    Action.MNEMONIC_KEY,
+                    Integer.valueOf(this.mainFrame.resourceBundle.getString(
+                            "MainFrame.clearCriteriaAction.mnemonic").charAt(0)));
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -455,11 +460,11 @@ public final class MainFrame extends JFrame implements MainView {
         private final MainFrame mainFrame;
 
         public ExitAction(MainFrame mainFrame) {
-            super(mainFrame.resourceBundle
-                    .getString("MainFrame.exitMenuItem.text"));
+            super(mainFrame.resourceBundle.getString("MainFrame.exitMenuItem.text"));
             this.mainFrame = mainFrame;
-            putValue(Action.MNEMONIC_KEY, Integer
-                    .valueOf(this.mainFrame.resourceBundle.getString(
+            putValue(
+                    Action.MNEMONIC_KEY,
+                    Integer.valueOf(this.mainFrame.resourceBundle.getString(
                             "MainFrame.exitMenuItem.mnemonic").charAt(0)));
         }
 

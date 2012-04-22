@@ -1,5 +1,16 @@
 package suncertify.presentation;
 
+import java.awt.Component;
+import java.awt.Container;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.SwingWorker;
+import javax.swing.SwingWorker.StateValue;
+
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -9,16 +20,12 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import suncertify.service.*;
 
-import javax.swing.*;
-import javax.swing.SwingWorker.StateValue;
-import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import suncertify.service.BrokerService;
+import suncertify.service.Contractor;
+import suncertify.service.ContractorDeletedException;
+import suncertify.service.ContractorModifiedException;
+import suncertify.service.SearchCriteria;
 
 public class MainPresenterTest {
 
@@ -82,13 +89,13 @@ public class MainPresenterTest {
         final String nameCriteria = "name";
         final String locationCriteria = "location";
         final List<Contractor> contractors = new ArrayList<Contractor>();
-        contractors.add(new Contractor(1, new String[] {"name", "location",
-                "spec1", "size1", "rate1", "owner1"}));
-        contractors.add(new Contractor(2, new String[] {"name", "location",
-                "spec2", "size2", "rate2", "owner2"}));
+        contractors.add(new Contractor(1, new String[] { "name", "location", "spec1", "size1",
+                "rate1", "owner1" }));
+        contractors.add(new Contractor(2, new String[] { "name", "location", "spec2", "size2",
+                "rate2", "owner2" }));
         final String statusLabelText = "<html>Viewing <b>" + contractors.size()
-                + " contractors</b> where Name is <b>" + nameCriteria
-                + "</b> and Location is <b>" + locationCriteria + "</b></html>";
+                + " contractors</b> where Name is <b>" + nameCriteria + "</b> and Location is <b>"
+                + locationCriteria + "</b></html>";
         context.checking(new Expectations() {
             {
                 one(mockView).disableControls();
@@ -100,12 +107,10 @@ public class MainPresenterTest {
                 will(returnValue(locationCriteria));
 
                 one(mockBrokerService).search(
-                        with(searchCriteriaMatching(nameCriteria,
-                                locationCriteria)));
+                        with(searchCriteriaMatching(nameCriteria, locationCriteria)));
                 will(returnValue(contractors));
 
-                one(mockView).setTableData(
-                        with(aContractorListContaining(contractors)));
+                one(mockView).setTableData(with(aContractorListContaining(contractors)));
 
                 one(mockView).setStatusLabelText(with(equal(statusLabelText)));
 
@@ -116,14 +121,12 @@ public class MainPresenterTest {
     }
 
     @Test
-    public void shouldPerformSearchActionWhenOnlyNameCriteriaIsSpecified()
-            throws Exception {
+    public void shouldPerformSearchActionWhenOnlyNameCriteriaIsSpecified() throws Exception {
         final String nameCriteria = "name";
         final String locationCriteria = "";
         final List<Contractor> contractors = new ArrayList<Contractor>();
         final String statusLabelText = "<html>Viewing <b>" + contractors.size()
-                + " contractors</b> where Name is <b>" + nameCriteria
-                + "</b></html>";
+                + " contractors</b> where Name is <b>" + nameCriteria + "</b></html>";
         context.checking(new Expectations() {
             {
                 one(mockView).disableControls();
@@ -134,12 +137,10 @@ public class MainPresenterTest {
                 one(mockView).getLocationCriteria();
                 will(returnValue(locationCriteria));
 
-                one(mockBrokerService).search(
-                        with(searchCriteriaMatching(nameCriteria, null)));
+                one(mockBrokerService).search(with(searchCriteriaMatching(nameCriteria, null)));
                 will(returnValue(contractors));
 
-                one(mockView).setTableData(
-                        with(aContractorListContaining(contractors)));
+                one(mockView).setTableData(with(aContractorListContaining(contractors)));
 
                 one(mockView).setStatusLabelText(with(equal(statusLabelText)));
 
@@ -150,14 +151,12 @@ public class MainPresenterTest {
     }
 
     @Test
-    public void shouldPerformSearchActionWhenOnlyLocationCriteriaIsSpecified()
-            throws Exception {
+    public void shouldPerformSearchActionWhenOnlyLocationCriteriaIsSpecified() throws Exception {
         final String nameCriteria = "";
         final String locationCriteria = "location";
         final List<Contractor> contractors = new ArrayList<Contractor>();
         final String statusLabelText = "<html>Viewing <b>" + contractors.size()
-                + " contractors</b> where Location is <b>" + locationCriteria
-                + "</b></html>";
+                + " contractors</b> where Location is <b>" + locationCriteria + "</b></html>";
         context.checking(new Expectations() {
             {
                 one(mockView).disableControls();
@@ -168,12 +167,10 @@ public class MainPresenterTest {
                 one(mockView).getLocationCriteria();
                 will(returnValue(locationCriteria));
 
-                one(mockBrokerService).search(
-                        with(searchCriteriaMatching(null, locationCriteria)));
+                one(mockBrokerService).search(with(searchCriteriaMatching(null, locationCriteria)));
                 will(returnValue(contractors));
 
-                one(mockView).setTableData(
-                        with(aContractorListContaining(contractors)));
+                one(mockView).setTableData(with(aContractorListContaining(contractors)));
 
                 one(mockView).setStatusLabelText(with(equal(statusLabelText)));
 
@@ -184,15 +181,14 @@ public class MainPresenterTest {
     }
 
     @Test
-    public void shouldPerformSearchActionWhenNoCriteriaAreSpecified()
-            throws Exception {
+    public void shouldPerformSearchActionWhenNoCriteriaAreSpecified() throws Exception {
         final String nameCriteria = "";
         final String locationCriteria = "";
         final List<Contractor> contractors = new ArrayList<Contractor>();
-        contractors.add(new Contractor(1, new String[] {"name", "location",
-                "spec1", "size1", "rate1", "owner1"}));
-        final String statusLabelText = "<html>Viewing all <b>"
-                + contractors.size() + " contractor</b></html>";
+        contractors.add(new Contractor(1, new String[] { "name", "location", "spec1", "size1",
+                "rate1", "owner1" }));
+        final String statusLabelText = "<html>Viewing all <b>" + contractors.size()
+                + " contractor</b></html>";
         context.checking(new Expectations() {
             {
                 one(mockView).disableControls();
@@ -203,12 +199,10 @@ public class MainPresenterTest {
                 one(mockView).getLocationCriteria();
                 will(returnValue(locationCriteria));
 
-                one(mockBrokerService).search(
-                        with(searchCriteriaMatching(null, null)));
+                one(mockBrokerService).search(with(searchCriteriaMatching(null, null)));
                 will(returnValue(contractors));
 
-                one(mockView).setTableData(
-                        with(aContractorListContaining(contractors)));
+                one(mockView).setTableData(with(aContractorListContaining(contractors)));
 
                 one(mockView).setStatusLabelText(with(equal(statusLabelText)));
 
@@ -223,8 +217,8 @@ public class MainPresenterTest {
         final String nameCriteria = " ";
         final String locationCriteria = " ";
         final List<Contractor> contractors = new ArrayList<Contractor>();
-        final String statusLabelText = "<html>Viewing all <b>"
-                + contractors.size() + " contractors</b></html>";
+        final String statusLabelText = "<html>Viewing all <b>" + contractors.size()
+                + " contractors</b></html>";
         context.checking(new Expectations() {
             {
                 one(mockView).disableControls();
@@ -235,12 +229,10 @@ public class MainPresenterTest {
                 one(mockView).getLocationCriteria();
                 will(returnValue(locationCriteria));
 
-                one(mockBrokerService).search(
-                        with(searchCriteriaMatching(null, null)));
+                one(mockBrokerService).search(with(searchCriteriaMatching(null, null)));
                 will(returnValue(contractors));
 
-                one(mockView).setTableData(
-                        with(aContractorListContaining(contractors)));
+                one(mockView).setTableData(with(aContractorListContaining(contractors)));
 
                 one(mockView).setStatusLabelText(with(equal(statusLabelText)));
 
@@ -252,8 +244,7 @@ public class MainPresenterTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void shouldNotUpdateInterfaceIfSearchThrowsException()
-            throws Exception {
+    public void shouldNotUpdateInterfaceIfSearchThrowsException() throws Exception {
         context.checking(new Expectations() {
             {
                 one(mockView).disableControls();
@@ -278,14 +269,12 @@ public class MainPresenterTest {
     @Test
     public void shouldPerformBookAction() throws Exception {
         final int rowNo = 1;
-        String[] preBookingContractorData = new String[] {"name", "location",
-                "spec", "size", "rate", "owner"};
-        final Contractor preBookingContractor = new Contractor(rowNo,
-                preBookingContractorData);
+        String[] preBookingContractorData = new String[] { "name", "location", "spec", "size",
+                "rate", "owner" };
+        final Contractor preBookingContractor = new Contractor(rowNo, preBookingContractorData);
         String[] postBookingContractorData = preBookingContractorData.clone();
         postBookingContractorData[PresentationConstants.TABLE_OWNER_COLUMN_INDEX] = customerId;
-        final Contractor postBookingContractor = new Contractor(rowNo,
-                postBookingContractorData);
+        final Contractor postBookingContractor = new Contractor(rowNo, postBookingContractorData);
         context.checking(new Expectations() {
             {
                 one(mockView).getContractorAtRow(with(equal(rowNo)));
@@ -314,8 +303,7 @@ public class MainPresenterTest {
     }
 
     @Test
-    public void shouldNotUpdateInterfaceIfBookThrowsIOException()
-            throws Exception {
+    public void shouldNotUpdateInterfaceIfBookThrowsIOException() throws Exception {
         final int rowNo = 1;
         context.checking(new Expectations() {
             {
@@ -323,8 +311,7 @@ public class MainPresenterTest {
 
                 one(mockView).disableControls();
 
-                one(mockBrokerService).book(with(any(String.class)),
-                        with(any(Contractor.class)));
+                one(mockBrokerService).book(with(any(String.class)), with(any(Contractor.class)));
                 will(throwException(new IOException()));
 
                 one(mockView).enableControls(componentToFocus);
@@ -334,8 +321,7 @@ public class MainPresenterTest {
     }
 
     @Test
-    public void shouldNotUpdateInterfaceIfBookThrowsContractorDeletedException()
-            throws Exception {
+    public void shouldNotUpdateInterfaceIfBookThrowsContractorDeletedException() throws Exception {
         final int rowNo = 1;
         context.checking(new Expectations() {
             {
@@ -343,8 +329,7 @@ public class MainPresenterTest {
 
                 one(mockView).disableControls();
 
-                one(mockBrokerService).book(with(any(String.class)),
-                        with(any(Contractor.class)));
+                one(mockBrokerService).book(with(any(String.class)), with(any(Contractor.class)));
                 will(throwException(new ContractorDeletedException()));
 
                 one(mockView).enableControls(componentToFocus);
@@ -354,8 +339,7 @@ public class MainPresenterTest {
     }
 
     @Test
-    public void shouldNotUpdateInterfaceIfBookThrowsContractorModifiedException()
-            throws Exception {
+    public void shouldNotUpdateInterfaceIfBookThrowsContractorModifiedException() throws Exception {
         final int rowNo = 1;
         context.checking(new Expectations() {
             {
@@ -363,8 +347,7 @@ public class MainPresenterTest {
 
                 one(mockView).disableControls();
 
-                one(mockBrokerService).book(with(any(String.class)),
-                        with(any(Contractor.class)));
+                one(mockBrokerService).book(with(any(String.class)), with(any(Contractor.class)));
                 will(throwException(new ContractorModifiedException()));
 
                 one(mockView).enableControls(componentToFocus);
@@ -373,13 +356,11 @@ public class MainPresenterTest {
         presenter.bookActionPerformed(rowNo, componentToFocus);
     }
 
-    private Matcher<List<Contractor>> aContractorListContaining(
-            List<Contractor> contractors) {
+    private Matcher<List<Contractor>> aContractorListContaining(List<Contractor> contractors) {
         return new ContractorListContaining(contractors);
     }
 
-    private static final class ContractorListContaining extends
-            BaseMatcher<List<Contractor>> {
+    private static final class ContractorListContaining extends BaseMatcher<List<Contractor>> {
 
         private final List<Contractor> expectedContractors;
 
@@ -403,41 +384,36 @@ public class MainPresenterTest {
         }
 
         public void describeTo(Description description) {
-            description.appendValueList("a table model containing: ", " & ",
-                    "", expectedContractors);
+            description.appendValueList("a table model containing: ", " & ", "",
+                    expectedContractors);
         }
     }
 
     private Matcher<SearchCriteria> searchCriteriaMatching(String nameCriteria,
-                                                           String locationCriteria) {
+            String locationCriteria) {
         return new SearchCriteriaMatching(nameCriteria, locationCriteria);
     }
 
-    private static final class SearchCriteriaMatching extends
-            BaseMatcher<SearchCriteria> {
+    private static final class SearchCriteriaMatching extends BaseMatcher<SearchCriteria> {
 
         private final String nameCriteria;
         private final String locationCriteria;
 
-        public SearchCriteriaMatching(String nameCriteria,
-                                      String locationCriteria) {
+        public SearchCriteriaMatching(String nameCriteria, String locationCriteria) {
             this.nameCriteria = nameCriteria;
             this.locationCriteria = locationCriteria;
         }
 
         public boolean matches(Object item) {
             SearchCriteria searchCriteria = (SearchCriteria) item;
-            return nameCriteria == null ? searchCriteria.getName() == null
-                    : nameCriteria.equals(searchCriteria.getName())
-                    && locationCriteria == null ? searchCriteria
-                    .getLocation() == null : locationCriteria
-                    .equals(searchCriteria.getLocation());
+            return nameCriteria == null ? searchCriteria.getName() == null : nameCriteria
+                    .equals(searchCriteria.getName()) && locationCriteria == null ? searchCriteria
+                    .getLocation() == null : locationCriteria.equals(searchCriteria.getLocation());
         }
 
         public void describeTo(Description description) {
-            description.appendText("search criteria matching: name=")
-                    .appendText(nameCriteria).appendText(", location=")
-                    .appendText(locationCriteria);
+            description.appendText("search criteria matching: name=").appendText(nameCriteria)
+                    .appendText(", location=").appendText(locationCriteria);
         }
     }
 
@@ -445,8 +421,7 @@ public class MainPresenterTest {
         return new ContractorMatching(contractor);
     }
 
-    private static final class ContractorMatching extends
-            BaseMatcher<Contractor> {
+    private static final class ContractorMatching extends BaseMatcher<Contractor> {
 
         private final Contractor expectedContractor;
 
@@ -456,49 +431,29 @@ public class MainPresenterTest {
 
         public boolean matches(Object item) {
             Contractor actualContractor = (Contractor) item;
-            return expectedContractor.getRecordNumber() == actualContractor
-                    .getRecordNumber()
-                    && expectedContractor.getName() == null ? actualContractor
-                    .getName() == null
-                    : expectedContractor.getName().equals(
-                    actualContractor.getName())
-                    && expectedContractor.getLocation() == null ? actualContractor
-                    .getLocation() == null
-                    : expectedContractor.getLocation().equals(
-                    actualContractor.getLocation())
-                    && expectedContractor.getSpecialties() == null ? actualContractor
-                    .getSpecialties() == null
-                    : expectedContractor.getSpecialties()
-                    .equals(
-                            actualContractor
-                                    .getSpecialties())
-                    && expectedContractor.getSize() == null ? actualContractor
-                    .getSize() == null
-                    : expectedContractor.getSize()
-                    .equals(
-                            actualContractor
-                                    .getSize())
-                    && expectedContractor
-                    .getRate() == null ? actualContractor
-                    .getRate() == null
-                    : expectedContractor
-                    .getRate()
-                    .equals(
-                            actualContractor
-                                    .getRate())
-                    && expectedContractor
-                    .getOwner() == null ? actualContractor
-                    .getOwner() == null
-                    : expectedContractor
-                    .getOwner()
-                    .equals(
-                            actualContractor
-                                    .getOwner());
+            return expectedContractor.getRecordNumber() == actualContractor.getRecordNumber()
+                    && expectedContractor.getName() == null ? actualContractor.getName() == null
+                    : expectedContractor.getName().equals(actualContractor.getName())
+                            && expectedContractor.getLocation() == null ? actualContractor
+                            .getLocation() == null : expectedContractor.getLocation().equals(
+                            actualContractor.getLocation())
+                            && expectedContractor.getSpecialties() == null ? actualContractor
+                            .getSpecialties() == null
+                            : expectedContractor.getSpecialties().equals(
+                                    actualContractor.getSpecialties())
+                                    && expectedContractor.getSize() == null ? actualContractor
+                                    .getSize() == null : expectedContractor.getSize().equals(
+                                    actualContractor.getSize())
+                                    && expectedContractor.getRate() == null ? actualContractor
+                                    .getRate() == null : expectedContractor.getRate().equals(
+                                    actualContractor.getRate())
+                                    && expectedContractor.getOwner() == null ? actualContractor
+                                    .getOwner() == null : expectedContractor.getOwner().equals(
+                                    actualContractor.getOwner());
         }
 
         public void describeTo(Description description) {
-            description.appendText("a contractor matching: "
-                    + expectedContractor);
+            description.appendText("a contractor matching: " + expectedContractor);
         }
     }
 
@@ -509,10 +464,10 @@ public class MainPresenterTest {
         }
 
         @Override
-        SwingWorker<List<Contractor>, Void> createSearchWorker(
-                SearchCriteria searchCriteria, Component component) {
-            SwingWorker<List<Contractor>, Void> worker = super
-                    .createSearchWorker(searchCriteria, component);
+        SwingWorker<List<Contractor>, Void> createSearchWorker(SearchCriteria searchCriteria,
+                Component component) {
+            SwingWorker<List<Contractor>, Void> worker = super.createSearchWorker(searchCriteria,
+                    component);
             addWorkerPropertyChangeListener(worker);
             return worker;
         }
@@ -523,10 +478,10 @@ public class MainPresenterTest {
         }
 
         @Override
-        SwingWorker<Void, Void> createBookWorker(String id,
-                                                 Contractor contractor, int rowNo, Component component) {
-            SwingWorker<Void, Void> worker = super.createBookWorker(id,
-                    contractor, rowNo, component);
+        SwingWorker<Void, Void> createBookWorker(String id, Contractor contractor, int rowNo,
+                Component component) {
+            SwingWorker<Void, Void> worker = super.createBookWorker(id, contractor, rowNo,
+                    component);
             addWorkerPropertyChangeListener(worker);
             return worker;
         }

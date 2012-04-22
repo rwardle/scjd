@@ -11,7 +11,7 @@ import suncertify.service.RmiServiceImpl;
 
 /**
  * Creates applications that run in {@link ApplicationMode#SERVER SERVER} mode.
- *
+ * 
  * @author Richard Wardle
  */
 public final class ServerApplicationFactory extends AbstractApplicationFactory {
@@ -34,7 +34,6 @@ public final class ServerApplicationFactory extends AbstractApplicationFactory {
             throw new IllegalArgumentException("configuration cannot be null");
         }
 
-        return new ServerApplication(configuration, new RmiServiceImpl(),
-                new DatabaseFactoryImpl());
+        return new ServerApplication(configuration, new RmiServiceImpl(), new DatabaseFactoryImpl());
     }
 }

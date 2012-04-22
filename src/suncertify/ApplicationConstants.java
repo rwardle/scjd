@@ -8,7 +8,7 @@ package suncertify;
 
 /**
  * Constants for the application layer.
- *
+ * 
  * @author Richard Wardle
  */
 public class ApplicationConstants {
@@ -31,8 +31,7 @@ public class ApplicationConstants {
     /**
      * Default database file path.
      */
-    public static final String DEFAULT_DATABASE_FILE_PATH = System
-            .getProperty("user.dir")
+    public static final String DEFAULT_DATABASE_FILE_PATH = System.getProperty("user.dir")
             + System.getProperty("file.separator") + "db-2x1.db";
 
     /**
@@ -51,8 +50,7 @@ public class ApplicationConstants {
     public static final String LOCALHOST_ADDRESS = "127.0.0.1";
 
     /**
-     * Name under which the remote broker service object is bound in the RMI
-     * registry.
+     * Name under which the remote broker service object is bound in the RMI registry.
      */
     public static final String REMOTE_BROKER_SERVICE_NAME = "BrokerService";
 

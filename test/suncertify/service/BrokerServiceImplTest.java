@@ -1,25 +1,25 @@
 package suncertify.service;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.io.IOException;
+import java.util.List;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import suncertify.db.Database;
 import suncertify.db.RecordNotFoundException;
-
-import java.io.IOException;
-import java.util.List;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 
 public class BrokerServiceImplTest {
 
     private static final int DATABASE_FIELD_COUNT = 6;
-    private static final String[] RECORD_DATA = {"Buonarotti & Company",
-            "Smallville", "Air Conditioning, Painting, Painting", "10",
-            "$40.00", ""};
+    private static final String[] RECORD_DATA = { "Buonarotti & Company", "Smallville",
+            "Air Conditioning, Painting, Painting", "10", "$40.00", "" };
 
     private Mockery context;
     private Database mockDatabase;
@@ -43,14 +43,12 @@ public class BrokerServiceImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionWhenSearchingWithNullCriteriaObject()
-            throws Exception {
+    public void shouldThrowExceptionWhenSearchingWithNullCriteriaObject() throws Exception {
         brokerService.search(null);
     }
 
     @Test(expected = IOException.class)
-    public void shouldThrowIOExceptionWhenSearchingAndFindThrowsIOException()
-            throws Exception {
+    public void shouldThrowIOExceptionWhenSearchingAndFindThrowsIOException() throws Exception {
         context.checking(new Expectations() {
             {
                 one(mockDatabase).find(with(any(String[].class)));
@@ -61,8 +59,7 @@ public class BrokerServiceImplTest {
     }
 
     @Test
-    public void shouldReturnEmptyListWhenSearchingAndFindReturnsNoRecords()
-            throws Exception {
+    public void shouldReturnEmptyListWhenSearchingAndFindReturnsNoRecords() throws Exception {
         context.checking(new Expectations() {
             {
                 one(mockDatabase).find(with(any(String[].class)));
@@ -73,13 +70,11 @@ public class BrokerServiceImplTest {
     }
 
     @Test
-    public void shouldReturnAllContractorsWhenSearchingWithNullCriteria()
-            throws Exception {
-        final int[] recNos = {0, 2};
+    public void shouldReturnAllContractorsWhenSearchingWithNullCriteria() throws Exception {
+        final int[] recNos = { 0, 2 };
         context.checking(new Expectations() {
             {
-                one(mockDatabase).find(
-                        with(equal(new String[DATABASE_FIELD_COUNT])));
+                one(mockDatabase).find(with(equal(new String[DATABASE_FIELD_COUNT])));
                 will(returnValue(recNos));
 
                 for (int recNo : recNos) {
@@ -88,18 +83,15 @@ public class BrokerServiceImplTest {
                 }
             }
         });
-        assertThat(brokerService.search(new SearchCriteria()).size(),
-                is(recNos.length));
+        assertThat(brokerService.search(new SearchCriteria()).size(), is(recNos.length));
     }
 
     @Test(expected = IOException.class)
-    public void shouldThrowIOExceptionWhenSearchingAndReadThrowsIOException()
-            throws Exception {
-        final int[] recNos = {0, 2};
+    public void shouldThrowIOExceptionWhenSearchingAndReadThrowsIOException() throws Exception {
+        final int[] recNos = { 0, 2 };
         context.checking(new Expectations() {
             {
-                one(mockDatabase).find(
-                        with(equal(new String[DATABASE_FIELD_COUNT])));
+                one(mockDatabase).find(with(equal(new String[DATABASE_FIELD_COUNT])));
                 will(returnValue(recNos));
 
                 one(mockDatabase).read(with(equal(recNos[0])));
@@ -112,11 +104,10 @@ public class BrokerServiceImplTest {
     @Test
     public void shouldNotReturnContractorForWhichReadThrowsRecordNotFoundExceptionWhenSearching()
             throws Exception {
-        final int[] recNos = {0, 2};
+        final int[] recNos = { 0, 2 };
         context.checking(new Expectations() {
             {
-                one(mockDatabase).find(
-                        with(equal(new String[DATABASE_FIELD_COUNT])));
+                one(mockDatabase).find(with(equal(new String[DATABASE_FIELD_COUNT])));
                 will(returnValue(recNos));
 
                 one(mockDatabase).read(with(equal(recNos[0])));
@@ -130,30 +121,25 @@ public class BrokerServiceImplTest {
     }
 
     @Test
-    public void shouldMapRecordValuesIntoContractorWhenSearching()
-            throws Exception {
-        final int[] recNos = {0};
-        final String[] recordData = {"Buonarotti & Company", "Smallville",
-                "Air Conditioning, Painting, Painting", "10", "$40.00",
-                "1245678"};
+    public void shouldMapRecordValuesIntoContractorWhenSearching() throws Exception {
+        final int[] recNos = { 0 };
+        final String[] recordData = { "Buonarotti & Company", "Smallville",
+                "Air Conditioning, Painting, Painting", "10", "$40.00", "1245678" };
         context.checking(new Expectations() {
             {
-                one(mockDatabase).find(
-                        with(equal(new String[DATABASE_FIELD_COUNT])));
+                one(mockDatabase).find(with(equal(new String[DATABASE_FIELD_COUNT])));
                 will(returnValue(recNos));
 
                 one(mockDatabase).read(with(equal(recNos[0])));
                 will(returnValue(recordData));
             }
         });
-        List<Contractor> contractors = brokerService
-                .search(new SearchCriteria());
+        List<Contractor> contractors = brokerService.search(new SearchCriteria());
         assertThat(contractors.size(), is(1));
         assertContractor(recNos[0], recordData, contractors.get(0));
     }
 
-    private void assertContractor(int recNo, String[] recordData,
-                                  Contractor contractor) {
+    private void assertContractor(int recNo, String[] recordData, Contractor contractor) {
         assertThat(contractor.getRecordNumber(), is(recNo));
         assertThat(contractor.getName(), is(recordData[0]));
         assertThat(contractor.getLocation(), is(recordData[1]));
@@ -164,18 +150,16 @@ public class BrokerServiceImplTest {
     }
 
     @Test
-    public void shouldMapSearchCriteriaToFindCriteriaWhenSearching()
-            throws Exception {
+    public void shouldMapSearchCriteriaToFindCriteriaWhenSearching() throws Exception {
         final SearchCriteria criteria = new SearchCriteria().setName("name")
-                .setLocation("location").setSpecialties("specialties").setSize(
-                        "size").setRate("rate").setOwner("owner");
+                .setLocation("location").setSpecialties("specialties").setSize("size")
+                .setRate("rate").setOwner("owner");
         context.checking(new Expectations() {
             {
                 one(mockDatabase).find(
-                        with(equal(new String[] {criteria.getName(),
-                                criteria.getLocation(),
-                                criteria.getSpecialties(), criteria.getSize(),
-                                criteria.getRate(), criteria.getOwner()})));
+                        with(equal(new String[] { criteria.getName(), criteria.getLocation(),
+                                criteria.getSpecialties(), criteria.getSize(), criteria.getRate(),
+                                criteria.getOwner() })));
                 will(returnValue(new int[0]));
             }
         });
@@ -184,13 +168,12 @@ public class BrokerServiceImplTest {
 
     @Test
     public void shouldOnlyReturnsExactMatchesWhenSearching() throws Exception {
-        final int[] recNos = {0, 1, 2, 3, 4, 5, 6};
+        final int[] recNos = { 0, 1, 2, 3, 4, 5, 6 };
         final String[] matchingData = RECORD_DATA.clone();
         matchingData[5] = "12345678";
-        final SearchCriteria criteria = new SearchCriteria().setName(
-                matchingData[0]).setLocation(matchingData[1]).setSpecialties(
-                matchingData[2]).setSize(matchingData[3]).setRate(
-                matchingData[4]).setOwner(matchingData[5]);
+        final SearchCriteria criteria = new SearchCriteria().setName(matchingData[0])
+                .setLocation(matchingData[1]).setSpecialties(matchingData[2])
+                .setSize(matchingData[3]).setRate(matchingData[4]).setOwner(matchingData[5]);
 
         final String[][] records = new String[recNos.length][6];
         for (int i = 0; i < recNos.length - 1; i++) {
@@ -202,10 +185,9 @@ public class BrokerServiceImplTest {
         context.checking(new Expectations() {
             {
                 one(mockDatabase).find(
-                        with(equal(new String[] {criteria.getName(),
-                                criteria.getLocation(),
-                                criteria.getSpecialties(), criteria.getSize(),
-                                criteria.getRate(), criteria.getOwner()})));
+                        with(equal(new String[] { criteria.getName(), criteria.getLocation(),
+                                criteria.getSpecialties(), criteria.getSize(), criteria.getRate(),
+                                criteria.getOwner() })));
                 will(returnValue(recNos));
 
                 for (int i = 0; i < recNos.length; i++) {
@@ -216,51 +198,43 @@ public class BrokerServiceImplTest {
         });
         List<Contractor> contractors = brokerService.search(criteria);
         assertThat(contractors.size(), is(1));
-        assertContractor(recNos[recNos.length - 1], records[recNos.length - 1],
-                contractors.get(0));
+        assertContractor(recNos[recNos.length - 1], records[recNos.length - 1], contractors.get(0));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionWhenBookingWithNullCustomerId()
-            throws Exception {
+    public void shouldThrowExceptionWhenBookingWithNullCustomerId() throws Exception {
         brokerService.book(null, new Contractor(0, RECORD_DATA));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionWhenBookingWithNullContractor()
-            throws Exception {
+    public void shouldThrowExceptionWhenBookingWithNullContractor() throws Exception {
         brokerService.book("12345678", null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionWhenBookingWithNullContractorField()
-            throws Exception {
+    public void shouldThrowExceptionWhenBookingWithNullContractorField() throws Exception {
         String[] data = RECORD_DATA.clone();
         data[5] = null;
         brokerService.book("12345678", new Contractor(0, data));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionWhenBookingWithTooLongCustomerId()
-            throws Exception {
+    public void shouldThrowExceptionWhenBookingWithTooLongCustomerId() throws Exception {
         brokerService.book("123456789", new Contractor(0, RECORD_DATA));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionWhenBookingWithTooShortCustomerId()
-            throws Exception {
+    public void shouldThrowExceptionWhenBookingWithTooShortCustomerId() throws Exception {
         brokerService.book("1234567", new Contractor(0, RECORD_DATA));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionWhenBookingWithCustomerIdContainingNonDigits()
-            throws Exception {
+    public void shouldThrowExceptionWhenBookingWithCustomerIdContainingNonDigits() throws Exception {
         brokerService.book("12a45678", new Contractor(0, RECORD_DATA));
     }
 
     @Test(expected = ContractorDeletedException.class)
-    public void shouldThrowExceptionWhenBookingContractorThatHasBeenDeleted()
-            throws Exception {
+    public void shouldThrowExceptionWhenBookingContractorThatHasBeenDeleted() throws Exception {
         final int recNo = 0;
         context.checking(new Expectations() {
             {
@@ -272,8 +246,7 @@ public class BrokerServiceImplTest {
     }
 
     @Test(expected = IOException.class)
-    public void shouldThrowExceptionWhenBookingIfLockThrowsInterruptedException()
-            throws Exception {
+    public void shouldThrowExceptionWhenBookingIfLockThrowsInterruptedException() throws Exception {
         final int recNo = 0;
         context.checking(new Expectations() {
             {
@@ -302,8 +275,7 @@ public class BrokerServiceImplTest {
     }
 
     @Test(expected = ContractorModifiedException.class)
-    public void shouldThrowExceptionWhenBookingContractorThatHasBeenModified()
-            throws Exception {
+    public void shouldThrowExceptionWhenBookingContractorThatHasBeenModified() throws Exception {
         final int recNo = 0;
         final String[] modifiedData = RECORD_DATA.clone();
         modifiedData[4] += " this is modified";
@@ -340,8 +312,7 @@ public class BrokerServiceImplTest {
     }
 
     @Test
-    public void shouldNotThrowExceptionWhenBookingContractorThatHasBeenUnbooked()
-            throws Exception {
+    public void shouldNotThrowExceptionWhenBookingContractorThatHasBeenUnbooked() throws Exception {
         final int recNo = 0;
         String[] data = RECORD_DATA.clone();
         data[5] = "87654321";
@@ -354,8 +325,7 @@ public class BrokerServiceImplTest {
                 one(mockDatabase).read(recNo);
                 will(returnValue(modifiedData));
 
-                allowing(mockDatabase).update(with(any(int.class)),
-                        with(any(String[].class)));
+                allowing(mockDatabase).update(with(any(int.class)), with(any(String[].class)));
 
                 one(mockDatabase).unlock(recNo);
             }
@@ -364,8 +334,7 @@ public class BrokerServiceImplTest {
     }
 
     @Test
-    public void shouldNotThrowExceptionIfUnlockThrowsExceptionWhenBooking()
-            throws Exception {
+    public void shouldNotThrowExceptionIfUnlockThrowsExceptionWhenBooking() throws Exception {
         final int recNo = 0;
         context.checking(new Expectations() {
             {
@@ -374,8 +343,7 @@ public class BrokerServiceImplTest {
                 one(mockDatabase).read(recNo);
                 will(returnValue(RECORD_DATA));
 
-                allowing(mockDatabase).update(with(any(int.class)),
-                        with(any(String[].class)));
+                allowing(mockDatabase).update(with(any(int.class)), with(any(String[].class)));
 
                 one(mockDatabase).unlock(recNo);
                 will(throwException(new RecordNotFoundException()));

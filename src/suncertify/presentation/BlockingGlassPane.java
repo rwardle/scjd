@@ -6,23 +6,26 @@
 
 package suncertify.presentation;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Cursor;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseMotionAdapter;
+
+import javax.swing.JComponent;
+
 
 /**
- * A component for designed for use as a glass pane that will block all mouse
- * and keyboard input. In order to ensure that all keyboard events are blocked,
- * the glass pane will request the focus when it is made visible and will not
- * release it while it remains visible. It is up to clients to restore the focus
- * to its previous owner when the glass pane is hidden, if this is required.
- * This glass pane will also set the cursor to the {@link Cursor#WAIT_CURSOR}
- * while it is visible.
+ * A component for designed for use as a glass pane that will block all mouse and keyboard input. In
+ * order to ensure that all keyboard events are blocked, the glass pane will request the focus when
+ * it is made visible and will not release it while it remains visible. It is up to clients to
+ * restore the focus to its previous owner when the glass pane is hidden, if this is required. This
+ * glass pane will also set the cursor to the {@link Cursor#WAIT_CURSOR} while it is visible.
  * <p/>
- * See <a
- * href="http://java.sun.com/docs/books/tutorial/uiswing/components/rootpane.html">How
- * to Use Root Panes</a> for more information on the glass pane.
- *
+ * See <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/rootpane.html">How to Use
+ * Root Panes</a> for more information on the glass pane.
+ * 
  * @author Richard Wardle
  */
 public final class BlockingGlassPane extends JComponent {
@@ -57,11 +60,12 @@ public final class BlockingGlassPane extends JComponent {
     }
 
     /**
-     * Makes the glasspane visible or invisible. Making the glasspane visible
-     * will also make it request the focus.
-     *
-     * @param visible <code>true</code> to make the component visible;
-     *                <code>false</code> to make it invisible.
+     * Makes the glasspane visible or invisible. Making the glasspane visible will also make it
+     * request the focus.
+     * 
+     * @param visible
+     *            <code>true</code> to make the component visible; <code>false</code> to make it
+     *            invisible.
      */
     @Override
     public void setVisible(boolean visible) {

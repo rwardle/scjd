@@ -6,23 +6,23 @@
 
 package suncertify;
 
-import suncertify.presentation.ConfigurationPresenter;
-import suncertify.presentation.ConfigurationView;
-
-import javax.swing.*;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JOptionPane;
+
+import suncertify.presentation.ConfigurationPresenter;
+import suncertify.presentation.ConfigurationView;
+
 /**
  * An abstract base class for applications.
- *
+ * 
  * @author Richard Wardle
  */
 public abstract class AbstractApplication implements Application {
 
-    private static final Logger LOGGER = Logger
-            .getLogger(AbstractApplication.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AbstractApplication.class.getName());
 
     private final ConfigurationManager configurationManager;
     private final FatalExceptionHandler exceptionHandler;
@@ -30,9 +30,11 @@ public abstract class AbstractApplication implements Application {
 
     /**
      * Creates a new instance of <code>AbstractApplication</code>.
-     *
-     * @param configuration Application configuration.
-     * @throws IllegalArgumentException If <code>configuration</code> is <code>null</code>.
+     * 
+     * @param configuration
+     *            Application configuration.
+     * @throws IllegalArgumentException
+     *             If <code>configuration</code> is <code>null</code>.
      */
     public AbstractApplication(Configuration configuration) {
         if (configuration == null) {
@@ -46,7 +48,7 @@ public abstract class AbstractApplication implements Application {
 
     /**
      * Returns the configuration manager.
-     *
+     * 
      * @return The configuration manager.
      */
     protected final ConfigurationManager getConfigurationManager() {
@@ -58,8 +60,7 @@ public abstract class AbstractApplication implements Application {
      * <p/>
      * Displays a configuration dialog.
      * <p/>
-     * This implementation calls the <code>createConfigurationView</code>
-     * method.
+     * This implementation calls the <code>createConfigurationView</code> method.
      */
     public final boolean initialise() {
         ReturnStatus returnStatus = showConfigurationDialog();
@@ -74,8 +75,7 @@ public abstract class AbstractApplication implements Application {
             } catch (ConfigurationException e) {
                 // Couldn't save configuration, application will continue but
                 // any new configuration will be lost at shutdown
-                LOGGER.log(Level.WARNING,
-                        "Could not save configuration to disk", e);
+                LOGGER.log(Level.WARNING, "Could not save configuration to disk", e);
                 showSaveWarningDialog();
             }
         } else {
@@ -89,15 +89,14 @@ public abstract class AbstractApplication implements Application {
         ConfigurationPresenter presenter = createConfigurationPresenter();
         presenter.realiseView();
         ReturnStatus returnStatus = presenter.getReturnStatus();
-        LOGGER.info("Returned from configuration dialog with status: "
-                + returnStatus);
+        LOGGER.info("Returned from configuration dialog with status: " + returnStatus);
         return returnStatus;
     }
 
     ConfigurationPresenter createConfigurationPresenter() {
         ConfigurationView view = createConfigurationView();
-        ConfigurationPresenter presenter = new ConfigurationPresenter(
-                getConfigurationManager(), view);
+        ConfigurationPresenter presenter = new ConfigurationPresenter(getConfigurationManager(),
+                view);
         view.setPresenter(presenter);
         return presenter;
     }
@@ -105,10 +104,9 @@ public abstract class AbstractApplication implements Application {
     /**
      * Returns a new configuration view.
      * <p/>
-     * This method is called by the <code>initialise</code> method. Subclasses
-     * should implement this method to return a configuration view that is
-     * application-specific.
-     *
+     * This method is called by the <code>initialise</code> method. Subclasses should implement this
+     * method to return a configuration view that is application-specific.
+     * 
      * @return The configuration view.
      */
     protected abstract ConfigurationView createConfigurationView();
@@ -118,8 +116,7 @@ public abstract class AbstractApplication implements Application {
                 .getString("AbstractApplication.saveConfigurationWarningDialog.message");
         String title = resourceBundle
                 .getString("AbstractApplication.saveConfigurationWarningDialog.title");
-        JOptionPane.showMessageDialog(null, message, title,
-                JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.WARNING_MESSAGE);
     }
 
     /**
