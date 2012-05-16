@@ -9,6 +9,7 @@ syntax:regexp
 ^bin
 ^build
 ^dist
+^lib$
 ^nbproject/genfiles.properties
 ^nbproject/private
 ^nbproject/project.xml
