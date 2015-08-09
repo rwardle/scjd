@@ -1,1 +1,7 @@
+/.idea/libraries
+/.idea/workspace.xml
+
 /target
+
+/suncertify.db
+/suncertify.properties
