@@ -15,7 +15,7 @@ import org.junit.Test;
 
 public class ArchitecturalRulesTest {
 
-    private static final String DEFAULT_CLASSES_DIR = "build/classes";
+    private static final String DEFAULT_CLASSES_DIR = "target/classes";
     private static final String APPLICATION_PACKAGE = "suncertify";
     private static final String PRESENTATION_PACKAGE = "suncertify.presentation";
     private static final String SERVICE_PACKAGE = "suncertify.service";
