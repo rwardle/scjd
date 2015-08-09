@@ -6,22 +6,17 @@
 
 package suncertify.presentation;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import suncertify.ApplicationMode;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
-import suncertify.ApplicationMode;
 
 /**
  * Configuration dialog for applications running in {@link ApplicationMode#STANDALONE STANDALONE}
  * mode.
- * 
+ *
  * @author Richard Wardle
  */
 public final class StandaloneConfigurationDialog extends AbstractConfigurationDialog {

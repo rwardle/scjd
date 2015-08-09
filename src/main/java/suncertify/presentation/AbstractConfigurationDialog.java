@@ -6,31 +6,15 @@
 
 package suncertify.presentation;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.Toolkit;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
-
-
 /**
  * Abstract base class for application configuration dialogs.
- * 
+ *
  * @author Richard Wardle
  */
 public abstract class AbstractConfigurationDialog extends JDialog implements ConfigurationView {
@@ -80,7 +64,7 @@ public abstract class AbstractConfigurationDialog extends JDialog implements Con
 
     /**
      * Returns the resource bundle.
-     * 
+     *
      * @return The resource bundle.
      */
     protected final ResourceBundle getResourceBundle() {
@@ -89,7 +73,7 @@ public abstract class AbstractConfigurationDialog extends JDialog implements Con
 
     /**
      * Returns the configuration presenter.
-     * 
+     *
      * @return The configuration presenter.
      */
     protected final ConfigurationPresenter getPresenter() {
@@ -252,23 +236,22 @@ public abstract class AbstractConfigurationDialog extends JDialog implements Con
 
     /**
      * Returns the message text to display.
-     * 
+     *
      * @return The message text.
      */
     protected abstract String getMessageText();
 
     /**
      * Initialises the input panel.
-     * 
+     *
      * @return The input panel.
      */
     protected abstract JPanel initialiseInputPanel();
 
     /**
      * Creates a server port spinner with the specified font.
-     * 
-     * @param font
-     *            Server port spinner font.
+     *
+     * @param font Server port spinner font.
      * @return The server port spinner.
      */
     protected final JSpinner createServerPortSpinner(Font font) {

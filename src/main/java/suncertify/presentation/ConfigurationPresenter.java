@@ -6,19 +6,18 @@
 
 package suncertify.presentation;
 
-import java.util.ResourceBundle;
-import java.util.logging.Logger;
-
-import javax.swing.JFileChooser;
-
 import suncertify.ConfigurationManager;
 import suncertify.ReturnStatus;
+
+import javax.swing.*;
+import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 /**
  * A controller that is responsible for handling user events delegated to it from the
  * {@link ConfigurationView} and for updating the view based on the data in the
  * {@link ConfigurationManager}.
- * 
+ *
  * @author Richard Wardle
  */
 public class ConfigurationPresenter {
@@ -31,13 +30,10 @@ public class ConfigurationPresenter {
 
     /**
      * Creates a new instance of <code>ConfigurationPresenter</code>.
-     * 
-     * @param configurationManager
-     *            Configuration manager.
-     * @param view
-     *            Configuration view.
-     * @throws IllegalArgumentException
-     *             If <code>configurationManager</code> or <code>view</code> is <code>null</code>.
+     *
+     * @param configurationManager Configuration manager.
+     * @param view                 Configuration view.
+     * @throws IllegalArgumentException If <code>configurationManager</code> or <code>view</code> is <code>null</code>.
      */
     public ConfigurationPresenter(ConfigurationManager configurationManager, ConfigurationView view) {
         if (configurationManager == null) {
@@ -54,7 +50,7 @@ public class ConfigurationPresenter {
 
     /**
      * Returns the return status of the configuration view.
-     * 
+     *
      * @return The return status.
      */
     public ReturnStatus getReturnStatus() {

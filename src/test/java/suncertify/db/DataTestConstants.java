@@ -7,9 +7,9 @@ public class DataTestConstants {
     public static final int EXPECTED_RECORD_LENGTH = 182;
     public static final short EXPECTED_FIELD_COUNT = 6;
 
-    private static final String[] FIELD_NAMES = { "name", "location", "specialties", "size",
-            "rate", "owner" };
-    private static final short[] FIELD_LENGTHS = { 32, 64, 64, 6, 8, 8 };
+    private static final String[] FIELD_NAMES = {"name", "location", "specialties", "size",
+            "rate", "owner"};
+    private static final short[] FIELD_LENGTHS = {32, 64, 64, 6, 8, 8};
 
     public static final FieldDescription[] EXPECTED_FIELD_DESCRIPTIONS = new FieldDescription[EXPECTED_FIELD_COUNT];
 
@@ -22,8 +22,8 @@ public class DataTestConstants {
         }
     }
 
-    public static final String[] RECORD_VALUES = { "Buonarotti & Company", "Smallville",
-            "Air Conditioning, Painting, Painting", "10", "$40.00", "1245678" };
+    public static final String[] RECORD_VALUES = {"Buonarotti & Company", "Smallville",
+            "Air Conditioning, Painting, Painting", "10", "$40.00", "1245678"};
     public static final String[] RECORD_VALUES_SPACE_PADDED, RECORD_VALUES_NULL_PADDED;
 
     static {

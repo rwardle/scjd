@@ -6,15 +6,9 @@
 
 package suncertify.presentation;
 
-import java.awt.Cursor;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseMotionAdapter;
-
-import javax.swing.JComponent;
-
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
 /**
  * A component for designed for use as a glass pane that will block all mouse and keyboard input. In
@@ -25,7 +19,7 @@ import javax.swing.JComponent;
  * <p/>
  * See <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/rootpane.html">How to Use
  * Root Panes</a> for more information on the glass pane.
- * 
+ *
  * @author Richard Wardle
  */
 public final class BlockingGlassPane extends JComponent {
@@ -62,10 +56,9 @@ public final class BlockingGlassPane extends JComponent {
     /**
      * Makes the glasspane visible or invisible. Making the glasspane visible will also make it
      * request the focus.
-     * 
-     * @param visible
-     *            <code>true</code> to make the component visible; <code>false</code> to make it
-     *            invisible.
+     *
+     * @param visible <code>true</code> to make the component visible; <code>false</code> to make it
+     *                invisible.
      */
     @Override
     public void setVisible(boolean visible) {

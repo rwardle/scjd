@@ -6,18 +6,15 @@
 
 package suncertify;
 
+import javax.swing.*;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
-
 /**
  * An application launcher. Contains the <code>main</code> method which is the entry point to the
  * application.
- * 
+ *
  * @author Richard Wardle
  */
 public final class Launcher {
@@ -32,11 +29,9 @@ public final class Launcher {
 
     /**
      * Creates a new instance of <code>Launcher</code>.
-     * 
-     * @param applicationFactory
-     *            Application factory to be used for creating the application.
-     * @throws IllegalArgumentException
-     *             If <code>applicationFactory</code> is <code>null</code>.
+     *
+     * @param applicationFactory Application factory to be used for creating the application.
+     * @throws IllegalArgumentException If <code>applicationFactory</code> is <code>null</code>.
      */
     public Launcher(AbstractApplicationFactory applicationFactory) {
         if (null == applicationFactory) {
@@ -78,9 +73,8 @@ public final class Launcher {
 
     /**
      * Entry point to the application.
-     * 
-     * @param args
-     *            Command line arguments.
+     *
+     * @param args Command line arguments.
      */
     public static void main(String[] args) {
         /*

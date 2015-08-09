@@ -1,20 +1,19 @@
 package suncertify;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import suncertify.db.DataValidationException;
 import suncertify.db.DatabaseFactory;
 import suncertify.presentation.StandaloneConfigurationDialog;
 import suncertify.service.BrokerServiceImpl;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import static org.junit.Assert.assertTrue;
 
 public class StandaloneApplicationTest {
 

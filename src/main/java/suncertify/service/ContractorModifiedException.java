@@ -8,7 +8,7 @@ package suncertify.service;
 
 /**
  * Exception indicating that a contractor has been modified.
- * 
+ *
  * @author Richard Wardle
  */
 public final class ContractorModifiedException extends Exception {
@@ -26,9 +26,8 @@ public final class ContractorModifiedException extends Exception {
     /**
      * Creates a new instance of <code>ContractorModifiedException</code> with the specified
      * <code>message</code>, and with <code>cause</code> initialised to <code>null</code>.
-     * 
-     * @param message
-     *            Error message.
+     *
+     * @param message Error message.
      */
     public ContractorModifiedException(String message) {
         super(message);
@@ -37,9 +36,8 @@ public final class ContractorModifiedException extends Exception {
     /**
      * Creates a new instance of <code>ContractorModifiedException</code> with the specified
      * <code>cause</code>, and with <code>message</code> initialised to <code>null</code>.
-     * 
-     * @param cause
-     *            Root cause.
+     *
+     * @param cause Root cause.
      */
     public ContractorModifiedException(Throwable cause) {
         super(cause);
@@ -48,11 +46,9 @@ public final class ContractorModifiedException extends Exception {
     /**
      * Creates a new instance of <code>ContractorModifiedException</code> with the specified
      * <code>message</code> and <code>cause</code>.
-     * 
-     * @param message
-     *            Error message.
-     * @param cause
-     *            Root cause.
+     *
+     * @param message Error message.
+     * @param cause   Root cause.
      */
     public ContractorModifiedException(String message, Throwable cause) {
         super(message, cause);

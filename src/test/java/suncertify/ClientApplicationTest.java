@@ -1,20 +1,19 @@
 package suncertify;
 
-import static org.junit.Assert.assertTrue;
-
-import java.net.MalformedURLException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import suncertify.presentation.ClientConfigurationDialog;
 import suncertify.service.RemoteBrokerService;
 import suncertify.service.RmiService;
+
+import java.net.MalformedURLException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+
+import static org.junit.Assert.assertTrue;
 
 public class ClientApplicationTest {
 

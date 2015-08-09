@@ -1,13 +1,13 @@
 package suncertify;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class LauncherTest {
 
@@ -33,7 +33,7 @@ public class LauncherTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfCommandLineArgumentIsInvalid() {
-        Launcher.getApplicationMode(new String[] { "invalid-mode" });
+        Launcher.getApplicationMode(new String[]{"invalid-mode"});
     }
 
     @Test
@@ -43,13 +43,13 @@ public class LauncherTest {
 
     @Test
     public void shouldUseServerApplicationModeIfCommandLineArgumentIsServer() {
-        assertThat(Launcher.getApplicationMode(new String[] { "server" }),
+        assertThat(Launcher.getApplicationMode(new String[]{"server"}),
                 is(ApplicationMode.SERVER));
     }
 
     @Test
     public void shouldUseStandaloneApplicationModeIfCommandLineArgumentIsAlone() {
-        assertThat(Launcher.getApplicationMode(new String[] { "alone" }),
+        assertThat(Launcher.getApplicationMode(new String[]{"alone"}),
                 is(ApplicationMode.STANDALONE));
     }
 

@@ -8,7 +8,7 @@ package suncertify;
 
 /**
  * A mode that the application runs in.
- * 
+ *
  * @author Richard Wardle
  */
 public enum ApplicationMode {

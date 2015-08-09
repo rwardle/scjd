@@ -1,17 +1,16 @@
 package suncertify;
 
-import static org.junit.Assert.fail;
+import jdepend.framework.JDepend;
+import jdepend.framework.JavaPackage;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import jdepend.framework.JDepend;
-import jdepend.framework.JavaPackage;
-
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.fail;
 
 public class ArchitecturalRulesTest {
 
@@ -64,13 +63,13 @@ public class ArchitecturalRulesTest {
 
     @SuppressWarnings("unchecked")
     private boolean isLayeringValid(String layer, Collection<String> rules,
-            StringBuilder failureMessage) {
+                                    StringBuilder failureMessage) {
         boolean rulesCorrect = true;
         Collection allPackages = jdepend.analyze();
-        for (Iterator packIter = allPackages.iterator(); packIter.hasNext();) {
+        for (Iterator packIter = allPackages.iterator(); packIter.hasNext(); ) {
             JavaPackage jPackage = (JavaPackage) packIter.next();
             Collection efferents = jPackage.getEfferents();
-            for (Iterator effIter = efferents.iterator(); effIter.hasNext();) {
+            for (Iterator effIter = efferents.iterator(); effIter.hasNext(); ) {
                 JavaPackage efferentPackage = (JavaPackage) effIter.next();
                 for (String rule : rules) {
                     if (jPackage.getName().equals(layer) && efferentPackage.getName().equals(rule)) {

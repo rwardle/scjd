@@ -6,16 +6,14 @@
 
 package suncertify.presentation;
 
-import java.awt.Color;
-import java.awt.Insets;
+import java.awt.*;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * Constants for the presentation layer.
- * 
+ *
  * @author Richard Wardle
  */
 public class PresentationConstants {

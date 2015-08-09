@@ -1,16 +1,5 @@
 package suncertify.presentation;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.SwingWorker;
-import javax.swing.SwingWorker.StateValue;
-
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -20,12 +9,16 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import suncertify.service.*;
 
-import suncertify.service.BrokerService;
-import suncertify.service.Contractor;
-import suncertify.service.ContractorDeletedException;
-import suncertify.service.ContractorModifiedException;
-import suncertify.service.SearchCriteria;
+import javax.swing.*;
+import javax.swing.SwingWorker.StateValue;
+import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainPresenterTest {
 
@@ -89,10 +82,10 @@ public class MainPresenterTest {
         final String nameCriteria = "name";
         final String locationCriteria = "location";
         final List<Contractor> contractors = new ArrayList<Contractor>();
-        contractors.add(new Contractor(1, new String[] { "name", "location", "spec1", "size1",
-                "rate1", "owner1" }));
-        contractors.add(new Contractor(2, new String[] { "name", "location", "spec2", "size2",
-                "rate2", "owner2" }));
+        contractors.add(new Contractor(1, new String[]{"name", "location", "spec1", "size1",
+                "rate1", "owner1"}));
+        contractors.add(new Contractor(2, new String[]{"name", "location", "spec2", "size2",
+                "rate2", "owner2"}));
         final String statusLabelText = "<html>Viewing <b>" + contractors.size()
                 + " contractors</b> where Name is <b>" + nameCriteria + "</b> and Location is <b>"
                 + locationCriteria + "</b></html>";
@@ -185,8 +178,8 @@ public class MainPresenterTest {
         final String nameCriteria = "";
         final String locationCriteria = "";
         final List<Contractor> contractors = new ArrayList<Contractor>();
-        contractors.add(new Contractor(1, new String[] { "name", "location", "spec1", "size1",
-                "rate1", "owner1" }));
+        contractors.add(new Contractor(1, new String[]{"name", "location", "spec1", "size1",
+                "rate1", "owner1"}));
         final String statusLabelText = "<html>Viewing all <b>" + contractors.size()
                 + " contractor</b></html>";
         context.checking(new Expectations() {
@@ -269,8 +262,8 @@ public class MainPresenterTest {
     @Test
     public void shouldPerformBookAction() throws Exception {
         final int rowNo = 1;
-        String[] preBookingContractorData = new String[] { "name", "location", "spec", "size",
-                "rate", "owner" };
+        String[] preBookingContractorData = new String[]{"name", "location", "spec", "size",
+                "rate", "owner"};
         final Contractor preBookingContractor = new Contractor(rowNo, preBookingContractorData);
         String[] postBookingContractorData = preBookingContractorData.clone();
         postBookingContractorData[PresentationConstants.TABLE_OWNER_COLUMN_INDEX] = customerId;
@@ -390,7 +383,7 @@ public class MainPresenterTest {
     }
 
     private Matcher<SearchCriteria> searchCriteriaMatching(String nameCriteria,
-            String locationCriteria) {
+                                                           String locationCriteria) {
         return new SearchCriteriaMatching(nameCriteria, locationCriteria);
     }
 
@@ -434,22 +427,22 @@ public class MainPresenterTest {
             return expectedContractor.getRecordNumber() == actualContractor.getRecordNumber()
                     && expectedContractor.getName() == null ? actualContractor.getName() == null
                     : expectedContractor.getName().equals(actualContractor.getName())
-                            && expectedContractor.getLocation() == null ? actualContractor
-                            .getLocation() == null : expectedContractor.getLocation().equals(
-                            actualContractor.getLocation())
-                            && expectedContractor.getSpecialties() == null ? actualContractor
-                            .getSpecialties() == null
-                            : expectedContractor.getSpecialties().equals(
-                                    actualContractor.getSpecialties())
-                                    && expectedContractor.getSize() == null ? actualContractor
-                                    .getSize() == null : expectedContractor.getSize().equals(
-                                    actualContractor.getSize())
-                                    && expectedContractor.getRate() == null ? actualContractor
-                                    .getRate() == null : expectedContractor.getRate().equals(
-                                    actualContractor.getRate())
-                                    && expectedContractor.getOwner() == null ? actualContractor
-                                    .getOwner() == null : expectedContractor.getOwner().equals(
-                                    actualContractor.getOwner());
+                    && expectedContractor.getLocation() == null ? actualContractor
+                    .getLocation() == null : expectedContractor.getLocation().equals(
+                    actualContractor.getLocation())
+                    && expectedContractor.getSpecialties() == null ? actualContractor
+                    .getSpecialties() == null
+                    : expectedContractor.getSpecialties().equals(
+                    actualContractor.getSpecialties())
+                    && expectedContractor.getSize() == null ? actualContractor
+                    .getSize() == null : expectedContractor.getSize().equals(
+                    actualContractor.getSize())
+                    && expectedContractor.getRate() == null ? actualContractor
+                    .getRate() == null : expectedContractor.getRate().equals(
+                    actualContractor.getRate())
+                    && expectedContractor.getOwner() == null ? actualContractor
+                    .getOwner() == null : expectedContractor.getOwner().equals(
+                    actualContractor.getOwner());
         }
 
         public void describeTo(Description description) {
@@ -465,7 +458,7 @@ public class MainPresenterTest {
 
         @Override
         SwingWorker<List<Contractor>, Void> createSearchWorker(SearchCriteria searchCriteria,
-                Component component) {
+                                                               Component component) {
             SwingWorker<List<Contractor>, Void> worker = super.createSearchWorker(searchCriteria,
                     component);
             addWorkerPropertyChangeListener(worker);
@@ -479,7 +472,7 @@ public class MainPresenterTest {
 
         @Override
         SwingWorker<Void, Void> createBookWorker(String id, Contractor contractor, int rowNo,
-                Component component) {
+                                                 Component component) {
             SwingWorker<Void, Void> worker = super.createBookWorker(id, contractor, rowNo,
                     component);
             addWorkerPropertyChangeListener(worker);

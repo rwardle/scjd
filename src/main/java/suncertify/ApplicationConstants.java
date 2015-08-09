@@ -8,7 +8,7 @@ package suncertify;
 
 /**
  * Constants for the application layer.
- * 
+ *
  * @author Richard Wardle
  */
 public class ApplicationConstants {

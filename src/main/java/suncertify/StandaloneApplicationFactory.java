@@ -10,7 +10,7 @@ import suncertify.db.DatabaseFactoryImpl;
 
 /**
  * Creates applications that run in {@link ApplicationMode#STANDALONE STANDALONE} mode.
- * 
+ *
  * @author Richard Wardle
  */
 public final class StandaloneApplicationFactory extends AbstractApplicationFactory {

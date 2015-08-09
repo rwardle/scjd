@@ -8,10 +8,9 @@ package suncertify.service;
 
 import java.io.Serializable;
 
-
 /**
  * A home improvement contractor.
- * 
+ *
  * @author Richard Wardle
  */
 public final class Contractor implements Serializable {
@@ -20,49 +19,49 @@ public final class Contractor implements Serializable {
 
     /**
      * Database record number of this contractor.
-     * 
+     *
      * @serial
      */
     private final int recordNumber;
 
     /**
      * Name of this contractor.
-     * 
+     *
      * @serial
      */
     private final String name;
 
     /**
      * Locality in which this contractor works.
-     * 
+     *
      * @serial
      */
     private final String location;
 
     /**
      * Comma separated list of the types of work this contractor can perform.
-     * 
+     *
      * @serial
      */
     private final String specialties;
 
     /**
      * The number of workers available for this contractor.
-     * 
+     *
      * @serial
      */
     private final String size;
 
     /**
      * Charge per hour of this contractor.
-     * 
+     *
      * @serial
      */
     private final String rate;
 
     /**
      * 8-digit ID of the customer who has booked this contractor.
-     * 
+     *
      * @serial
      */
     private final String owner;
@@ -70,16 +69,13 @@ public final class Contractor implements Serializable {
     /**
      * Creates a new instance of <code>Contractor</code> with the specfied <code>recordNumber</code>
      * and <code>data</code> array.
-     * 
-     * @param recordNumber
-     *            Database record number.
-     * @param data
-     *            Data array. Must be an array of length 6 containing contractor data in the
-     *            following order: name, location, specialties, size, rate, owner.
-     * @throws IllegalArgumentException
-     *             If <code>recordNumber</code> is negative or <code>data</code> is
-     *             <code>null</code> or the length of <code>data</code> does not match
-     *             {@link ServiceConstants#FIELD_COUNT}.
+     *
+     * @param recordNumber Database record number.
+     * @param data         Data array. Must be an array of length 6 containing contractor data in the
+     *                     following order: name, location, specialties, size, rate, owner.
+     * @throws IllegalArgumentException If <code>recordNumber</code> is negative or <code>data</code> is
+     *                                  <code>null</code> or the length of <code>data</code> does not match
+     *                                  {@link ServiceConstants#FIELD_COUNT}.
      */
     public Contractor(int recordNumber, String[] data) {
         if (recordNumber < 0) {
@@ -106,7 +102,7 @@ public final class Contractor implements Serializable {
 
     /**
      * Returns the database record number of this contractor.
-     * 
+     *
      * @return The record number.
      */
     public int getRecordNumber() {
@@ -115,7 +111,7 @@ public final class Contractor implements Serializable {
 
     /**
      * Returns the name of this contractor.
-     * 
+     *
      * @return The name.
      */
     public String getName() {
@@ -124,7 +120,7 @@ public final class Contractor implements Serializable {
 
     /**
      * Returns the locality in which this contractor works.
-     * 
+     *
      * @return The location.
      */
     public String getLocation() {
@@ -133,7 +129,7 @@ public final class Contractor implements Serializable {
 
     /**
      * Returns the types of work this contractor can perform.
-     * 
+     *
      * @return A comma-separated list of the specialties.
      */
     public String getSpecialties() {
@@ -142,7 +138,7 @@ public final class Contractor implements Serializable {
 
     /**
      * Returns the number of workers available for this contractor.
-     * 
+     *
      * @return The size.
      */
     public String getSize() {
@@ -151,7 +147,7 @@ public final class Contractor implements Serializable {
 
     /**
      * Returns the charge per hour of this contractor.
-     * 
+     *
      * @return The rate.
      */
     public String getRate() {
@@ -160,7 +156,7 @@ public final class Contractor implements Serializable {
 
     /**
      * Returns the ID of the customer who has booked this contractor.
-     * 
+     *
      * @return The 8-digit customer ID.
      */
     public String getOwner() {
@@ -169,7 +165,7 @@ public final class Contractor implements Serializable {
 
     /**
      * Returns a string representation of the <code>Contractor</code>.
-     * 
+     *
      * @return A string representation of the <code>Contractor</code>.
      */
     @Override

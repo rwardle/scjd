@@ -1,18 +1,12 @@
 package suncertify.presentation;
 
-import java.awt.Color;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-
-import javax.swing.JPanel;
-
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Extends {@link JPanel} to use a gradient paint from top-to-bottom using the colours specified in
  * the constructor.
- * 
+ *
  * @author Richard Wardle
  */
 public final class JGradientPanel extends JPanel {
@@ -22,11 +16,9 @@ public final class JGradientPanel extends JPanel {
 
     /**
      * Creates a new instance of <code>JGradientPanel</code> with the specified colours.
-     * 
-     * @param topColor
-     *            Colour to use for the top of the gradient paint.
-     * @param bottomColor
-     *            Colour to use for the bottom of the gradient paint.
+     *
+     * @param topColor    Colour to use for the top of the gradient paint.
+     * @param bottomColor Colour to use for the bottom of the gradient paint.
      */
     public JGradientPanel(Color topColor, Color bottomColor) {
         this.topColor = topColor;
@@ -36,9 +28,8 @@ public final class JGradientPanel extends JPanel {
     /**
      * Paints a gradient paint using the <code>topColor</code> and <code>bottomColor</code> in the
      * rectangle that makes up the bounds of this panel.
-     * 
-     * @param g
-     *            <code>Graphics</code> object.
+     *
+     * @param g <code>Graphics</code> object.
      */
     @Override
     public void paintComponent(Graphics g) {

@@ -9,10 +9,9 @@ package suncertify;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  * Provides a simplified interface for {@link Configuration} (facade pattern).
- * 
+ *
  * @author Richard Wardle
  */
 public final class ConfigurationManager {
@@ -24,11 +23,9 @@ public final class ConfigurationManager {
     /**
      * Creates a new instance of <code>ConfigurationManager</code> using the specified
      * configuration.
-     * 
-     * @param configuration
-     *            Configuration.
-     * @throws IllegalArgumentException
-     *             If the <code>configuration</code> is <code>null</code>.
+     *
+     * @param configuration Configuration.
+     * @throws IllegalArgumentException If the <code>configuration</code> is <code>null</code>.
      */
     public ConfigurationManager(Configuration configuration) {
         if (configuration == null) {
@@ -73,9 +70,8 @@ public final class ConfigurationManager {
 
     /**
      * Saves the configuration.
-     * 
-     * @throws ConfigurationException
-     *             If the configuration cannot be saved.
+     *
+     * @throws ConfigurationException If the configuration cannot be saved.
      */
     public void save() throws ConfigurationException {
         configuration.save();
@@ -83,7 +79,7 @@ public final class ConfigurationManager {
 
     /**
      * Gets the database file path.
-     * 
+     *
      * @return The database file path.
      */
     public String getDatabaseFilePath() {
@@ -92,11 +88,9 @@ public final class ConfigurationManager {
 
     /**
      * Sets the database file path.
-     * 
-     * @param databaseFilePath
-     *            Database file path to set.
-     * @throws IllegalArgumentException
-     *             If <code>databaseFilePath</code> is <code>null</code>.
+     *
+     * @param databaseFilePath Database file path to set.
+     * @throws IllegalArgumentException If <code>databaseFilePath</code> is <code>null</code>.
      */
     public void setDatabaseFilePath(String databaseFilePath) {
         if (databaseFilePath == null) {
@@ -108,7 +102,7 @@ public final class ConfigurationManager {
 
     /**
      * Gets the server address.
-     * 
+     *
      * @return The server address.
      */
     public String getServerAddress() {
@@ -117,11 +111,9 @@ public final class ConfigurationManager {
 
     /**
      * Sets the server address.
-     * 
-     * @param serverAddress
-     *            Server address to set.
-     * @throws IllegalArgumentException
-     *             If <code>serverAddress</code> is <code>null</code>.
+     *
+     * @param serverAddress Server address to set.
+     * @throws IllegalArgumentException If <code>serverAddress</code> is <code>null</code>.
      */
     public void setServerAddress(String serverAddress) {
         if (serverAddress == null) {
@@ -132,10 +124,9 @@ public final class ConfigurationManager {
 
     /**
      * Gets the server port.
-     * 
+     *
      * @return The server port.
-     * @throws NumberFormatException
-     *             If the server port property is <code>null</code> or is not a number.
+     * @throws NumberFormatException If the server port property is <code>null</code> or is not a number.
      */
     public Integer getServerPort() {
         return Integer
@@ -144,11 +135,9 @@ public final class ConfigurationManager {
 
     /**
      * Sets the server port.
-     * 
-     * @param serverPort
-     *            Server port to set.
-     * @throws IllegalArgumentException
-     *             If <code>serverPort</code> is <code>null</code>.
+     *
+     * @param serverPort Server port to set.
+     * @throws IllegalArgumentException If <code>serverPort</code> is <code>null</code>.
      */
     public void setServerPort(Integer serverPort) {
         if (serverPort == null) {

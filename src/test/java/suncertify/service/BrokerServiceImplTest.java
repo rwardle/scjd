@@ -1,25 +1,24 @@
 package suncertify.service;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
-import java.util.List;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import suncertify.db.Database;
 import suncertify.db.RecordNotFoundException;
+
+import java.io.IOException;
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class BrokerServiceImplTest {
 
     private static final int DATABASE_FIELD_COUNT = 6;
-    private static final String[] RECORD_DATA = { "Buonarotti & Company", "Smallville",
-            "Air Conditioning, Painting, Painting", "10", "$40.00", "" };
+    private static final String[] RECORD_DATA = {"Buonarotti & Company", "Smallville",
+            "Air Conditioning, Painting, Painting", "10", "$40.00", ""};
 
     private Mockery context;
     private Database mockDatabase;
@@ -71,7 +70,7 @@ public class BrokerServiceImplTest {
 
     @Test
     public void shouldReturnAllContractorsWhenSearchingWithNullCriteria() throws Exception {
-        final int[] recNos = { 0, 2 };
+        final int[] recNos = {0, 2};
         context.checking(new Expectations() {
             {
                 one(mockDatabase).find(with(equal(new String[DATABASE_FIELD_COUNT])));
@@ -88,7 +87,7 @@ public class BrokerServiceImplTest {
 
     @Test(expected = IOException.class)
     public void shouldThrowIOExceptionWhenSearchingAndReadThrowsIOException() throws Exception {
-        final int[] recNos = { 0, 2 };
+        final int[] recNos = {0, 2};
         context.checking(new Expectations() {
             {
                 one(mockDatabase).find(with(equal(new String[DATABASE_FIELD_COUNT])));
@@ -104,7 +103,7 @@ public class BrokerServiceImplTest {
     @Test
     public void shouldNotReturnContractorForWhichReadThrowsRecordNotFoundExceptionWhenSearching()
             throws Exception {
-        final int[] recNos = { 0, 2 };
+        final int[] recNos = {0, 2};
         context.checking(new Expectations() {
             {
                 one(mockDatabase).find(with(equal(new String[DATABASE_FIELD_COUNT])));
@@ -122,9 +121,9 @@ public class BrokerServiceImplTest {
 
     @Test
     public void shouldMapRecordValuesIntoContractorWhenSearching() throws Exception {
-        final int[] recNos = { 0 };
-        final String[] recordData = { "Buonarotti & Company", "Smallville",
-                "Air Conditioning, Painting, Painting", "10", "$40.00", "1245678" };
+        final int[] recNos = {0};
+        final String[] recordData = {"Buonarotti & Company", "Smallville",
+                "Air Conditioning, Painting, Painting", "10", "$40.00", "1245678"};
         context.checking(new Expectations() {
             {
                 one(mockDatabase).find(with(equal(new String[DATABASE_FIELD_COUNT])));
@@ -157,9 +156,9 @@ public class BrokerServiceImplTest {
         context.checking(new Expectations() {
             {
                 one(mockDatabase).find(
-                        with(equal(new String[] { criteria.getName(), criteria.getLocation(),
+                        with(equal(new String[]{criteria.getName(), criteria.getLocation(),
                                 criteria.getSpecialties(), criteria.getSize(), criteria.getRate(),
-                                criteria.getOwner() })));
+                                criteria.getOwner()})));
                 will(returnValue(new int[0]));
             }
         });
@@ -168,7 +167,7 @@ public class BrokerServiceImplTest {
 
     @Test
     public void shouldOnlyReturnsExactMatchesWhenSearching() throws Exception {
-        final int[] recNos = { 0, 1, 2, 3, 4, 5, 6 };
+        final int[] recNos = {0, 1, 2, 3, 4, 5, 6};
         final String[] matchingData = RECORD_DATA.clone();
         matchingData[5] = "12345678";
         final SearchCriteria criteria = new SearchCriteria().setName(matchingData[0])
@@ -185,9 +184,9 @@ public class BrokerServiceImplTest {
         context.checking(new Expectations() {
             {
                 one(mockDatabase).find(
-                        with(equal(new String[] { criteria.getName(), criteria.getLocation(),
+                        with(equal(new String[]{criteria.getName(), criteria.getLocation(),
                                 criteria.getSpecialties(), criteria.getSize(), criteria.getRate(),
-                                criteria.getOwner() })));
+                                criteria.getOwner()})));
                 will(returnValue(recNos));
 
                 for (int i = 0; i < recNos.length; i++) {

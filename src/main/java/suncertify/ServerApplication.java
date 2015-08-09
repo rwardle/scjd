@@ -6,11 +6,6 @@
 
 package suncertify;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.rmi.RemoteException;
-
 import suncertify.db.DataValidationException;
 import suncertify.db.DatabaseFactory;
 import suncertify.presentation.ConfigurationView;
@@ -19,9 +14,14 @@ import suncertify.service.RemoteBrokerService;
 import suncertify.service.RemoteBrokerServiceImpl;
 import suncertify.service.RmiService;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.rmi.RemoteException;
+
 /**
  * An application that runs in {@link ApplicationMode#SERVER SERVER} mode.
- * 
+ *
  * @author Richard Wardle
  */
 public final class ServerApplication extends AbstractApplication {
@@ -31,19 +31,15 @@ public final class ServerApplication extends AbstractApplication {
 
     /**
      * Creates a new instance of <code>ServerApplication</code>.
-     * 
-     * @param configuration
-     *            Application configuration.
-     * @param rmiService
-     *            RMI service.
-     * @param databaseFactory
-     *            Database factory.
-     * @throws IllegalArgumentException
-     *             If <code>configuration</code>, <code>rmiService</code> or
-     *             <code>databaseFactory</code> is <code>null</code>.
+     *
+     * @param configuration   Application configuration.
+     * @param rmiService      RMI service.
+     * @param databaseFactory Database factory.
+     * @throws IllegalArgumentException If <code>configuration</code>, <code>rmiService</code> or
+     *                                  <code>databaseFactory</code> is <code>null</code>.
      */
     public ServerApplication(Configuration configuration, RmiService rmiService,
-            DatabaseFactory databaseFactory) {
+                             DatabaseFactory databaseFactory) {
         super(configuration);
 
         if (rmiService == null) {
@@ -58,7 +54,7 @@ public final class ServerApplication extends AbstractApplication {
 
     /**
      * Returns a new configuration view for a server application.
-     * 
+     *
      * @return The configuration view.
      */
     @Override

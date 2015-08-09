@@ -6,9 +6,6 @@
 
 package suncertify;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import suncertify.db.DataValidationException;
 import suncertify.db.DatabaseFactory;
 import suncertify.presentation.ConfigurationView;
@@ -16,9 +13,12 @@ import suncertify.presentation.StandaloneConfigurationDialog;
 import suncertify.service.BrokerService;
 import suncertify.service.BrokerServiceImpl;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 /**
  * An application that runs in {@link ApplicationMode#STANDALONE STANDALONE} mode.
- * 
+ *
  * @author Richard Wardle
  */
 public final class StandaloneApplication extends AbstractGuiApplication {
@@ -27,14 +27,11 @@ public final class StandaloneApplication extends AbstractGuiApplication {
 
     /**
      * Creates a new instance of <code>StandaloneApplication</code>.
-     * 
-     * @param configuration
-     *            Application configuration.
-     * @param databaseFactory
-     *            Database factory.
-     * @throws IllegalArgumentException
-     *             If <code>configuration</code> or <code>databaseFactory</code> is
-     *             <code>null</code>.
+     *
+     * @param configuration   Application configuration.
+     * @param databaseFactory Database factory.
+     * @throws IllegalArgumentException If <code>configuration</code> or <code>databaseFactory</code> is
+     *                                  <code>null</code>.
      */
     public StandaloneApplication(Configuration configuration, DatabaseFactory databaseFactory) {
         super(configuration);
@@ -47,7 +44,7 @@ public final class StandaloneApplication extends AbstractGuiApplication {
 
     /**
      * Returns a new configuration view for a standalone application.
-     * 
+     *
      * @return The configuration view.
      */
     @Override
@@ -57,10 +54,9 @@ public final class StandaloneApplication extends AbstractGuiApplication {
 
     /**
      * Creates a database and returns a new broker service that uses the database.
-     * 
+     *
      * @return The broker service.
-     * @throws FatalException
-     *             If there is an error creating the broker service.
+     * @throws FatalException If there is an error creating the broker service.
      */
     @Override
     protected BrokerService createBrokerService() throws FatalException {

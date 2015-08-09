@@ -1,16 +1,5 @@
 package suncertify.db;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 import org.hamcrest.Description;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -20,8 +9,13 @@ import org.jmock.api.Invocation;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import suncertify.db.DatabaseSchema.FieldDescription;
+
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
 public class DataTest {
 
@@ -139,13 +133,13 @@ public class DataTest {
                 is(not((short) DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[0].getName().length())));
         FieldDescription invalidFieldDescription = new FieldDescription(
                 DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[0].getName(), invalidFieldLength, 0);
-        checkingFieldDescriptions(new FieldDescription[] { invalidFieldDescription }, sequence);
+        checkingFieldDescriptions(new FieldDescription[]{invalidFieldDescription}, sequence);
 
         data = new Data(mockDatabaseFile);
     }
 
     private void checkingFieldDescriptions(final FieldDescription[] fieldDescriptions,
-            final Sequence sequence) throws Exception {
+                                           final Sequence sequence) throws Exception {
         context.checking(new Expectations() {
             {
                 for (FieldDescription element : fieldDescriptions) {
@@ -265,7 +259,7 @@ public class DataTest {
                     is(DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[i].getLength()));
             assertThat(fieldDescriptions[i].getRecordOffset(),
 
-            is(DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[i].getRecordOffset()));
+                    is(DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[i].getRecordOffset()));
         }
     }
 
@@ -301,7 +295,7 @@ public class DataTest {
     }
 
     private void read(final int recordNumber, final String[] recordValuesToRead,
-            String[] expectedRecordValues) throws Exception {
+                      String[] expectedRecordValues) throws Exception {
         final Sequence sequence = context.sequence("read");
         checkingSeek(getOffsetForRecord(recordNumber)
                 + DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH, sequence);
@@ -448,7 +442,7 @@ public class DataTest {
     }
 
     private void checkingUpdateRecord(int recNo, final String[] recordValues,
-            final Sequence sequence) throws Exception {
+                                      final Sequence sequence) throws Exception {
         final long recordValuesStartPos = getOffsetForRecord(recNo)
                 + DatabaseConstants.RECORD_VALIDITY_FLAG_LENGTH;
         context.checking(new Expectations() {
@@ -458,7 +452,7 @@ public class DataTest {
                         one(mockDatabaseFile).seek(
                                 with(equal(recordValuesStartPos
                                         + DataTestConstants.EXPECTED_FIELD_DESCRIPTIONS[i]
-                                                .getRecordOffset())));
+                                        .getRecordOffset())));
                         inSequence(sequence);
 
                         one(mockDatabaseFile).write(
@@ -616,7 +610,7 @@ public class DataTest {
     }
 
     private void checkingCreateRecord(final int firstAvailableRecNo, final String[] recordValues,
-            final Sequence sequence) throws Exception {
+                                      final Sequence sequence) throws Exception {
         checkingSeek(getOffsetForRecord(firstAvailableRecNo), sequence);
 
         final StringBuilder recordBuilder = new StringBuilder();
@@ -654,19 +648,19 @@ public class DataTest {
     @Test
     public void shouldFindContractors() throws Exception {
         standardSetup();
-        int[] matchingRecNos = { 1, 2 };
-        String[] criteria = { "Buonarotti", null, "", null, null, "12345678" };
+        int[] matchingRecNos = {1, 2};
+        String[] criteria = {"Buonarotti", null, "", null, null, "12345678"};
         String[][] allRecordValues = {
-                DataTestConstants.padRecord(new String[] { "nm", "m", "", "m", "m", "12345678" },
+                DataTestConstants.padRecord(new String[]{"nm", "m", "", "m", "m", "12345678"},
                         ' '),
-                DataTestConstants.padRecord(new String[] { "Buonarotti", "m", "", "m", "m",
-                        "12345678" }, ' '),
-                DataTestConstants.padRecord(new String[] { "Buonarotti & Family", "m", "", "m",
-                        "m", "12345678" }, ' '),
-                DataTestConstants.padRecord(new String[] { "Family of Buonarotti", "m", "", "m",
-                        "m", "12345678" }, ' '),
-                DataTestConstants.padRecord(new String[] { "Buonarotti", "m", "", "m", "m", "nm" },
-                        ' ') };
+                DataTestConstants.padRecord(new String[]{"Buonarotti", "m", "", "m", "m",
+                        "12345678"}, ' '),
+                DataTestConstants.padRecord(new String[]{"Buonarotti & Family", "m", "", "m",
+                        "m", "12345678"}, ' '),
+                DataTestConstants.padRecord(new String[]{"Family of Buonarotti", "m", "", "m",
+                        "m", "12345678"}, ' '),
+                DataTestConstants.padRecord(new String[]{"Buonarotti", "m", "", "m", "m", "nm"},
+                        ' ')};
         Sequence sequence = context.sequence("find");
         checkingFindRecords(allRecordValues, sequence);
         int[] recNos = data.find(criteria);
@@ -676,19 +670,19 @@ public class DataTest {
     @Test
     public void shouldReturnAllRecordsWhenFindCalledWithAllCriteriaNull() throws Exception {
         standardSetup();
-        int[] matchingRecNos = { 0, 1, 2, 3, 4 };
-        String[] criteria = { null, null, null, null, null, null };
+        int[] matchingRecNos = {0, 1, 2, 3, 4};
+        String[] criteria = {null, null, null, null, null, null};
         String[][] allRecordValues = {
-                DataTestConstants.padRecord(new String[] { "nm", "m", "", "m", "m", "12345678" },
+                DataTestConstants.padRecord(new String[]{"nm", "m", "", "m", "m", "12345678"},
                         ' '),
-                DataTestConstants.padRecord(new String[] { "Buonarotti", "m", "", "m", "m",
-                        "12345678" }, ' '),
-                DataTestConstants.padRecord(new String[] { "Buonarotti & Family", "m", "", "m",
-                        "m", "12345678" }, ' '),
-                DataTestConstants.padRecord(new String[] { "Family of Buonarotti", "m", "", "m",
-                        "m", "12345678" }, ' '),
-                DataTestConstants.padRecord(new String[] { "Buonarotti", "m", "", "m", "m", "nm" },
-                        ' ') };
+                DataTestConstants.padRecord(new String[]{"Buonarotti", "m", "", "m", "m",
+                        "12345678"}, ' '),
+                DataTestConstants.padRecord(new String[]{"Buonarotti & Family", "m", "", "m",
+                        "m", "12345678"}, ' '),
+                DataTestConstants.padRecord(new String[]{"Family of Buonarotti", "m", "", "m",
+                        "m", "12345678"}, ' '),
+                DataTestConstants.padRecord(new String[]{"Buonarotti", "m", "", "m", "m", "nm"},
+                        ' ')};
         Sequence sequence = context.sequence("find");
         checkingFindRecords(allRecordValues, sequence);
         int[] recNos = data.find(criteria);

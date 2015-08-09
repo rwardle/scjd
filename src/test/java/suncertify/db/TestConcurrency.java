@@ -61,21 +61,21 @@ public class TestConcurrency {
 
             try {
                 switch (action.getMethodIndex()) {
-                case 0:
-                    doCreate();
-                    break;
-                case 1:
-                    doRead();
-                    break;
-                case 2:
-                    doUpdate();
-                    break;
-                case 3:
-                    doDelete();
-                    break;
-                default:
-                    doRead();
-                    break;
+                    case 0:
+                        doCreate();
+                        break;
+                    case 1:
+                        doRead();
+                        break;
+                    case 2:
+                        doUpdate();
+                        break;
+                    case 3:
+                        doDelete();
+                        break;
+                    default:
+                        doRead();
+                        break;
                 }
             } catch (RecordNotFoundException ex) {
                 LOG("<I>    Record Index not Valid :" + action.getIndex() + "</I>");
@@ -187,9 +187,8 @@ public class TestConcurrency {
 
         /**
          * Tests if this <code>Counter</code> was hit for a specified number of times.
-         * 
-         * @param toTest
-         *            the number of hits.
+         *
+         * @param toTest the number of hits.
          * @return true if this <code>Counter</code> was hit for a specified number of times.
          */
         private synchronized boolean isDone(int toTest) {
@@ -200,12 +199,10 @@ public class TestConcurrency {
          * Starts a threads which tests if this <code>Counter</code> was hit for a specified number
          * of times. After the test is done (and the <code>Counter</code> was hit for a specified
          * number of times) it runs the <code>toRun</code> command.
-         * 
-         * @param must
-         *            the specified number of hits.
-         * @param toRun
-         *            this command runs after the <code>Counter</code> <code>isDone</code> method
-         *            returns true.
+         *
+         * @param must  the specified number of hits.
+         * @param toRun this command runs after the <code>Counter</code> <code>isDone</code> method
+         *              returns true.
          */
         public synchronized void check(int must, Runnable toRun) {
             final Thread checkThread = new Thread(new CheckTarget(must, toRun), "checkThread");
@@ -235,12 +232,10 @@ public class TestConcurrency {
 
             /**
              * Builds a <code>CheckTarget</code> for a specified number if hits.
-             * 
-             * @param must
-             *            the number of hits.
-             * @param toRun
-             *            this command runs after the <code>Counter</code> <code>isDone</code>
-             *            method returns true.
+             *
+             * @param must  the number of hits.
+             * @param toRun this command runs after the <code>Counter</code> <code>isDone</code>
+             *              method returns true.
              */
             private CheckTarget(int must, Runnable toRun) {
                 this.must = must;

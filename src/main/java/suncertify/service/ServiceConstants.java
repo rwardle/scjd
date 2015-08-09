@@ -8,7 +8,7 @@ package suncertify.service;
 
 /**
  * Constants for the service layer.
- * 
+ *
  * @author Richard Wardle
  */
 public class ServiceConstants {

@@ -13,18 +13,16 @@ import suncertify.service.BrokerService;
 
 /**
  * An abstract base class for applications that display a main GUI window.
- * 
+ *
  * @author Richard Wardle
  */
 public abstract class AbstractGuiApplication extends AbstractApplication {
 
     /**
      * Creates a new instance of <code>AbstractGuiApplication</code>.
-     * 
-     * @param configuration
-     *            Application configuration.
-     * @throws IllegalArgumentException
-     *             If <code>configuration</code> is <code>null</code>.
+     *
+     * @param configuration Application configuration.
+     * @throws IllegalArgumentException If <code>configuration</code> is <code>null</code>.
      */
     public AbstractGuiApplication(Configuration configuration) {
         super(configuration);
@@ -53,10 +51,9 @@ public abstract class AbstractGuiApplication extends AbstractApplication {
      * <p/>
      * This method is called from the <code>startup</code> method. Subclasses should implement this
      * method to return a broker service that is application-specific.
-     * 
+     *
      * @return The broker service.
-     * @throws FatalException
-     *             If there is an error creating the broker service.
+     * @throws FatalException If there is an error creating the broker service.
      */
     protected abstract BrokerService createBrokerService() throws FatalException;
 

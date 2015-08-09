@@ -6,19 +6,14 @@
 
 package suncertify.presentation;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-
 import suncertify.ApplicationMode;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Configuration dialog for applications running in {@link ApplicationMode#CLIENT CLIENT} mode.
- * 
+ *
  * @author Richard Wardle
  */
 public final class ClientConfigurationDialog extends AbstractConfigurationDialog {

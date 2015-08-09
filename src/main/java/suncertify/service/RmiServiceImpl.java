@@ -14,10 +14,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.util.logging.Logger;
 
-
 /**
  * Implementation of {@link RmiService} that delegates to {@link LocateRegistry} and {@link Naming}.
- * 
+ *
  * @author Richard Wardle
  */
 public final class RmiServiceImpl implements RmiService {

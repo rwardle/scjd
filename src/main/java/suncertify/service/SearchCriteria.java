@@ -8,12 +8,11 @@ package suncertify.service;
 
 import java.io.Serializable;
 
-
 /**
  * Criteria for searching for contractors. All <code>setXXX</code> methods of this class return
  * <code>this</code> to enable use of the builder pattern when creating <code>SearchCriteria</code>
  * objects.
- * 
+ *
  * @author Richard Wardle
  */
 public final class SearchCriteria implements Serializable {
@@ -22,42 +21,42 @@ public final class SearchCriteria implements Serializable {
 
     /**
      * Contractor name criteria.
-     * 
+     *
      * @serial
      */
     private String name;
 
     /**
      * Contractor location criteria.
-     * 
+     *
      * @serial
      */
     private String location;
 
     /**
      * Contractor specialties criteria.
-     * 
+     *
      * @serial
      */
     private String specialties;
 
     /**
      * Contractor size criteria.
-     * 
+     *
      * @serial
      */
     private String size;
 
     /**
      * Contractor rate criteria.
-     * 
+     *
      * @serial
      */
     private String rate;
 
     /**
      * Contractor owner criteria.
-     * 
+     *
      * @serial
      */
     private String owner;
@@ -72,7 +71,7 @@ public final class SearchCriteria implements Serializable {
 
     /**
      * Returns the contractor name criteria.
-     * 
+     *
      * @return The name criteria.
      */
     public String getName() {
@@ -81,9 +80,8 @@ public final class SearchCriteria implements Serializable {
 
     /**
      * Sets the contractor name criteria.
-     * 
-     * @param name
-     *            Name criteria.
+     *
+     * @param name Name criteria.
      * @return This <code>SearchCriteria</code> object.
      */
     public SearchCriteria setName(String name) {
@@ -93,7 +91,7 @@ public final class SearchCriteria implements Serializable {
 
     /**
      * Returns the contractor location criteria.
-     * 
+     *
      * @return The location criteria.
      */
     public String getLocation() {
@@ -102,9 +100,8 @@ public final class SearchCriteria implements Serializable {
 
     /**
      * Sets the contractor location criteria.
-     * 
-     * @param location
-     *            Location criteria.
+     *
+     * @param location Location criteria.
      * @return This <code>SearchCriteria</code> object.
      */
     public SearchCriteria setLocation(String location) {
@@ -114,7 +111,7 @@ public final class SearchCriteria implements Serializable {
 
     /**
      * Returns the contractor specialties criteria.
-     * 
+     *
      * @return The specialties criteria.
      */
     public String getSpecialties() {
@@ -123,9 +120,8 @@ public final class SearchCriteria implements Serializable {
 
     /**
      * Sets the contractor specialties criteria.
-     * 
-     * @param specialties
-     *            Specialties criteria.
+     *
+     * @param specialties Specialties criteria.
      * @return This <code>SearchCriteria</code> object.
      */
     public SearchCriteria setSpecialties(String specialties) {
@@ -135,7 +131,7 @@ public final class SearchCriteria implements Serializable {
 
     /**
      * Returns the contractor size criteria.
-     * 
+     *
      * @return The size criteria.
      */
     public String getSize() {
@@ -144,9 +140,8 @@ public final class SearchCriteria implements Serializable {
 
     /**
      * Sets the contractor size criteria.
-     * 
-     * @param size
-     *            Size criteria.
+     *
+     * @param size Size criteria.
      * @return This <code>SearchCriteria</code> object.
      */
     public SearchCriteria setSize(String size) {
@@ -156,7 +151,7 @@ public final class SearchCriteria implements Serializable {
 
     /**
      * Returns the contractor rate criteria.
-     * 
+     *
      * @return The rate criteria.
      */
     public String getRate() {
@@ -165,9 +160,8 @@ public final class SearchCriteria implements Serializable {
 
     /**
      * Sets the contractor rate criteria.
-     * 
-     * @param rate
-     *            Rate criteria.
+     *
+     * @param rate Rate criteria.
      * @return This <code>SearchCriteria</code> object.
      */
     public SearchCriteria setRate(String rate) {
@@ -177,7 +171,7 @@ public final class SearchCriteria implements Serializable {
 
     /**
      * Returns the contractor owner criteria.
-     * 
+     *
      * @return The owner criteria.
      */
     public String getOwner() {
@@ -186,9 +180,8 @@ public final class SearchCriteria implements Serializable {
 
     /**
      * Sets the contractor owner criteria.
-     * 
-     * @param owner
-     *            Owner criteria.
+     *
+     * @param owner Owner criteria.
      * @return This <code>SearchCriteria</code> object.
      */
     public SearchCriteria setOwner(String owner) {
@@ -198,17 +191,17 @@ public final class SearchCriteria implements Serializable {
 
     /**
      * Returns the search criteria as an array of <code>String</code>s.
-     * 
+     *
      * @return An array of length 6 containing the search criteria in the following order: name,
-     *         location, specialties, size, rate, owner.
+     * location, specialties, size, rate, owner.
      */
     public String[] toArray() {
-        return new String[] { name, location, specialties, size, rate, owner };
+        return new String[]{name, location, specialties, size, rate, owner};
     }
 
     /**
      * Returns a string representation of the <code>SearchCriteria</code>.
-     * 
+     *
      * @return A string representation of the <code>SearchCriteria</code>.
      */
     @Override

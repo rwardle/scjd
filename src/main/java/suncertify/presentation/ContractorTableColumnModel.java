@@ -6,36 +6,23 @@
 
 package suncertify.presentation;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.util.ResourceBundle;
-
-import javax.swing.AbstractCellEditor;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.util.ResourceBundle;
 
 /**
  * Column model for the contractor table.
- * 
+ *
  * @author Richard Wardle
  */
 public final class ContractorTableColumnModel extends DefaultTableColumnModel {
@@ -87,9 +74,8 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
 
     /**
      * Returns the tooltip text for the column at the specified index.
-     * 
-     * @param columnIndex
-     *            Column index
+     *
+     * @param columnIndex Column index
      * @return The tooltip text.
      */
     public String getColumnHeaderToolTipText(int columnIndex) {
@@ -112,9 +98,8 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
 
     /**
      * Sets the main presenter.
-     * 
-     * @param presenter
-     *            Presenter to set.
+     *
+     * @param presenter Presenter to set.
      */
     public void setPresenter(MainPresenter presenter) {
         this.presenter = presenter;
@@ -158,14 +143,14 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
         private Border focusBorder;
 
         public OwnerTableCellRenderer(ContractorTableColumnModel contractorTableColumnModel,
-                String bookButtonTooltip) {
+                                      String bookButtonTooltip) {
             bookButtonPanel = contractorTableColumnModel
                     .createBookButtonPanel(contractorTableColumnModel.rendererBookButton);
             this.bookButtonTooltip = bookButtonTooltip;
         }
 
         public Component getTableCellRendererComponent(JTable table, Object value,
-                boolean isSelected, boolean hasFocus, int row, int column) {
+                                                       boolean isSelected, boolean hasFocus, int row, int column) {
             JComponent component;
             if ("".equals(value)) {
                 // Owner column is empty, render the book button
@@ -201,7 +186,7 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
         }
 
         private Border getFocusBorder(JTable table, Object value, boolean isSelected, int row,
-                int column) {
+                                      int column) {
             if (focusBorder == null) {
                 // Get and store the default focus border for future use
                 JComponent defaultRendererComponent = (JComponent) table.getDefaultRenderer(
@@ -224,7 +209,7 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
         private int currentRow;
 
         public OwnerTableCellEditor(ContractorTableColumnModel contractorTableColumnModel,
-                String bookButtonTooltip) {
+                                    String bookButtonTooltip) {
             this.contractorTableColumnModel = contractorTableColumnModel;
             this.bookButtonTooltip = bookButtonTooltip;
 
@@ -252,7 +237,7 @@ public final class ContractorTableColumnModel extends DefaultTableColumnModel {
         }
 
         public Component getTableCellEditorComponent(JTable table, Object value,
-                boolean isSelected, int row, int column) {
+                                                     boolean isSelected, int row, int column) {
             /*
              * Editor always shows the book button since it can only be invoked when there is no
              * owner.

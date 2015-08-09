@@ -6,20 +6,13 @@
 
 package suncertify.db;
 
+import suncertify.db.DatabaseSchema.FieldDescription;
+
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
-
-import suncertify.db.DatabaseSchema.FieldDescription;
 
 /**
  * Implementation of {@link DBMain} that obtains contractor data using an implementation of
@@ -30,7 +23,7 @@ import suncertify.db.DatabaseSchema.FieldDescription;
  * concurrent operations from multiple threads. To ensure database integrity, users of the class
  * must ensure that no operations are called on the supplied <code>databaseFile</code> externally to
  * this class.
- * 
+ *
  * @author Richard Wardle
  */
 public class Data implements DBMain {
@@ -88,15 +81,11 @@ public class Data implements DBMain {
 
     /**
      * Creates a new instance of <code>Data</code> using the specified database file.
-     * 
-     * @param databaseFile
-     *            Database file.
-     * @throws DataValidationException
-     *             If the database is invalid.
-     * @throws IOException
-     *             If there is an error accessing the database.
-     * @throws IllegalArgumentException
-     *             If the <code>databaseFile</code> is <code>null</code>.
+     *
+     * @param databaseFile Database file.
+     * @throws DataValidationException  If the database is invalid.
+     * @throws IOException              If there is an error accessing the database.
+     * @throws IllegalArgumentException If the <code>databaseFile</code> is <code>null</code>.
      */
     public Data(DatabaseFile databaseFile) throws DataValidationException, IOException {
         if (databaseFile == null) {

@@ -10,10 +10,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-
 /**
  * Implementation of {@link DatabaseFactory} that creates contractor databases.
- * 
+ *
  * @author Richard Wardle
  */
 public final class DatabaseFactoryImpl implements DatabaseFactory {

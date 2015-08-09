@@ -6,11 +6,9 @@
 
 package suncertify.presentation;
 
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import javax.swing.text.MaskFormatter;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
@@ -18,21 +16,9 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.text.MaskFormatter;
-
-
 /**
  * A dialog for entering the customer ID when making a booking.
- * 
+ *
  * @author Richard Wardle
  */
 public final class CustomerIdDialog extends JDialog {
@@ -49,9 +35,8 @@ public final class CustomerIdDialog extends JDialog {
 
     /**
      * Creates a new <code>CustomerIdDialog</code> with the specified parent frame.
-     * 
-     * @param parentFrame
-     *            Parent frame.
+     *
+     * @param parentFrame Parent frame.
      */
     public CustomerIdDialog(JFrame parentFrame) {
         super(parentFrame);
@@ -229,9 +214,9 @@ public final class CustomerIdDialog extends JDialog {
 
     /**
      * Returns the customer ID.
-     * 
+     *
      * @return The customer ID entered in the dialog, or <code>null</code> if the dialog was
-     *         cancelled.
+     * cancelled.
      */
     public String getCustomerId() {
         return customerId;

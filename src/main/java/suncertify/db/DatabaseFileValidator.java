@@ -6,16 +6,16 @@
 
 package suncertify.db;
 
+import suncertify.db.DatabaseSchema.FieldDescription;
+
 import java.io.IOException;
 import java.util.logging.Logger;
-
-import suncertify.db.DatabaseSchema.FieldDescription;
 
 /**
  * A class that can be used to validate that the contractor database file is in the correct format.
  * Note that the methods <code>getDataSectionOffset</code> and <code>getRecordCount</code> can only
  * be called if <code>validate</code> has previously been called and it returned successfully.
- * 
+ *
  * @author Richard Wardle
  */
 public final class DatabaseFileValidator {
@@ -39,13 +39,10 @@ public final class DatabaseFileValidator {
     /**
      * Creates a new instance of <code>DatabaseFileValidator</code> with the specified database file
      * and schema.
-     * 
-     * @param databaseFile
-     *            Database file to validate.
-     * @param databaseSchema
-     *            Database schema to validate against.
-     * @throws IllegalArgumentException
-     *             If <code>databaseFile</code> or <code>databaseSchema</code> is <code>null</code>.
+     *
+     * @param databaseFile   Database file to validate.
+     * @param databaseSchema Database schema to validate against.
+     * @throws IllegalArgumentException If <code>databaseFile</code> or <code>databaseSchema</code> is <code>null</code>.
      */
     public DatabaseFileValidator(DatabaseFile databaseFile, DatabaseSchema databaseSchema) {
         if (databaseFile == null) {
@@ -64,11 +61,9 @@ public final class DatabaseFileValidator {
      * offset and record count are stored. They can be accessed using the
      * <code>getDataSectionOffset</code> and <code>getRecordCount</code> after this method has
      * completed.
-     * 
-     * @throws IOException
-     *             If there is an error accessing the database file.
-     * @throws DataValidationException
-     *             If the database file is invalid.
+     *
+     * @throws IOException             If there is an error accessing the database file.
+     * @throws DataValidationException If the database file is invalid.
      */
     public void validate() throws IOException, DataValidationException {
         validated = false;
@@ -157,11 +152,10 @@ public final class DatabaseFileValidator {
 
     /**
      * Gets the offset of the data section of the database file.
-     * 
+     *
      * @return The offset in bytes from the beginning of the file.
-     * @throws IllegalStateException
-     *             If <code>validate</code> has not been called successfully before this method is
-     *             called.
+     * @throws IllegalStateException If <code>validate</code> has not been called successfully before this method is
+     *                               called.
      */
     public long getDataSectionOffset() {
         if (!validated) {
@@ -173,11 +167,10 @@ public final class DatabaseFileValidator {
 
     /**
      * Gets the number of records in the database.
-     * 
+     *
      * @return The number of records.
-     * @throws IllegalStateException
-     *             If <code>validate</code> has not been called successfully before this method is
-     *             called.
+     * @throws IllegalStateException If <code>validate</code> has not been called successfully before this method is
+     *                               called.
      */
     public int getRecordCount() {
         if (!validated) {
