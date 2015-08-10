@@ -1,5 +1,6 @@
-/.idea/libraries
-/.idea/workspace.xml
+*.iml
+/.idea/*
+!/.idea/runConfigurations/
 
 /target
 
