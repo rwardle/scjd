@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>scjd</name>
-    <url>http://bitbucket.org/rwardle/scjd</url>
+    <url>https://github.com/rwardle/scjd</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
